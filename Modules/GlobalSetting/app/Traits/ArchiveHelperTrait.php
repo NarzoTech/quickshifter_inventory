@@ -31,7 +31,7 @@ trait ArchiveHelperTrait
     }
 
 
-    private function checkAndReadJsonFile($zipPath, $searchFile = "wsus.json")
+    private function checkAndReadJsonFile($zipPath, $searchFile = "innvatech.json")
     {
         $zip = new ZipArchive();
         if ($zip->open($zipPath) === TRUE) {

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
 use Modules\Language\app\Enums\TranslationModels;
-use Modules\Language\App\Traits\GenerateTranslationTrait;
+use Modules\Language\app\Traits\GenerateTranslationTrait;
 use Modules\MenuBuilder\app\Http\Requests\MenuRequest;
 use Modules\MenuBuilder\app\Models\Menu;
 use Modules\MenuBuilder\app\Models\MenuTranslation;

@@ -38,7 +38,6 @@ class Kernel extends HttpKernel
             // \Modules\Installer\app\Http\Middleware\PurchaseVerifyMiddleware::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\DemoModeMiddleware::class,
-            // \Modules\Installer\app\Http\Middleware\SetupMiddleware::class,
         ],
 
         'api' => [

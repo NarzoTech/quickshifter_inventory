@@ -13,7 +13,7 @@ class GlobalSettingInfoSeeder extends Seeder
     public function run(): void
     {
         $setting_data = [
-            'app_name' => 'WebSolutionUs',
+            'app_name' => 'InnvaTech',
             'version' => '1.00',
             'logo' => 'uploads/website-images/logo.png',
             'timezone' => 'Asia/Dhaka',
@@ -55,7 +55,7 @@ class GlobalSettingInfoSeeder extends Seeder
             'mail_password' => 'mail_password',
             'mail_port' => 'mail_port',
             'mail_encryption' => 'ssl',
-            'mail_sender_name' => 'WebSolutionUs',
+            'mail_sender_name' => 'InnvaTech',
             'contact_message_receiver_mail' => 'receiver@gmail.com',
             'pusher_app_id' => 'pusher_app_id',
             'pusher_app_key' => 'pusher_app_key',
@@ -67,7 +67,7 @@ class GlobalSettingInfoSeeder extends Seeder
             'maintenance_mode' => 0,
             'maintenance_title' => 'Website Under maintenance',
             'maintenance_description' => '<p>We are currently performing maintenance on our website to<br>improve your experience. Please check back later.</p>
-            <p><a title="Websolutions" href="https://websolutionus.com/">Websolutions</a></p>',
+            <p><a title="InnvaTech" href="https://InnvaTech.com/">InnvaTech</a></p>',
             'last_update_date' => date('Y-m-d H:i:s'),
             'is_queable' => 'inactive',
         ];

@@ -11,7 +11,6 @@ use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
-use Modules\Installer\app\Http\Middleware\SetupMiddleware;
 
 /*  End Admin panel Controller  */
 
@@ -26,7 +25,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::post('/reset-password-store/{token}', [NewPasswordController::class, 'custom_reset_password_store'])->name('password.reset-store');
     /* End admin auth route */
 
-    Route::middleware(['auth:admin', SetupMiddleware::class])->group(function () {
+    Route::middleware(['auth:admin'])->group(function () {
         Route::get('/', [DashboardController::class, 'dashboard']);
         Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -46,6 +45,4 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::put('admin-status/{id}', [AdminController::class, 'changeStatus'])->name('admin.status');
     // Settings routes
     Route::get('settings', [SettingController::class, 'settings'])->name('settings');
-
-    Route::get('sync-modules', [AddonsController::class, 'syncModules'])->name('addons.sync');
 });

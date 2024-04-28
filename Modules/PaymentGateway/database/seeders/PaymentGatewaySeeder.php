@@ -16,7 +16,7 @@ class PaymentGatewaySeeder extends Seeder
         $payment_info = [
             'razorpay_key' => 'razorpay_key',
             'razorpay_secret' => 'razorpay_secret',
-            'razorpay_name' => 'WebSolutionUs',
+            'razorpay_name' => 'InnvaTech',
             'razorpay_description' => 'This is test payment window',
             'razorpay_charge' => 0.00,
             'razorpay_theme_color' => '#6d0ce4',
@@ -25,7 +25,7 @@ class PaymentGatewaySeeder extends Seeder
             'razorpay_image' => 'uploads/website-images/razorpay.jpeg',
             'flutterwave_public_key' => 'flutterwave_public_key',
             'flutterwave_secret_key' => 'flutterwave_secret_key',
-            'flutterwave_app_name' => 'WebSolutionUs',
+            'flutterwave_app_name' => 'InnvaTech',
             'flutterwave_charge' => 0.00,
             'flutterwave_currency_id' => MultiCurrency::where('currency_code', 'NGN')->first()?->id,
             'flutterwave_status' => 'inactive',
