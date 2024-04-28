@@ -1,0 +1,11 @@
+{
+    "name": "ClubPoint",
+    "alias": "clubpoint",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ClubPoint\\app\\Providers\\ClubPointServiceProvider"
+    ],
+    "files": []
+}

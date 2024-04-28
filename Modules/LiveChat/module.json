@@ -1,0 +1,11 @@
+{
+    "name": "LiveChat",
+    "alias": "livechat",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\LiveChat\\app\\Providers\\LiveChatServiceProvider"
+    ],
+    "files": []
+}

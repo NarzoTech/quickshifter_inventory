@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/clubpoint",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ClubPoint\\": "",
+            "Modules\\ClubPoint\\App\\": "app/",
+            "Modules\\ClubPoint\\Database\\Factories\\": "database/factories/",
+            "Modules\\ClubPoint\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\ClubPoint\\Tests\\": "tests/"
+        }
+    }
+}
