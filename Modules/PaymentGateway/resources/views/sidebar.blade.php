@@ -1,1 +1,0 @@
-<li class="{{ Route::is('admin.paymentgateway') ? 'active' : '' }}"><a class="nav-link" href="{{ route('admin.paymentgateway') }}">{{ __('Gateway List') }} <small class="badge badge-danger ml-2">{{ __('addon') }}</small></a> </li>
