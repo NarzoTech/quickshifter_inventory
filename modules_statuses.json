@@ -3,5 +3,7 @@
     "GlobalSetting": true,
     "Currency": true,
     "Customer": true,
-    "Media": true
+    "Media": true,
+    "Product": true,
+    "POS": true
 }
