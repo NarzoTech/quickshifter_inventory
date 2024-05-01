@@ -12,45 +12,9 @@ class Category extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'parent_id', 'slug', 'image', 'status', 'top_category',
+        'parent_id',  'status', 'name'
     ];
 
-    // public function products()
-    // {
-    //     return $this->hasMany(Product::class, 'category_id', 'id');
-    // }
-
-    public function translation(): ?HasOne
-    {
-        return $this->hasOne(ProductCategoryTranslation::class,'product_category_id','id')->where('lang_code', getSessionLanguage());
-    }
-
-    public function getTranslation($code): ?ProductCategoryTranslation
-    {
-        return $this->hasOne(ProductCategoryTranslation::class)->where('lang_code', $code)->first();
-    }
-
-    public function translations(): ?HasMany
-    {
-        return $this->hasMany(ProductCategoryTranslation::class, 'product_category_id');
-    }
-
-    public function getNameAttribute(): ?string
-    {
-        return $this->translation?->name;
-    }
-
-    public function getDescriptionAttribute(): ?string
-    {
-        return $this->translation?->description;
-    }
-
-    public function getImageUrlAttribute(): ?string
-    {
-        $img = Media::find($this->image)?->path;
-
-        return asset($img);
-    }
     public function productCategories()
     {
         return $this->hasMany(ProductCategory::class);

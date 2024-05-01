@@ -35,10 +35,10 @@
                 {{ __('Add Product') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.product.import') ? 'active' : '' }}">
+        {{-- <li class="{{ Route::is('admin.product.import') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.product.import') }}">
                 {{ __('Bulk Product Import') }}
             </a>
-        </li>
+        </li> --}}
     </ul>
 </li>

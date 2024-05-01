@@ -19,18 +19,21 @@ use Modules\Order\app\Models\Order;
 use Modules\Order\app\Models\OrderDetails;
 use Modules\Product\app\Models\Category;
 use Modules\Product\app\Models\Product;
+use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductService;
 
 class POSController extends Controller
 {
     protected $productService;
     protected $orderService;
+    protected $brandService;
 
-    public function __construct(ProductService $productService,OrderService $orderService)
+    public function __construct(ProductService $productService,OrderService $orderService,BrandService $brandService)
     {
         $this->middleware('auth:admin');
         $this->productService = $productService;
         $this->orderService = $orderService;
+        $this->brandService = $brandService;
     }
     /**
      * Display a listing of the resource.
@@ -61,6 +64,7 @@ class POSController extends Controller
         $products = $products->appends($request->all());
 
         $categories = Category::where('status', 1)->get();
+        $brands = $this->brandService->getActiveBrands();
         $customers = User::orderBy('id', 'desc')->where('status', 'active')->where('is_banned', 'no')->get();
 
 
@@ -72,6 +76,7 @@ class POSController extends Controller
             'categories' => $categories,
             'customers' => $customers,
             'cart_contents' => $cart_contents,
+            'brands' => $brands,
         ]);
     }
 

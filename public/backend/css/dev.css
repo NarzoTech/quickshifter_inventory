@@ -480,3 +480,29 @@ img.mr-3.ml-3.rounded-circle {
     height: 300px;
     overflow-y: auto;
 }
+
+.preloader_area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999999999 !important;
+    background: #ffffff69;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preloader_area .img {
+    width: 130px;
+    height: 130px;
+}
+
+.preloader_area .img img {
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}

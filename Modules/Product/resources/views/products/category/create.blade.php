@@ -42,31 +42,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="slug">{{ __('Slug') }}<span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" id="slug" name="slug"
-                                                    value="{{ old('slug') }}" placeholder="{{ __('Slug') }}"
-                                                    class="form-control">
-                                                @error('slug')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="top_category">{{ __('Is Top Category?') }}</label>
-                                                <select name="top_category" id="top_category" class="form-control">
-                                                    <option value="0">{{__('No')}}</option>
-                                                    <option value="1">{{__('Yes')}}</option>
-                                                </select>
-                                                @error('top_category')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
                                         <div class="col-md-8 offset-md-2">
                                             <div class="form-group">
                                                 <label for="slug">{{ __('Status') }}<span
@@ -97,22 +73,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="description">{{ __('Short Description') }}</label>
-                                                <input type="text" id="description" name="description"
-                                                    value="{{ old('description') }}"
-                                                    placeholder="{{ __('Enter Short Description') }}" class="form-control">
-                                                @error('description')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        @if (Module::isEnabled('Media'))
-                                            <div class="form-group col-md-8 offset-md-2">
-                                                <x-media::media-input name="image" label_text="Image" />
-                                            </div>
-                                        @endif
                                         <div class="text-center offset-md-2 col-md-8">
                                             <x-admin.save-button :text="__('Save')">
                                             </x-admin.save-button>
@@ -127,9 +87,6 @@
         </section>
     </div>
 
-    @if (Module::isEnabled('Media'))
-        @stack('media_list_html')
-    @endif
 @endsection
 
 @push('js')
@@ -145,14 +102,4 @@
             });
         })(jQuery);
     </script>
-    @if (Module::isEnabled('Media'))
-        @stack('media_libary_js')
-    @endif
-@endpush
-
-{{-- Media Css --}}
-@push('css')
-    @if (Module::isEnabled('Media'))
-        @stack('media_libary_css')
-    @endif
 @endpush

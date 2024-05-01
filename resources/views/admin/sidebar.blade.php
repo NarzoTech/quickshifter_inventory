@@ -19,6 +19,10 @@
                 </li>
             @endadminCan
 
+            @if (Module::isEnabled('Product'))
+                @include('product::sidebar')
+            @endif
+
             <li class="menu-header">{{ __('Manage Contents') }}</li>
 
             @if (Module::isEnabled('Media') && checkAdminHasPermission('media.view'))

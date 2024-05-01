@@ -52,6 +52,12 @@
                         </a>
                     </li>
 
+                    <li class="dropdown dropdown-list-toggle">
+                        <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                            <i class="fas fa-cart-plus"></i> {{ __('POS') }}</i>
+                        </a>
+                    </li>
+
                     <li class="dropdown"><a href="#" data-toggle="dropdown"
                             class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                             @if ($header_admin->image)

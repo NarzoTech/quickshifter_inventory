@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="{{ asset('backend/css/bootstrap.min.css') }}">
-<link rel="stylesheet" href="{{ asset('backend/fontawesome/css/all.min.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-social.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/components.css') }}">
@@ -20,3 +19,4 @@
 <link rel="stylesheet" href="{{ asset('backend/css/iziToast.min.css') }}">
 
 <script src="{{ asset('global/js/jquery-3.7.1.min.js') }}"></script>
+<script src="{{ asset('backend/js/fontawesome.js') }}"></script>

@@ -21,11 +21,9 @@ class ProductCategoryService
 
     public function getAllProductCategories()
     {
-        $category = $this->category->with('translations');
+        $category = $this->category;
         if (request()->search) {
-            $category = $category->whereHas('translation', function($q){
-                $q->where('name', 'like', '%' . request()->search . '%');
-            });
+            $category = $category->where('name', 'like', '%' . request()->search . '%');
         }
         return $category->paginate(20);
     }
@@ -47,12 +45,7 @@ class ProductCategoryService
     public function storeProductCategory($request)
     {
         $category = $this->category->create($request->all());
-        $this->generateTranslations(
-            TranslationModels::ProductCategory,
-            $category,
-            'product_category_id',
-            $request,
-        );
+
         return $category;
     }
 
@@ -62,12 +55,6 @@ class ProductCategoryService
     {
         $category = $this->category->find($id);
         $category->update($request->all());
-        $request['code'] = getSessionLanguage();
-        $this->updateTranslations(
-            $category,
-            $request,
-            $request->all(),
-        );
 
         return $category;
     }

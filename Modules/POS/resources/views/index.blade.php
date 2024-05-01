@@ -36,11 +36,7 @@
                             <div class="card-header">
                                 <form id="product_search_form" class="pos_pro_search_form w-100">
                                     <div class="row">
-                                        <div class="col-md-5 d-flex align-items-center">
-                                            <input type="text" class="form-control" name="name"
-                                                placeholder="{{ __('Search here..') }}" autocomplete="off"
-                                                value="{{ request()->get('name') }}">
-                                        </div>
+
                                         <div class="col-md-5 d-flex align-items-center">
                                             <select name="category_id" id="category_id" class="form-control select2">
                                                 <option value="">{{ __('Select Category') }}</option>
@@ -57,10 +53,27 @@
                                                 @endif
                                             </select>
                                         </div>
+                                        <div class="col-md-5 d-flex align-items-center ">
+                                            <select name="brand_id" id="brand_id" class="form-control select2">
+                                                <option value="">{{ __('Select brand') }}</option>
+                                                @if (request()->has('brand_id'))
+                                                    @foreach ($brands as $brand)
+                                                        <option
+                                                            {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
+                                                            value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($categories as $brand)
+                                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
 
-                                        <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary w-100" id="search_btn_text"><i
-                                                    class="fas fa-search fa-2x fs-25"></i></button>
+                                        <div class="col-md-12 d-flex align-items-center mt-2">
+                                            <input type="text" class="form-control" name="name"
+                                                placeholder="{{ __('Search here..') }}" autocomplete="off"
+                                                value="{{ request()->get('name') }}">
                                         </div>
                                     </div>
                                 </form>
@@ -97,33 +110,6 @@
                             </div>
 
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <label class="form-label">{{ _('Delivery Type') }}</label>
-                                            <div class="selectgroup w-100">
-                                                <label class="selectgroup-item" title="{{ __('Pick up') }}">
-                                                    <input type="radio" name="delivery_method" value="2"
-                                                        class="selectgroup-input" checked>
-                                                    <span class="selectgroup-button selectgroup-button-icon"><i
-                                                            class="fas fa-shopping-bag"></i></span>
-                                                </label>
-                                                <label class="selectgroup-item" title="{{ __('Delivery') }}">
-                                                    <input type="radio" name="delivery_method" value="1"
-                                                        class="selectgroup-input">
-                                                    <span class="selectgroup-button selectgroup-button-icon"><i
-                                                            class="fas fa-shipping-fast"></i></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h5 class="add_delivery_info d-none">
-                                    <i class="fa fa-user" aria-hidden="true"></i> {{ __('Delivery Information') }}
-                                    <button id="createNewAddressBtn" class="btn btn-primary btn-sm">
-                                        <i class="fa fa-plus" aria-hidden="true"></i>
-                                    </button>
-                                </h5>
                                 <div class="shopping-card-body">
                                     <table class="table table-bordered">
                                         <thead>
@@ -286,7 +272,6 @@
                                     <input type="hidden" value="" name="order_payment_details">
                                     <input type="hidden" value="" name="order_payment_notes">
                                     <input type="hidden" value="" name="order_order_note">
-                                    <input type="hidden" value="2" name="order_delivery_method">
                                 </form>
                             </div>
                         </div>
@@ -298,6 +283,8 @@
 
 
     @include('components.admin.preloader')
+
+
     <!-- Product Modal -->
     <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
@@ -393,83 +380,6 @@
         </div>
     </div>
 
-    <!-- Create New Address Modal -->
-    <div class="modal fade" id="newAddress" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('New address') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <form id="add_new_address_form" method="POST">
-                            @csrf
-                            <div class="row">
-                                <input type="hidden" name="customer_id" value="" id="address_customer_id">
-                                <div class="col-md-12 col-lg-12 col-xl-12 form-group">
-                                    <label for="">{{ __('Address') }} *</label>
-                                    <textarea class="form-control h-80px" name="address" cols="3" rows="4"
-                                        placeholder="{{ __('Address') }}" required></textarea>
-                                </div>
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-                                    <label for="">{{ __('First Name') }} <span
-                                            class="required d-none">*</span></label>
-                                    <input class="form-control" type="text" placeholder="{{ __('First Name') }}"
-                                        name="first_name">
-                                </div>
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-                                    <label for="">{{ __('Last Name') }} <span
-                                            class="required d-none">*</span></label>
-                                    <input class="form-control" type="text" placeholder="{{ __('Last Name') }}"
-                                        name="last_name">
-                                </div>
-
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-
-                                    <label for="">{{ __('Phone') }} * </label>
-                                    <input class="form-control" type="text" placeholder="{{ __('Phone') }}"
-                                        name="phone" required>
-                                </div>
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-                                    <label for="">{{ __('Email') }}</label>
-                                    <input class="form-control" type="email" placeholder="{{ __('Email') }}"
-                                        name="email">
-                                </div>
-
-                                <div class="col-12 form-group">
-                                    <div class="wsus__check_single_form check_area d-flex flex-wrap">
-                                        <div class="form-check mr-3">
-                                            <input value="home" class="form-check-input" type="radio"
-                                                name="address_type" id="flexRadioDefault1">
-                                            <label class="form-check-label" for="flexRadioDefault1">
-                                                {{ __('Home') }}
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input value="office" class="form-check-input" type="radio"
-                                                name="address_type" id="flexRadioDefault2">
-                                            <label class="form-check-label" for="flexRadioDefault2">
-                                                {{ __('Office') }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">{{ __('Save Address') }}</button>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
     {{-- item details modal --}}
     <div class="modal fade" id="itemDetailsModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
@@ -477,32 +387,6 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content load_item_details_modal_response">
 
-            </div>
-        </div>
-    </div>
-
-
-    {{-- modal for confirm if product has different restaurnat it will reset the cart --}}
-
-    <div class="modal fade" id="resetCartModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Reset Cart') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body
-                    ">
-                    <p>{{ __('You have selected a product from different restaurant. Do you want to reset the cart?') }}
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                    <button class="btn btn-danger modal-reset-button">{{ __('Reset') }}</button>
-                </div>
             </div>
         </div>
     </div>
@@ -635,62 +519,7 @@
                         });
                     })
 
-                    $("#createNewAddressBtn").on("click", function() {
-                        let customer_id = $("#customer_id").val();
-                        if (customer_id) {
-                            $("#newAddress").modal('show');
-                        } else {
-                            toastr.error("{{ __('Please select a customer') }}")
-                        }
-
-                    })
-
-                    // add new address modal
-                    $("#add_new_address_form").on("submit", function(e) {
-                        e.preventDefault();
-
-                        $('.preloader_area').removeClass('d-none');
-                        $.ajax({
-                            type: 'POST',
-                            data: $('#add_new_address_form').serialize(),
-                            url: "{{ route('admin.create-new-address') }}",
-                            success: function(response) {
-                                console.log(response)
-                                toastr.success(response.message)
-                                $("#add_new_address_form").trigger("reset");
-                                $(".address-container").html(response.view)
-                                $("#newAddress").modal('hide');
-                                $('.preloader_area').addClass('d-none');
-                            },
-                            error: function(response) {
-                                if (response.status == 422) {
-                                    if (response.responseJSON.errors.first_name) toastr.error(
-                                        response.responseJSON.errors.first_name[0])
-                                    if (response.responseJSON.errors.last_name) toastr.error(
-                                        response.responseJSON.errors.last_name[0])
-                                    if (response.responseJSON.errors.address) toastr.error(
-                                        response.responseJSON.errors.address[0])
-                                    if (response.responseJSON.errors.address_type) toastr.error(
-                                        response.responseJSON.errors.address_type[0])
-                                    if (response.responseJSON.errors.delivery_area_id) toastr
-                                        .error(response.responseJSON.errors.delivery_area_id[0])
-                                    if (response.responseJSON.errors.customer_id) toastr.error(
-                                        response.responseJSON.errors.customer_id[0])
-
-                                }
-
-                                if (response.status == 500) {
-                                    toastr.error("{{ __('Server error occurred') }}")
-                                }
-
-                                if (response.status == 403) {
-                                    toastr.error(response.responseJSON.message);
-                                }
-                                $('.preloader_area').addClass('d-none');
-                            }
-                        });
-
-                    })
+                    
 
                     // make payment modal
                     $("#makePaymentBtn").on("click", function() {
