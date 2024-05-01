@@ -22,13 +22,13 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
 
     // Products
     Route::resource('product', ProductController::class);
-    
-    // bulk product import 
-    
+
+    // bulk product import
+
 
     Route::post('product/import', [ProductController::class, 'bulkImportStore'])->name('product.import.store');
-    
-    
+
+
     Route::get('product/product-gallery/{id}', [ProductController::class, 'product_gallery'])->name('product-gallery');
     Route::post('product/product-gallery/{id}', [ProductController::class, 'product_gallery_store'])->name('product-gallery.store');
 
@@ -51,8 +51,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('bulk-product-upload', [ProductController::class, 'bulk_product_upload_page'])->name('bulk_product_upload_page');
     Route::post('bulk-product-upload-store', [ProductController::class, 'bulk_product_store'])->name('bulk_product_store');
     Route::post('wholesale-modal', [ProductController::class, 'productWholesaleModal'])->name('wholesale.modal');
-   
-   
+
+
     // Categories Routes
 
 
@@ -65,6 +65,9 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
 
     Route::get('/category-info', [ProductCategoryController::class, 'info'])->name('categories.index_info');
     Route::get('/categories/get-data', [ProductCategoryController::class, 'getData'])->name('categories.get-data');
+
+    // delete all selected category
+    Route::post('/categories/delete-all', [ProductCategoryController::class, 'deleteAll'])->name('category.deleteSelected');
 
     Route::post('/request-product/approved', [ProductController::class, 'approved'])->name('request.approved');
     Route::group(['prefix' => 'products'], function () {

@@ -116,4 +116,15 @@ class ProductCategoryController extends Controller
             return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.category.index');
         }
     }
+
+    public function deleteAll(Request $request)
+    {
+        try {
+            $this->category->deleteAll($request);
+            return response()->json(['success'=> true,'message' => 'Deleted successfully'], 200);
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
+    }
 }

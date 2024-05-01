@@ -16,6 +16,7 @@
 <script src="{{ asset('backend/js/modules-toastr.js') }}"></script>
 <script src="{{ asset('backend/tinymce/js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('backend/js/custom.js') }}"></script>
+<script src="{{ asset('backend/js/sweetalert2.all.min.js') }}"></script>
 
 <script>
     @session('messege')

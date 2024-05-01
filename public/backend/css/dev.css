@@ -506,3 +506,7 @@ img.mr-3.ml-3.rounded-circle {
     -ms-border-radius: 50%;
     -o-border-radius: 50%;
 }
+.danger-bg
+{
+    background-color: #ffb1a9 !important;
+}

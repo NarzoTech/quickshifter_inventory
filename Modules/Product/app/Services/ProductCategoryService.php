@@ -104,4 +104,9 @@ class ProductCategoryService
         }
         return [];
     }
+
+    public function deleteAll($request)
+    {
+        $this->category->whereIn('id', $request->ids)->delete();
+    }
 }

@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="{{ asset('backend/css/dev.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/tagify.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/css/sweetalert2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-tagsinput.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/fontawesome-iconpicker.min.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-datepicker.min.css') }}">
