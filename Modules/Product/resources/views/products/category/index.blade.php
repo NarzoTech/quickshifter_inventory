@@ -25,7 +25,7 @@
                                                 placeholder="{{ __('Search here..') }}" autocomplete="off"
                                                 value="{{ request()->get('search') }}">
                                             <div class="input-group-btn">
-                                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                                <button class="btn btn-primary" style="padding:9px"><i class="fas fa-search"></i></button>
                                             </div>
                                         </div>
                                     </form>

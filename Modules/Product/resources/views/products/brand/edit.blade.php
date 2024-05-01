@@ -47,18 +47,6 @@
                                         </div>
                                         <div class="col-md-8 offset-md-2">
                                             <div class="form-group">
-                                                <label for="slug">{{ __('Slug') }}<span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" id="slug" name="slug"
-                                                    value="{{ old('slug', $brand->slug) }}"
-                                                    placeholder="{{ __('Slug') }}" class="form-control">
-                                                @error('slug')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
                                                 <label for="slug">{{ __('Status') }}<span
                                                         class="text-danger">*</span></label>
                                                 <select name="status" id="status" class="form-control">
@@ -113,18 +101,6 @@
 @endsection
 
 @push('js')
-    <script>
-        (function($) {
-            "use strict";
-            $(document).ready(function() {
-                $('[name="name"]').on('input', function() {
-                    var name = $(this).val();
-                    var slug = convertToSlug(name);
-                    $("[name='slug']").val(slug);
-                });
-            });
-        })(jQuery);
-    </script>
     @if (Module::isEnabled('Media'))
         @stack('media_libary_js')
     @endif

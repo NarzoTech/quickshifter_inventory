@@ -15,7 +15,10 @@ class ProductBrand extends Model
     protected $table = 'product_brands';
 
     protected $fillable = [
-        'slug', 'image', 'status',
+        'name',
+        'image',
+        'description',
+        'status',
     ];
 
     protected $appends = [
@@ -26,30 +29,6 @@ class ProductBrand extends Model
     public function products()
     {
         return $this->hasMany(Product::class, 'brand_id', 'id');
-    }
-
-    public function getNameAttribute()
-    {
-        return $this->translation?->name;
-    }
-
-    public function getDescriptionAttribute()
-    {
-        return $this->translation?->description;
-    }
-    public function translation(): ?HasOne
-    {
-        return $this->hasOne(ProductBrandTranslation::class)->where('lang_code', getSessionLanguage());
-    }
-
-    public function getTranslation($code): ?ProductBrandTranslation
-    {
-        return $this->hasOne(ProductBrandTranslation::class)->where('lang_code', $code)->first();
-    }
-
-    public function translations(): ?HasMany
-    {
-        return $this->hasMany(ProductBrandTranslation::class, 'product_brand_id');
     }
 
     public function getImageUrlAttribute()

@@ -49,7 +49,7 @@ class BrandController extends Controller
      */
     public function store(BrandRequest $request)
     {
-        
+
         try {
             $brand = $this->brandService->store($request);
 
@@ -148,6 +148,22 @@ class BrandController extends Controller
                 'messege' => 'Brand delete failed',
                 'alert-type' => 'error',
             ]);
+        }
+    }
+
+    public function deleteAll(Request $request)
+    {
+        try {
+            $brand = $this->brandService->deleteAll($request);
+
+            if ($brand) {
+                return response()->json(['success' => true, 'message' => 'Deleted successfully'], 200);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Delete failed'], 400);
+            }
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            return response()->json(['success' => false, 'message' => 'Delete failed'], 400);
         }
     }
 }

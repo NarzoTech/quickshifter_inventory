@@ -69,6 +69,9 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     // delete all selected category
     Route::post('/categories/delete-all', [ProductCategoryController::class, 'deleteAll'])->name('category.deleteSelected');
 
+    // delete all selected brand
+    Route::post('/brands/delete-all', [BrandController::class, 'deleteAll'])->name('brand.deleteSelected');
+
     Route::post('/request-product/approved', [ProductController::class, 'approved'])->name('request.approved');
     Route::group(['prefix' => 'products'], function () {
         Route::resource('category', ProductCategoryController::class);

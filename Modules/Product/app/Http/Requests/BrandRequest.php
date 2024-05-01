@@ -22,8 +22,7 @@ class BrandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:product_brand_translations,name,' . $this->brand,
-            'slug' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:product_brands,name,' . $this->brand,
             'description' => 'nullable|string',
             'status' => 'required|boolean',
         ];

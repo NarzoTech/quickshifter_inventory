@@ -34,12 +34,7 @@ class BrandService
     {
 
         $brand = $this->brand->create($request->all());
-        $this->generateTranslations(
-            TranslationModels::ProductBrand,
-            $brand,
-            'product_brand_id',
-            $request,
-        );
+
         return $brand;
 
     }
@@ -54,11 +49,7 @@ class BrandService
         $brand = $this->brand->find($id);
         $brand->update($request->all());
 
-        $this->updateTranslations(
-            $brand,
-            $request,
-            $request->all(),
-        );
+        
         return $brand;
     }
 
@@ -88,6 +79,12 @@ class BrandService
             return $brand->products;
         }
         return [];
+    }
+
+    public function deleteAll($request)
+    {
+        $ids = $request->ids;
+        return $this->brand->whereIn('id', $ids)->delete();
     }
 
 }
