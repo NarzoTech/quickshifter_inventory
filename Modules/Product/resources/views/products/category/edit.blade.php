@@ -43,32 +43,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="slug">{{ __('Slug') }}<span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" id="slug" name="slug"
-                                                    value="{{ old('slug', $cat->slug) }}"
-                                                    placeholder="{{ __('Slug') }}" class="form-control">
-                                                @error('slug')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="top_category">{{ __('Is Top Category?') }}<span
-                                                        class="text-danger">*</span></label>
-                                                <select name="top_category" id="top_category" class="form-control">
-                                                    <option value="0" @if ($cat->top_category == 0) selected @endif>{{__('No')}}</option>
-                                                    <option value="1" @if ($cat->top_category == 1) selected @endif>{{__('Yes')}}</option>
-                                                </select>
-                                                @error('top_category')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
                                         <div class="col-md-8 offset-md-2">
                                             <div class="form-group">
                                                 <label for="slug">{{ __('Status') }}<span
@@ -102,28 +77,10 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="description">{{ __('Short Description') }}</label>
-                                                <input type="text" id="description" name="description"
-                                                    value="{{ old('description', $cat->description) }}"
-                                                    placeholder="{{ __('Enter Short Description') }}" class="form-control">
-                                                @error('description')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        @if (Module::isEnabled('Media'))
-                                            @php
-                                                $image = [$cat->image ?? $cat->image];
-                                            @endphp
-                                            <div class="form-group col-md-8 offset-md-2">
-                                                <x-media::media-input name="image" label_text="Image" :dataImages="$image" />
-                                            </div>
-                                        @endif
+
                                         <div class="text-center offset-md-2 col-md-8">
-                                            <x-admin.save-button :text="__('Save')">
-                                            </x-admin.save-button>
+                                            <x-admin.update-button :text="__('Update')">
+                                            </x-admin.update-button>
                                         </div>
                                     </div>
                                 </form>
@@ -134,32 +91,4 @@
             </div>
         </section>
     </div>
-    @if (Module::isEnabled('Media'))
-        @stack('media_list_html')
-    @endif
 @endsection
-
-@push('js')
-    <script>
-        (function($) {
-            "use strict";
-            $(document).ready(function() {
-                $('[name="name"]').on('input', function() {
-                    var name = $(this).val();
-                    var slug = convertToSlug(name);
-                    $("[name='slug']").val(slug);
-                });
-            });
-        })(jQuery);
-    </script>
-    @if (Module::isEnabled('Media'))
-        @stack('media_libary_js')
-    @endif
-@endpush
-
-{{-- Media Css --}}
-@push('css')
-    @if (Module::isEnabled('Media'))
-        @stack('media_libary_css')
-    @endif
-@endpush
