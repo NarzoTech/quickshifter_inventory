@@ -186,71 +186,6 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     *
-     * related product view
-     */
-    public function related_product(string $id)
-    {
-        try {
-            $product = $this->productService->getProduct($id);
-            if (!$product) {
-                return back()->with([
-                    'messege' => 'Product not found',
-                    'alert-type' => 'error',
-                ]);
-            }
-            $relatedProducts = $this->productService->getRelatedProducts($product);
-            $products = $this->productService->getProducts()->whereNot('id', $product->id)->paginate(20);
-            return view('product::products.related_product', compact('product', 'relatedProducts', 'products'));
-        } catch (\Exception $ex) {
-            Log::error($ex->getMessage());
-            return back()->with([
-                'messege' => 'Something Went Wrong',
-                'alert-type' => 'error',
-            ]);
-        }
-    }
-
-    /**
-     *
-     * related product store
-     */
-
-    public function related_product_store(Request $request, string $id)
-    {
-        try {
-            DB::beginTransaction();
-            $product = $this->productService->getProduct($id);
-            if (!$product) {
-                return back()->with([
-                    'messege' => 'Product not found',
-                    'alert-type' => 'error',
-                ]);
-            }
-            $relatedProducts = $this->productService->storeRelatedProducts($request, $product);
-            DB::commit();
-            if ($relatedProducts) {
-                return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.related-products', [$product->id], [
-                    'messege' => 'Related Products updated successfully',
-                    'alert-type' => 'success',
-                ]);
-            } else {
-                return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.related-products', [$product->id], [
-                    'messege' => 'Related Products update failed',
-                    'alert-type' => 'error',
-                ]);
-            }
-        } catch (\Exception $ex) {
-            Log::error($ex->getMessage());
-            DB::rollBack();
-            return back()->with([
-                'messege' => 'Something Went Wrong',
-                'alert-type' => 'error',
-            ]);
-        }
-    }
-
     public function product_variant(string $id)
     {
         try {
@@ -409,9 +344,6 @@ class ProductController extends Controller
     // store bulk product
     public function bulkImportStore(Request $request)
     {
-
-
-
         try {
             $this->productService->bulkImport($request);
             return back()->with([
@@ -420,54 +352,6 @@ class ProductController extends Controller
             ]);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
-            return back()->with([
-                'messege' => 'Something Went Wrong',
-                'alert-type' => 'error',
-            ]);
-        }
-    }
-
-    public function product_gallery(string $id)
-    {
-        try {
-            $product = $this->productService->getProduct($id);
-            if (!$product) {
-                return back()->with([
-                    'messege' => 'Product not found',
-                    'alert-type' => 'error',
-                ]);
-            }
-            return view('product::products.gallery', compact('product'));
-        } catch (\Exception $ex) {
-            Log::error($ex->getMessage());
-            return back()->with([
-                'messege' => 'Something Went Wrong',
-                'alert-type' => 'error',
-            ]);
-        }
-    }
-
-    public function product_gallery_store(Request $request, string $id)
-    {
-        try {
-            DB::beginTransaction();
-            $product = $this->productService->getProduct($id);
-            if (!$product) {
-                return back()->with([
-                    'messege' => 'Product not found',
-                    'alert-type' => 'error',
-                ]);
-            }
-            $this->productService->storeProductGallery($request, $product);
-            DB::commit();
-            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.product-gallery', [$product->id], [
-                'messege' => 'Product Gallery updated successfully',
-                'alert-type' => 'success',
-            ]);
-
-        } catch (\Exception $ex) {
-            Log::error($ex->getMessage());
-            DB::rollBack();
             return back()->with([
                 'messege' => 'Something Went Wrong',
                 'alert-type' => 'error',

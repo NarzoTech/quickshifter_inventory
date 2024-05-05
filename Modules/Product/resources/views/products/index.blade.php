@@ -34,7 +34,7 @@
                                                 <th>{{ __('Cost') }}</th>
                                                 <th>{{ __('Price') }}</th>
                                                 <th>{{ __('Unit') }}</th>
-                                                <th>{{ __('Quantity') }}</th>
+                                                <th>{{ __('Stock Quantity') }}</th>
                                                 <th>{{ __('Status') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
@@ -53,7 +53,7 @@
                                                     <td>{{ currency($product->cost) }}</td>
                                                     <td>{{ currency($product->price) }}</td>
                                                     <td>{{ $product->unit->name }}</td>
-                                                    <td>{{ $product->quantity }}</td>
+                                                    <td>{{ $product->stock }}{{ $product->unit->ShortName }}</td>
                                                     <td>
                                                         @if ($product->status == 1)
                                                             <a href="javascript:;"
@@ -73,11 +73,18 @@
                                                             </a>
                                                         @endif
                                                     </td>
-                                                    <td>
+                                                    <td class="d-flex justify-content-center align-items-center">
                                                         <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
-                                                            class="btn btn-primary btn-sm"><i class="fa fa-edit"
+                                                            class="btn btn-primary btn-sm mr-2"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
 
+                                                            <button type="button" data-toggle="modal"
+                                                                @if ($product->orders->count() > 0) data-target="#canNotDeleteModal"
+                                                                @else
+                                                                data-target="#deleteModal" onclick="deleteData({{ $product->id }})" @endif
+                                                                class="btn btn-danger btn-sm mr-2">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            </button>
                                                         <div class="dropdown d-inline">
                                                             <button class="btn btn-primary btn-sm dropdown-toggle"
                                                                 type="button" id="dropdownMenuButton2"
@@ -85,26 +92,9 @@
                                                                 aria-expanded="false">
                                                                 <i class="fas fa-cog"></i>
                                                             </button>
-                                                            <button type="button" data-toggle="modal"
-                                                                @if ($product->orders->count() > 0) data-target="#canNotDeleteModal"
-                                                                @else
-                                                                data-target="#deleteModal" onclick="deleteData({{ $product->id }})" @endif
-                                                                class="btn btn-danger btn-sm">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                            </button>
 
                                                             <div class="dropdown-menu" x-placement="top-start"
                                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -131px, 0px);">
-                                                                <a class="dropdown-item has-icon"
-                                                                    href="{{ route('admin.product-gallery', $product->id) }}"><i
-                                                                        class="far fa-image"></i>
-                                                                    {{ __('Image Gallery') }}</a>
-
-                                                                <a class="dropdown-item has-icon"
-                                                                    href="{{ route('admin.related-products', $product->id) }}"><i
-                                                                        class="fas fa-lightbulb"></i>
-                                                                    {{ __('Related Products') }}</a>
-
                                                                 <a class="dropdown-item has-icon"
                                                                     href="{{ route('admin.product-variant', $product->id) }}"><i
                                                                         class="fas fa-cog"></i>{{ __('Product Variant') }}</a>
