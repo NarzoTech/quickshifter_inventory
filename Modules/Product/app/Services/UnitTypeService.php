@@ -50,7 +50,7 @@ class UnitTypeService
 
     public function findById($id)
     {
-        return UnitType::findOrFail($id);
+        return UnitType::with('children')->findOrFail($id);
     }
 
     public function delete($id)

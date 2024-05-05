@@ -24,15 +24,19 @@
                                 <div class="table-responsive">
                                     <table class="table table-striped">
                                         <thead>
-
                                             <tr>
-                                                <th width="5%">{{ __('SN') }}</th>
-                                                <th width="30%">{{ __('Name') }}</th>
-                                                <th width="10%">{{ __('Price') }}</th>
-                                                <th width="15%">{{ __('Photo') }}</th>
-                                                <th width="15%">{{ __('Type') }}</th>
-                                                <th width="10%">{{ __('Status') }}</th>
-                                                <th width="15%">{{ __('Action') }}</th>
+                                                <th>{{ __('SN') }}</th>
+                                                <th>{{ __('Photo') }}</th>
+                                                <th>{{ __('Name') }}</th>
+                                                <th>{{ __('Sku') }}</th>
+                                                <th>{{ __('Brand') }}</th>
+                                                <th>{{ __('Category') }}</th>
+                                                <th>{{ __('Cost') }}</th>
+                                                <th>{{ __('Price') }}</th>
+                                                <th>{{ __('Unit') }}</th>
+                                                <th>{{ __('Quantity') }}</th>
+                                                <th>{{ __('Status') }}</th>
+                                                <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -40,20 +44,16 @@
                                             @foreach ($products as $index => $product)
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
-                                                    <td>{{ $product->name }}
-                                                    </td>
-                                                    <td>{{ currency($product->actual_price) }}</td>
-                                                    <td> <img class="rounded-circle" src="{{ asset($product->image_url) }}"
+                                                    <td> <img class="rounded-circle" src="{{ $product->ImagesUrl[0] }}"
                                                             alt="" width="100px" height="100px"></td>
-                                                    <td>
-                                                        @if ($product->is_new == 1)
-                                                            {{ __('New Arrival') }}
-                                                        @elseif ($product->is_featured == 1)
-                                                            {{ __('Featured Product') }}
-                                                        @elseif ($product->is_bestseller == 1)
-                                                            {{ __('Best Selling Product') }}
-                                                        @endif
-                                                    </td>
+                                                    <td>{{ $product->name }} </td>
+                                                    <td>{{ $product->sku }}</td>
+                                                    <td>{{ $product->brand->name }}</td>
+                                                    <td>{{ $product->category->name }}</td>
+                                                    <td>{{ currency($product->cost) }}</td>
+                                                    <td>{{ currency($product->price) }}</td>
+                                                    <td>{{ $product->unit->name }}</td>
+                                                    <td>{{ $product->quantity }}</td>
                                                     <td>
                                                         @if ($product->status == 1)
                                                             <a href="javascript:;"
@@ -74,7 +74,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('admin.product.edit', ['product' => $product->id, 'code' => getSessionLanguage()]) }}"
+                                                        <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
                                                             class="btn btn-primary btn-sm"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
 

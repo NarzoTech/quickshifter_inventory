@@ -22,12 +22,14 @@ class ProductController extends Controller
     private ProductCategoryService $categoryService;
     private AttributeService $attributeService;
     private BrandService $brandService;
-    public function __construct(ProductService $productService, ProductCategoryService $categoryService, AttributeService $attributeService, BrandService $brandService)
+    private UnitTypeService $unitService;
+    public function __construct(ProductService $productService, ProductCategoryService $categoryService, AttributeService $attributeService, BrandService $brandService, UnitTypeService $unitService)
     {
         $this->productService = $productService;
         $this->categoryService = $categoryService;
         $this->attributeService = $attributeService;
         $this->brandService = $brandService;
+        $this->unitService = $unitService;
         $this->middleware('auth:admin');
 
     }
@@ -48,11 +50,11 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(UnitTypeService $unitService)
+    public function create()
     {
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         $brands = $this->brandService->getActiveBrands();
-        $units = $unitService->getActiveAll();
+        $units = $this->unitService->getParentUnits();
         return view('product::products.create', compact('categories', 'brands','units'));
     }
 
@@ -98,16 +100,14 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id,UnitTypeService $unitService)
+    public function edit(string $id)
     {
         try {
             $product = $this->productService->getProduct($id);
-            $productCategories = $this->categoryService->getCategoriesIdsByProductId($id);
-
             $categories = $this->categoryService->getAllProductCategoriesForSelect();
             $brands = $this->brandService->getActiveBrands();
-            $units = $unitService->getActiveAll();
-            return view('product::products.edit', compact('categories', 'brands', 'product', 'productCategories','units'));
+            $units = $this->unitService->getParentUnits();
+            return view('product::products.edit', compact('categories', 'brands', 'product','units'));
 
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
@@ -409,9 +409,9 @@ class ProductController extends Controller
     // store bulk product
     public function bulkImportStore(Request $request)
     {
-        
 
-        
+
+
         try {
             $this->productService->bulkImport($request);
             return back()->with([

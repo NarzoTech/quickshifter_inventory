@@ -49,7 +49,7 @@
                                                     <label for="name">{{ __('Name') }}<span
                                                             class="text-danger">*</span></label>
                                                     <input type="text" name="name" class="form-control" id="name"
-                                                        required value="{{ old('name') }}">
+                                                        value="{{ old('name') }}">
                                                     @error('name')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -104,8 +104,7 @@
 
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="brand_id">{{ __('Brands') }}<span
-                                                            class="text-danger">*</span></label>
+                                                    <label for="brand_id">{{ __('Brand') }}</label>
                                                     <select name="brand_id" id="brand_id" class="form-control select2">
                                                         <option value="">{{ __('Select Brand') }}</option>
                                                         @foreach ($brands as $brand)
@@ -125,7 +124,7 @@
                                                             class="text-danger">*</span></label>
                                                     <div class="input-group">
                                                         <input type="text" name="sku" class="form-control currency"
-                                                            id="sku" required value="{{ old('sku') }}">
+                                                            id="sku" value="{{ old('sku') }}">
                                                         <div class="input-group-prepend">
                                                             <div class="input-group-text generate_sku cursor-pointer">
                                                                 <i class="fas fa-barcode"></i>
@@ -143,7 +142,7 @@
                                                     <label for="price">{{ __('Price') }} ({{ currency_icon() }})<span
                                                             class="text-danger">*</span></label>
                                                     <input type="number" name="price" class="form-control" id="price"
-                                                        required value="{{ old('price') }}">
+                                                        value="{{ old('price') }}">
                                                     @error('price')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -155,7 +154,7 @@
                                                     <div class="input-group">
 
                                                         <input type="number" name="tax" class="form-control currency"
-                                                            id="tax" required value="{{ old('tax') }}">
+                                                            id="tax" value="{{ old('tax') }}">
                                                         <div class="input-group-prepend">
                                                             <div class="input-group-text">
                                                                 %
@@ -186,7 +185,7 @@
                                                     <label for="cost">{{ __('Cost') }}
                                                         ({{ currency_icon() }})<span class="text-danger">*</span></label>
                                                     <input type="number" name="cost" class="form-control"
-                                                        id="cost" required value="{{ old('cost') }}">
+                                                        id="cost" value="{{ old('cost') }}">
                                                     @error('cost')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -197,17 +196,16 @@
                                                 <div class="form-group">
                                                     <label>{{ __('Stock Quantity') }} <span
                                                             class="text-danger">*</span></label>
-                                                    <input type="number" class="form-control" name="quantity"
-                                                        value="{{ old('quantity') }}">
-                                                    @error('quantity')
+                                                    <input type="number" class="form-control" name="stock"
+                                                        value="{{ old('stock',1) }}">
+                                                    @error('stock')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>{{ __('Stock alert') }} <span
-                                                            class="text-danger">*</span></label>
+                                                    <label>{{ __('Stock alert') }}</label>
                                                     <input type="number" class="form-control" name="stock_alert"
                                                         value="{{ old('stock_alert') }}">
                                                     @error('stock_alert')
@@ -232,7 +230,7 @@
                                                     @if (Module::isEnabled('Media'))
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <x-media::media-input name="image" />
+                                                                <x-media::media-input label_text="Images" name="images[]" multiple="yes"/>
                                                             </div>
                                                         </div>
                                                     @endif
@@ -255,11 +253,11 @@
 
                                                     <div class="col-md-12">
                                                         <div class="form-group">
-                                                            <label for="unit_id">{{ __('Unit Type') }}<span
+                                                            <label for="unit_id">{{ __('Unit') }}<span
                                                                     class="text-danger">*</span></label>
                                                             <select name="unit_id" id="unit_id"
                                                                 class="form-control select2">
-                                                                <option value="">{{ __('Select Unit Type') }}
+                                                                <option value="">{{ __('Select Unit') }}
                                                                 </option>
                                                                 @foreach ($units as $unit)
                                                                     <option value="{{ $unit->id }}">
@@ -268,6 +266,34 @@
                                                                 @endforeach
                                                             </select>
                                                             @error('unit_id')
+                                                                <span class="text-danger">{{ $message }}</span>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="unit_sale_id">{{ __('Sale Unit') }}<span
+                                                                    class="text-danger">*</span></label>
+                                                            <select name="unit_sale_id" id="unit_sale_id"
+                                                                class="form-control select2">
+                                                                <option value="">{{ __('Select Sale Unit') }}
+                                                                </option>
+                                                            </select>
+                                                            @error('unit_sale_id')
+                                                                <span class="text-danger">{{ $message }}</span>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="unit_purchase_id">{{ __('Purchase Unit') }}<span
+                                                                    class="text-danger">*</span></label>
+                                                            <select name="unit_purchase_id" id="unit_purchase_id"
+                                                                class="form-control select2">
+                                                                <option value="">{{ __('Select Purchase Unit') }}
+                                                                </option>
+                                                            </select>
+                                                            @error('unit_purchase_id')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
                                                         </div>
@@ -312,6 +338,28 @@
                     var sku = Math.floor(10000000 + Math.random() * 90000000);
                     $("[name='sku']").val(sku);
                 });
+
+                $('#unit_id').on('change',function(){
+                    // admin.unit.parent
+
+                    const id = $(this).val();
+
+                    $.ajax({
+                        url:"{{ route('admin.unit.parent','') }}/"+id,
+                        success:function(response){
+                            console.log(response);
+                            let html = `<option value="${response.id}">${response.name} (${response.ShortName})</option>`
+
+                            if(response.children){
+                                $.each(response.children,function(index,data){
+                                    html += `<option value="${data?.id}">${data?.name} (${data?.ShortName})</option>`
+                                })
+                            }
+
+                            $('[name="unit_sale_id"],[name="unit_purchase_id"]').html(html)
+                        }
+                    });
+                })
             });
 
             function changeAttr(val, selectorName) {

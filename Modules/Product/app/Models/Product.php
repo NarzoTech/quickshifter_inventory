@@ -64,6 +64,11 @@ class Product extends Model
         return $this->belongsTo(ProductBrand::class, 'brand_id', 'id');
     }
 
+    public function unit()
+    {
+        return $this->belongsTo(UnitType::class, 'unit_id', 'id');
+    }
+
     public function getImagesAttribute($value)
     {
         return json_decode($value);
@@ -79,7 +84,7 @@ class Product extends Model
 
             // flatten the array
             $media = array_map(function ($item) {
-                return asset('public/' . $item['path']);
+                return asset($item['path']);
             }, $media);
 
             return $media;
@@ -224,4 +229,5 @@ class Product extends Model
         }
         return $variantsWithAttributes;
     }
+
 }

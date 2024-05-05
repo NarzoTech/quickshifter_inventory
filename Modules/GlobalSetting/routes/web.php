@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Modules\GlobalSetting\app\Http\Controllers\EmailSettingController;
 use Modules\GlobalSetting\app\Http\Controllers\GlobalSettingController;
-use Modules\GlobalSetting\app\Http\Controllers\ManageAddonController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
 
@@ -54,16 +53,6 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
         Route::put('update-email-template/{id}', 'update_email_template')->name('update-email-template');
 
         Route::post('test/mail/credentials', 'test_mail_credentials')->name('test-mail-credentials');
-    });
-
-    Route::controller(ManageAddonController::class)->prefix('settings')->group(function () {
-        Route::get('addons', 'index')->name('addons.view');
-        Route::get('addons/install', 'installAddon')->name('addons.install');
-        Route::get('addons/update/{slug}', 'updateStatus')->name('addons.update.status');
-        Route::post('addons/store', 'installStore')->name('addons.store');
-        Route::post('addons/install', 'installProcessStart')->name('addons.install.start');
-        Route::delete('addons/delete', 'deleteAddon')->name('addons.delete');
-        Route::delete('addons/uninstall/{slug}', 'uninstallAddon')->name('addons.uninstall');
     });
 
 });

@@ -82,5 +82,6 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
         Route::post('attribute/value/delete', [ProductAttributeController::class, 'deleteValue'])->name('attribute.value.delete');
         Route::post('/attribute/has-value', [ProductAttributeController::class, 'checkHasValue'])->name('attribute.has-value');
         Route::resource('unit', UnitTypeController::class);
+        Route::get('unit/parent/{id}',[UnitTypeController::class,'unitByParent'])->name('unit.parent');
     });
 });

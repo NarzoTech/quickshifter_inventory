@@ -8,7 +8,7 @@ use Modules\Language\app\Jobs\CreateNewTranslatedDataJob;
 use Modules\Language\app\Jobs\DeleteTranslationDataJob;
 use Modules\Language\app\Jobs\UpdateTranslationCodeJob;
 use Modules\Language\app\Models\Language;
-use Modules\Language\App\Traits\TranslateableModelsTrait;
+use Modules\Language\app\Traits\TranslateableModelsTrait;
 
 trait SyncModelsTrait
 {

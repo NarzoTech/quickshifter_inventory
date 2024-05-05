@@ -98,12 +98,20 @@ class UnitTypeController extends Controller
             if ($result == "not_possible") {
                 return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
             }
-            LogActivity::successLog('unit delete successful.');
+
             return $this->redirectWithMessage(RedirectType::DELETE->value, "admin.unit.index");
         } catch (\Exception $e) {
-            LogActivity::errorLog($e->getMessage() . ' - Error has been detected for Unit Destroy');
+            Log::error($e->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
         }
 
     }
+
+    public function unitByParent($id)
+    {
+        $unit = $this->unitTypeService->findById($id);
+
+        return response()->json($unit,200);
+    }
+
 }

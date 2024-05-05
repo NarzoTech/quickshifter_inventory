@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Modules\Language\app\Models\Language;
-use Modules\Language\App\Traits\LanguageTrait;
+use Modules\Language\app\Traits\LanguageTrait;
 use Modules\Language\app\Enums\SyncLanguageType;
-use Modules\Language\App\Traits\SyncModelsTrait;
+use Modules\Language\app\Traits\SyncModelsTrait;
 use Modules\Language\app\Enums\AllCountriesDetailsEnum;
 use Modules\Language\app\Http\Requests\LanguageRequest;
 
