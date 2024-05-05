@@ -9,7 +9,12 @@ class Variant extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'price', 'compare_at_price', 'cost_per_item', 'taxable', 'track_inventory', 'out_of_stock_track_inventory', 'sku', 'weight', 'weight_unit', 'origin', 'barcode', 'is_default', 'media_id'];
+    protected $fillable = [
+        'product_id',
+        'price',
+        'cost',
+        'sku',
+    ];
 
     protected $appends = ['attribute_ids', 'attribute_and_value_ids', 'attributes'];
     public function product()
@@ -70,5 +75,4 @@ class Variant extends Model
             ];
         });
     }
-
 }

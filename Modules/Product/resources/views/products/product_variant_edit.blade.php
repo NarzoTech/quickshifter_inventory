@@ -52,6 +52,7 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Selling Price</th>
+                                                                <th>Cost</th>
                                                                 <th>SKU</th>
                                                             </tr>
                                                         </thead>
@@ -65,6 +66,16 @@
                                                                             name="selling_price"
                                                                             value="{{ $variant->price }}"
                                                                             placeholder="Enter Selling Price">
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div
+                                                                        class="d-flex justify-content-between align-items-center mt-3">
+                                                                        <input type="text"
+                                                                            class="form-control buying-price"
+                                                                            name="cost"
+                                                                            value="{{ $variant->cost }}"
+                                                                            placeholder="Enter Buying Price">
                                                                     </div>
                                                                 </td>
                                                                 <td>
@@ -175,7 +186,7 @@
                     }
                     // Create a variation table HTML
                     var variationTableHTML =
-                        '<table class="table"><thead><tr><th>Variant</th><th>Selling Price</th><th>SKU</th></tr></thead><tbody>';
+                        '<table class="table"><thead><tr><th>Variant</th><th>Selling Price</th><th>Cost</th><th>SKU</th></tr></thead><tbody>';
                     // Generate rows for each combination of selected values
                     selectedValues = cartesian(selectedValues);
                     $.each(selectedValues, function(index, combination) {
@@ -187,10 +198,14 @@
                         variationTableHTML +=
                             `<td >
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <input type="text" class="form-control selling-price w-75" name="selling_price[]" placeholder="Enter Selling Price">
+                                <input type="text" class="form-control selling-price w-75" name="price[]" placeholder="Enter Selling Price">
                             </div>
                         </td>
-
+                        <td >
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <input type="text" class="form-control buying-price w-75" name="cost[]" placeholder="Enter Buying Price" value="{{$product->cost}}">
+                            </div>
+                        </td>
                     `;
                         const sku = "{{ $product->sku }}";
                         // Selling Price column with input

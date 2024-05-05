@@ -192,6 +192,7 @@ class ProductService
                 'id' => $variant->id,
                 'sku' => $variant->sku,
                 'price' => $variant->price,
+                'cost' => $variant->cost,
                 'attribute' => $variant->attributes(),
                 'attributes' => $variant->options->map(function ($option) {
                     return [
@@ -237,12 +238,11 @@ class ProductService
     public function storeProductVariant($request, $product)
     {
         $variantData = $request->variant;
-        $sellingPrices = $request->selling_price;
+        $sellingPrices = $request->price;
+        $costs = $request->cost;
         $skus = $request->sku;
 
         foreach ($variantData as $key => $variantInfo) {
-
-
             // check if variant already exists
             $existingVariant = $product->variants->where('sku', $skus[$key])->first();
 
@@ -257,6 +257,7 @@ class ProductService
                 'product_id' => $product->id,
                 'sku' => $skus[$key],
                 'price' => $sellingPrices[$key],
+                'cost' => $costs[$key],
             ]);
 
             // Insert variant-specific information into the variant_attribute_values table
@@ -286,6 +287,7 @@ class ProductService
     {
         $variant->update([
             'price' => $request->selling_price,
+            'cost' => $request->cost,
             'sku' => $request->sku,
         ]);
         return $variant;

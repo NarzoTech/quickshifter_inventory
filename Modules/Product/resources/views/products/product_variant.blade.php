@@ -24,11 +24,11 @@
                                 <div class="table-responsive">
                                     <table class="table table-striped">
                                         <thead>
-
                                             <tr>
                                                 <th width="5%">{{ __('SN') }}</th>
-                                                <th width="15%">{{ __('Sku') }}</th>
+                                                <th width="30%">{{ __('Sku') }}</th>
                                                 <th width="10%">{{ __('Price') }}</th>
+                                                <th width="10%">{{ __('Cost') }}</th>
                                                 <th width="30%">{{ __('Attributes') }}</th>
                                                 <th width="15%">{{ __('Action') }}</th>
                                             </tr>
@@ -39,7 +39,8 @@
                                                 <tr>
                                                     <td>{{ $index + 1 }}</td>
                                                     <td>{{ $variant['sku'] }}</td>
-                                                    <td>{{ $variant['price'] }}</td>
+                                                    <td>{{ currency($variant['price']) }}</td>
+                                                    <td>{{ currency($variant['cost']) }}</td>
                                                     <td>
                                                         @foreach ($variant['attributes'] as $attr)
 
