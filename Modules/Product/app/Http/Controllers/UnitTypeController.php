@@ -6,7 +6,9 @@ use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
 use App\Traits\LogActivity;
 use App\Traits\RedirectHelperTrait;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Modules\Product\app\Services\UnitTypeService;
 
 class UnitTypeController extends Controller
@@ -24,7 +26,8 @@ class UnitTypeController extends Controller
     public function index()
     {
         $units = $this->unitTypeService->getAll();
-        return view('product::unit-types.index', compact('units'));
+        $parentUnits = $this->unitTypeService->getParentUnits();
+        return view('product::unit-types.index', compact('units', "parentUnits"));
     }
 
     /**
@@ -41,12 +44,12 @@ class UnitTypeController extends Controller
     public function store(Request $request)
     {
         try {
-            $this->unitTypeService->save($request->except("_token"));
-            LogActivity::successLog('Units added.');
+            $this->unitTypeService->save($request);
+
             return $this->redirectWithMessage(RedirectType::CREATE->value, "admin.unit.index");
 
-        } catch (\Exception $e) {
-            LogActivity::errorLog($e->getMessage());
+        } catch (Exception $ex) {
+            Log::error($ex->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
         }
 
@@ -75,11 +78,11 @@ class UnitTypeController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $this->unitTypeService->update($request->except("_token"), $id);
-            LogActivity::successLog('Units updated.');
+            $this->unitTypeService->update($request, $id);
+
             return $this->redirectWithMessage(RedirectType::UPDATE->value, "admin.unit.index");
-        } catch (\Exception $e) {
-            LogActivity::errorLog($e->getMessage());
+        } catch (Exception $ex) {
+            Log::error($ex->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
         }
 

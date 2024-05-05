@@ -11,7 +11,15 @@ class UnitType extends Model
     use HasFactory;
     protected $table = "unit_types";
 
-    protected $fillable = ["name", "description", "status", "created_by", "updated_by"];
+    protected $fillable = [
+        "name",
+        "description",
+        "status",
+        'ShortName',
+        'base_unit',
+        'operator',
+        'operator_value',
+    ];
 
     public function products()
     {

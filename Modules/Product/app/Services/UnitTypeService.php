@@ -17,22 +17,33 @@ class UnitTypeService
         return UnitType::latest()->where('status', 1)->get();
     }
 
-    public function save($data)
+    public function getParentUnits()
+    {
+        return UnitType::latest()->where('base_unit', null)->get();
+    }
+
+    public function save($request)
     {
         $unit_type = new UnitType();
-        $unit_type->name = $data['name'];
-        $unit_type->description = $data['description'];
-        $unit_type->status = $data['status'];
+        $unit_type->name = $request->name;
+        $unit_type->ShortName = $request->ShortName;
+        $unit_type->base_unit = $request->base_unit;
+        $unit_type->operator = $request->operator;
+        $unit_type->operator_value = $request->operator_value;
+        $unit_type->status = $request->status;
         $unit_type->save();
         return true;
     }
 
-    public function update($data, $id)
+    public function update($request, $id)
     {
         $unit_type = UnitType::findOrFail($id);
-        $unit_type->name = $data['name'];
-        $unit_type->description = $data['description'];
-        $unit_type->status = $data['status'];
+        $unit_type->name = $request->name;
+        $unit_type->ShortName = $request->ShortName;
+        $unit_type->base_unit = $request->base_unit;
+        $unit_type->operator = $request->operator;
+        $unit_type->operator_value = $request->operator_value;
+        $unit_type->status = $request->status;
         $unit_type->save();
         return true;
     }

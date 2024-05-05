@@ -17,7 +17,26 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'brand_id', 'slug', 'image', 'images', 'price', 'discount', 'discount_type', 'cost_per_item', 'stock', 'stock_status', 'tags', 'attributes', 'sku', 'status', 'has_variant', 'is_featured', 'is_bestseller', 'is_new', 'is_top', 'is_hot', 'is_warranty', 'warranty_duration', 'is_return', 'is_exchangeable', 'is_refundable', 'is_cod', 'is_emi', 'is_guest_checkout', 'badge', 'unit_id', 'qty', 'video_link', 'meta_title', 'meta_description', 'created_by', 'updated_by', 'deleted_by', 'viewed', 'is_partial', 'partial_amount', 'delivery_location', 'buyone_getone', 'is_wholesale', 'is_pre_order', 'release_date', 'max_product', 'is_undefine', 'is_flash_deal', 'offer_start_date', 'offer_end_date', 'is_verified', 'return_policy_id', 'show_homepage', 'min_delivery_time','max_delivery_time'
+        'name',
+        'short_description',
+        'brand_id',
+        'category_id',
+        'unit_id',
+        'unit_sale_id',
+        'unit_purchase_id',
+        'images',
+        'cost',
+        'price',
+        'stock_alert',
+        'is_imei',
+        'not_selling',
+        'stock',
+        'stock_status',
+        'sku',
+        'barcode',
+        'status',
+        "tax_type",
+        "tax",
     ];
 
 
@@ -30,69 +49,16 @@ class Product extends Model
         'name', 'short_description', 'additional_information', 'description', 'tags', 'image_url', 'actual_price', 'stock_status', 'has_variant'
     ];
 
-    public function getNameAttribute(): ?string
-    {
-        return $this->translation?->name;
-    }
 
     public function getHasVariantAttribute(): bool
     {
         return $this->variants->count() > 0;
     }
 
-    public function getShortDescriptionAttribute(): ?string
+    public function category()
     {
-        return $this->translation?->short_description;
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
-    public function getAdditionalInformationAttribute(): ?string
-    {
-        return $this->translation?->additional_information;
-    }
-    public function getDescriptionAttribute(): ?string
-    {
-        return $this->translation?->description;
-    }
-    public function getMetaTitleAttribute(): ?string
-    {
-        return $this->translation?->meta_title;
-    }
-    public function getMetaKeywordsAttribute(): ?string
-    {
-        return $this->translation?->meta_keywords;
-    }
-    public function getMetaDescriptionAttribute(): ?string
-    {
-        return $this->translation?->meta_description;
-    }
-    public function getTagsAttribute(): ?string
-    {
-        return $this->translation?->tags;
-    }
-
-    public function translation(): ?HasOne
-    {
-        return $this->hasOne(ProductTranslation::class)->where('lang_code', getSessionLanguage());
-    }
-
-    public function getTranslation($code): ?ProductTranslation
-    {
-        return $this->hasOne(ProductTranslation::class)->where('lang_code', $code)->first();
-    }
-
-    public function translations(): ?HasMany
-    {
-        return $this->hasMany(ProductTranslation::class, 'product_id');
-    }
-
-    public function productCategories()
-    {
-        return $this->hasMany(ProductCategory::class, 'product_id', 'id');
-    }
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class, 'product_categories');
-    }
-
     public function brand()
     {
         return $this->belongsTo(ProductBrand::class, 'brand_id', 'id');
@@ -152,41 +118,16 @@ class Product extends Model
         return number_format($value, 2);
     }
 
-    public function getDiscountAttribute($value)
-    {
-        return number_format($value, 2);
-    }
 
-    public function getCostPerItemAttribute($value)
-    {
-        return number_format($value, 2);
-    }
 
     public function getStockAttribute($value)
     {
         return number_format($value, 0);
     }
 
-    public function getActualPriceAttribute()
-    {
-        $price = floatval(str_replace(',', '', $this->price));
-
-        $discount = $this->discount ? floatval(str_replace(',', '', $this->discount)) : 0;
-
-        if ($this->discount_type == 'fixed') {
-            return number_format($price - $discount, 2);
-        } else {
-            return number_format($price - ($price * $discount / 100), 2);
-        }
-    }
-
     public function orders()
     {
         return $this->hasMany(OrderDetails::class, 'product_id', 'id');
-    }
-    public function relatedProducts()
-    {
-        return $this->hasMany(RelatedProduct::class, 'product_id', 'id');
     }
 
     public function getRelatedProductAttribute()
@@ -282,11 +223,5 @@ class Product extends Model
             }
         }
         return $variantsWithAttributes;
-    }
-
-    public function singleProduct()
-    {
-        $resource = new ProductResource($this);
-        return $resource->singleProduct();
     }
 }

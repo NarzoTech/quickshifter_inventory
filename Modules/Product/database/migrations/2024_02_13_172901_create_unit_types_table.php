@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string("name", 250);
             $table->text("description")->nullable();
             $table->boolean("status")->default(0);
-            $table->unsignedBigInteger("created_by")->nullable();
-            $table->unsignedBigInteger("updated_by")->nullable();
+            $table->string('ShortName', 192);
+            $table->integer('base_unit')->nullable()->index('base_unit');
+            $table->char('operator', 192)->nullable()->default('*');
+            $table->float('operator_value', 10, 0)->nullable()->default(1);
             $table->timestamps();
         });
     }

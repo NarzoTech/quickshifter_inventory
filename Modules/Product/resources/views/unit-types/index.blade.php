@@ -25,8 +25,28 @@
                                             <input type="text" id="name" class="form-control" name="name">
                                         </div>
                                         <div class="form-group col-12">
-                                            <label>{{ __('Description') }}</label>
-                                            <textarea name="description" id="description" cols="30" rows="10" class="form-control" style="height:50px"></textarea>
+                                            <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
+                                            <input type="text" id="ShortName" class="form-control" name="ShortName">
+                                        </div>
+                                        <div class="form-group col-12">
+                                            <label>{{ __('Parent Unit') }}</label>
+                                            <select name="base_unit" id="base_unit" class="form-control">
+                                                <option value="">{{ __('Select Parent Unit') }}</option>
+                                                @foreach ($parentUnits as $parentUnit)
+                                                    <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-12 operator d-none">
+                                            <label>{{ __('Operator') }}</label>
+                                            <select name="operator" id="operator" class="form-control">
+                                                <option value="*">{{ __('Multiply') }} (*)</option>
+                                                <option value="/">{{ __('Divide') }} (/)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-12 operator_value d-none">
+                                            <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
+                                            <input type="text" id="operator_value" class="form-control" name="operator_value" value="1">
                                         </div>
                                         <div class="form-group col-12">
                                             <label>{{ __('Status') }} </label>
@@ -114,7 +134,18 @@
                     type: 'GET',
                     success: function(response) {
                         $('#name').val(response.name);
-                        $('#description').val(response.description);
+                        $('#ShortName').val(response.ShortName);
+                        $('#base_unit').val(response.base_unit);
+                        $('#operator').val(response.operator);
+                        $('#operator_value').val(response.operator_value);
+
+                        if (response.base_unit) {
+                            $('.operator').removeClass('d-none');
+                            $('.operator_value').removeClass('d-none');
+                        } else {
+                            $('.operator').addClass('d-none');
+                            $('.operator_value').addClass('d-none');
+                        }
                         $('input[name="status"][value="' + response.status + '"]').prop(
                             'checked', true);
                         let url = "{{ route('admin.unit.update', ':id') }}";
@@ -133,6 +164,17 @@
                     }
                 });
             })
+
+            $('#base_unit').on("change",function() {
+                const baseUnit = $(this).val();
+                if (baseUnit) {
+                    $('.operator').removeClass('d-none');
+                    $('.operator_value').removeClass('d-none');
+                } else {
+                    $('.operator').addClass('d-none');
+                    $('.operator_value').addClass('d-none');
+                }
+            });
         });
 
         function deleteData(id) {

@@ -15,15 +15,11 @@ class Category extends Model
         'parent_id',  'status', 'name'
     ];
 
-    public function productCategories()
-    {
-        return $this->hasMany(ProductCategory::class);
-    }
 
-    // Define the relationship with Product through ProductCategory
-    public function products()
+
+    public function products(): HasMany
     {
-        return $this->belongsToMany(Product::class, 'product_categories');
+        return $this->hasMany(Product::class, 'category_id');
     }
 
     public function parent()
