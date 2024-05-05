@@ -29,9 +29,9 @@
                                             <input type="text" id="ShortName" class="form-control" name="ShortName">
                                         </div>
                                         <div class="form-group col-12">
-                                            <label>{{ __('Parent Unit') }}</label>
+                                            <label>{{ __('Base Unit') }}</label>
                                             <select name="base_unit" id="base_unit" class="form-control">
-                                                <option value="">{{ __('Select Parent Unit') }}</option>
+                                                <option value="">{{ __('Select Base Unit') }}</option>
                                                 @foreach ($parentUnits as $parentUnit)
                                                     <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
                                                 @endforeach
@@ -80,6 +80,10 @@
                                             <tr>
                                                 <th>{{ __('SN') }}</th>
                                                 <th>{{ __('Name') }}</th>
+                                                <th>{{ __('Short Name') }}</th>
+                                                <th>{{ __('Base Unit') }}</th>
+                                                <th>{{ __('Operator') }}</th>
+                                                <th>{{ __('Operator Value') }}</th>
                                                 <th>{{ __('Status') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
@@ -89,6 +93,10 @@
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $unit->name }}</td>
+                                                    <td>{{ $unit->ShortName }}</td>
+                                                    <td>{{ $unit->base_unit }}</td>
+                                                    <td>{{ $unit->operator }}</td>
+                                                    <td>{{ $unit->operator_value }}</td>
                                                     <td>
                                                         @if ($unit->status == 1)
                                                             <span class="badge badge-success">{{ __('Active') }}</span>

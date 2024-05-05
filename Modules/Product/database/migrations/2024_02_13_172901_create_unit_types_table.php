@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('unit_types', function (Blueprint $table) {
             $table->id();
             $table->string("name", 250);
-            $table->text("description")->nullable();
-            $table->boolean("status")->default(0);
             $table->string('ShortName', 192);
             $table->integer('base_unit')->nullable()->index('base_unit');
             $table->char('operator', 192)->nullable()->default('*');
             $table->float('operator_value', 10, 0)->nullable()->default(1);
+            $table->boolean("status")->default(0);
             $table->timestamps();
         });
     }
