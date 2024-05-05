@@ -71,53 +71,19 @@ class ProductService
         // store product
         $product = $this->product->create([
             'brand_id' => $request->brand_id,
-            'user_id' => auth('admin')->user()->id,
             'unit_id' => $request->unit_id,
-            'slug' => $request->slug,
-            'badge' => $request->badge,
             'image' => $request->image,
             'price' => $request->price,
             'image' => $request->image,
-            'discount' => $request->discount,
-            'discount_type' => $request->discount_type,
-            'min_delivery_time' => $request->min_delivery_time,
-            'max_delivery_time' => $request->max_delivery_time,
-            'cost_per_item' => $request->cost_per_item,
-            'qty' => $request->quantity,
-            'video_link' => $request->video_link,
+            'cost' => $request->cost,
             'stock' => $request->quantity,
             'stock_status' => $request->quantity > 0 ? 'in_stock' : 'out_of_stock',
             'sku' => $request->sku,
             'status' => $request->status,
-            'is_featured' => $request->is_featured,
-            'is_bestseller' => $request->is_bestseller,
-            'is_new' => $request->is_new,
-            'is_flash_deal' => $request->is_flash_deal,
-            'is_top' => $request->is_top,
-            'is_warranty' => $request->is_warranty,
-            'warranty_duration' => $request->is_warranty,
-            'is_return' => $request->is_returnable,
-            'is_pre_order' => $request->is_pre_order,
-            'is_partial' => $request->is_partial,
-            'partial_amount' => isset($request->partial_amount) ? $request->partial_amount : 0,
-            'is_verified' => $request->is_verified,
-            'is_cod' => $request->is_cod,
-            'release_date' => $request->release_date,
-            'max_product' => $request->max_product,
-            'show_homepage' => $request->show_homepage,
-            'created_by' => auth('admin')->user()->id,
         ]);
 
         // store product categories
         $product->categories()->sync($request->categories);
-
-        // Generate translations
-        $this->generateTranslations(
-            TranslationModels::Product,
-            $product,
-            'product_id',
-            $request,
-        );
         return $product;
     }
 
