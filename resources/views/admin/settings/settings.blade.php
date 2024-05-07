@@ -69,19 +69,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="card card-large-icons">
-                                <div class="text-white card-icon bg-primary">
-                                    <i class="fas fa-credit-card"></i>
-                                </div>
-                                <div class="card-body">
-                                    <h4>{{ __('Payment Gateway') }}</h4>
-                                    <a href="{{ route('admin.basicpayment') }}"
-                                        class="card-cta">{{ __('Change Setting') }} <i
-                                            class="fas fa-chevron-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
                     @endif
                     @adminCan(['role.view', 'admin.view'])
                         <div class="col-lg-6">
@@ -106,22 +93,6 @@
                                 <div class="card-body">
                                     <h4>{{ __('System Update') }}</h4>
                                     <a href="{{ route('admin.system-update.index') }}"
-                                        class="card-cta">{{ __('Change Setting') }} <i
-                                            class="fas fa-chevron-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('addon.view'))
-                        <div class="col-lg-6">
-                            <div class="card card-large-icons">
-                                <div class="text-white card-icon bg-primary">
-                                    <i class="fas fa-plug"></i>
-                                </div>
-                                <div class="card-body">
-                                    <h4>{{ __('Manage Addon') }}</h4>
-                                    <a href="{{ route('admin.addons.view') }}"
                                         class="card-cta">{{ __('Change Setting') }} <i
                                             class="fas fa-chevron-right"></i></a>
                                 </div>

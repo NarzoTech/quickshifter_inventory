@@ -19,33 +19,9 @@
     @include('language::sidebar')
 @endif
 
-<li class="{{ Route::is('admin.seo-setting') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('admin.seo-setting') }}"><i class="fas fa-search"></i>
-        <span>{{ __('SEO Setup') }}</span>
-    </a>
-</li>
 <li class="menu-header">{{ __('Extra Settings') }}</li>
-<li class="{{ Route::is('admin.custom-code') ? 'active' : '' }}"><a class="nav-link"
-        href="{{ route('admin.custom-code') }}"><i class="fas fa-code"></i>
-        <span>{{ __('Custom CSS & JS') }}</span></a></li>
 
 <li class="{{ Route::is('admin.cache-clear') ? 'active' : '' }}"><a class="nav-link"
         href="{{ route('admin.cache-clear') }}"><i class="fas fa-sync"></i>
         <span>{{ __('Clear cache') }}</span>
     </a></li>
-
-<li class="{{ Route::is('admin.database-clear') ? 'active' : '' }}"><a class="nav-link"
-        href="{{ route('admin.database-clear') }}"><i class="fas fa-database"></i>
-        <span>{{ __('Database Clear') }}</span></a></li>
-
-<li class="{{ Route::is('admin.system-update.index') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('admin.system-update.index') }}"><i class="fas fa-arrow-circle-up"></i>
-        <span>{{ __('System Update') }}</span>
-    </a>
-</li>
-
-<li class="{{ Route::is('admin.addons.*') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('admin.addons.view') }}"><i class="fas fa-plug"></i>
-        <span>{{ __('Manage Addons') }}</span>
-    </a>
-</li>

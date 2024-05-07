@@ -23,26 +23,6 @@
                 @include('globalsetting::sidebar')
             @endif
 
-            @adminCan(['basic.payment.view', 'payment.view'])
-                <li
-                    class="nav-item dropdown {{ Route::is('admin.basicpayment') || Route::is('admin.paymentgateway') ? 'active' : '' }}">
-                    <a href="#" class="nav-link has-dropdown"><i
-                            class="fas fa-credit-card"></i><span>{{ __('Payment Gateway') }}</span></a>
-
-                    <ul class="dropdown-menu">
-
-                        @if (Module::isEnabled('BasicPayment') && checkAdminHasPermission('basic.payment.view'))
-                            @include('basicpayment::sidebar')
-                        @endif
-
-                        @if (Module::isEnabled('PaymentGateway') && checkAdminHasPermission('payment.view'))
-                            @include('paymentgateway::sidebar')
-                        @endif
-
-                    </ul>
-                </li>
-            @endadminCan
-
             @include('currency::sidebar')
 
             @adminCan(['role.view', 'admin.view'])
