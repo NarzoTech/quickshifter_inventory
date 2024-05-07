@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 /*  End Admin panel Controller  */
@@ -45,4 +46,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::put('admin-status/{id}', [AdminController::class, 'changeStatus'])->name('admin.status');
     // Settings routes
     Route::get('settings', [SettingController::class, 'settings'])->name('settings');
+
+
+    // Warehouse
+    Route::get('warehouse', [WarehouseController::class, 'index'])->name('warehouse.index');
 });

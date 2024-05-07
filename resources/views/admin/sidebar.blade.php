@@ -36,6 +36,12 @@
 
             <li class="menu-header">{{ __('Settings') }}</li>
 
+            <li class="{{ isRoute('admin.settings', 'active') }}">
+                    <a class="nav-link" href="{{ route('admin.settings') }}"><i class="fas fa-cog"></i>
+                        <span>{{ __('Warehouse') }}</span>
+                    </a>
+                </li>
+
             @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('setting.view'))
                 <li class="{{ isRoute('admin.settings', 'active') }}">
                     <a class="nav-link" href="{{ route('admin.settings') }}"><i class="fas fa-cog"></i>
