@@ -205,65 +205,9 @@
 
 @push('js')
     <script>
-        $(document).ready(function() {
-
-            $('.edit-btn').click(function(e) {
-                $('.preloader_area').removeClass('d-none');
-                e.preventDefault();
-                const url = $(this).attr('href');
-                console.log(url);
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function(response) {
-                        $('#name').val(response.name);
-                        $('#ShortName').val(response.ShortName);
-                        $('#base_unit').val(response.base_unit);
-                        $('#operator').val(response.operator);
-                        $('#operator_value').val(response.operator_value);
-
-                        if (response.base_unit) {
-                            $('.operator').removeClass('d-none');
-                            $('.operator_value').removeClass('d-none');
-                        } else {
-                            $('.operator').addClass('d-none');
-                            $('.operator_value').addClass('d-none');
-                        }
-                        $('input[name="status"][value="' + response.status + '"]').prop(
-                            'checked', true);
-                        let url = "{{ route('admin.unit.update', ':id') }}";
-                        url = url.replace(':id', response.id);
-                        $('#form').attr('action', url);
-                        const unitId = "<input type='hidden' name='unit_id' value='" +
-                            response.id + "'>";
-                        const method = "<input type='hidden' name='_method' value='PUT'>";
-                        $('#form').append(unitId);
-                        $('#form').append(method);
-                        $('.preloader_area').addClass('d-none');
-                    },
-                    error: function(error) {
-                        console.log(error);
-                        $('.preloader_area').addClass('d-none');
-                    }
-                });
-            })
-
-            $('#base_unit').on("change", function() {
-                const baseUnit = $(this).val();
-                if (baseUnit) {
-                    $('.operator').removeClass('d-none');
-                    $('.operator_value').removeClass('d-none');
-                } else {
-                    $('.operator').addClass('d-none');
-                    $('.operator_value').addClass('d-none');
-                }
-            });
-        });
-
         function deleteData(id) {
-            let url = '{{ route('admin.unit.destroy', ':id') }}';
-            url = url.replace(':id', id);
-            $("#deleteForm").attr('action', url);
+            $("#deleteForm").attr("action", '{{ route('admin.warehouse.destroy', '') }}' + "/" + id)
+            $("#deleteModal").modal('show')
         }
     </script>
 @endpush

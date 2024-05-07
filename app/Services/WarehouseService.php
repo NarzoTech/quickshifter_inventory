@@ -26,7 +26,9 @@ class WarehouseService
 
     public function update($data, $id)
     {
-        return Warehouse::where('id', $id)->update($data);
+        $warehouse = $this->warehouse->find($id);
+        $warehouse->update($data);
+        return $warehouse;
     }
 
     public function delete($id)

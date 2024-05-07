@@ -152,7 +152,6 @@
                     ids.push($(this).attr('id').split('-')[1]);
                 });
 
-
                 // fire swal
                 swal.fire({
                     title: 'Are you sure?',
