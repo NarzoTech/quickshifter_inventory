@@ -13,57 +13,28 @@
 
             <div class="section-body">
                 <div class="row mt-4">
-                    <div class="col-3">
+                    <div class="col-12">
                         <div class="card">
-                            <div class="card-body">
-                                <form action="{{ route('admin.unit.store') }}" method="POST" enctype="multipart/form-data"
-                                    id="form">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="name" class="form-control" name="name">
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="ShortName" class="form-control" name="ShortName">
-                                        </div>
-                                        <div class="form-group col-12 operator d-none">
-                                            <label>{{ __('Operator') }}</label>
-                                            <select name="operator" id="operator" class="form-control">
-                                                <option value="*">{{ __('Multiply') }} (*)</option>
-                                                <option value="/">{{ __('Divide') }} (/)</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-12 operator_value d-none">
-                                            <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="operator_value" class="form-control" name="operator_value" value="1">
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Status') }} </label>
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <input type="radio" name='status' value="1" checked />
-                                                    <label>{{ __('Active') }} </label>
-                                                </div>
-                                                <div>
-                                                    <input type="radio" name='status' value="0" />
-                                                    <label>{{ __('Inactive') }} </label>
-                                                </div>
+                            <div class="card-header">
+                                <h4>
+                                    <a href="javascript:;" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#addWarehouse"><i class="fa fa-plus"></i>
+                                        {{ __('Add Warehouse') }}</a>
+                                </h4>
+                                <div class="card-header-form">
+                                    <form id="product_search_form">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search"
+                                                placeholder="{{ __('Search here..') }}" autocomplete="off"
+                                                value="{{ request()->get('search') }}">
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-primary" style="padding:9px"><i
+                                                        class="fas fa-search"></i></button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <x-admin.save-button :text="__('Save')" />
-                                        </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-9">
-                        <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
                                     <table class="table table-striped" id="dataTable">
@@ -71,37 +42,35 @@
                                             <tr>
                                                 <th>{{ __('SN') }}</th>
                                                 <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Short Name') }}</th>
-                                                <th>{{ __('Base Unit') }}</th>
-                                                <th>{{ __('Operator') }}</th>
-                                                <th>{{ __('Operator Value') }}</th>
+                                                <th>{{ __('Phone') }}</th>
+                                                <th>{{ __('Email') }}</th>
+                                                <th>{{ __('City') }}</th>
                                                 <th>{{ __('Status') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($units as $index => $unit)
+                                            @foreach ($warehouses as $index => $house)
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
-                                                    <td>{{ $unit->name }}</td>
-                                                    <td>{{ $unit->ShortName }}</td>
-                                                    <td>{{ $unit->base_unit }}</td>
-                                                    <td>{{ $unit->operator }}</td>
-                                                    <td>{{ $unit->operator_value }}</td>
+                                                    <td>{{ $house->name }}</td>
+                                                    <td>{{ $house->phone }}</td>
+                                                    <td>{{ $house->email }}</td>
+                                                    <td>{{ $house->city }}</td>
                                                     <td>
-                                                        @if ($unit->status == 1)
+                                                        @if ($house->status == 1)
                                                             <span class="badge badge-success">{{ __('Active') }}</span>
                                                         @else
                                                             <span class="badge badge-danger">{{ __('Inactive') }}</span>
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('admin.unit.edit', $unit->id) }}"
+                                                        <a href="javascript:;" data-toggle="modal" data-target="#editWarehouse{{ $house->id }}"
                                                             class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
                                                         <a href="javascript:;" data-toggle="modal"
                                                             data-target="#deleteModal" class="btn btn-danger btn-sm"
-                                                            onclick="deleteData({{ $unit->id }})"><i
+                                                            onclick="deleteData({{ $house->id }})"><i
                                                                 class="fa fa-trash" aria-hidden="true"></i></a>
                                                     </td>
                                                 </tr>
@@ -115,6 +84,121 @@
                 </div>
         </section>
     </div>
+
+    <!-- Add Warehouse modal -->
+    <div class="modal" id="addWarehouse">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Warehouse</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form action="{{ route('admin.warehouse.store') }}" method="POST" id="add-warehouse-form">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="phone">{{ __('Phone') }}</label>
+                                <input type="text" class="form-control" id="phone" name="phone">
+                            </div>
+                            <div class="form-group col-md-6 ">
+                                <label for="email">{{ __('Email') }}</label>
+                                <input type="email" class="form-control" id="email" name="email">
+                            </div>
+                            <div class="form-group col-md-6 ">
+                                <label for="city">{{ __('City') }}</label>
+                                <input type="text" class="form-control" id="city" name="city">
+                            </div>
+                            <div class="form-group col-md-6 ">
+                                <label for="status">{{ __('Status') }}</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="1">{{ __('Active') }}</option>
+                                    <option value="0">{{ __('Inactive') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="add-warehouse-form">Save</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    {{-- edit warehouse modal --}}
+
+    @foreach ($warehouses as $index => $house)
+        <div class="modal" id="editWarehouse{{ $house->id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Warehouse</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="{{ route('admin.warehouse.update',$house->id) }}" method="POST" id="update-warehouse-form{{ $house->id }}">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ $house->name }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="phone">{{ __('Phone') }}</label>
+                                    <input type="text" class="form-control" id="phone" value="{{ $house->phone }}" name="phone">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="email">{{ __('Email') }}</label>
+                                    <input type="email" class="form-control" id="email" value="{{ $house->email }}" name="email">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="city">{{ __('City') }}</label>
+                                    <input type="text" class="form-control" id="city" value="{{ $house->city }}" name="city">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="status">{{ __('Status') }}</label>
+                                    <select  name="status" id="status" class="form-control">
+                                        <option value="1" @if ($house->status == 1)
+                                            selected
+                                        @endif>{{ __('Active') }}</option>
+                                        <option value="0" @if ($house->status == 0)
+                                            selected
+                                        @endif>{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" form="update-warehouse-form{{ $house->id }}">Update</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
 
     @include('components.admin.preloader')
 @endsection
@@ -164,7 +248,7 @@
                 });
             })
 
-            $('#base_unit').on("change",function() {
+            $('#base_unit').on("change", function() {
                 const baseUnit = $(this).val();
                 if (baseUnit) {
                     $('.operator').removeClass('d-none');

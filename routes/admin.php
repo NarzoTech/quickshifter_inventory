@@ -49,5 +49,5 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
 
 
     // Warehouse
-    Route::get('warehouse', [WarehouseController::class, 'index'])->name('warehouse.index');
+    Route::resource('warehouse', WarehouseController::class)->only(['index','store','update','destroy']);
 });

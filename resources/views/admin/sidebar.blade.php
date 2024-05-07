@@ -36,8 +36,8 @@
 
             <li class="menu-header">{{ __('Settings') }}</li>
 
-            <li class="{{ isRoute('admin.settings', 'active') }}">
-                    <a class="nav-link" href="{{ route('admin.settings') }}"><i class="fas fa-cog"></i>
+            <li class="{{ isRoute('admin.warehouse.*', 'active') }}">
+                    <a class="nav-link" href="{{ route('admin.warehouse.index') }}"><i class="fas fa-store"></i>
                         <span>{{ __('Warehouse') }}</span>
                     </a>
                 </li>
