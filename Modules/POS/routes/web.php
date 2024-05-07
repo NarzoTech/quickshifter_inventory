@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\POS\app\Http\Controllers\POSController;
+use Modules\POS\app\Http\Controllers\PosSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,4 +34,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
         Route::get('/modal-cart-clear', [POSController::class, 'modalClearCart'])->name('modal-cart-clear');
 
     });
+
+    Route::get('pos/settings',[PosSettingsController::class,'index'])->name('pos.settings');
+    Route::post('pos/settings',[PosSettingsController::class,'store'])->name('pos.settings.store');
 });

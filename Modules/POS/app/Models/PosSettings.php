@@ -14,6 +14,16 @@ class PosSettings extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
-    
+    protected $fillable = [
+        'note_customer',
+        'show_note',
+        'show_barcode',
+        'show_discount',
+        'show_customer',
+        'show_warehouse',
+        'show_email',
+        'show_phone',
+        'show_address',
+        'is_printable',
+    ];
 }

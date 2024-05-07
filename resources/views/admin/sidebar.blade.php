@@ -2,7 +2,7 @@
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
             <a href="{{ route('admin.dashboard') }}"><img class="w-75" src="{{ asset($setting->logo) ?? '' }}"
-                alt="{{ $setting->app_name ?? '' }}"></a>
+                    alt="{{ $setting->app_name ?? '' }}"></a>
         </div>
 
         <div class="sidebar-brand sidebar-brand-sm">
@@ -37,10 +37,15 @@
             <li class="menu-header">{{ __('Settings') }}</li>
 
             <li class="{{ isRoute('admin.warehouse.*', 'active') }}">
-                    <a class="nav-link" href="{{ route('admin.warehouse.index') }}"><i class="fas fa-store"></i>
-                        <span>{{ __('Warehouse') }}</span>
-                    </a>
-                </li>
+                <a class="nav-link" href="{{ route('admin.warehouse.index') }}"><i class="fas fa-store"></i>
+                    <span>{{ __('Warehouse') }}</span>
+                </a>
+            </li>
+            <li class="{{ isRoute('admin.pos.settings', 'active') }}">
+                <a class="nav-link" href="{{ route('admin.pos.settings') }}"><i class="fas fa-store"></i>
+                    <span>{{ __('Pos Settings') }}</span>
+                </a>
+            </li>
 
             @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('setting.view'))
                 <li class="{{ isRoute('admin.settings', 'active') }}">

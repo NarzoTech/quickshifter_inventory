@@ -18,9 +18,11 @@ return new class extends Migration
             $table->boolean('show_barcode')->default(1);
             $table->boolean('show_discount')->default(1);
             $table->boolean('show_customer')->default(1);
+            $table->boolean('show_warehouse')->default(1);
             $table->boolean('show_email')->default(1);
             $table->boolean('show_phone')->default(1);
             $table->boolean('show_address')->default(1);
+            $table->boolean('is_printable')->default(1);
             $table->timestamps();
         });
     }
