@@ -80,4 +80,27 @@ class CustomerController extends Controller
             'banned_histories' => $banned_histories,
         ]);
     }
+
+    // update
+
+    public function update(Request $request, $id)
+    {
+        // checkAdminHasPermissionAndThrowException('customer.update');
+
+        $request->validate([
+            'name' => 'required',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->name = $request->name;
+        $user->phone = $request->phone;
+        $user->email = $request->email;
+        $user->city = $request->city;
+        $user->tax_number = $request->tax_number;
+        $user->status = $request->status;
+        $user->address = $request->address;
+        $user->save();
+
+        return $this->redirectWithMessage(RedirectType::UPDATE->value,'admin.customers.index',[],['messege'=>'Customer updated successfully.','alert-type'=>'success']);
+    }
 }

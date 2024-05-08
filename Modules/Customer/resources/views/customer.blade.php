@@ -62,8 +62,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addCustomer" class="btn btn-primary"><i
-                                            class="fa fa-plus"></i>
+                                    <a href="javascript:;" data-toggle="modal" data-target="#addCustomer"
+                                        class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Customer') }}</a>
                                 </h4>
                             </div>
@@ -90,17 +90,18 @@
                                                     <td>{{ $user->phone }}</td>
                                                     <td>{{ $user->email }}</td>
                                                     <td>{{ $user->tax_number }}</td>
-                                                    <td>{{ $user->total_sale_due }}</td>
-                                                    <td>{{ $user->total_sale_return_due }}</td>
+                                                    <td>{{ currency($user->total_sale_due) }}</td>
+                                                    <td>{{ currency($user->total_sale_return_due) }}</td>
                                                     <td>
                                                         <a href="{{ route('admin.customers.show', $user->id) }}"
-                                                            class="btn btn-primary btn-action mr-1" data-toggle="tooltip"
+                                                            class="btn btn-primary  mr-1 btn-sm" data-toggle="tooltip"
                                                             title="{{ __('View') }}"><i class="fas fa-eye"></i></a>
-                                                        <a href="{{ route('admin.customers.edit', $user->id) }}"
-                                                            class="btn btn-primary btn-action mr-1" data-toggle="tooltip"
-                                                            title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
+                                                        <a href="javascript:;"
+                                                            class="btn btn-primary mr-1 btn-sm" data-toggle="modal"
+                                                            title="{{ __('Edit') }}" data-target="#editCustomer{{ $user->id }}"><i
+                                                                class="fas fa-pencil-alt"></i></a>
                                                         <a href="javascript:void(0)" data-toggle="modal"
-                                                            data-target="#deleteModal" class="btn btn-danger btn-action"
+                                                            data-target="#deleteModal" class="btn btn-danger btn-sm"
                                                             onclick="deleteData({{ $user->id }})" data-toggle="tooltip"
                                                             title="{{ __('Delete') }}"><i class="fas fa-trash"></i></a>
                                                     </td>
@@ -127,6 +128,7 @@
 
     <x-admin.delete-modal />
 
+    {{-- add customer --}}
     <div class="modal" id="addCustomer">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -170,8 +172,8 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-12">
-                            <label for="address">{{ __('Address') }}</label>
-                            <textarea name="address" id="address" class="form-control height-80px" rows="3" ></textarea>
+                                <label for="address">{{ __('Address') }}</label>
+                                <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
                             </div>
                         </div>
                     </form>
@@ -187,10 +189,79 @@
         </div>
     </div>
 
+
+    {{-- edit customer --}}
+    @foreach ($users as $index => $user)
+        <div class="modal" id="editCustomer{{ $user->id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ __('Add Customer') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="{{ route('admin.customers.update',$user->id) }}" method="POST" id="edit-customer-form{{ $user->id }}">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="name">{{ __('Customer Name') }}<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{$user->name}}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="phone">{{ __('Phone') }}</label>
+                                    <input type="text" class="form-control" id="phone" name="phone" value="{{$user->phone}}">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="email">{{ __('Email') }}</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{$user->email}}">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="city">{{ __('City') }}</label>
+                                    <input type="text" class="form-control" id="city" name="city" value="{{$user->city}}">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="tax_number">{{ __('Tax Number') }}</label>
+                                    <input type="text" class="form-control" id="tax_number" name="tax_number" value="{{$user->tax_number}}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="status">{{ __('Status') }}</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1" @if ($user->status == 1)
+                                            selected
+                                        @endif>{{ __('Active') }}</option>
+                                        <option value="0" @if ($user->status == 0)
+                                            selected
+                                        @endif>{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label for="address">{{ __('Address') }}</label>
+                                    <textarea name="address" id="address" class="form-control height-80px" rows="3">{{$user->address}}</textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" form="edit-customer-form{{ $user->id }}">{{ __('Update') }}</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ url('/admin/customer-delete/') }}' + "/" + id)
+                $("#deleteForm").attr("action", '{{ route('admin.customers.destroy', '') }}' + "/" + id)
             }
         </script>
     @endpush
