@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('zip')->nullable();
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->boolean('status')->default('active');
+            $table->boolean('status')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });
