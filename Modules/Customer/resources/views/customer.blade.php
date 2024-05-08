@@ -15,34 +15,12 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.customers') }}" method="GET" onchange="this.submit()"
+                                <form action="{{ route('admin.customers.index') }}" method="GET" onchange="this.submit()"
                                     class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="{{ __('Search') }}">
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="verified" id="verified" class="form-control">
-                                                <option value="">{{ __('Select Verified') }}</option>
-                                                <option value="1" {{ request('verified') == '1' ? 'selected' : '' }}>
-                                                    {{ __('Verified') }}
-                                                </option>
-                                                <option value="0" {{ request('verified') == '0' ? 'selected' : '' }}>
-                                                    {{ __('Non-verified') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="banned" id="banned" class="form-control">
-                                                <option value="">{{ __('Select Banned') }}</option>
-                                                <option value="1" {{ request('banned') == '1' ? 'selected' : '' }}>
-                                                    {{ __('Banned') }}
-                                                </option>
-                                                <option value="0" {{ request('banned') == '0' ? 'selected' : '' }}>
-                                                    {{ __('Non-banned') }}
-                                                </option>
-                                            </select>
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="order_by" id="order_by" class="form-control">
@@ -82,6 +60,13 @@
 
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h4>
+                                    <a href="javascript:;" data-toggle="modal" data-target="#addCustomer" class="btn btn-primary"><i
+                                            class="fa fa-plus"></i>
+                                        {{ __('Add Customer') }}</a>
+                                </h4>
+                            </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
                                     <table class="table table-striped">
@@ -89,9 +74,11 @@
                                             <tr>
                                                 <th>{{ __('SN') }}</th>
                                                 <th>{{ __('Name') }}</th>
+                                                <th>{{ __('Phone') }}</th>
                                                 <th>{{ __('Email') }}</th>
-                                                <th>{{ __('Joined at') }}</th>
-                                                <th>{{ __('Status') }}</th>
+                                                <th>{{ __('Tax Number') }}</th>
+                                                <th>{{ __('Total Sale Due') }}</th>
+                                                <th>{{ __('Total Sale Return Due') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
@@ -99,30 +86,23 @@
                                             @forelse ($users as $index => $user)
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
-                                                    <td>{{ html_decode($user->name) }}</td>
-                                                    <td>{{ html_decode($user->email) }}</td>
-                                                    <td>{{ $user->created_at->format('h:iA, d M Y') }}</td>
+                                                    <td>{{ $user->name }}</td>
+                                                    <td>{{ $user->phone }}</td>
+                                                    <td>{{ $user->email }}</td>
+                                                    <td>{{ $user->tax_number }}</td>
+                                                    <td>{{ $user->total_sale_due }}</td>
+                                                    <td>{{ $user->total_sale_return_due }}</td>
                                                     <td>
-                                                        @if ($user->email_verified_at)
-                                                            @if ($user->is_banned == 'no')
-                                                                <span
-                                                                    class="badge badge-success">{{ __('Active') }}</span>
-                                                            @else
-                                                                <b class="badge badge-danger">{{ __('Banned') }}</b>
-                                                            @endif
-                                                        @else
-                                                            <span
-                                                                class="badge badge-warning">{{ __('Not verified') }}</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('admin.customer-show', $user->id) }}"
-                                                            class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
-
-                                                        <a onclick="deleteData({{ $user->id }})" href="javascript:;"
-                                                            data-toggle="modal" data-target="#deleteModal"
-                                                            class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
-
+                                                        <a href="{{ route('admin.customers.show', $user->id) }}"
+                                                            class="btn btn-primary btn-action mr-1" data-toggle="tooltip"
+                                                            title="{{ __('View') }}"><i class="fas fa-eye"></i></a>
+                                                        <a href="{{ route('admin.customers.edit', $user->id) }}"
+                                                            class="btn btn-primary btn-action mr-1" data-toggle="tooltip"
+                                                            title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
+                                                        <a href="javascript:void(0)" data-toggle="modal"
+                                                            data-target="#deleteModal" class="btn btn-danger btn-action"
+                                                            onclick="deleteData({{ $user->id }})" data-toggle="tooltip"
+                                                            title="{{ __('Delete') }}"><i class="fas fa-trash"></i></a>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -146,6 +126,66 @@
     </div>
 
     <x-admin.delete-modal />
+
+    <div class="modal" id="addCustomer">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ __('Add Customer') }}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form action="{{ route('admin.customers.store') }}" method="POST" id="add-customer-form">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="name">{{ __('Customer Name') }}<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="phone">{{ __('Phone') }}</label>
+                                <input type="text" class="form-control" id="phone" name="phone">
+                            </div>
+                            <div class="form-group col-md-6 ">
+                                <label for="email">{{ __('Email') }}</label>
+                                <input type="email" class="form-control" id="email" name="email">
+                            </div>
+                            <div class="form-group col-md-6 ">
+                                <label for="city">{{ __('City') }}</label>
+                                <input type="text" class="form-control" id="city" name="city">
+                            </div>
+                            <div class="form-group col-md-6 ">
+                                <label for="tax_number">{{ __('Tax Number') }}</label>
+                                <input type="text" class="form-control" id="tax_number" name="tax_number">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="status">{{ __('Status') }}</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="1">{{ __('Active') }}</option>
+                                    <option value="0">{{ __('Inactive') }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-12">
+                            <label for="address">{{ __('Address') }}</label>
+                            <textarea name="address" id="address" class="form-control height-80px" rows="3" ></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="add-customer-form">Save</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     @push('js')
         <script>
