@@ -1,12 +1,12 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Non verified Customers') }}</title>
+    <title>{{ __('All Customers') }}</title>
 @endsection
 @section('admin-content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Non verified Customers') }}</h1>
+                <h1>{{ __('All Customers') }}</h1>
             </div>
 
             <div class="section-body">
@@ -15,12 +15,23 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.non-verified-customers') }}" method="GET"
-                                    onchange="this.submit()" class="card-body">
+                                <form action="{{ route('admin.customers') }}" method="GET" onchange="this.submit()"
+                                    class="card-body">
                                     <div class="row">
-                                        <div class="col-md-6 form-group">
+                                        <div class="col-md-4 form-group">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="{{ __('Search') }}">
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="verified" id="verified" class="form-control">
+                                                <option value="">{{ __('Select Verified') }}</option>
+                                                <option value="1" {{ request('verified') == '1' ? 'selected' : '' }}>
+                                                    {{ __('Verified') }}
+                                                </option>
+                                                <option value="0" {{ request('verified') == '0' ? 'selected' : '' }}>
+                                                    {{ __('Non-verified') }}
+                                                </option>
+                                            </select>
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="banned" id="banned" class="form-control">
@@ -70,8 +81,6 @@
                     </div>
 
                     <div class="col-12">
-                        <a href="javascript:;" data-toggle="modal" data-target="#verifyModal"
-                            class="btn btn-primary mb-3">{{ __('Send Verify Link to All') }}</a>
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
@@ -82,6 +91,7 @@
                                                 <th>{{ __('Name') }}</th>
                                                 <th>{{ __('Email') }}</th>
                                                 <th>{{ __('Joined at') }}</th>
+                                                <th>{{ __('Status') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
@@ -93,17 +103,31 @@
                                                     <td>{{ html_decode($user->email) }}</td>
                                                     <td>{{ $user->created_at->format('h:iA, d M Y') }}</td>
                                                     <td>
+                                                        @if ($user->email_verified_at)
+                                                            @if ($user->is_banned == 'no')
+                                                                <span
+                                                                    class="badge badge-success">{{ __('Active') }}</span>
+                                                            @else
+                                                                <b class="badge badge-danger">{{ __('Banned') }}</b>
+                                                            @endif
+                                                        @else
+                                                            <span
+                                                                class="badge badge-warning">{{ __('Not verified') }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
                                                         <a href="{{ route('admin.customer-show', $user->id) }}"
                                                             class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
 
                                                         <a onclick="deleteData({{ $user->id }})" href="javascript:;"
                                                             data-toggle="modal" data-target="#deleteModal"
                                                             class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <x-empty-table :name="__('Customer')" route="" create="no"
-                                                    :message="__('No data found!')" colspan="5"></x-empty-table>
+                                                    :message="__('No data found!')" colspan="6"></x-empty-table>
                                             @endforelse
                                         </tbody>
                                     </table>
@@ -116,43 +140,13 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- Start Verify modal -->
-    <div class="modal fade" id="verifyModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Send verify link to customer mail') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <p>{{ __('Are you sure want to send verify link to customer mail?') }}</p>
-
-                        <form action="{{ route('admin.send-verify-request-to-all') }}" method="POST">
-                            @csrf
-
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
-                    <button type="submit" class="btn btn-primary">{{ __('Send Request') }}</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Verify modal -->
-
     <x-admin.delete-modal />
+
     @push('js')
         <script>
             function deleteData(id) {
