@@ -3,18 +3,27 @@
 namespace Modules\Purchase\app\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Purchase\Services\PurchaseService;
 
 class PurchaseController extends Controller
 {
+
+    use RedirectHelperTrait;
+    public function __construct(private PurchaseService $purchaseService)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('purchase::index');
+        $purchases = $this->purchaseService->all()->paginate(20);
+        return view('purchase::index',compact('purchases'));
     }
 
     /**

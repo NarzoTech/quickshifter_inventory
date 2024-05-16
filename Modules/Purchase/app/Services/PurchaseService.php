@@ -13,6 +13,15 @@ use Modules\Product\app\Models\Product;
 
 class PurchaseService
 {
+
+    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails)
+    {
+    }
+
+    public function all()
+    {
+        return $this->purchase->with('supplier', 'warehouse')->latest();
+    }
     public function store($request)
     {
         DB::beginTransaction();
@@ -66,7 +75,7 @@ class PurchaseService
     {
         DB::beginTransaction();
         try {
-            $purchase = Purchase::find($id);
+            $purchase = $this->purchase->find($id);
             $purchase->supplier_id = $request->supplier_id;
             $purchase->warehouse_id = $request->warehouse_id;
             $purchase->invoice_number = $request->invoice_number;
@@ -117,7 +126,7 @@ class PurchaseService
     {
         DB::beginTransaction();
         try {
-            Purchase::find($id)->delete();
+            $this->purchase->find($id)->delete();
             PurchaseDetails::where('purchase_id', $id)->delete();
             DB::commit();
             return true;
@@ -129,7 +138,7 @@ class PurchaseService
 
     public function getPurchase($id)
     {
-        return Purchase::with('supplier', 'warehouse', 'purchaseDetails.product')->find($id);
+        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product')->find($id);
     }
 
     public function getPurchaseDetails($id)
@@ -139,7 +148,7 @@ class PurchaseService
 
     public function getPurchaseList()
     {
-        return Purchase::with('supplier', 'warehouse')->latest()->get();
+        return $this->purchase->with('supplier', 'warehouse')->latest()->get();
     }
 
     public function getSupplierList()
