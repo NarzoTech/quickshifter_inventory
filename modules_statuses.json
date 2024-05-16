@@ -9,5 +9,6 @@
     "Order": true,
     "Supplier": true,
     "Purchase": true,
-    "Service": true
+    "Service": true,
+    "Sales": true
 }
