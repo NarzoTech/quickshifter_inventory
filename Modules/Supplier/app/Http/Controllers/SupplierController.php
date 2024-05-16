@@ -2,12 +2,16 @@
 
 namespace Modules\Supplier\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Modules\Supplier\app\Services\SupplierService;
 
 class SupplierController extends Controller
 {
+    use RedirectHelperTrait;
     public function __construct(private SupplierService $supplierService)
     {
         $this->middleware('auth:admin');
@@ -34,7 +38,15 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(['name' => 'required']);
+
+        try {
+            $this->supplierService->storeSupplier($request);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier created successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier creation failed.', 'alert-type' => 'error']);
+        }
     }
 
     /**

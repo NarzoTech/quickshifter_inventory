@@ -2,6 +2,7 @@
 
 namespace Modules\Supplier\app\Services;
 
+use Illuminate\Http\Request;
 use Modules\Supplier\app\Models\Supplier;
 
 class SupplierService
@@ -14,5 +15,12 @@ class SupplierService
     public function all()
     {
         return $this->supplier;
+    }
+
+    public function storeSupplier(Request $request)
+    {
+        $data = $request->except('_token');
+        $data['created_by'] = auth()->id();
+        return $this->supplier->create($data);
     }
 }

@@ -15,7 +15,7 @@
             background-color: lightpink;
         }
 
-        thead > tr > th {
+        thead>tr>th {
             /* background-color: lightseagreen; */
             color: white !important;
         }
@@ -107,20 +107,16 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($suppliers as $index => $supplier)
+                                            @foreach ($suppliers as $index => $supplier)
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $supplier->name }}</td>
                                                     <td>{{ $supplier->phone }}</td>
-                                                    <td>{{ currency($supplier->total_sale) }}</td>
-                                                    <td>{{ currency($supplier->total_sale_pay) }}</td>
-                                                    <td>{{ currency($supplier->total_sale_due) }}</td>
-                                                    <td>{{ currency($supplier->total_sale_advance) }}</td>
-                                                    <td>{{ currency($supplier->total_sale_return) }}</td>
-                                                    <td>{{ currency($supplier->total_sale_return_pay) }}</td>
-                                                    <td>{{ currency($supplier->total_sale_return_due) }}</td>
+                                                    <td>{{ currency($supplier->total_purchase) }}</td>
+                                                    <td>{{ currency($supplier->total_purchase_pay) }}</td>
+                                                    <td>{{ currency($supplier->total_purchase_return) }}</td>
+                                                    <td>{{ currency($supplier->total_purchase_return_pay) }}</td>
                                                     <td>{{ currency($supplier->total_due) }}</td>
-
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $supplier->id }}" type="button"
@@ -129,22 +125,24 @@
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
-                                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $supplier->id }}">
-                                                                <a class="dropdown-item" href="javascript:;" data-toggle="modal" data-target="#showSupplier{{ $supplier->id }}">Show</a>
-                                                                <a class="dropdown-item" href="javascript:;" data-toggle="modal" data-target="#editSupplier{{ $supplier->id }}">Edit</a>
+                                                            <div class="dropdown-menu"
+                                                                aria-labelledby="btnGroupDrop{{ $supplier->id }}">
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#showSupplier{{ $supplier->id }}">Show</a>
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                    data-toggle="modal"
+                                                                    data-target="#editSupplier{{ $supplier->id }}">Edit</a>
                                                                 <a class="dropdown-item" href="#">Sales</a>
                                                                 <a href="javascript:;" data-toggle="modal"
-                                                            data-target="#deleteModal" class="dropdown-item"
-                                                            onclick="deleteData({{ $supplier->id }})">
-                                                                Delete</a>
+                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                    onclick="deleteData({{ $supplier->id }})">
+                                                                    Delete</a>
                                                             </div>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            @empty
-                                                <x-empty-table :name="__('Supplier')" route="" create="no"
-                                                    :message="__('No data found!')" colspan="6"></x-empty-table>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -184,6 +182,10 @@
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
                             <div class="form-group col-md-6">
+                                <label for="company">{{ __('Company') }}</label>
+                                <input type="text" class="form-control" id="company" name="company">
+                            </div>
+                            <div class="form-group col-md-6">
                                 <label for="phone">{{ __('Phone') }}</label>
                                 <input type="text" class="form-control" id="phone" name="phone">
                             </div>
@@ -196,8 +198,12 @@
                                 <input type="text" class="form-control" id="city" name="city">
                             </div>
                             <div class="form-group col-md-6 ">
-                                <label for="tax_number">{{ __('Tax Number') }}</label>
-                                <input type="text" class="form-control" id="tax_number" name="tax_number">
+                                <label for="city">{{ __('State') }}</label>
+                                <input type="text" class="form-control" id="city" name="city">
+                            </div>
+                            <div class="form-group col-md-6 ">
+                                <label for="city">{{ __('Country') }}</label>
+                                <input type="text" class="form-control" id="city" name="city">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="status">{{ __('Status') }}</label>

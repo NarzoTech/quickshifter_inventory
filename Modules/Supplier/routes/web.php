@@ -14,6 +14,6 @@ use Modules\Supplier\app\Http\Controllers\SupplierController;
 |
 */
 
-Route::group([], function () {
-    Route::resource('suppliers', SupplierController::class)->names('supplier');
+Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
+    Route::resource('suppliers', SupplierController::class);
 });

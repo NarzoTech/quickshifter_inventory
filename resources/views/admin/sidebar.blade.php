@@ -23,6 +23,10 @@
                 @include('customer::sidebar')
             @endif
 
+            @if (Module::isEnabled('Supplier') && checkAdminHasPermission('customer.view'))
+                @include('supplier::sidebar')
+            @endif
+
             @if (Module::isEnabled('Product'))
                 @include('product::sidebar')
             @endif
