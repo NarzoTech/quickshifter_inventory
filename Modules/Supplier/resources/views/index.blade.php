@@ -198,12 +198,12 @@
                                 <input type="text" class="form-control" id="city" name="city">
                             </div>
                             <div class="form-group col-md-6 ">
-                                <label for="city">{{ __('State') }}</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                                <label for="state">{{ __('State') }}</label>
+                                <input type="text" class="form-control" id="state" name="state">
                             </div>
                             <div class="form-group col-md-6 ">
-                                <label for="city">{{ __('Country') }}</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                                <label for="country">{{ __('Country') }}</label>
+                                <input type="text" class="form-control" id="country" name="country">
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="status">{{ __('Status') }}</label>
@@ -257,6 +257,10 @@
                                         value="{{ $supplier->name }}">
                                 </div>
                                 <div class="form-group col-md-6">
+                                <label for="company">{{ __('Company') }}</label>
+                                <input type="text" class="form-control" id="company" name="company" value="{{ $supplier->company }}">
+                            </div>
+                                <div class="form-group col-md-6">
                                     <label for="phone">{{ __('Phone') }}</label>
                                     <input type="text" class="form-control" id="phone" name="phone"
                                         value="{{ $supplier->phone }}">
@@ -270,6 +274,16 @@
                                     <label for="city">{{ __('City') }}</label>
                                     <input type="text" class="form-control" id="city" name="city"
                                         value="{{ $supplier->city }}">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="state">{{ __('State') }}</label>
+                                    <input type="text" class="form-control" id="state" name="state"
+                                        value="{{ $supplier->state }}">
+                                </div>
+                                <div class="form-group col-md-6 ">
+                                    <label for="country">{{ __('Country') }}</label>
+                                    <input type="text" class="form-control" id="country" name="country"
+                                        value="{{ $supplier->country }}">
                                 </div>
                                 <div class="form-group col-md-6 ">
                                     <label for="tax_number">{{ __('Tax Number') }}</label>
@@ -328,6 +342,10 @@
                                         <td>{{ $supplier->name }}</td>
                                     </tr>
                                     <tr>
+                                        <th>{{ __('Company') }}</th>
+                                        <td>{{ $supplier->company }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>{{ __('Phone') }}</th>
                                         <td>{{ $supplier->phone }}</td>
                                     </tr>
@@ -335,13 +353,18 @@
                                         <th>{{ __('Email') }}</th>
                                         <td>{{ $supplier->email }}</td>
                                     </tr>
+
                                     <tr>
                                         <th>{{ __('City') }}</th>
                                         <td>{{ $supplier->city }}</td>
                                     </tr>
                                     <tr>
-                                        <th>{{ __('Tax Number') }}</th>
-                                        <td>{{ $supplier->tax_number }}</td>
+                                        <th>{{ __('State') }}</th>
+                                        <td>{{ $supplier->state }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Country') }}</th>
+                                        <td>{{ $supplier->country }}</td>
                                     </tr>
                                     <tr>
                                         <th>{{ __('Status') }}</th>

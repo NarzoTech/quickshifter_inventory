@@ -23,4 +23,11 @@ class SupplierService
         $data['created_by'] = auth()->id();
         return $this->supplier->create($data);
     }
+
+    public function updateSupplier(Request $request, $id)
+    {
+        $data = $request->except(['_token', '_method']);
+        $data['updated_by'] = auth()->id();
+        return $this->supplier->where('id', $id)->update($data);
+    }
 }

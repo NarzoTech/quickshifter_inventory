@@ -62,6 +62,7 @@ class SupplierController extends Controller
      */
     public function edit($id)
     {
+
         return view('supplier::edit');
     }
 
@@ -70,7 +71,15 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate(['name' => 'required']);
+
+        try {
+            $this->supplierService->updateSupplier($request, $id);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier updated successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier update failed.', 'alert-type' => 'error']);
+        }
     }
 
     /**
