@@ -31,6 +31,10 @@
                 @include('product::sidebar')
             @endif
 
+            @if (Module::isEnabled('Purchase'))
+                @include('purchase::sidebar')
+            @endif
+
             @if (Module::isEnabled('Sales'))
                 @include('sales::sidebar')
             @endif

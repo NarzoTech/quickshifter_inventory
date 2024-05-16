@@ -7,7 +7,7 @@ use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Modules\Purchase\Services\PurchaseService;
+use Modules\Purchase\app\Services\PurchaseService;
 
 class PurchaseController extends Controller
 {

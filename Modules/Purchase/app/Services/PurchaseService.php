@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Purchase\Services;
+namespace Modules\Purchase\app\Services;
 
 
 use Illuminate\Support\Facades\DB;

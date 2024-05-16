@@ -81,9 +81,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addCustomer"
+                                    <a href="{{ route('admin.purchase.create') }}"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Customer') }}</a>
+                                        {{ __('Add Purchase') }}</a>
                                 </h4>
                             </div>
                             <div class="card-body">

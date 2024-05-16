@@ -14,6 +14,6 @@ use Modules\Purchase\app\Http\Controllers\PurchaseController;
 |
 */
 
-Route::group([], function () {
+Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('purchase', PurchaseController::class)->names('purchase');
 });
