@@ -239,7 +239,7 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Add Supplier') }}</h4>
+                        <h4 class="modal-title">{{ __('Edit Supplier') }}</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
@@ -323,7 +323,7 @@
     {{-- Show Supplier --}}
     @foreach ($suppliers as $index => $supplier)
         <div class="modal" id="showSupplier{{ $supplier->id }}">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">

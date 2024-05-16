@@ -30,4 +30,9 @@ class SupplierService
         $data['updated_by'] = auth()->id();
         return $this->supplier->where('id', $id)->update($data);
     }
+
+    public function deleteSupplier($id)
+    {
+        return $this->supplier->where('id', $id)->delete();
+    }
 }

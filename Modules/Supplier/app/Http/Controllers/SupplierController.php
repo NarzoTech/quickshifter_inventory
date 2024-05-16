@@ -87,6 +87,12 @@ class SupplierController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $this->supplierService->deleteSupplier($id);
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier deleted successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier deletion failed.', 'alert-type' => 'error']);
+        }
     }
 }
