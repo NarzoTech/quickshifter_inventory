@@ -133,8 +133,10 @@
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $user->id }}">
-                                                                <a class="dropdown-item" href="#">Dropdown link</a>
-                                                                <a class="dropdown-item" href="#">Dropdown link</a>
+                                                                <a class="dropdown-item" href="javascript:;">Show</a>
+                                                                <a class="dropdown-item" href="javascript:;" data-toggle="modal" data-target="#editCustomer{{ $user->id }}">Edit</a>
+                                                                <a class="dropdown-item" href="#">Sales</a>
+                                                                <a class="dropdown-item" href="javascript:;">Delete</a>
                                                             </div>
                                                         </div>
                                                     </td>
