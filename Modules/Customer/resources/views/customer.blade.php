@@ -2,6 +2,25 @@
 @section('title')
     <title>{{ __('All Customers') }}</title>
 @endsection
+
+@push('css')
+    <style>
+        thead tr:nth-child(odd) {
+            background-color: lightskyblue;
+
+        }
+
+
+        thead tr:nth-child(even) {
+            background-color: lightpink;
+        }
+
+        thead > tr > th {
+            /* background-color: lightseagreen; */
+            color: white !important;
+        }
+    </style>
+@endpush
 @section('admin-content')
     <div class="main-content">
         <section class="section">
@@ -72,14 +91,22 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('SN') }}</th>
-                                                <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Phone') }}</th>
-                                                <th>{{ __('Email') }}</th>
-                                                <th>{{ __('Tax Number') }}</th>
-                                                <th>{{ __('Total Sale Due') }}</th>
-                                                <th>{{ __('Total Sale Return Due') }}</th>
-                                                <th>{{ __('Action') }}</th>
+                                                <th rowspan="2">{{ __('SN') }}</th>
+                                                <th rowspan="2">{{ __('Name') }}</th>
+                                                <th rowspan="2">{{ __('Phone') }}</th>
+                                                <th colspan="4">{{ __('Total Sale') }}</th>
+                                                <th colspan="3">{{ __('Total Sale Return') }}</th>
+                                                <th rowspan="2">{{ __('Total Due') }}</th>
+                                                <th rowspan="2">{{ __('Action') }}</th>
+                                            </tr>
+                                            <tr>
+                                                <th>{{ __('Total') }}</th>
+                                                <th>{{ __('Pay') }}</th>
+                                                <th>{{ __('Due') }}</th>
+                                                <th>{{ __('Advance') }}</th>
+                                                <th>{{ __('Total') }}</th>
+                                                <th>{{ __('Pay') }}</th>
+                                                <th>{{ __('Due') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -88,22 +115,28 @@
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $user->name }}</td>
                                                     <td>{{ $user->phone }}</td>
-                                                    <td>{{ $user->email }}</td>
-                                                    <td>{{ $user->tax_number }}</td>
+                                                    <td>{{ currency($user->total_sale) }}</td>
+                                                    <td>{{ currency($user->total_sale_pay) }}</td>
                                                     <td>{{ currency($user->total_sale_due) }}</td>
+                                                    <td>{{ currency($user->total_sale_advance) }}</td>
+                                                    <td>{{ currency($user->total_sale_return) }}</td>
+                                                    <td>{{ currency($user->total_sale_return_pay) }}</td>
                                                     <td>{{ currency($user->total_sale_return_due) }}</td>
+                                                    <td>{{ currency($user->total_due) }}</td>
+
                                                     <td>
-                                                        <a href="{{ route('admin.customers.show', $user->id) }}"
-                                                            class="btn btn-primary  mr-1 btn-sm" data-toggle="tooltip"
-                                                            title="{{ __('View') }}"><i class="fas fa-eye"></i></a>
-                                                        <a href="javascript:;"
-                                                            class="btn btn-primary mr-1 btn-sm" data-toggle="modal"
-                                                            title="{{ __('Edit') }}" data-target="#editCustomer{{ $user->id }}"><i
-                                                                class="fas fa-pencil-alt"></i></a>
-                                                        <a href="javascript:void(0)" data-toggle="modal"
-                                                            data-target="#deleteModal" class="btn btn-danger btn-sm"
-                                                            onclick="deleteData({{ $user->id }})" data-toggle="tooltip"
-                                                            title="{{ __('Delete') }}"><i class="fas fa-trash"></i></a>
+                                                        <div class="btn-group" role="group">
+                                                            <button id="btnGroupDrop{{ $user->id }}" type="button"
+                                                                class="btn btn-primary dropdown-toggle"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                Action
+                                                            </button>
+                                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $user->id }}">
+                                                                <a class="dropdown-item" href="#">Dropdown link</a>
+                                                                <a class="dropdown-item" href="#">Dropdown link</a>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -204,45 +237,49 @@
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <form action="{{ route('admin.customers.update',$user->id) }}" method="POST" id="edit-customer-form{{ $user->id }}">
+                        <form action="{{ route('admin.customers.update', $user->id) }}" method="POST"
+                            id="edit-customer-form{{ $user->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="name">{{ __('Customer Name') }}<span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{$user->name}}">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ $user->name }}">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="phone">{{ __('Phone') }}</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" value="{{$user->phone}}">
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        value="{{ $user->phone }}">
                                 </div>
                                 <div class="form-group col-md-6 ">
                                     <label for="email">{{ __('Email') }}</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{$user->email}}">
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="{{ $user->email }}">
                                 </div>
                                 <div class="form-group col-md-6 ">
                                     <label for="city">{{ __('City') }}</label>
-                                    <input type="text" class="form-control" id="city" name="city" value="{{$user->city}}">
+                                    <input type="text" class="form-control" id="city" name="city"
+                                        value="{{ $user->city }}">
                                 </div>
                                 <div class="form-group col-md-6 ">
                                     <label for="tax_number">{{ __('Tax Number') }}</label>
-                                    <input type="text" class="form-control" id="tax_number" name="tax_number" value="{{$user->tax_number}}">
+                                    <input type="text" class="form-control" id="tax_number" name="tax_number"
+                                        value="{{ $user->tax_number }}">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="status">{{ __('Status') }}</label>
                                     <select name="status" id="status" class="form-control">
-                                        <option value="1" @if ($user->status == 1)
-                                            selected
-                                        @endif>{{ __('Active') }}</option>
-                                        <option value="0" @if ($user->status == 0)
-                                            selected
-                                        @endif>{{ __('Inactive') }}</option>
+                                        <option value="1" @if ($user->status == 1) selected @endif>
+                                            {{ __('Active') }}</option>
+                                        <option value="0" @if ($user->status == 0) selected @endif>
+                                            {{ __('Inactive') }}</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label for="address">{{ __('Address') }}</label>
-                                    <textarea name="address" id="address" class="form-control height-80px" rows="3">{{$user->address}}</textarea>
+                                    <textarea name="address" id="address" class="form-control height-80px" rows="3">{{ $user->address }}</textarea>
                                 </div>
                             </div>
                         </form>
@@ -251,7 +288,8 @@
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" form="edit-customer-form{{ $user->id }}">{{ __('Update') }}</button>
+                        <button type="submit" class="btn btn-primary"
+                            form="edit-customer-form{{ $user->id }}">{{ __('Update') }}</button>
                     </div>
 
                 </div>
