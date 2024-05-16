@@ -133,10 +133,13 @@
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $user->id }}">
-                                                                <a class="dropdown-item" href="javascript:;">Show</a>
+                                                                <a class="dropdown-item" href="javascript:;" data-toggle="modal" data-target="#showCustomer{{ $user->id }}">Show</a>
                                                                 <a class="dropdown-item" href="javascript:;" data-toggle="modal" data-target="#editCustomer{{ $user->id }}">Edit</a>
                                                                 <a class="dropdown-item" href="#">Sales</a>
-                                                                <a class="dropdown-item" href="javascript:;">Delete</a>
+                                                                <a href="javascript:;" data-toggle="modal"
+                                                            data-target="#deleteModal" class="dropdown-item"
+                                                            onclick="deleteData({{ $user->id }})">
+                                                                Delete</a>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -298,6 +301,69 @@
             </div>
         </div>
     @endforeach
+
+
+    {{-- Show customer --}}
+    @foreach ($users as $index => $user)
+        <div class="modal" id="showCustomer{{ $user->id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ __('Customer') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="row">
+                            {{-- table --}}
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>{{ __('Name') }}</th>
+                                        <td>{{ $user->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Phone') }}</th>
+                                        <td>{{ $user->phone }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Email') }}</th>
+                                        <td>{{ $user->email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('City') }}</th>
+                                        <td>{{ $user->city }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Tax Number') }}</th>
+                                        <td>{{ $user->tax_number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Status') }}</th>
+                                        <td>{{ $user->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>{{ __('Address') }}</th>
+                                        <td>{{ $user->address }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+
     @push('js')
         <script>
             function deleteData(id) {

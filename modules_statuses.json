@@ -8,5 +8,6 @@
     "POS": true,
     "Order": true,
     "Supplier": true,
-    "Purchase": true
+    "Purchase": true,
+    "Service": true
 }
