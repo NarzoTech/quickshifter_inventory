@@ -10,5 +10,6 @@
     "Supplier": true,
     "Purchase": true,
     "Service": true,
-    "Sales": true
+    "Sales": true,
+    "Model": true
 }

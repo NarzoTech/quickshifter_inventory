@@ -15,5 +15,5 @@ use Modules\Supplier\app\Http\Controllers\SupplierController;
 */
 
 Route::group([], function () {
-    Route::resource('supplier', SupplierController::class)->names('supplier');
+    Route::resource('suppliers', SupplierController::class)->names('supplier');
 });

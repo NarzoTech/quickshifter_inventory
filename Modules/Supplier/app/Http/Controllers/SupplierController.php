@@ -3,18 +3,22 @@
 namespace Modules\Supplier\app\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Modules\Supplier\app\Services\SupplierService;
 
 class SupplierController extends Controller
 {
+    public function __construct(private SupplierService $supplierService)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('supplier::index');
+        $suppliers = $this->supplierService->all()->paginate(20);
+        return view('supplier::index', compact('suppliers'));
     }
 
     /**
@@ -28,7 +32,7 @@ class SupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         //
     }
@@ -52,7 +56,7 @@ class SupplierController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
         //
     }
