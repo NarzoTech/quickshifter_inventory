@@ -1,0 +1,46 @@
+<?php
+
+namespace Modules\Purchase\app\Models;
+
+use App\Models\Warehouse;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Purchase\Database\factories\PurchaseFactory;
+use Modules\Supplier\app\Models\Supplier;
+
+class Purchase extends Model
+{
+    use HasFactory;
+
+    protected $table = 'purchases';
+    /**
+     * The attributes that are mass assignable.
+     */
+    protected $fillable = [
+        'supplier_id',
+        'warehouse_id',
+        'invoice_number',
+        'reference_no',
+        'purchase_date',
+        'items',
+        'total_amount',
+        'paid_amount',
+        'due_amount',
+        'payment_status',
+        'payment_type',
+        'note',
+        'status',
+        'created_by',
+        'updated_by',
+    ];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class,'supplier_id','id');
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class,'warehouse_id','id');
+    }
+}
