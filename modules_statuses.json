@@ -6,5 +6,7 @@
     "Media": true,
     "Product": true,
     "POS": true,
-    "Order": true
+    "Order": true,
+    "Supplier": true,
+    "Purchase": true
 }
