@@ -6,15 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Sales\app\Services\SaleService;
 
 class SalesController extends Controller
 {
+    public function __construct( private SaleService $saleService)
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('sales::index');
+        $sales = $this->saleService->getSales()->paginate(20);
+        return view('sales::index',compact('sales'));
     }
 
     /**
