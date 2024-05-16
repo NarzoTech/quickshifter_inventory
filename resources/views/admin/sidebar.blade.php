@@ -19,19 +19,25 @@
                 </li>
             @endadminCan
 
+            @if (Module::isEnabled('Customer') && checkAdminHasPermission('customer.view'))
+                @include('customer::sidebar')
+            @endif
+
             @if (Module::isEnabled('Product'))
                 @include('product::sidebar')
             @endif
 
+            @if (Module::isEnabled('Sales'))
+                @include('sales::sidebar')
+            @endif
+
             {{-- <li class="menu-header">{{ __('Manage Contents') }}</li> --}}
 
-            @if (Module::isEnabled('Media') && checkAdminHasPermission('media.view'))
+            {{-- @if (Module::isEnabled('Media') && checkAdminHasPermission('media.view'))
                 @include('media::sidebar')
-            @endif
+            @endif --}}
 
-            @if (Module::isEnabled('Customer') && checkAdminHasPermission('customer.view'))
-                @include('customer::sidebar')
-            @endif
+            
 
 
             <li class="menu-header">{{ __('Settings') }}</li>

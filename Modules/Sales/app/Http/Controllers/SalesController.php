@@ -12,7 +12,7 @@ class SalesController extends Controller
 {
     public function __construct( private SaleService $saleService)
     {
-        $this->middleware('auth');
+        $this->middleware('auth:admin');
     }
     /**
      * Display a listing of the resource.
@@ -20,7 +20,8 @@ class SalesController extends Controller
     public function index()
     {
         $sales = $this->saleService->getSales()->paginate(20);
-        return view('sales::index',compact('sales'));
+        $title = 'Sales List';
+        return view('sales::index',compact('sales', 'title'));
     }
 
     /**

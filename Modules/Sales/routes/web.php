@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\POS\app\Http\Controllers\POSController;
 use Modules\Sales\app\Http\Controllers\SalesController;
 
 /*
@@ -14,6 +15,7 @@ use Modules\Sales\app\Http\Controllers\SalesController;
 |
 */
 
-Route::group([], function () {
+Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('sales', SalesController::class)->names('sales');
+    Route::get('sales/return/list', [SalesController::class, 'returnList'])->name('sales.return.list');
 });
