@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
 use Modules\Language\app\Models\Language;
-use Modules\Language\App\Traits\LanguageTrait;
+use Modules\Language\app\Traits\LanguageTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\GlobalSetting\app\Models\CustomPagination;
 use Illuminate\Support\Str;

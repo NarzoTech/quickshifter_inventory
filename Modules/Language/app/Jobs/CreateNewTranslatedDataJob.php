@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Modules\Language\App\Traits\TranslateableModelsTrait;
+use Modules\Language\app\Traits\TranslateableModelsTrait;
 
 class CreateNewTranslatedDataJob implements ShouldQueue
 {

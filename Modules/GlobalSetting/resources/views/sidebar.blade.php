@@ -3,11 +3,6 @@
         href="{{ route('admin.general-setting') }}"><i class="fas fa-cog"></i>
         <span>{{ __('General Settings') }}</span></a></li>
 
-<li class="{{ Route::is('admin.crediential-setting') ? 'active' : '' }}">
-    <a class="nav-link" href="{{ route('admin.crediential-setting') }}"><i class="fas fa-key"></i>
-        <span>{{ __('Credential Settings') }}</span>
-    </a>
-</li>
 
 <li class="{{ Route::is('admin.email-configuration') || Route::is('admin.edit-email-template') ? 'active' : '' }}">
     <a class="nav-link" href="{{ route('admin.email-configuration') }}"><i class="fas fa-envelope"></i>
@@ -15,9 +10,9 @@
     </a>
 </li>
 
-@if (Module::isEnabled('Language') && checkAdminHasPermission('language.view'))
+{{-- @if (Module::isEnabled('Language') && checkAdminHasPermission('language.view'))
     @include('language::sidebar')
-@endif
+@endif --}}
 
 <li class="menu-header">{{ __('Extra Settings') }}</li>
 

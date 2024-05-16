@@ -4,8 +4,8 @@ namespace Modules\Language\app\Traits;
 
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Modules\Language\App\Enums\TranslationModels;
-use Modules\Language\App\Models\Language;
+use Modules\Language\app\Enums\TranslationModels;
+use Modules\Language\app\Models\Language;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 trait GenerateTranslationTrait
