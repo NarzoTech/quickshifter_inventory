@@ -44,8 +44,8 @@
             },
         });
         $(".datepicker").datepicker({
-            format: "yyyy-mm-dd",
-            startDate: "-Infinity",
+            format: "dd-mm-yyyy",
+            startDate: -Infinity,
         });
         $(".clockpicker").clockpicker();
     });

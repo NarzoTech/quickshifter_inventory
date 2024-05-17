@@ -7,13 +7,14 @@ use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Purchase\app\Services\PurchaseService;
 
 class PurchaseController extends Controller
 {
 
     use RedirectHelperTrait;
-    public function __construct(private PurchaseService $purchaseService)
+    public function __construct(private PurchaseService $purchaseService, private PurchaseDetails $purchaseDetails)
     {
         $this->middleware('auth:admin');
     }
@@ -23,15 +24,19 @@ class PurchaseController extends Controller
     public function index()
     {
         $purchases = $this->purchaseService->all()->paginate(20);
-        return view('purchase::index',compact('purchases'));
+        return view('purchase::index', compact('purchases'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('purchase::create');
+        $suppliers = $this->purchaseService->getSuppliers();
+        $warehouses = $this->purchaseService->getWarehouses();
+        $products = $this->purchaseService->getProducts($request);
+        $invoiceNumber = $this->purchaseService->genInvoiceNumber();
+        return view('purchase::create', compact('suppliers', 'warehouses', 'products', 'invoiceNumber'));
     }
 
     /**
@@ -39,7 +44,7 @@ class PurchaseController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        //
+        dd($request->all());
     }
 
     /**

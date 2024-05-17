@@ -30,9 +30,9 @@ class ProductService
     // get all active products
     public function allActiveProducts($request)
     {
-        $products = $this->product->where('status', 1)->with('categories');
+        $products = $this->product->where('status', 1)->with('category');
         if ($request->has('category')) {
-            $products = $products->whereHas('categories', function ($query) use ($request) {
+            $products = $products->whereHas('category', function ($query) use ($request) {
                 $query->where('slug', $request->category);
             });
         }

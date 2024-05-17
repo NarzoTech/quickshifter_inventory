@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('All Customers') }}</title>
+    <title>{{ __('Purchase List') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('All Customers') }}</h1>
+                <h1>{{ __('Purchase List') }}</h1>
             </div>
 
             <div class="section-body">

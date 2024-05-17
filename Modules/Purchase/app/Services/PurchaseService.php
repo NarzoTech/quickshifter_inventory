@@ -2,19 +2,21 @@
 
 namespace Modules\Purchase\app\Services;
 
-
+use App\Models\Warehouse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Modules\Purchase\app\Models\Purchase;
 use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Supplier\app\Models\Supplier;
 use Modules\Product\app\Models\Product;
-
+use Modules\Product\app\Services\ProductService;
 
 class PurchaseService
 {
 
-    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails)
+
+    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails,private ProductService $productService)
     {
     }
 
@@ -136,6 +138,24 @@ class PurchaseService
         }
     }
 
+    public function genInvoiceNumber(){
+        $number = 1000000; 
+        $prefix = 'INV-';
+        $invoice_number = $prefix.$number;
+
+        $purchase = $this->purchase->latest()->first();
+        if($purchase){
+            $purchaseInvoice = $purchase->invoice_number;
+
+            // split the invoice number
+            $split_invoice = explode('-', $purchaseInvoice);
+            $invoice_number = (int) $split_invoice[1] + 1;
+            $invoice_number = $prefix.$invoice_number;
+        }
+
+        return $invoice_number;
+    }
+
     public function getPurchase($id)
     {
         return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product')->find($id);
@@ -151,8 +171,19 @@ class PurchaseService
         return $this->purchase->with('supplier', 'warehouse')->latest()->get();
     }
 
-    public function getSupplierList()
+    public function getSuppliers()
     {
-        return Supplier::latest()->get();
+        return Supplier::where('status',1)->latest()->get();
+    }
+
+    public function getWarehouses()
+    {
+        return Warehouse::where('status',1)->latest()->get();
+    }
+
+    public function getProducts(Request $request)
+    {
+        $products = $this->productService->allActiveProducts($request);
+        return $products->get();
     }
 }

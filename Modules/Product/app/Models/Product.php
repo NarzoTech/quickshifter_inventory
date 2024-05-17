@@ -46,7 +46,7 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'name', 'short_description', 'additional_information', 'description', 'tags', 'image_url', 'actual_price', 'stock_status', 'has_variant'
+       'image_url','stock_status', 'has_variant'
     ];
 
 
