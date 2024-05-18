@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Customer\Database\factories\CustomerGroupFactory;
 
-class CustomerGroup extends Model
+class UserGroup extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'customer_groups';
+    protected $table = 'user_group';
     /**
      * The attributes that are mass assignable.
      */
@@ -19,6 +19,7 @@ class CustomerGroup extends Model
         'name',
         'description',
         'discount',
+        'type',
         'status',
         'created_by',
         'updated_by',

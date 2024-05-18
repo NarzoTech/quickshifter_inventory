@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('All Vehicles') }}</h1>
+                <h1>{{ __('All groups') }}</h1>
             </div>
 
             <div class="section-body">
@@ -81,7 +81,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addVehicle"
+                                    <a href="javascript:;" data-toggle="modal" data-target="#addgroup"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Customer Group') }}</a>
                                 </h4>
@@ -122,7 +122,7 @@
                                                                 aria-labelledby="btnGroupDrop{{ $group->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#editVehicle{{ $group->id }}">Edit</a>
+                                                                    data-target="#editgroup{{ $group->id }}">Edit</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $group->id }})">
@@ -140,7 +140,7 @@
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{ $groups->onEachSide(0)->links() }}
+                                        {{ $customerGroups->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>
@@ -153,8 +153,8 @@
 
     <x-admin.delete-modal />
 
-    {{-- add Vehicle --}}
-    <div class="modal" id="addVehicle">
+    {{-- add group --}}
+    <div class="modal" id="addgroup">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
@@ -166,28 +166,28 @@
 
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <form action="{{ route('admin.customerGroup.store') }}" method="POST" id="add-Vehicle-form">
+                    <form action="{{ route('admin.customerGroup.store') }}" method="POST" id="add-group-form">
                         @csrf
                         <div class="row">
+                            <input type="hidden" class="form-control" id="type" name="type" value="customer">
                             <div class="form-group col-md-6">
-                                <label for="name">{{ __('Vehicle Name') }}<span class="text-danger">*</span></label>
+                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="model">{{ __('Model') }}</label>
-                                <input type="text" class="form-control" id="model" name="model">
+                                <label for="discount">{{ __('Discount') }}(%)</label>
+                                <input type="text" class="form-control" id="discount" name="discount">
                             </div>
                             <div class="form-group col-md-4">
-                                <label for="plate_number">{{ __('Plate Number') }}</label>
-                                <input type="text" class="form-control" id="plate_number" name="plate_number">
+                                <label for="status">{{ __('Status') }}</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="1">{{ __('Active') }}</option>
+                                    <option value="0">{{ __('Inactive') }}</option>
+                                </select>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="color">{{ __('Color') }}</label>
-                                <input type="text" class="form-control" id="color" name="color">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="year">{{ __('Year') }}</label>
-                                <input type="text" class="form-control" id="year" name="year">
+                            <div class="form-group col-md-8">
+                                <label for="description">{{ __('Description') }}</label>
+                                <input type="text" class="form-control" id="description" name="description">
                             </div>
                         </div>
                     </form>
@@ -196,7 +196,7 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="add-Vehicle-form">Save</button>
+                    <button type="submit" class="btn btn-primary" form="add-group-form">Save</button>
                 </div>
 
             </div>
@@ -204,9 +204,9 @@
     </div>
 
 
-    {{-- edit Vehicle --}}
-    @foreach ($groups as $index => $group)
-        <div class="modal" id="editVehicle{{ $group->id }}">
+    {{-- edit group --}}
+    @foreach ($customerGroups as $index => $group)
+        <div class="modal" id="editGroup{{ $group->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
@@ -219,12 +219,12 @@
                     <!-- Modal body -->
                     <div class="modal-body">
                         <form action="{{ route('admin.customerGroup.update', $group->id) }}" method="POST"
-                            id="edit-Vehicle-form{{ $group->id }}">
+                            id="edit-group-form{{ $group->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label for="name">{{ __('Vehicle Name') }}<span
+                                    <label for="name">{{ __('group Name') }}<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $group->name }}">
@@ -257,7 +257,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
-                            form="edit-Vehicle-form{{ $group->id }}">{{ __('Update') }}</button>
+                            form="edit-group-form{{ $group->id }}">{{ __('Update') }}</button>
                     </div>
 
                 </div>

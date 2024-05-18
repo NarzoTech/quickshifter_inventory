@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_group', function (Blueprint $table) {
+        Schema::create('user_group', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('discount')->nullable();
+            $table->enum('type', ['customer', 'supplier'])->nullable();
             $table->boolean('status')->default(true);
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();

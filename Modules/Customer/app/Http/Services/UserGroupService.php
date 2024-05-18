@@ -2,43 +2,43 @@
 
 namespace Modules\Customer\app\Http\Services;
 
-use Modules\Customer\app\Models\CustomerGroup;
+use Modules\Customer\app\Models\UserGroup;
 
-class CustomerGroupService
+class UserGroupService
 {
-    protected $customerGroup;
+    protected $userGroup;
 
-    public function __construct(CustomerGroup $customerGroup)
+    public function __construct(UserGroup $userGroup)
     {
-        $this->customerGroup = $customerGroup;
+        $this->userGroup = $userGroup;
     }
 
-    public function getCustomerGroup()
+    public function getUserGroup()
     {
-        $customer = $this->customerGroup;
+        $user = $this->userGroup;
         if (request()->keyword) {
-            return $this->customerGroup->where(function ($q) {
+            return $this->userGroup->where(function ($q) {
                 $q->where('name', 'LIKE', '%' . request()->keyword . '%')
                     ->orWhere('description', 'LIKE', '%' . request()->keyword . '%')
                     ->orWhere('discount', 'LIKE', '%' . request()->keyword . '%');
             });
         }
-        return $customer;
+        return $user;
     }
 
     public function store(array $data): void
     {
-        $this->customerGroup->create($data);
+        $this->userGroup->create($data);
     }
 
 
     public function update(array $data, int $id)
     {
-        $this->customerGroup->find($id)->update($data);
+        $this->userGroup->find($id)->update($data);
     }
 
     public function delete(int $id)
     {
-        return $this->customerGroup->destroy($id);
+        return $this->userGroup->destroy($id);
     }
 }
