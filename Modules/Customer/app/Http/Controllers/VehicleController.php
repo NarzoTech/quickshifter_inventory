@@ -47,9 +47,15 @@ class VehicleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(VehicleRequest $request, $id): RedirectResponse
     {
-        //
+        try {
+            Vehicle::find($id)->update($request->validated());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle update failed', 'alert-type' => 'error']);
+        }
     }
 
     /**

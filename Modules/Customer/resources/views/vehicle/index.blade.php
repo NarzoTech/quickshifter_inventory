@@ -121,11 +121,7 @@
                                                                 aria-labelledby="btnGroupDrop{{ $vehicle->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#showVehicle{{ $vehicle->id }}">Show</a>
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
                                                                     data-target="#editVehicle{{ $vehicle->id }}">Edit</a>
-                                                                <a class="dropdown-item" href="#">Sales</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $vehicle->id }})">
@@ -233,37 +229,24 @@
                                         value="{{ $vehicle->name }}">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="phone">{{ __('Phone') }}</label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
-                                        value="{{ $vehicle->phone }}">
+                                    <label for="model">{{ __('Model') }}</label>
+                                    <input type="text" class="form-control" id="model" name="model"
+                                        value="{{ $vehicle->model }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="email">{{ __('Email') }}</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        value="{{ $vehicle->email }}">
+                                <div class="form-group col-md-4">
+                                    <label for="plate_number">{{ __('Plate Number') }}</label>
+                                    <input type="text" class="form-control" id="plate_number" name="plate_number"
+                                        value="{{ $vehicle->plate_number }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="city">{{ __('City') }}</label>
-                                    <input type="text" class="form-control" id="city" name="city"
-                                        value="{{ $vehicle->city }}">
+                                <div class="form-group col-md-4">
+                                    <label for="color">{{ __('Color') }}</label>
+                                    <input type="text" class="form-control" id="color" name="color"
+                                        value="{{ $vehicle->color }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="tax_number">{{ __('Tax Number') }}</label>
-                                    <input type="text" class="form-control" id="tax_number" name="tax_number"
-                                        value="{{ $vehicle->tax_number }}">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1" @if ($vehicle->status == 1) selected @endif>
-                                            {{ __('Active') }}</option>
-                                        <option value="0" @if ($vehicle->status == 0) selected @endif>
-                                            {{ __('Inactive') }}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <label for="address">{{ __('Address') }}</label>
-                                    <textarea name="address" id="address" class="form-control height-80px" rows="3">{{ $vehicle->address }}</textarea>
+                                <div class="form-group col-md-4">
+                                    <label for="year">{{ __('Year') }}</label>
+                                    <input type="text" class="form-control" id="year" name="year"
+                                        value="{{ $vehicle->year }}">
                                 </div>
                             </div>
                         </form>
