@@ -146,7 +146,7 @@
 
     {{-- add area --}}
     <div class="modal" id="addarea">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
 
                 <!-- Modal Header -->
@@ -160,7 +160,7 @@
                     <form action="{{ route('admin.area.store') }}" method="POST" id="add-area-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-12">
                                 <label for="name">{{ __('Area Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
@@ -182,7 +182,7 @@
     {{-- edit area --}}
     @foreach ($areas as $index => $area)
         <div class="modal" id="editarea{{ $area->id }}">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
@@ -198,7 +198,7 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-12">
                                     <label for="name">{{ __('area Name') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $area->name }}">

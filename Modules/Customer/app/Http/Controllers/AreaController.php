@@ -2,59 +2,68 @@
 
 namespace Modules\Customer\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Modules\Customer\app\Http\Services\AreaService;
 
 class AreaController extends Controller
 {
+    use RedirectHelperTrait;
+    public function __construct(private AreaService $areaService)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('customer::index');
+        $areas = $this->areaService->getArea()->paginate(20);
+        return view('customer::area.index', compact('areas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('customer::create');
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+        ]);
+
+
+        try {
+            $this->areaService->saveArea($request->validated());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.area.index', [], ['messege' => 'Area created successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.area.index', [], ['messege' => 'Area creation failed', 'alert-type' => 'error']);
+        }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('customer::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('customer::edit');
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+        ]);
+
+        try {
+            $this->areaService->updateArea($request->validated(), $id);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.area.index', [], ['messege' => 'Area updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.area.index', [], ['messege' => 'Area update failed', 'alert-type' => 'error']);
+        }
     }
 
     /**
