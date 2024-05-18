@@ -265,67 +265,6 @@
     @endforeach
 
 
-    {{-- Show Vehicle --}}
-    @foreach ($vehicles as $index => $vehicle)
-        <div class="modal" id="showVehicle{{ $vehicle->id }}">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Vehicle') }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="row">
-                            {{-- table --}}
-                            <div class="col-md-6">
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <th>{{ __('Name') }}</th>
-                                        <td>{{ $vehicle->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Phone') }}</th>
-                                        <td>{{ $vehicle->phone }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Email') }}</th>
-                                        <td>{{ $vehicle->email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('City') }}</th>
-                                        <td>{{ $vehicle->city }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Tax Number') }}</th>
-                                        <td>{{ $vehicle->tax_number }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Status') }}</th>
-                                        <td>{{ $vehicle->status == 1 ? 'Active' : 'Inactive' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Address') }}</th>
-                                        <td>{{ $vehicle->address }}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    @endforeach
-
-
     @push('js')
         <script>
             function deleteData(id) {

@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('All Customers') }}</title>
+    <title>{{ __('Area List') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('All Customers') }}</h1>
+                <h1>{{ __('All areas') }}</h1>
             </div>
 
             <div class="section-body">
@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.customers.index') }}" method="GET" onchange="this.submit()"
+                                <form action="{{ route('admin.area.index') }}" method="GET" onchange="this.submit()"
                                     class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
@@ -81,9 +81,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addCustomer"
+                                    <a href="javascript:;" data-toggle="modal" data-target="#addarea"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Customer') }}</a>
+                                        {{ __('Add Area') }}</a>
                                 </h4>
                             </div>
                             <div class="card-body">
@@ -91,66 +91,39 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th rowspan="2">{{ __('SN') }}</th>
-                                                <th rowspan="2">{{ __('Name') }}</th>
-                                                <th rowspan="2">{{ __('Phone') }}</th>
-                                                <th colspan="4">{{ __('Total Sale') }}</th>
-                                                <th colspan="3">{{ __('Total Sale Return') }}</th>
-                                                <th rowspan="2">{{ __('Total Due') }}</th>
-                                                <th rowspan="2">{{ __('Action') }}</th>
-                                            </tr>
-                                            <tr>
-                                                <th>{{ __('Total') }}</th>
-                                                <th>{{ __('Pay') }}</th>
-                                                <th>{{ __('Due') }}</th>
-                                                <th>{{ __('Advance') }}</th>
-                                                <th>{{ __('Total') }}</th>
-                                                <th>{{ __('Pay') }}</th>
-                                                <th>{{ __('Due') }}</th>
+                                                <th>{{ __('SN') }}</th>
+                                                <th>{{ __('Name') }}</th>
+                                                <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($users as $index => $user)
+                                            @forelse ($areas as $index => $area)
                                                 <tr>
-                                                    <td>{{ ++$index }}</td>
-                                                    <td>{{ $user->name }}</td>
-                                                    <td>{{ $user->phone }}</td>
-                                                    <td>{{ currency($user->total_sale) }}</td>
-                                                    <td>{{ currency($user->total_sale_pay) }}</td>
-                                                    <td>{{ currency($user->total_sale_due) }}</td>
-                                                    <td>{{ currency($user->total_sale_advance) }}</td>
-                                                    <td>{{ currency($user->total_sale_return) }}</td>
-                                                    <td>{{ currency($user->total_sale_return_pay) }}</td>
-                                                    <td>{{ currency($user->total_sale_return_due) }}</td>
-                                                    <td>{{ currency($user->total_due) }}</td>
-
+                                                    <td>{{ $index + 1 }}</td>
+                                                    <td>{{ $area->name }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop{{ $user->id }}" type="button"
+                                                            <button id="btnGroupDrop{{ $area->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
                                                                 data-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
-                                                                aria-labelledby="btnGroupDrop{{ $user->id }}">
+                                                                aria-labelledby="btnGroupDrop{{ $area->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#showCustomer{{ $user->id }}">Show</a>
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editCustomer{{ $user->id }}">Edit</a>
-                                                                <a class="dropdown-item" href="#">Sales</a>
+                                                                    data-target="#editarea{{ $area->id }}">Edit</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
-                                                                    onclick="deleteData({{ $user->id }})">
+                                                                    onclick="deleteData({{ $area->id }})">
                                                                     Delete</a>
                                                             </div>
                                                         </div>
                                                     </td>
                                                 </tr>
                                             @empty
-                                                <x-empty-table :name="__('Customer')" route="" create="no"
+                                                <x-empty-table :name="__('area')" route="" create="no"
                                                     :message="__('No data found!')" colspan="6"></x-empty-table>
                                             @endforelse
                                         </tbody>
@@ -158,7 +131,7 @@
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{ $users->onEachSide(0)->links() }}
+                                        {{ $areas->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>
@@ -171,52 +144,25 @@
 
     <x-admin.delete-modal />
 
-    {{-- add customer --}}
-    <div class="modal" id="addCustomer">
+    {{-- add area --}}
+    <div class="modal" id="addarea">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">{{ __('Add Customer') }}</h4>
+                    <h4 class="modal-title">{{ __('Add area') }}</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <form action="{{ route('admin.customers.store') }}" method="POST" id="add-customer-form">
+                    <form action="{{ route('admin.area.store') }}" method="POST" id="add-area-form">
                         @csrf
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="name">{{ __('Customer Name') }}<span class="text-danger">*</span></label>
+                                <label for="name">{{ __('Area Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="phone">{{ __('Phone') }}</label>
-                                <input type="text" class="form-control" id="phone" name="phone">
-                            </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="email">{{ __('Email') }}</label>
-                                <input type="email" class="form-control" id="email" name="email">
-                            </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="city">{{ __('City') }}</label>
-                                <input type="text" class="form-control" id="city" name="city">
-                            </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="tax_number">{{ __('Tax Number') }}</label>
-                                <input type="text" class="form-control" id="tax_number" name="tax_number">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="status">{{ __('Status') }}</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">{{ __('Active') }}</option>
-                                    <option value="0">{{ __('Inactive') }}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="address">{{ __('Address') }}</label>
-                                <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
                             </div>
                         </div>
                     </form>
@@ -225,7 +171,7 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="add-customer-form">Save</button>
+                    <button type="submit" class="btn btn-primary" form="add-area-form">Save</button>
                 </div>
 
             </div>
@@ -233,63 +179,29 @@
     </div>
 
 
-    {{-- edit customer --}}
-    @foreach ($users as $index => $user)
-        <div class="modal" id="editCustomer{{ $user->id }}">
+    {{-- edit area --}}
+    @foreach ($areas as $index => $area)
+        <div class="modal" id="editarea{{ $area->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Add Customer') }}</h4>
+                        <h4 class="modal-title">{{ __('Add area') }}</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <form action="{{ route('admin.customers.update', $user->id) }}" method="POST"
-                            id="edit-customer-form{{ $user->id }}">
+                        <form action="{{ route('admin.area.update', $area->id) }}" method="POST"
+                            id="edit-area-form{{ $area->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label for="name">{{ __('Customer Name') }}<span
-                                            class="text-danger">*</span></label>
+                                    <label for="name">{{ __('area Name') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $user->name }}">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="phone">{{ __('Phone') }}</label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
-                                        value="{{ $user->phone }}">
-                                </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="email">{{ __('Email') }}</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        value="{{ $user->email }}">
-                                </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="city">{{ __('City') }}</label>
-                                    <input type="text" class="form-control" id="city" name="city"
-                                        value="{{ $user->city }}">
-                                </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="tax_number">{{ __('Tax Number') }}</label>
-                                    <input type="text" class="form-control" id="tax_number" name="tax_number"
-                                        value="{{ $user->tax_number }}">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1" @if ($user->status == 1) selected @endif>
-                                            {{ __('Active') }}</option>
-                                        <option value="0" @if ($user->status == 0) selected @endif>
-                                            {{ __('Inactive') }}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <label for="address">{{ __('Address') }}</label>
-                                    <textarea name="address" id="address" class="form-control height-80px" rows="3">{{ $user->address }}</textarea>
+                                        value="{{ $area->name }}">
                                 </div>
                             </div>
                         </form>
@@ -297,9 +209,9 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
-                            form="edit-customer-form{{ $user->id }}">{{ __('Update') }}</button>
+                            form="edit-area-form{{ $area->id }}">{{ __('Update') }}</button>
                     </div>
 
                 </div>
@@ -307,72 +219,11 @@
         </div>
     @endforeach
 
-
-    {{-- Show customer --}}
-    @foreach ($users as $index => $user)
-        <div class="modal" id="showCustomer{{ $user->id }}">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Customer') }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="row">
-                            {{-- table --}}
-                            <div class="col-md-6">
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <th>{{ __('Name') }}</th>
-                                        <td>{{ $user->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Phone') }}</th>
-                                        <td>{{ $user->phone }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Email') }}</th>
-                                        <td>{{ $user->email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('City') }}</th>
-                                        <td>{{ $user->city }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Tax Number') }}</th>
-                                        <td>{{ $user->tax_number }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Status') }}</th>
-                                        <td>{{ $user->status == 1 ? 'Active' : 'Inactive' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Address') }}</th>
-                                        <td>{{ $user->address }}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    @endforeach
+    @push('js')
+        <script>
+            function deleteData(id) {
+                $("#deleteForm").attr("action", '{{ route('admin.area.destroy', '') }}' + "/" + id)
+            }
+        </script>
+    @endpush
 @endsection
-
-@push('js')
-    <script>
-        function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ route('admin.customers.destroy', '') }}' + "/" + id)
-        }
-    </script>
-@endpush
