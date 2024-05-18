@@ -23,7 +23,7 @@ class CustomerGroupController extends Controller
      */
     public function index()
     {
-        $customerGroups = $this->userGroup->getUserGroup()->where('type', 'customer')->paginate(20);
+        $customerGroups = $this->userGroup->getUserGroup()->where('type', 'customer')->paginate(request()->get('par-page') ? request()->get('par-page') : 20);
         return view('customer::group.index', compact('customerGroups'));
     }
 

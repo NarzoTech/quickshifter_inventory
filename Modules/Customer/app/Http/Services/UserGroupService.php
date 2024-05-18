@@ -23,6 +23,9 @@ class UserGroupService
                     ->orWhere('discount', 'LIKE', '%' . request()->keyword . '%');
             });
         }
+        if (request()->order_by) {
+            $user = $user->orderBy('id', request()->order_by == 1 ? 'asc' : 'desc');
+        }
         return $user;
     }
 
