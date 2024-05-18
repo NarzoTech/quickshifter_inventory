@@ -63,6 +63,12 @@ class VehicleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Vehicle::destroy($id);
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle deletion failed', 'alert-type' => 'error']);
+        }
     }
 }
