@@ -177,20 +177,20 @@
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="phone">{{ __('Model') }}</label>
-                                <input type="text" class="form-control" id="phone" name="phone">
+                                <label for="model">{{ __('Model') }}</label>
+                                <input type="text" class="form-control" id="model" name="model">
                             </div>
                             <div class="form-group col-md-4">
-                                <label for="email">{{ __('Plate Number') }}</label>
-                                <input type="email" class="form-control" id="email" name="email">
+                                <label for="plate_number">{{ __('Plate Number') }}</label>
+                                <input type="text" class="form-control" id="plate_number" name="plate_number">
                             </div>
                             <div class="form-group col-md-4">
-                                <label for="city">{{ __('Color') }}</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                                <label for="color">{{ __('Color') }}</label>
+                                <input type="text" class="form-control" id="color" name="color">
                             </div>
                             <div class="form-group col-md-4">
-                                <label for="tax_number">{{ __('Year') }}</label>
-                                <input type="text" class="form-control" id="tax_number" name="tax_number">
+                                <label for="year">{{ __('Year') }}</label>
+                                <input type="text" class="form-control" id="year" name="year">
                             </div>
                         </div>
                     </form>

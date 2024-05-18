@@ -2,14 +2,23 @@
 
 namespace Modules\Customer\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Modules\Customer\app\Http\Requests\VehicleRequest;
 use Modules\Customer\app\Models\Vehicle;
 
 class VehicleController extends Controller
 {
+    use RedirectHelperTrait;
+    public function __construct(private Vehicle $vehicle)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -21,36 +30,19 @@ class VehicleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('customer::create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(VehicleRequest $request): RedirectResponse
     {
-        dd($request->all());
+        try {
+            $this->vehicle->create($request->validated());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle created successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle creation failed', 'alert-type' => 'error']);
+        }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('customer::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('customer::edit');
-    }
 
     /**
      * Update the specified resource in storage.
