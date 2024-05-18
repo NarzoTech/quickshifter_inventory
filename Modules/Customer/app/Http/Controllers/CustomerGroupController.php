@@ -66,6 +66,11 @@ class CustomerGroupController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $this->userGroup->destroy($id);
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customerGroup.index', [], ['messege' => 'Customer group deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customerGroup.index', [], ['messege' => 'Customer group deletion failed', 'alert-type' => 'error']);
+        }
     }
 }

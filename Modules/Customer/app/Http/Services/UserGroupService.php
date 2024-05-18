@@ -37,7 +37,7 @@ class UserGroupService
         $this->userGroup->find($id)->update($data);
     }
 
-    public function delete(int $id)
+    public function destroy(int $id)
     {
         return $this->userGroup->destroy($id);
     }
