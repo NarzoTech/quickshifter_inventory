@@ -1,5 +1,5 @@
 <li
-    class="nav-item dropdown {{ isRoute(['admin.customers.index', 'admin.vehicle.index', 'admin.area.index'], 'active') }}">
+    class="nav-item dropdown {{ isRoute(['admin.customers.index', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
         <i class="fas fa-users"></i><span>{{ __('Manage Customer') }}</span>
     </a>
@@ -15,8 +15,8 @@
                 {{ __('Customer Due List') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.customers.index', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.customers.index') }}">
+        <li class="{{ isRoute('admin.customerGroup.index', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.customerGroup.index') }}">
                 {{ __('Customer Group') }}
             </a>
         </li>

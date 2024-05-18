@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Customer\app\Http\Controllers\AreaController;
 use Modules\Customer\app\Http\Controllers\CustomerController;
+use Modules\Customer\app\Http\Controllers\CustomerGroupController;
 use Modules\Customer\app\Http\Controllers\VehicleController;
 
 /*
@@ -19,6 +20,7 @@ use Modules\Customer\app\Http\Controllers\VehicleController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('customers', CustomerController::class);
 
+    Route::resource('customerGroup', CustomerGroupController::class);
     Route::resource('vehicle', VehicleController::class);
     Route::resource('area', AreaController::class);
 });
