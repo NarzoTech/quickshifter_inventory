@@ -49,27 +49,16 @@ class CustomerGroupController extends Controller
     }
 
     /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('customer::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('customer::edit');
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(UserGroupRequest $request, $id): RedirectResponse
     {
-        //
+        try {
+            $this->userGroup->update($request->validated(), $id);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customerGroup.index', [], ['messege' => 'Customer group updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customerGroup.index', [], ['messege' => 'Customer group update failed', 'alert-type' => 'error']);
+        }
     }
 
     /**

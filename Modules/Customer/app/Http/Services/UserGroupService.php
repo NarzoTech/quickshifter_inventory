@@ -32,7 +32,7 @@ class UserGroupService
     }
 
 
-    public function update(array $data, int $id)
+    public function update(array $data, int $id): void
     {
         $this->userGroup->find($id)->update($data);
     }

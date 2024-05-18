@@ -122,7 +122,7 @@
                                                                 aria-labelledby="btnGroupDrop{{ $group->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#editgroup{{ $group->id }}">Edit</a>
+                                                                    data-target="#editGroup{{ $group->id }}">Edit</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $group->id }})">
@@ -176,7 +176,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="discount">{{ __('Discount') }}(%)</label>
-                                <input type="text" class="form-control" id="discount" name="discount">
+                                <input type="number" class="form-control" id="discount" name="discount">
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="status">{{ __('Status') }}</label>
@@ -223,31 +223,31 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
+                                <input type="hidden" class="form-control" id="type" name="type"
+                                    value="customer">
                                 <div class="form-group col-md-6">
-                                    <label for="name">{{ __('group Name') }}<span
-                                            class="text-danger">*</span></label>
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $group->name }}">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="model">{{ __('Model') }}</label>
-                                    <input type="text" class="form-control" id="model" name="model"
-                                        value="{{ $group->model }}">
+                                    <label for="discount">{{ __('Discount') }}(%)</label>
+                                    <input type="number" class="form-control" id="discount" name="discount"
+                                        value="{{ $group->discount }}">
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label for="plate_number">{{ __('Plate Number') }}</label>
-                                    <input type="text" class="form-control" id="plate_number" name="plate_number"
-                                        value="{{ $group->plate_number }}">
+                                    <label for="status">{{ __('Status') }}</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1" @if ($group->status == 1) selected @endif>
+                                            {{ __('Active') }}</option>
+                                        <option value="0" @if ($group->status == 0) selected @endif>
+                                            {{ __('Inactive') }}</option>
+                                    </select>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="color">{{ __('Color') }}</label>
-                                    <input type="text" class="form-control" id="color" name="color"
-                                        value="{{ $group->color }}">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label for="year">{{ __('Year') }}</label>
-                                    <input type="text" class="form-control" id="year" name="year"
-                                        value="{{ $group->year }}">
+                                <div class="form-group col-md-8">
+                                    <label for="description">{{ __('Description') }}</label>
+                                    <input type="text" class="form-control" id="description" name="description"
+                                        value="{{ $group->description }}">
                                 </div>
                             </div>
                         </form>

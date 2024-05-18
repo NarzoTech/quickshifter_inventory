@@ -14,7 +14,7 @@ class UserGroupRequest extends FormRequest
         return [
             'name' => 'required',
             'description' => 'nullable',
-            'discount' => 'nullable',
+            'discount' => 'nullable|numeric',
             'type' => 'nullable|in:supplier,customer',
             'status' => 'nullable',
 
@@ -37,6 +37,7 @@ class UserGroupRequest extends FormRequest
     {
         return [
             'name.required' => 'Name is required',
+            'discount.numeric' => 'Discount must be a number',
         ];
     }
 }
