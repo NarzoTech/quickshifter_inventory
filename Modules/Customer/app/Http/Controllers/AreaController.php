@@ -39,7 +39,7 @@ class AreaController extends Controller
 
 
         try {
-            $this->areaService->saveArea($request->validated());
+            $this->areaService->saveArea($request->only('name'));
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.area.index', [], ['messege' => 'Area created successfully', 'alert-type' => 'success']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -58,7 +58,7 @@ class AreaController extends Controller
         ]);
 
         try {
-            $this->areaService->updateArea($request->validated(), $id);
+            $this->areaService->updateArea($request->only('name'), $id);
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.area.index', [], ['messege' => 'Area updated successfully', 'alert-type' => 'success']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -71,6 +71,12 @@ class AreaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $this->areaService->deleteArea($id);
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.area.index', [], ['messege' => 'Area deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.area.index', [], ['messege' => 'Area deletion failed', 'alert-type' => 'error']);
+        }
     }
 }
