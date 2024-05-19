@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 
 class AccountsController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      */

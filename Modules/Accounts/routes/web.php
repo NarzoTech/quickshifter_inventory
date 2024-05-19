@@ -16,4 +16,5 @@ use Modules\Accounts\app\Http\Controllers\AccountsController;
 
 Route::group([], function () {
     Route::resource('accounts', AccountsController::class)->names('accounts');
+
 });
