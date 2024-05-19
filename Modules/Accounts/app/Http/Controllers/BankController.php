@@ -70,6 +70,13 @@ class BankController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $bank = $this->bankService->find($id);
+            $this->bankService->delete($bank);
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.bank.index', [], ['messege' => 'Bank deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.bank.index', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 }
