@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Accounts\app\Http\Controllers\AccountsController;
+use Modules\Accounts\app\Http\Controllers\BankController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +15,7 @@ use Modules\Accounts\app\Http\Controllers\AccountsController;
 |
 */
 
-Route::group([], function () {
+Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('accounts', AccountsController::class)->names('accounts');
-
+    Route::resource('bank', BankController::class)->names('bank');
 });

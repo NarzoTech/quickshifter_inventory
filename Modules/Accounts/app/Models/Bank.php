@@ -10,13 +10,9 @@ class Bank extends Model
 {
     use HasFactory;
 
+    protected $table = 'banks';
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
-    
-    protected static function newFactory(): BankFactory
-    {
-        //return BankFactory::new();
-    }
+    protected $fillable = ['name'];
 }

@@ -9,5 +9,10 @@
                 {{ __('Create Account') }}
             </a>
         </li>
+        <li class="{{ isRoute('admin.bank.index', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.bank.index') }}">
+                {{ __('Bank') }}
+            </a>
+        </li>
     </ul>
 </li>
