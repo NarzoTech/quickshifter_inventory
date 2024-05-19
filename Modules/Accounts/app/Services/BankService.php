@@ -14,6 +14,11 @@ class BankService
     {
         return $this->bank;
     }
+
+    public function find(int $id): Bank
+    {
+        return $this->bank->findOrFail($id);
+    }
     public function create(array $data): Bank
     {
         return $this->bank->create($data);

@@ -45,28 +45,24 @@ class BankController extends Controller
         }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('accounts::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('accounts::edit');
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        try {
+            $bank = $this->bankService->find($id);
+            $this->bankService->update($bank, $request->only('name'));
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.bank.index', [], ['messege' => 'Bank updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.bank.index', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 
     /**
