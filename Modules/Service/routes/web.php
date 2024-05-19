@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Service\app\Http\Controllers\ServiceCategoryController;
 use Modules\Service\app\Http\Controllers\ServiceController;
 
 /*
@@ -14,6 +15,7 @@ use Modules\Service\app\Http\Controllers\ServiceController;
 |
 */
 
-Route::group([], function () {
+Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('service', ServiceController::class)->names('service');
+    Route::resource('serviceCategory', ServiceCategoryController::class);
 });

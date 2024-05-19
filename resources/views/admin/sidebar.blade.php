@@ -35,6 +35,9 @@
                 @include('purchase::sidebar')
             @endif
 
+            @if (Module::isEnabled('Service'))
+                @include('service::sidebar')
+            @endif
             @if (Module::isEnabled('Sales'))
                 @include('sales::sidebar')
             @endif
@@ -45,7 +48,7 @@
                 @include('media::sidebar')
             @endif --}}
 
-            
+
 
 
             <li class="menu-header">{{ __('Settings') }}</li>

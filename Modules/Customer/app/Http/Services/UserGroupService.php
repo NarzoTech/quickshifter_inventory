@@ -17,7 +17,7 @@ class UserGroupService
     {
         $user = $this->userGroup;
         if (request()->keyword) {
-            return $this->userGroup->where(function ($q) {
+            $user =  $user->where(function ($q) {
                 $q->where('name', 'LIKE', '%' . request()->keyword . '%')
                     ->orWhere('description', 'LIKE', '%' . request()->keyword . '%')
                     ->orWhere('discount', 'LIKE', '%' . request()->keyword . '%');
