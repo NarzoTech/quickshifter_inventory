@@ -6,16 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Accounts\app\Services\BankService;
 
 class AccountsController extends Controller
 {
-    
+
+    public function __construct(private BankService $bankService)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('accounts::index');
+        $accounts = $this->bankService->all()->paginate(20);
+        return view('accounts::index', compact('accounts'));
     }
 
     /**
