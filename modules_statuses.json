@@ -12,5 +12,6 @@
     "Service": true,
     "Sales": true,
     "Model": true,
-    "Accounts": true
+    "Accounts": true,
+    "Expense": true
 }

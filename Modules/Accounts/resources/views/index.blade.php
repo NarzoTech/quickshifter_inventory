@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Bank List') }}</title>
+    <title>{{ __('Account List') }}</title>
 @endsection
 
 @push('css')
@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.bank.index') }}" method="GET" onchange="this.submit()"
+                                <form action="{{ route('admin.accounts.index') }}" method="GET" onchange="this.submit()"
                                     class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
@@ -79,13 +79,6 @@
 
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addbank"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Bank') }}</a>
-                                </h4>
-                            </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
                                     <table class="table table-striped">
