@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Bank List') }}</title>
+    <title>{{ __('Account List') }}</title>
 @endsection
 
 @push('css')
@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.bank.index') }}" method="GET" onchange="this.submit()"
+                                <form action="{{ route('admin.expense.type.index') }}" method="GET" onchange="this.submit()"
                                     class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
@@ -81,9 +81,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addbank"
+                                    <a href="javascript:;" data-toggle="modal" data-target="#addExpense"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Bank') }}</a>
+                                        {{ __('Add Expense') }}</a>
                                 </h4>
                             </div>
                             <div class="card-body">
@@ -97,26 +97,26 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($banks as $index => $bank)
+                                            @forelse ($types as $index => $type)
                                                 <tr>
                                                     <td>{{ $loop->first + $index }}</td>
-                                                    <td>{{ $bank->name }}</td>
+                                                    <td>{{ $type->name }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop{{ $bank->id }}" type="button"
+                                                            <button id="btnGroupDrop{{ $type->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
                                                                 data-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
-                                                                aria-labelledby="btnGroupDrop{{ $bank->id }}">
+                                                                aria-labelledby="btnGroupDrop{{ $type->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#editbank{{ $bank->id }}">Edit</a>
+                                                                    data-target="#editbank{{ $type->id }}">Edit</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
-                                                                    onclick="deleteData({{ $bank->id }})">
+                                                                    onclick="deleteData({{ $type->id }})">
                                                                     Delete</a>
                                                             </div>
                                                         </div>
@@ -131,7 +131,7 @@
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{ $banks->onEachSide(0)->links() }}
+                                        {{ $types->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>
@@ -144,18 +144,19 @@
 
     <x-admin.delete-modal />
 
-    {{-- add bank --}}
-    <div class="modal" id="addbank">
+
+    {{-- add Expense --}}
+    <div class="modal" id="addExpense">
         <div class="modal-dialog">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">{{ __('Add Bank') }}</h4>
+                    <h4 class="modal-title">{{ __('Add Expense') }}</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <form action="{{ route('admin.bank.store') }}" method="POST" id="add-bank-form">
+                    <form action="{{ route('admin.expense.type.store') }}" method="POST" id="add-bank-form">
                         @csrf
                         <div class="row">
                             <div class="form-group col-12">
@@ -174,47 +175,6 @@
             </div>
         </div>
     </div>
-
-
-    {{-- edit bank --}}
-    @foreach ($banks as $index => $bank)
-        <div class="modal" id="editbank{{ $bank->id }}">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Edit Bank') }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <form action="{{ route('admin.bank.update', $bank->id) }}" method="POST"
-                            id="edit-bank-form{{ $bank->id }}">
-                            @csrf
-                            @method('PUT')
-                            <div class="row">
-                                <div class="form-group col-12">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $bank->name }}">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
-                        <button type="submit" class="btn btn-primary"
-                            form="edit-bank-form{{ $bank->id }}">{{ __('Update') }}</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    @endforeach
 
     @push('js')
         <script>
