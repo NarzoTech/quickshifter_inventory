@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Modules\Accounts\app\Http\Requests\AccountRequest;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Accounts\app\Services\BankService;
 
@@ -41,7 +42,7 @@ class AccountsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(AccountRequest $request): RedirectResponse
     {
         try {
             $this->accountsService->create($request->except('_token'));
