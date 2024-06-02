@@ -13,10 +13,18 @@ class Account extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
-    
-    protected static function newFactory(): AccountFactory
-    {
-        //return AccountFactory::new();
-    }
+    protected $fillable = [
+        'account_type',
+        'mobile_bank_name',
+        'mobile_number',
+        'bank_id',
+        'service_charge',
+        'card_type',
+        'card_holder_name',
+        'card_number',
+        'bank_account_type',
+        'bank_account_name',
+        'bank_account_number',
+        'bank_account_branch',
+    ];
 }

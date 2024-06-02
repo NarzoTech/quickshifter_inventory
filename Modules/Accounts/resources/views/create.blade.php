@@ -1,0 +1,251 @@
+@extends('admin.master_layout')
+@section('title')
+    <title>{{ __('Account List') }}</title>
+@endsection
+
+@push('css')
+    <style>
+        .tagify.form-control.tags {
+            height: auto;
+        }
+
+        tag {
+            padding-top: 5px;
+        }
+    </style>
+@endpush
+@section('admin-content')
+    <div class="main-content">
+        <section class="section">
+            <div class="section-header">
+                <h1>{{ __('Account List') }}</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
+                    </div>
+                    <div class="breadcrumb-item active"><a
+                            href="{{ route('admin.accounts.index') }}">{{ __('Account List') }}</a>
+                    </div>
+                    <div class="breadcrumb-item">{{ __('Add Account') }}</div>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="mt-4 row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <h4>{{ __('Add Account') }}</h4>
+                                <div>
+                                    <a href="{{ route('admin.accounts.index') }}" class="btn btn-primary"><i
+                                            class="fas fa-arrow-left"></i>{{ __('Back') }}</a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('admin.accounts.store') }}" method="post">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="account_type">{{ __('Account Type') }}<span
+                                                        class="text-danger">*</span></label>
+                                                <select name="account_type" id="account_type" class="form-control">
+                                                    <option value="">{{ __('Select Account Type') }}</option>
+                                                    @foreach (accountList() as $key => $list)
+                                                        <option value="{{ $key }}">{{ $list }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {{-- for mobile banking --}}
+
+                                        <div class="col-12 row d-none mobile_section">
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="mobile_bank_name">{{ __('Mobile Bank Name') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <select name="mobile_bank_name" id="mobile_bank_name"
+                                                        class="form-control">
+                                                        <option value="">{{ __('Select Mobile Bank Name') }}</option>
+                                                        @foreach (mobileBankList() as $key => $list)
+                                                            <option value="{{ $key }}">{{ $list }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="mobile_number">{{ __('Mobile Number') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="mobile_number" id="mobile_number"
+                                                        class="form-control" placeholder="{{ __('Mobile Number') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="service_charge">{{ __('Service Charge') }}(%)</label>
+                                                    <input type="text" name="service_charge" id="service_charge"
+                                                        class="form-control" placeholder="{{ __('Service Charge') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- for card --}}
+
+                                        <div class="col-12 row d-none bank-card">
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="card_type">{{ __('Card Type') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <select name="card_type" id="card_type" class="form-control">
+                                                        <option value="">{{ __('Select Mobile Bank Name') }}</option>
+                                                        @foreach (cardTypeList() as $key => $list)
+                                                            <option value="{{ $key }}">{{ $list }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="bank_name">{{ __('Bank Name') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <select name="bank_name" id="bank_name" class="form-control select2">
+                                                        <option value="">{{ __('Select Bank') }}</option>
+                                                        @foreach ($accounts as $bank)
+                                                            <option value="{{ $bank->id }}">{{ $bank->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="card_holder_name">{{ __('Card Holder Name') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="card_holder_name" id="card_holder_name"
+                                                        class="form-control" placeholder="{{ __('Card Holder Name') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="card_number">{{ __('Card Number') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="card_number" id="card_number"
+                                                        class="form-control" placeholder="{{ __('Card Number') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="service_charge">{{ __('Service Charge') }}(%)</label>
+                                                    <input type="text" name="service_charge" id="service_charge"
+                                                        class="form-control" placeholder="{{ __('Service Charge') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- for bank --}}
+
+                                        <div class="col-12 row d-none bank">
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="bank_name">{{ __('Bank Name') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <select name="bank_name" id="bank_name" class="form-control select2">
+                                                        <option value="">{{ __('Select Bank') }}</option>
+                                                        @foreach ($accounts as $bank)
+                                                            <option value="{{ $bank->id }}">{{ $bank->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="bank_account_type">{{ __('Bank Account Type') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="bank_account_type" id="bank_account_type"
+                                                        class="form-control" placeholder="{{ __('Bank Account Type') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="bank_account_name">{{ __('Bank Account Name') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="bank_account_name" id="bank_account_name"
+                                                        class="form-control" placeholder="{{ __('Bank Account Name') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="bank_account_number">{{ __('Bank Account Number') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="bank_account_number"
+                                                        id="bank_account_number" class="form-control"
+                                                        placeholder="{{ __('Bank Account Number') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="form-group">
+                                                    <label for="bank_account_branch">{{ __('Bank Account Branch') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <input type="text" name="bank_account_branch"
+                                                        id="bank_account_branch" class="form-control"
+                                                        placeholder="{{ __('Bank Account Branch') }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                            <div class="form-group">
+                                                <label for="service_charge">{{ __('Service Charge') }}(%)</label>
+                                                <input type="text" name="service_charge" id="service_charge"
+                                                    class="form-control" placeholder="{{ __('Service Charge') }}">
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="text-center offset-md-2 col-md-8">
+                                            <x-admin.save-button :text="__('Save')">
+                                            </x-admin.save-button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection
+
+
+@push('js')
+    <script>
+        $(document).ready(function() {
+            $('#account_type').on('change', function() {
+                var account_type = $(this).val();
+
+                if (account_type == 'mobile_banking') {
+                    $('.mobile_section').removeClass('d-none');
+                    $('.bank-card').addClass('d-none');
+                    $('.bank').addClass('d-none');
+                } else if (account_type == 'card') {
+                    $('.bank-card').removeClass('d-none');
+                    $('.mobile_section').addClass('d-none');
+                    $('.bank').addClass('d-none');
+                } else if(account_type == 'bank') {
+                    $('.bank').removeClass('d-none');
+                    $('.mobile_section').addClass('d-none');
+                    $('.bank-card').addClass('d-none');
+                }
+                else{
+                    $('.mobile_section').addClass('d-none');
+                    $('.bank-card').addClass('d-none');
+                    $('.bank').addClass('d-none');
+                }
+            });
+        });
+    </script>
+@endpush

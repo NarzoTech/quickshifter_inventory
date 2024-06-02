@@ -2,36 +2,36 @@
 
 namespace Modules\Accounts\app\Services;
 
-use Modules\Accounts\app\Models\Bank;
+use Modules\Accounts\app\Models\Account;
 
-class BankService
+class AccountsService
 {
-    public function __construct(private Bank $bank)
+    public function __construct(private Account $account)
     {
     }
     public function all()
     {
-        return $this->bank;
+        return $this->account;
     }
 
-    public function find(int $id): Bank
+    public function find(int $id): Account
     {
-        return $this->bank->findOrFail($id);
+        return $this->account->findOrFail($id);
     }
-    public function create(array $data): Bank
+    public function create(array $data): Account
     {
-        return $this->bank->create($data);
-    }
-
-    public function update(Bank $bank, array $data): Bank
-    {
-        $bank->update($data);
-
-        return $bank;
+        return $this->account->create($data);
     }
 
-    public function delete(Bank $bank): bool
+    public function update(Account $account, array $data): Account
     {
-        return $bank->delete();
+        $account->update($data);
+
+        return $account;
+    }
+
+    public function delete(Account $account): bool
+    {
+        return $account->delete();
     }
 }

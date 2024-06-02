@@ -4,7 +4,6 @@
     </a>
 
     <ul class="dropdown-menu">
-
         <li class="{{ isRoute('admin.accounts.index', 'active') }}">
             <a class="nav-link" href="{{ route('admin.accounts.index') }}">
                 {{ __('Account List') }}

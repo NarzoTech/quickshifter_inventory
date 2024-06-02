@@ -53,6 +53,57 @@ if (!function_exists('allLanguages')) {
     }
 }
 
+if (!function_exists('accountList')) {
+    function accountList()
+    {
+        $list = [
+            'cash' => 'Cash',
+            'bank' => 'Bank',
+            'mobile_banking' => 'Mobile Banking',
+            'card' => 'Card',
+            'advance' => 'Advance',
+        ];
+
+        return $list;
+    }
+}
+
+if (!function_exists('mobileBankList')) {
+    function mobileBankList()
+    {
+        $list = [
+            'bkash' => 'bKash',
+            'rocket' => 'Rocket',
+            'nagad' => 'Nagad',
+            'surecash' => 'SureCash',
+            'ucash' => 'UCash',
+            'mCash' => 'mCash',
+            'tap' => 'Tap',
+        ];
+
+        return $list;
+    }
+}
+
+// card type
+if (!function_exists('cardTypeList')) {
+    function cardTypeList()
+    {
+        $list = [
+            'mastercard' => 'MasterCard',
+            'visa' => 'Visa',
+            'amex' => 'American Express',
+            'nexus' => 'Nexus',
+            'credit' => 'Credit Card',
+            'debit' => 'Debit Card',
+            'prepaid' => 'Prepaid Card',
+
+        ];
+
+        return $list;
+    }
+}
+
 if (!function_exists('getSessionLanguage')) {
     function getSessionLanguage(): string
     {
@@ -204,7 +255,7 @@ if (!function_exists('getSettingStatus')) {
             try {
                 return Setting::where('key', $key)->first()?->value == 'active' ? true : false;
             } catch (Exception $e) {
-                    Log::info($e->getMessage());
+                Log::info($e->getMessage());
                 return false;
             }
         }

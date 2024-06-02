@@ -2,16 +2,21 @@
 
 namespace Modules\Accounts\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Modules\Accounts\app\Services\AccountsService;
 use Modules\Accounts\app\Services\BankService;
 
 class AccountsController extends Controller
 {
-
-    public function __construct(private BankService $bankService)
+    use RedirectHelperTrait;
+    public function __construct(private BankService $bankService, private AccountsService $accountsService)
     {
         $this->middleware('auth:admin');
     }
@@ -20,7 +25,7 @@ class AccountsController extends Controller
      */
     public function index()
     {
-        $accounts = $this->bankService->all()->paginate(20);
+        $accounts = $this->accountsService->all()->paginate(20);
         return view('accounts::index', compact('accounts'));
     }
 
@@ -29,7 +34,8 @@ class AccountsController extends Controller
      */
     public function create()
     {
-        return view('accounts::create');
+        $accounts = $this->bankService->all()->get();
+        return view('accounts::create', compact('accounts'));
     }
 
     /**
@@ -37,7 +43,13 @@ class AccountsController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        //
+        try {
+            $this->accountsService->create($request->except('_token'));
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.accounts.create',[],['messege'=>'Account created successfully', 'alert-type'=>'success']);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.accounts.create',[],['messege'=>'Something went wrong', 'alert-type'=>'error']);
+        }
     }
 
     /**
