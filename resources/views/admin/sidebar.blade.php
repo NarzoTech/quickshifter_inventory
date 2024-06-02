@@ -45,6 +45,9 @@
             @if (Module::isEnabled('Accounts'))
                 @include('accounts::sidebar')
             @endif
+            @if (Module::isEnabled('Expense'))
+                @include('expense::sidebar')
+            @endif
 
             {{-- <li class="menu-header">{{ __('Manage Contents') }}</li> --}}
 
