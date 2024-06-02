@@ -41,7 +41,7 @@ class ExpenseTypeController extends Controller
             $type->name = $request->name;
             $type->save();
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.expense.type.index', [], ['messege' => 'Expense Type Created Successfully', 'alert-type' => 'success']);
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             Log::error($th->getMessage());
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.expense.type.create', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
         }
@@ -68,7 +68,15 @@ class ExpenseTypeController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        try {
+            $type = ExpenseType::find($id);
+            $type->name = $request->name;
+            $type->save();
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.type.index', [], ['messege' => 'Expense Type Updated Successfully', 'alert-type' => 'success']);
+        } catch (\Exception $th) {
+            Log::error($th->getMessage());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.type.index', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 
     /**

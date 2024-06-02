@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Account List') }}</title>
+    <title>{{ __('Expense Type') }}</title>
 @endsection
 
 @push('css')
@@ -113,7 +113,7 @@
                                                                 aria-labelledby="btnGroupDrop{{ $type->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#editbank{{ $type->id }}">Edit</a>
+                                                                    data-target="#editType{{ $type->id }}">Edit</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $type->id }})">
@@ -145,13 +145,13 @@
     <x-admin.delete-modal />
 
 
-    {{-- add Expense --}}
+    {{-- add Expense type--}}
     <div class="modal" id="addExpense">
         <div class="modal-dialog">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">{{ __('Add Expense') }}</h4>
+                    <h4 class="modal-title">{{ __('Add Expense Type') }}</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <!-- Modal body -->
@@ -176,6 +176,45 @@
         </div>
     </div>
 
+    {{-- edit expense type --}}
+    @foreach ($types as $index => $type)
+        <div class="modal" id="editType{{ $type->id }}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ __('Edit Expense Type') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="{{ route('admin.expense.type.update', $type->id) }}" method="POST"
+                            id="edit-type-form{{ $type->id }}">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+                                <div class="form-group col-12">
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ $type->name }}">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="submit" class="btn btn-primary"
+                            form="edit-type-form{{ $type->id }}">{{ __('Update') }}</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
     @push('js')
         <script>
             function deleteData(id) {
