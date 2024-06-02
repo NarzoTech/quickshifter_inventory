@@ -84,6 +84,13 @@ class ExpenseTypeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $type = ExpenseType::find($id);
+            $type->delete();
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.expense.type.index', [], ['messege' => 'Expense Type Deleted Successfully', 'alert-type' => 'success']);
+        } catch (\Exception $th) {
+            Log::error($th->getMessage());
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.expense.type.index', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 }
