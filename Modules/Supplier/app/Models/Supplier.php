@@ -18,18 +18,14 @@ class Supplier extends Model
      */
     protected $fillable = [
         'name',
-        'email',
-        'phone',
-        'address',
-        'city',
-        'state',
-        'country',
-        'zip',
         'company',
-        'tax_number',
-        'note',
+        'phone',
+        'email',
+        'group_id',
+        'area_id',
+        'date',
+        'address',
         'status',
-        'created_by',
-        'updated_by',
+        'guest',
     ];
 }

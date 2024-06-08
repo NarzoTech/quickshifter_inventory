@@ -9,7 +9,7 @@ class SupplierService
 {
     public function __construct(private Supplier $supplier)
     {
-        
+
     }
 
     public function all()
@@ -21,6 +21,7 @@ class SupplierService
     {
         $data = $request->except('_token');
         $data['created_by'] = auth()->id();
+        $data['date'] = now()->parse($request->date);
         return $this->supplier->create($data);
     }
 
@@ -28,6 +29,7 @@ class SupplierService
     {
         $data = $request->except(['_token', '_method']);
         $data['updated_by'] = auth()->id();
+        $data['date'] = now()->parse($request->date);
         return $this->supplier->where('id', $id)->update($data);
     }
 

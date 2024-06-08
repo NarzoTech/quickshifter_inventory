@@ -14,19 +14,15 @@ return new class extends Migration
         Schema::create('supplier', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('country')->nullable();
-            $table->string('zip')->nullable();
             $table->string('company')->nullable();
-            $table->string('tax_number')->nullable();
-            $table->string('note')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->unsignedBigInteger('group_id')->nullable();
+            $table->unsignedBigInteger('area_id')->nullable();
+            $table->date('date')->nullable();
+            $table->string('address')->nullable();
             $table->boolean('status')->default(true);
-            $table->string('created_by')->nullable();
-            $table->string('updated_by')->nullable();
+            $table->boolean('guest')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });

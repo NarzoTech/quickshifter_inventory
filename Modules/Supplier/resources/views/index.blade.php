@@ -181,7 +181,7 @@
                                 <label for="name">{{ __('Supplier Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label for="company">{{ __('Company') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -215,6 +215,15 @@
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
+                                <label for="group_id">{{ __('Supplier Group') }}</label>
+                                <select name="group_id" id="group_id" class="form-control">
+                                    <option value="">{{ __('Select Group') }}</option>
+                                    @foreach ($groups as $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
                                 <label for="area_id">{{ __('Area') }}</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -246,7 +255,7 @@
                                 <label class="custom-switch mt-2">
                                     <input type="checkbox" name="guest" class="custom-switch-input" value="1">
                                     <span class="custom-switch-indicator"></span>
-                                    <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
+                                    <label for="guest" class="ml-2">{{ __('Guest Supplier') }}</label>
                                 </label>
                             </div>
                             <div class="form-group col-md-12">
