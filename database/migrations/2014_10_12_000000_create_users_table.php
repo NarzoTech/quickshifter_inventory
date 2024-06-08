@@ -16,10 +16,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('tax_number')->nullable();
+            $table->integer('group_id')->nullable();
+            $table->integer('area_id')->nullable();
+            $table->integer('vehicle_id')->nullable();
+            $table->string('membership')->nullable();
+            $table->date('date')->nullable();
             $table->string('address')->nullable();
-            $table->string('city')->nullable();
             $table->boolean('status')->default(1);
+            $table->boolean('guest')->default(0);
             $table->decimal('wallet_balance', 8, 2)->default(0.00)->nullable();
             $table->rememberToken();
             $table->timestamps();

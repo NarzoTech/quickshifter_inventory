@@ -21,11 +21,13 @@ class User extends Model
         'name',
         'email',
         'phone',
-        'tax_number',
+        'group_id',
+        'area_id',
+        'vehicle_id',
+        'membership',
+        'date',
         'address',
-        'city',
         'status',
         'wallet_balance',
     ];
-
 }

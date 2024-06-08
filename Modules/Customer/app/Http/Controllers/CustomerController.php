@@ -12,13 +12,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Modules\Customer\app\Http\Services\AreaService;
+use Modules\Customer\app\Http\Services\UserGroupService;
 use Modules\Customer\app\Jobs\SendBulkEmailToUser;
 use Modules\Customer\app\Jobs\SendUserBannedMailJob;
 use Modules\Customer\app\Models\BannedHistory;
+use Modules\Customer\app\Models\Vehicle;
 
 class CustomerController extends Controller
 {
     use RedirectHelperTrait;
+
+    public function __construct(private UserGroupService $userGroup, private AreaService $areaService, private Vehicle $vehicle)
+    {
+        $this->middleware('auth:admin');
+    }
 
     public function index(Request $request)
     {
@@ -41,14 +49,21 @@ class CustomerController extends Controller
             $users = $query->orderBy( 'id', $orderBy )->paginate()->withQueryString();
         }
 
-        return view('customer::customer')->with([
+        $groups =$this->userGroup->getUserGroup()->where('type','customer')->where('status',1)->get();
+        $areaList = $this->areaService->getArea()->get();
+        $vehicles = $this->vehicle->get();
+         return view('customer::customer')->with([
             'users' => $users,
+            'groups' => $groups,
+            'areaList' => $areaList,
+            'vehicles' => $vehicles,
         ]);
     }
 
     // store
     public function store(Request $request)
     {
+        dd($request->all());
         checkAdminHasPermissionAndThrowException('customer.create');
 
         $request->validate([
