@@ -7,12 +7,14 @@ use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Modules\Customer\app\Http\Services\AreaService;
+use Modules\Customer\app\Http\Services\UserGroupService;
 use Modules\Supplier\app\Services\SupplierService;
 
 class SupplierController extends Controller
 {
     use RedirectHelperTrait;
-    public function __construct(private SupplierService $supplierService)
+    public function __construct(private SupplierService $supplierService, private UserGroupService $userGroup, private AreaService $areaService)
     {
         $this->middleware('auth:admin');
     }
@@ -22,7 +24,9 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = $this->supplierService->all()->paginate(20);
-        return view('supplier::index', compact('suppliers'));
+        $groups = $this->userGroup->getUserGroup()->where('type', 'supplier')->where('status', 1)->get();
+        $areaList = $this->areaService->getArea()->get();
+        return view('supplier::index', compact('suppliers', 'groups', 'areaList'));
     }
 
     /**

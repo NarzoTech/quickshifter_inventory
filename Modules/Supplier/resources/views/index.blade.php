@@ -181,36 +181,73 @@
                                 <label for="name">{{ __('Supplier Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label for="company">{{ __('Company') }}</label>
-                                <input type="text" class="form-control" id="company" name="company">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fa fa-briefcase"></i>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" id="company" name="company">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <label for="phone">{{ __('Phone') }}</label>
-                                <input type="text" class="form-control" id="phone" name="phone">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-phone-alt"></i>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" id="phone" name="phone">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6 ">
+                            <div class="form-group col-md-4">
                                 <label for="email">{{ __('Email') }}</label>
-                                <input type="email" class="form-control" id="email" name="email">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                    </div>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="city">{{ __('City') }}</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                            <div class="form-group col-md-4">
+                                <label for="area_id">{{ __('Area') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                    </div>
+                                    <select name="area_id" id="area_id" class="form-control">
+                                        <option value="">{{ __('Select Area') }}</option>
+                                        @foreach ($areaList as $list)
+                                            <option value="{{ $list->id }}">{{ $list->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="state">{{ __('State') }}</label>
-                                <input type="text" class="form-control" id="state" name="state">
+                            <div class="form-group col-md-4 ">
+                                <label for="date">{{ __('Date') }}</label>
+                                <input type="text" class="form-control datepicker" id="date" name="date">
                             </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="country">{{ __('Country') }}</label>
-                                <input type="text" class="form-control" id="country" name="country">
-                            </div>
-                            <div class="form-group col-md-6">
+
+                            <div class="form-group col-md-4">
                                 <label for="status">{{ __('Status') }}</label>
                                 <select name="status" id="status" class="form-control">
                                     <option value="1">{{ __('Active') }}</option>
                                     <option value="0">{{ __('Inactive') }}</option>
                                 </select>
+                            </div>
+                            <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
+                                <label class="custom-switch mt-2">
+                                    <input type="checkbox" name="guest" class="custom-switch-input" value="1">
+                                    <span class="custom-switch-indicator"></span>
+                                    <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
+                                </label>
                             </div>
                             <div class="form-group col-md-12">
                                 <label for="address">{{ __('Address') }}</label>
@@ -257,9 +294,10 @@
                                         value="{{ $supplier->name }}">
                                 </div>
                                 <div class="form-group col-md-6">
-                                <label for="company">{{ __('Company') }}</label>
-                                <input type="text" class="form-control" id="company" name="company" value="{{ $supplier->company }}">
-                            </div>
+                                    <label for="company">{{ __('Company') }}</label>
+                                    <input type="text" class="form-control" id="company" name="company"
+                                        value="{{ $supplier->company }}">
+                                </div>
                                 <div class="form-group col-md-6">
                                     <label for="phone">{{ __('Phone') }}</label>
                                     <input type="text" class="form-control" id="phone" name="phone"

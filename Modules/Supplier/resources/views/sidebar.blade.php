@@ -10,5 +10,10 @@
                 {{ __('Supplier List') }}
             </a>
         </li>
+        <li class="{{ isRoute('admin.supplierGroup.index', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.supplierGroup.index') }}">
+                {{ __('Supplier Group') }}
+            </a>
+        </li>
     </ul>
 </li>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Supplier\app\Http\Controllers\SupplierController;
+use Modules\Supplier\app\Http\Controllers\SupplierGroupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,5 @@ use Modules\Supplier\app\Http\Controllers\SupplierController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('suppliers', SupplierController::class);
+    Route::resource('supplierGroup', SupplierGroupController::class);
 });
