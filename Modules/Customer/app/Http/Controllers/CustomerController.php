@@ -63,20 +63,25 @@ class CustomerController extends Controller
     // store
     public function store(Request $request)
     {
-        dd($request->all());
         checkAdminHasPermissionAndThrowException('customer.create');
 
         $request->validate([
             'name' => 'required',
+            'phone' => 'nullable|unique:users,phone',
+            'email' => 'nullable|email|unique:users,email',
         ]);
 
         $user = new User();
         $user->name = $request->name;
         $user->phone = $request->phone;
         $user->email = $request->email;
-        $user->city = $request->city;
-        $user->tax_number = $request->tax_number;
+        $user->group_id = $request->group_id;
+        $user->area_id = $request->area_id;
+        $user->vehicle_id = $request->vehicle_id;
+        $user->membership = $request->membership;
+        $user->date = now()->parse($request->date);
         $user->status = $request->status;
+        $user->guest = $request->guest ? 1 : 0;
         $user->address = $request->address;
         $user->save();
 
@@ -104,15 +109,21 @@ class CustomerController extends Controller
 
         $request->validate([
             'name' => 'required',
+            'phone' => 'nullable|unique:users,phone,'.$id,
+            'email' => 'nullable|email|unique:users,email,'.$id,
         ]);
 
         $user = User::findOrFail($id);
         $user->name = $request->name;
         $user->phone = $request->phone;
         $user->email = $request->email;
-        $user->city = $request->city;
-        $user->tax_number = $request->tax_number;
+        $user->group_id = $request->group_id;
+        $user->area_id = $request->area_id;
+        $user->vehicle_id = $request->vehicle_id;
+        $user->membership = $request->membership;
+        $user->date = now()->parse($request->date);
         $user->status = $request->status;
+        $user->guest = $request->guest ? 1 : 0;
         $user->address = $request->address;
         $user->save();
 

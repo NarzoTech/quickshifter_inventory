@@ -241,6 +241,13 @@
                                     <option value="0">{{ __('Inactive') }}</option>
                                 </select>
                             </div>
+                            <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
+                                <label class="custom-switch mt-2">
+                                    <input type="checkbox" name="guest" class="custom-switch-input" value="1">
+                                    <span class="custom-switch-indicator"></span>
+                                    <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
+                                </label>
+                            </div>
                             <div class="form-group col-md-12">
                                 <label for="address">{{ __('Address') }}</label>
                                 <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
