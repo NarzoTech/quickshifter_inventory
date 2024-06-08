@@ -27,7 +27,14 @@ class AccountsController extends Controller
     public function index()
     {
         $accounts = $this->accountsService->all()->paginate(20);
-        return view('accounts::index', compact('accounts'));
+        $bankAccounts = $this->accountsService->all()->where('account_type','bank')->get();
+        $cashAccounts = $this->accountsService->all()->where('account_type','cash')->get();
+        $mobileAccounts = $this->accountsService->all()->where('account_type', 'mobile_banking')->get();
+        $cardAccounts = $this->accountsService->all()->where('account_type', 'card')->get();
+        $advanceAccounts = $this->accountsService->all()->where('account_type', 'advance')->get();
+
+
+        return view('accounts::index', compact('accounts','bankAccounts','cashAccounts','mobileAccounts','cardAccounts','advanceAccounts'));
     }
 
     /**

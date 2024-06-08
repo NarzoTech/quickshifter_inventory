@@ -27,7 +27,6 @@
             <div class="section-header">
                 <h1>{{ __('Bank List') }}</h1>
             </div>
-
             <div class="section-body">
                 <div class="row">
                     {{-- Search filter --}}
@@ -215,6 +214,8 @@
             </div>
         </div>
     @endforeach
+
+
 
     @push('js')
         <script>

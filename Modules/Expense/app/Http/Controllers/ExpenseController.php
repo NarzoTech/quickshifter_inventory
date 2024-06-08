@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Accounts\app\Models\Account;
+use Modules\Expense\app\Models\Expense;
+use Modules\Expense\app\Models\ExpenseType;
 
 class ExpenseController extends Controller
 {
@@ -14,7 +17,10 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        return view('expense::index');
+        $expenses = Expense::paginate(20);
+        $types = ExpenseType::all();
+        $accounts = Account::all();
+        return view('expense::index', compact('expenses', 'types', 'accounts'));
     }
 
     /**

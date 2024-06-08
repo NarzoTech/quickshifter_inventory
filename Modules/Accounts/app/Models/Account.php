@@ -27,4 +27,13 @@ class Account extends Model
         'bank_account_number',
         'bank_account_branch',
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     */
+
+     public function bank()
+     {
+         return $this->belongsTo(Bank::class);
+     }
 }
