@@ -77,6 +77,16 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
+                                                <label>{{ __('Attachment') }}</label>
+                                                <input type="file" class="form-control" name="attachment"
+                                                    value="{{ old('attachment') }}">
+                                                @error('attachment')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
                                                 <label>{{ __('Purchase Status') }}</label>
                                                 <select class="form-control" name="status">
                                                     <option value="">{{ __('Select Status') }}</option>
@@ -109,6 +119,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>{{ __('Product Name') }}</th>
+                                                        <th>{{ __('Product Stock') }}</th>
                                                         <th>{{ __('Quantity') }}</th>
                                                         <th>{{ __('Purchase Price') }}</th>
                                                         <th>{{ __('Sub Total') }}</th>
@@ -212,9 +223,7 @@
     <script>
         'use strict';
 
-        function addPurchaseRow(product) {
-
-
+        function addPurchaseRow(product)
             // calculation profit per product on product cost and product price
             let profit = ((parseFloat(product.price) - parseFloat(product.cost)) / parseFloat(product.cost)) * 100;
             let tr = `
@@ -324,7 +333,7 @@
         })
 
 
-        // 
+        //
 
         function calculateTotalAmount() {
 

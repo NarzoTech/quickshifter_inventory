@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('reference_no')->nullable();
             $table->date('purchase_date');
             $table->integer('items');
+            $table->string('attachment')->nullable();
             $table->decimal('total_amount', 10, 2);
             $table->decimal('paid_amount', 10, 2);
             $table->decimal('due_amount', 10, 2);
