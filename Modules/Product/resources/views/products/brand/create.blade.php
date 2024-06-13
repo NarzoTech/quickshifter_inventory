@@ -70,7 +70,7 @@
 
                                         @if (Module::isEnabled('Media'))
                                             <div class="form-group col-md-8 offset-md-2">
-                                                <x-media::media-input name="image" label_text="Image" />
+                                                <x-media::media-input name="image" label_text="Image" requ/>
                                             </div>
                                         @endif
                                         <div class="text-center offset-md-2 col-md-8">

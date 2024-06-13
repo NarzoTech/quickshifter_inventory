@@ -1,9 +1,11 @@
-@props(['label_text' => __('Thumbnail Image'), ' multiple' => 'no', 'dataImages' => false])
+@props(['label_text' => __('Thumbnail Image'), ' multiple' => 'no', 'dataImages' => false , 'required' => false])
 
 {{-- Media preview area --}}
 <div class="select-media-preview d-flex"></div>
 
-<label>{{ $label_text }}<span class="text-danger">*</span></label>
+<label>{{ $label_text }}@if ($required)
+    <span class="text-danger">*</span>
+@endif</label>
 <div class="input-group">
     <input {!! $attributes->merge(['class' => 'form-control']) !!} type="hidden" id="mediaInputId">
     <div class="input-group-append">

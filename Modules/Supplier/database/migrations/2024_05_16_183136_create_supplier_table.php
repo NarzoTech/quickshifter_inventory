@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->string('address')->nullable();
             $table->boolean('status')->default(true);
-            $table->boolean('guest')->default(true);
+            $table->boolean('guest')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
