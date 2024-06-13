@@ -113,7 +113,7 @@
                                                     <td>{{ $supplier->name }}</td>
                                                     <td>{{ $supplier->phone }}</td>
                                                     <td>{{ currency($supplier->total_purchase) }}</td>
-                                                    <td>{{ currency($supplier->total_purchase_pay) }}</td>
+                                                    <td>{{ currency($supplier->total_paid) }}</td>
                                                     <td>{{ currency($supplier->total_purchase_return) }}</td>
                                                     <td>{{ currency($supplier->total_purchase_return_pay) }}</td>
                                                     <td>{{ currency($supplier->total_due) }}</td>
