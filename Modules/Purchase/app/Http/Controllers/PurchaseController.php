@@ -2,11 +2,15 @@
 
 namespace Modules\Purchase\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Modules\Purchase\app\Http\Requests\PurchaseRequest;
 use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Purchase\app\Services\PurchaseService;
 
@@ -43,9 +47,20 @@ class PurchaseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(PurchaseRequest $request): RedirectResponse
     {
-        dd($request->all());
+        DB::beginTransaction();
+        try {
+            $this->purchaseService->store($request);
+
+            DB::commit();
+
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.index', [], ['messege' => 'Product Purchase successfully', 'alert-type' => 'success']);
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            DB::rollBack();
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 
     /**

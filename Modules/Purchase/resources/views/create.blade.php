@@ -22,7 +22,7 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <form method="POST" action="{{ route('admin.purchase.store') }}">
+                        <form method="POST" action="{{ route('admin.purchase.store') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="card">
                                 <div class="card-header">
@@ -59,7 +59,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Purchase Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="purchase_date"
-                                                    value="{{ old('purchase_date') }}">
+                                                    value="{{ old('purchase_date',now()->format('d-m-Y')) }}">
                                                 @error('purchase_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -90,7 +90,7 @@
                                                 <label>{{ __('Purchase Status') }}</label>
                                                 <select class="form-control" name="status">
                                                     <option value="">{{ __('Select Status') }}</option>
-                                                    <option value="1">{{ __('Pending') }}</option>
+                                                    <option value="1" selected>{{ __('Pending') }}</option>
                                                     <option value="2">{{ __('Received') }}</option>
                                                 </select>
                                                 @error('status')
@@ -173,9 +173,13 @@
                                                     </div>
                                                     <div class="col-8">
                                                         <select name="payment_type" id="" class="form-control">
-                                                            <option value="">{{ __('Select Payment Type') }}</option>
-                                                            @foreach ($accounts as $account)
-                                                                <option value="{{ $account->id }}">{{ $account->account_type }}</option>
+                                                            <option value="">{{ __('Select Payment Type') }}
+                                                            </option>
+                                                            @foreach (accountList() as $key => $list)
+                                                                <option value="{{ $key }}" @if ($key == 'cash')
+                                                                    selected
+                                                                @endif data-name="{{ $list }}">{{ $list }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -226,7 +230,7 @@
     <script>
         'use strict';
 
-        function addPurchaseRow(product)
+        function addPurchaseRow(product) {
             // calculation profit per product on product cost and product price
             let profit = ((parseFloat(product.price) - parseFloat(product.cost)) / parseFloat(product.cost)) * 100;
             let tr = `
@@ -234,6 +238,9 @@
                     <td>
                         <input type="text" class="form-control" name="product_name[]" value="${product.name}" readonly>
                         <input type="hidden" name="product_id[]" value="${product.id}">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" name="stock[]" value="${product.stock}" readonly>
                     </td>
                     <td>
                         <input type="number" class="form-control" name="quantity[]" value="1" min="1">
@@ -283,14 +290,6 @@
             calculateTotalAmount();
 
         });
-        // $(document).on('input', '[name="profit[]"]', function() {
-        //     var tr = $(this).closest('tr');
-        //     var profit = tr.find('input[name="profit[]"]').val() ?? 0;
-        //     var unit_price = tr.find('input[name="unit_price[]"]').val();
-        //     var selling_price = parseFloat(unit_price) + (parseFloat(unit_price) * parseFloat(profit) / 100);
-        //     tr.find('input[name="selling_price[]"]').val(selling_price);
-
-        // });
 
         $(document).on('change', '[name="selling_price[]"]', function() {
             var tr = $(this).closest('tr');
@@ -333,6 +332,11 @@
             let paid_amount = parseFloat($(this).val());
             let due_amount = total_amount - paid_amount;
             $('[name="due_amount"]').val(due_amount);
+        })
+
+        $(document).on('change','[name="payment_type"]',function(){
+            let payment_type = $(this).data('name');
+            $('[name="payment_method"]').val(payment_type);
         })
 
 
