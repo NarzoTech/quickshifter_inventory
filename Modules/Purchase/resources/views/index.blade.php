@@ -105,12 +105,12 @@
                                             @foreach ($purchases as $index => $purchase)
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
-                                                    <td>{{ $purchase->date }}</td>
+                                                    <td>{{ $purchase->purchase_date }}</td>
                                                     <td>{{ $purchase->invoice_number }}</td>
-                                                    <td>{{ $purchase->supplier->name }}</td>
+                                                    <td>{{ $purchase->supplier?->name }}</td>
                                                     <td>{{ currency($purchase->total_amount) }}</td>
-                                                    <td>{{ currency($purchase->total_pay) }}</td>
-                                                    <td>{{ currency($purchase->total_due) }}</td>
+                                                    <td>{{ currency($purchase->paid_amount) }}</td>
+                                                    <td>{{ currency($purchase->due_amount) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $purchase->id }}" type="button"
