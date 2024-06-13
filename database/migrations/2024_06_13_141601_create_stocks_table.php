@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->nullable();
-            $table->foreignId('purchase_id')->constrained('purchases')->nullable();
-            $table->foreignId('warehouse_id')->constrained('warehouses')->nullable();
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('purchase_id')->nullable();
+            $table->unsignedBigInteger('warehouse_id')->nullable();
             $table->integer('quantity');
             $table->string('sku')->nullable();
             $table->decimal('purchase_price', 10, 2)->nullable();
@@ -25,6 +25,10 @@ return new class extends Migration
             $table->decimal('tax', 10, 2)->nullable();
             $table->foreignId('created_by')->constrained('admins');
             $table->foreignId('updated_by')->nullable()->constrained('admins');
+
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');
+            $table->foreign('warehouse_id')->references('id')->on('warehouses')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

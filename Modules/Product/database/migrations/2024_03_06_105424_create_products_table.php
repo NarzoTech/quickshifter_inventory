@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('short_description')->nullable();
-            $table->foreignId('brand_id')->constrained('product_brands')->nullable();
+            $table->unsignedBigInteger('brand_id')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
             $table->integer('unit_id')->nullable();
             $table->integer('unit_sale_id')->nullable();
@@ -34,6 +34,11 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->string("tax_type", 50)->nullable();
             $table->double("tax", 16, 2)->default(0)->nullable();
+
+            $table->foreign('category_id')->references('id')->on('product_categories')->onDelete('cascade');
+            $table->foreign('brand_id')->references('id')->on('product_brands')->onDelete('cascade');
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('cascade');
+            $table->foreign('unit_sale_id')->references('id')->on('units')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

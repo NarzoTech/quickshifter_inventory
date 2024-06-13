@@ -78,7 +78,6 @@ class ProductController extends Controller
                     'alert-type' => 'error',
                 ]);
             }
-
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();

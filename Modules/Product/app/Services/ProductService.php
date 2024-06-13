@@ -2,6 +2,7 @@
 
 namespace Modules\Product\app\Services;
 
+use App\Models\Stock;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Product\app\Models\Product;
@@ -9,6 +10,7 @@ use Modules\Product\app\Models\Variant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Modules\Product\app\Models\VariantOption;
 use Modules\Product\app\Models\AttributeValue;
 use Modules\Language\app\Enums\TranslationModels;
@@ -71,6 +73,19 @@ class ProductService
         $product = $this->product->create(
             $request->validated()
         );
+        if ($request->stock) {
+            Stock::create([
+                'purchase_id' => null, 
+                'product_id' => $product->id,
+                'quantity' => $request->stock,
+                'sku' => $request->sku,
+                'purchase_price' => $request->cost,
+                'sale_price' => $request->price,
+                'profit' => $request->profit,
+                'tax' => $request->tax,
+                'created_by' => auth('admin')->user()->id,
+            ]);
+        }
 
         return $product;
     }
