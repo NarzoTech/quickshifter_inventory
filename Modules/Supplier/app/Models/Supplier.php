@@ -68,4 +68,9 @@ class Supplier extends Model
         return $this->total_purchase - $this->total_paid;
     }
 
+    public function duePurchase()
+    {
+        return $this->hasMany(Purchase::class, 'supplier_id')->where('payment_status', 'due');
+    }
+
 }

@@ -99,4 +99,11 @@ class SupplierController extends Controller
             return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier deletion failed.', 'alert-type' => 'error']);
         }
     }
+
+
+    public function duePay($id)
+    {
+        $supplier = $this->supplierService->find($id)->with('duePurchase')->first();
+        return view('supplier::due-pay', compact('supplier'));
+    }
 }

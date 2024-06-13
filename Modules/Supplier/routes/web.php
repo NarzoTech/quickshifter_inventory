@@ -17,5 +17,6 @@ use Modules\Supplier\app\Http\Controllers\SupplierGroupController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('suppliers', SupplierController::class);
+    Route::get('suppliers/due-pay/{id}', [SupplierController::class, 'duePay'])->name('suppliers.due-pay');
     Route::resource('supplierGroup', SupplierGroupController::class);
 });

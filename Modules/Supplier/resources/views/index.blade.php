@@ -133,7 +133,11 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editSupplier{{ $supplier->id }}">Edit</a>
-                                                                <a class="dropdown-item" href="#">Sales</a>
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
+                                                                <a class="dropdown-item"
+                                                                    href="#">{{ __('Sales') }}</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $supplier->id }})">

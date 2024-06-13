@@ -17,6 +17,11 @@ class SupplierService
         return $this->supplier;
     }
 
+    public function find($id)
+    {
+        return $this->supplier->find($id);
+    }
+
     public function storeSupplier(Request $request)
     {
         $data = $request->except('_token');
