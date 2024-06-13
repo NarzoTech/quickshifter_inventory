@@ -36,7 +36,8 @@ class PurchaseController extends Controller
         $warehouses = $this->purchaseService->getWarehouses();
         $products = $this->purchaseService->getProducts($request);
         $invoiceNumber = $this->purchaseService->genInvoiceNumber();
-        return view('purchase::create', compact('suppliers', 'warehouses', 'products', 'invoiceNumber'));
+        $accounts = $this->purchaseService->getAccounts();
+        return view('purchase::create', compact('suppliers', 'warehouses', 'products', 'invoiceNumber', 'accounts'));
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Modules\Accounts\app\Services\AccountsService;
 use Modules\Purchase\app\Models\Purchase;
 use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Supplier\app\Models\Supplier;
@@ -16,7 +17,7 @@ class PurchaseService
 {
 
 
-    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails,private ProductService $productService)
+    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails,private ProductService $productService, private Supplier $supplier, private Warehouse $warehouse, private Product $product, private AccountsService $accountsService)
     {
     }
 
@@ -139,7 +140,7 @@ class PurchaseService
     }
 
     public function genInvoiceNumber(){
-        $number = 1000000; 
+        $number = 1000000;
         $prefix = 'INV-';
         $invoice_number = $prefix.$number;
 
@@ -185,5 +186,10 @@ class PurchaseService
     {
         $products = $this->productService->allActiveProducts($request);
         return $products->get();
+    }
+
+    public function getAccounts()
+    {
+        return $this->accountsService->all()->get();
     }
 }

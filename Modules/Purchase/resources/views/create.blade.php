@@ -173,7 +173,10 @@
                                                     </div>
                                                     <div class="col-8">
                                                         <select name="payment_type" id="" class="form-control">
-                                                            <option value="cash">{{ __('Cash') }}</option>
+                                                            <option value="">{{ __('Select Payment Type') }}</option>
+                                                            @foreach ($accounts as $account)
+                                                                <option value="{{ $account->id }}">{{ $account->account_type }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
