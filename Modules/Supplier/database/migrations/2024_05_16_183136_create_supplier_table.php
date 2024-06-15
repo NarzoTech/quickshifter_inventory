@@ -23,6 +23,11 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->boolean('status')->default(true);
             $table->boolean('guest')->default(false);
+            $table->decimal('balance', 10, 2)->default(0);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('group_id')->references('id')->on('user_group')->onDelete('cascade');
+            $table->foreign('area_id')->references('id')->on('area')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

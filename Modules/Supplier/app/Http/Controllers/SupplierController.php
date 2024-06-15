@@ -6,6 +6,7 @@ use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
@@ -107,5 +108,39 @@ class SupplierController extends Controller
         $supplier = $this->supplierService->find($id)->with('duePurchase')->first();
         $accounts = $this->accountsService->all()->with('bank')->get();
         return view('supplier::due-pay', compact('supplier', 'accounts'));
+    }
+
+    public function duePayStore(Request $request, $id)
+    {        
+        $rule = [
+            'invoice_no' => 'required|array',
+            'invoice_no.*' => 'required',
+            'amount' => 'required|array',
+            'amount.*' => 'required',
+            'payment_date' => 'required|date',
+            'paying_amount' => 'required',
+            'payment_type' => 'required',
+        ];
+
+        $message = [
+            'invoice_no.required' => 'Invoice number is required',
+            'amount.required' => 'Amount is required',
+            'date.required' => 'Date is required',
+            'paying_amount.required' => 'Paying amount is required',
+            'payment_type.required' => 'Payment type is required',
+        ];
+
+        $request->validate($rule, $message);
+        DB::beginTransaction();
+        try {
+            $this->supplierService->duePay($request, $id);
+
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.suppliers.index', [], ['messege' => 'Due payment successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.suppliers.index', [], ['messege' => 'Due payment failed.', 'alert-type' => 'error']);
+        }
     }
 }

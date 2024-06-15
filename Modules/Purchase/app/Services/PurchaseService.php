@@ -95,6 +95,11 @@ class PurchaseService
             'created_by' => auth('admin')->user()->id,
         ]);
 
+        // update supplier balance
+        $supplier = Supplier::find($request->supplier_id);
+        $supplier->balance += $request->due_amount;
+        $supplier->save();
+
         return $purchase;
     }
 
