@@ -1,5 +1,5 @@
 <li
-    class="nav-item dropdown {{ isRoute(['admin.suppliers.*'], 'active') }}">
+    class="nav-item dropdown {{ isRoute(['admin.suppliers.*','admin.supplierGroup.index'])  ? 'active' : '' }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
         <i class="fas fa-users"></i><span>{{ __('Manage Suppliers') }}</span>
     </a>
@@ -10,7 +10,12 @@
                 {{ __('Supplier List') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.supplierGroup.index', 'active') }}">
+        <li class="{{ isRoute('admin.suppliers.due-pay-history', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.suppliers.due-pay-history') }}">
+                {{ __('Supplier Due Paid List') }}
+            </a>
+        </li>
+        <li class="{{ isRoute('admin.supplierGroup.index') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.supplierGroup.index') }}">
                 {{ __('Supplier Group') }}
             </a>

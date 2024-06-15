@@ -143,4 +143,10 @@ class SupplierController extends Controller
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.suppliers.index', [], ['messege' => 'Due payment failed.', 'alert-type' => 'error']);
         }
     }
+
+    public function duePayHistory()
+    {
+        $payments = $this->supplierService->duePayHistory();
+        return view('supplier::due-pay-history', compact('payments'));
+    }
 }

@@ -16,9 +16,10 @@ use Modules\Supplier\app\Http\Controllers\SupplierGroupController;
 */
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
-    Route::resource('suppliers', SupplierController::class);
+    Route::resource('suppliers', SupplierController::class)->except(['show']);
     Route::get('suppliers/due-pay/{id}', [SupplierController::class, 'duePay'])->name('suppliers.due-pay');
     Route::post('suppliers/due-pay-store/{id}', [SupplierController::class, 'duePayStore'])->name('suppliers.due-pay-store');
-    Route::get('suppliers/due-pay-history/{id}', [SupplierController::class, 'duePayHistory'])->name('suppliers.due-pay-history');
+
+    Route::get('suppliers/due-pay-history', [SupplierController::class, 'duePayHistory'])->name('suppliers.due-pay-history');
     Route::resource('supplierGroup', SupplierGroupController::class);
 });

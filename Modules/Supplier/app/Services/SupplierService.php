@@ -84,4 +84,10 @@ class SupplierService
             ]);
         }
     }
+
+    public function duePayHistory()
+    {
+        $list  = Payment::whereNotNull('purchase_id')->where('payment_type', 'due_pay')->get();
+        return $list;
+    }
 }
