@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Purchase\app\Http\Controllers\PurchaseController;
+use Modules\Purchase\app\Http\Controllers\PurchaseReturnTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,7 @@ use Modules\Purchase\app\Http\Controllers\PurchaseController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('purchase', PurchaseController::class)->names('purchase');
-    Route::get('purchase/return/list', [PurchaseController::class, 'returnList'])->name('purchase.return.list');
+    Route::get('purchase/return/list', [PurchaseReturnTypeController::class, 'index'])->name('purchase.return.list');
+
     Route::post('purchase/product', [PurchaseController::class, 'product'])->name('purchase.product');
 });
