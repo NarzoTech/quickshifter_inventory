@@ -153,24 +153,16 @@
                                             <div class="col-12">
                                                 <div class="form-group row">
                                                     <div class="col-4">
-                                                        <input type="text" class="form-control" name="payment_method"
-                                                            value="cash" readonly>
+                                                        <label>{{ __('Paying Date') }}</label>
                                                     </div>
                                                     <div class="col-8">
-                                                        <input type="text" class="form-control" name="paid_amount">
+                                                        <input type="text" class="form-control datepicker" name="payment_date" value="{{ now()->format('d-m-Y') }}"
+                                                            >
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
-                                                <div class="form-group row">
-                                                    <div class="col-4">
-                                                        <label>{{ __('Due') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <input type="text" class="form-control" name="due_amount"
-                                                            readonly>
-                                                    </div>
-                                                </div>
+                                                @include('components.account-type')
                                             </div>
                                         </div>
                                     </div>

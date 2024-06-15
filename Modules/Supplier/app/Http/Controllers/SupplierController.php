@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
 use Modules\Supplier\app\Services\SupplierService;
@@ -14,7 +15,7 @@ use Modules\Supplier\app\Services\SupplierService;
 class SupplierController extends Controller
 {
     use RedirectHelperTrait;
-    public function __construct(private SupplierService $supplierService, private UserGroupService $userGroup, private AreaService $areaService)
+    public function __construct(private SupplierService $supplierService, private UserGroupService $userGroup, private AreaService $areaService, private AccountsService $accountsService)
     {
         $this->middleware('auth:admin');
     }
@@ -104,6 +105,7 @@ class SupplierController extends Controller
     public function duePay($id)
     {
         $supplier = $this->supplierService->find($id)->with('duePurchase')->first();
-        return view('supplier::due-pay', compact('supplier'));
+        $accounts = $this->accountsService->all()->with('bank')->get();
+        return view('supplier::due-pay', compact('supplier', 'accounts'));
     }
 }
