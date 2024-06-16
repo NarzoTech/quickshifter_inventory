@@ -36,10 +36,11 @@
                                             <thead>
                                                 <tr>
                                                     <th>
-                                                        {{ __('SL')}}
+                                                        {{ __('SL') }}
                                                     </th>
                                                     <th>{{ __('Type') }}</th>
                                                     <th>{{ __('Created By') }}</th>
+                                                    <th>{{ __('Action') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -48,6 +49,26 @@
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $list->name }}</td>
                                                         <td>{{ $list->createdBy?->name }}</td>
+                                                        <td>
+                                                            <div class="btn-group" role="group">
+                                                                <button id="btnGroupDrop{{ $list->id }}" type="button"
+                                                                    class="btn btn-primary dropdown-toggle"
+                                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                                    aria-expanded="false">
+                                                                    Action
+                                                                </button>
+                                                                <div class="dropdown-menu"
+                                                                    aria-labelledby="btnGroupDrop{{ $list->id }}">
+                                                                    <a class="dropdown-item" href="javascript:;"
+                                                                        data-toggle="modal"
+                                                                        data-target="#editType{{ $list->id }}">Edit</a>
+                                                                    <a href="javascript:;" data-toggle="modal"
+                                                                        data-target="#deleteModal" class="dropdown-item"
+                                                                        onclick="deleteData({{ $list->id }})">
+                                                                        Delete</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -92,4 +113,50 @@
             </div>
         </div>
     </div>
+
+    @foreach ($lists as $list)
+        <div class="modal" id="editType{{ $list->id }}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ __('Edit Return Type') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="{{ route('admin.purchase.return.type.update', $list->id) }}" method="POST"
+                            id="edit-bank-form{{ $list->id }}">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+                                <div class="form-group col-12">
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ $list->name }}">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="submit" class="btn btn-primary"
+                            form="edit-bank-form{{ $list->id }}">{{ __('Update') }}</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
+@push('js')
+        <script>
+            function deleteData(id) {
+                $("#deleteForm").attr("action", '{{ route('admin.purchase.return.type.destroy', '') }}' + "/" + id)
+            }
+        </script>
+    @endpush

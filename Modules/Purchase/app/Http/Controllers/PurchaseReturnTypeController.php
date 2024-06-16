@@ -69,7 +69,15 @@ class PurchaseReturnTypeController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $data = $request->except('_token');
+        $data['updated_by'] = auth('admin')->id();
+        PurchaseReturnType::find($id)->update($data);
+
+        return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.purchase.return.type.list',[],['messege'=> 'Purchase Return Type Updated Successfully.','alert-type'=>'success']);
     }
 
     /**
@@ -77,6 +85,7 @@ class PurchaseReturnTypeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        PurchaseReturnType::find($id)->delete();
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.purchase.return.type.list',[],['messege'=> 'Purchase Return Type Deleted Successfully.','alert-type'=>'success']);
     }
 }
