@@ -10,8 +10,8 @@
                 {{ __('Purchase List') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.purchase.return.list') ? 'active' :'' }}">
-            <a class="nav-link" href="{{ route('admin.purchase.return.list') }}">
+        <li class="{{ isRoute('admin.purchase.return.type.list') ? 'active' :'' }}">
+            <a class="nav-link" href="{{ route('admin.purchase.return.type.list') }}">
                 {{ __('Purchases Return List') }}
             </a>
         </li>

@@ -17,7 +17,8 @@ use Modules\Purchase\app\Http\Controllers\PurchaseReturnTypeController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('purchase', PurchaseController::class)->names('purchase');
-    Route::get('purchase/return/list', [PurchaseReturnTypeController::class, 'index'])->name('purchase.return.list');
+    Route::get('purchase/return/type/list', [PurchaseReturnTypeController::class, 'index'])->name('purchase.return.type.list');
+    Route::post('purchase/return/type', [PurchaseReturnTypeController::class, 'store'])->name('purchase.return.type.store');
 
     Route::post('purchase/product', [PurchaseController::class, 'product'])->name('purchase.product');
 });

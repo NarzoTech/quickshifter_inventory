@@ -2,19 +2,26 @@
 
 namespace Modules\Purchase\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Purchase\app\Models\PurchaseReturnType;
 
 class PurchaseReturnTypeController extends Controller
 {
+
+    use RedirectHelperTrait;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('purchase::return-list');
+
+        $lists = PurchaseReturnType::all();
+        return view('purchase::return-list',compact('lists'));
     }
 
     /**
@@ -30,7 +37,15 @@ class PurchaseReturnTypeController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $data = $request->except('_token');
+        $data['created_by'] = auth('admin')->id();
+        PurchaseReturnType::create($data);
+
+        return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.type.list',[],['messege'=> 'Purchase Return Type Created Successfully.','alert-type'=>'success']);
     }
 
     /**

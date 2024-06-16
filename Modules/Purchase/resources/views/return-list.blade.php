@@ -23,7 +23,11 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="">{{ __('Purchases Return Type') }}</div>
+                                <h4>
+                                    <a href="javascript:;" data-toggle="modal" data-target="#addType"
+                                        class="btn btn-primary"><i class="fa fa-plus"></i>
+                                        {{ __('Add Type') }}</a>
+                                </h4>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -39,6 +43,13 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @foreach ($lists as $list)
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $list->name }}</td>
+                                                        <td>{{ $list->createdBy?->name }}</td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -50,5 +61,35 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <div class="modal" id="addType">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ __('Add Type') }}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form action="{{ route('admin.purchase.return.type.store') }}" method="POST" id="add-type-form">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="add-type-form">Save</button>
+                </div>
+
+            </div>
+        </div>
     </div>
 @endsection
