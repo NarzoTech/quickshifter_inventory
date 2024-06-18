@@ -5,6 +5,7 @@ namespace Modules\Purchase\app\Models;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Product\app\Models\Product;
 use Modules\Purchase\Database\factories\PurchaseFactory;
 use Modules\Supplier\app\Models\Supplier;
 
@@ -42,5 +43,20 @@ class Purchase extends Model
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class,'warehouse_id','id');
+    }
+
+    public function purchaseDetails()
+    {
+        return $this->hasMany(PurchaseDetails::class,'purchase_id','id');
+    }
+
+    // public function purchaseReturn()
+    // {
+    //     return $this->hasMany(PurchaseReturn::class,'purchase_id','id');
+    // }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class,'purchase_details','purchase_id','product_id')->withPivot('quantity','purchase_price','sub_total','profit','sale_price','discount','tax','created_by','updated_by');
     }
 }

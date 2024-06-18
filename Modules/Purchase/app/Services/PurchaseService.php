@@ -14,6 +14,7 @@ use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Supplier\app\Models\Supplier;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\ProductService;
+use Modules\Purchase\app\Models\PurchaseReturnType;
 
 class PurchaseService
 {
@@ -189,7 +190,7 @@ class PurchaseService
 
     public function getPurchase($id)
     {
-        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product')->find($id);
+        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product', 'products')->find($id);
     }
 
     public function getPurchaseDetails($id)
@@ -221,5 +222,15 @@ class PurchaseService
     public function getAccounts()
     {
         return $this->accountsService->all()->get();
+    }
+
+    public function getPurchaseById($id)
+    {
+        return $this->purchase->find($id);
+    }
+
+    public function getReturnTypes()
+    {
+        return PurchaseReturnType::all();
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Purchase\app\Http\Controllers\PurchaseController;
+use Modules\Purchase\app\Http\Controllers\PurchaseReturnController;
 use Modules\Purchase\app\Http\Controllers\PurchaseReturnTypeController;
 
 /*
@@ -23,4 +24,6 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::put('purchase/return/type/{id}', [PurchaseReturnTypeController::class, 'update'])->name('purchase.return.type.update');
 
     Route::post('purchase/product', [PurchaseController::class, 'product'])->name('purchase.product');
+
+    Route::get('purchase/return/{id}', [PurchaseReturnController::class, 'create'])->name('purchase.return');
 });

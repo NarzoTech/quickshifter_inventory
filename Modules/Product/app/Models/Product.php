@@ -46,7 +46,7 @@ class Product extends Model
     ];
 
     protected $appends = [
-       'image_url','stock_status', 'has_variant'
+       'image_url','stock_status', 'has_variant','total_stock'
     ];
 
 
@@ -228,6 +228,11 @@ class Product extends Model
             }
         }
         return $variantsWithAttributes;
+    }
+
+    public function getTotalStockAttribute()
+    {
+        return $this->attributes['stock'];
     }
 
 }
