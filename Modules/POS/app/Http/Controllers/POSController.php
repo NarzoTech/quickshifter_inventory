@@ -43,7 +43,7 @@ class POSController extends Controller
 
         Paginator::useBootstrap();
 
-        $products = Product::where('status', 1)->whereHas('categories', function ($query) {
+        $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
         })->orderBy('id', 'desc');
 
@@ -65,7 +65,7 @@ class POSController extends Controller
 
         $categories = Category::where('status', 1)->get();
         $brands = $this->brandService->getActiveBrands();
-        $customers = User::orderBy('id', 'desc')->where('status', 'active')->where('is_banned', 'no')->get();
+        $customers = User::orderBy('id', 'desc')->where('status', 'active')->get();
 
 
         $cart_contents = session('POSCART') ?? (object) session('POSCART');
@@ -261,7 +261,7 @@ class POSController extends Controller
             $user->email_verified_at = now();
             $user->save();
 
-            $customers = User::orderBy('id', 'desc')->where('is_banned', 'no')->where('status', 'active')->get();
+            $customers = User::orderBy('id', 'desc')->where('status', 'active')->get();
 
             Address::create([
                 'user_id' => $user->id,
