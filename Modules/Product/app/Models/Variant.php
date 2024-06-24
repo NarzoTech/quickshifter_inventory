@@ -19,22 +19,22 @@ class Variant extends Model
     protected $appends = ['attribute_ids', 'attribute_and_value_ids', 'attributes'];
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withDefault();
     }
 
     public function options()
     {
-        return $this->hasMany(VariantOption::class);
+        return $this->hasMany(VariantOption::class)->withDefault();
     }
 
     public function variantOptions()
     {
-        return $this->hasMany(VariantOption::class);
+        return $this->hasMany(VariantOption::class)->withDefault();
     }
 
     public function optionValues()
     {
-        return $this->hasManyThrough(AttributeValue::class, VariantOption::class, 'variant_id', 'id', 'id', 'attribute_value_id');
+        return $this->hasManyThrough(AttributeValue::class, VariantOption::class, 'variant_id', 'id', 'id', 'attribute_value_id')->withDefault();
     }
 
     public function getAttributeIdsAttribute()

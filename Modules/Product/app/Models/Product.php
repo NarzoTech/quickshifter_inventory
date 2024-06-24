@@ -57,16 +57,16 @@ class Product extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id', 'id');
+        return $this->belongsTo(Category::class, 'category_id', 'id')->withDefault();
     }
     public function brand()
     {
-        return $this->belongsTo(ProductBrand::class, 'brand_id', 'id');
+        return $this->belongsTo(ProductBrand::class, 'brand_id', 'id')->withDefault();
     }
 
     public function unit()
     {
-        return $this->belongsTo(UnitType::class, 'unit_id', 'id');
+        return $this->belongsTo(UnitType::class, 'unit_id', 'id')->withDefault();
     }
 
     public function getImagesAttribute($value)

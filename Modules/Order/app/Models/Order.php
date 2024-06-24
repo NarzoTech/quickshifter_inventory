@@ -39,18 +39,18 @@ class Order extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class)->select('id', 'name', 'email', 'image');
+        return $this->belongsTo(User::class)->withDefault()->select('id', 'name', 'email', 'image');
     }
 
     public function orderDetails()
     {
-        return $this->hasMany(OrderDetails::class);
+        return $this->hasMany(OrderDetails::class)->withDefault();
     }
     public function getQuantityAttribute(){
         return $this->orderDetails->sum('quantity');
     }
     public function createdBy(){
-        return $this->belongsTo(User::class,'created_by','id');
+        return $this->belongsTo(User::class,'created_by','id')->withDefault();
     }
 
     public function getAmountAttribute(){

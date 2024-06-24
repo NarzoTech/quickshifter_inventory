@@ -17,6 +17,6 @@ class ProductBrandTranslation extends Model
 
     public function productBrand()
     {
-        return $this->belongsTo(ProductBrand::class);
+        return $this->belongsTo(ProductBrand::class)->withDefault();
     }
 }

@@ -57,6 +57,6 @@ class Purchase extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class,'purchase_details','purchase_id','product_id')->withPivot('quantity','purchase_price','sub_total','profit','sale_price','discount','tax','created_by','updated_by');
+        return $this->belongsToMany(Product::class,'purchase_details','purchase_id','product_id')->withPivot('quantity','purchase_price','sub_total','profit','sale_price','discount','tax','created_by','updated_by')->withDefault();
     }
 }

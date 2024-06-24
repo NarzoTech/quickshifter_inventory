@@ -17,7 +17,7 @@ class ProductCategoryTranslation extends Model
 
     public function productCategory()
     {
-        return $this->belongsTo(Category::class, 'product_category_id', 'id');
+        return $this->belongsTo(Category::class, 'product_category_id', 'id')->withDefault();
     }
 
 }

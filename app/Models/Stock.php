@@ -29,26 +29,26 @@ class Stock extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class, 'product_id')->withDefault();
     }
 
     public function purchase()
     {
-        return $this->belongsTo(Purchase::class, 'purchase_id');
+        return $this->belongsTo(Purchase::class, 'purchase_id')->withDefault();
     }
 
     public function warehouse()
     {
-        return $this->belongsTo(Warehouse::class, 'warehouse_id');
+        return $this->belongsTo(Warehouse::class, 'warehouse_id')->withDefault();
     }
 
     public function createdBy()
     {
-        return $this->belongsTo(Admin::class, 'created_by');
+        return $this->belongsTo(Admin::class, 'created_by')->withDefault();
     }
 
     public function updatedBy()
     {
-        return $this->belongsTo(Admin::class, 'updated_by');
+        return $this->belongsTo(Admin::class, 'updated_by')->withDefault();
     }
 }

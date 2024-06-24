@@ -35,22 +35,22 @@ class Supplier extends Model
 
     public function group()
     {
-        return $this->belongsTo(UserGroup::class, 'group_id');
+        return $this->belongsTo(UserGroup::class, 'group_id')->withDefault();
     }
 
     public function area()
     {
-        return $this->belongsTo(Area::class, 'area_id');
+        return $this->belongsTo(Area::class, 'area_id')->withDefault();
     }
 
     public function purchases()
     {
-        return $this->hasMany(Purchase::class, 'supplier_id');
+        return $this->hasMany(Purchase::class, 'supplier_id')->withDefault();
     }
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'supplier_id');
+        return $this->hasMany(Payment::class, 'supplier_id')->withDefault();
     }
 
     public function getTotalPurchaseAttribute()
@@ -70,7 +70,7 @@ class Supplier extends Model
 
     public function duePurchase()
     {
-        return $this->hasMany(Purchase::class, 'supplier_id')->where('payment_status', 'due');
+        return $this->hasMany(Purchase::class, 'supplier_id')->where('payment_status', 'due')->withDefault();
     }
 
 }

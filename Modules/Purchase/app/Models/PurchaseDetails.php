@@ -31,11 +31,11 @@ class PurchaseDetails extends Model
 
     public function purchase()
     {
-        return $this->belongsTo(Purchase::class,'purchase_id','id');
+        return $this->belongsTo(Purchase::class,'purchase_id','id')->withDefault();
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class,'product_id','id');
+        return $this->belongsTo(Product::class,'product_id','id')->withDefault();
     }
 }

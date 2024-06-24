@@ -17,16 +17,16 @@ class VariantOption extends Model
 
     public function variant()
     {
-        return $this->belongsTo(Variant::class);
+        return $this->belongsTo(Variant::class)->withDefault();
     }
 
     public function attribute()
     {
-        return $this->belongsTo(Attribute::class);
+        return $this->belongsTo(Attribute::class)->withDefault();
     }
 
     public function attributeValue()
     {
-        return $this->belongsTo(AttributeValue::class);
+        return $this->belongsTo(AttributeValue::class)->withDefault();
     }
 }

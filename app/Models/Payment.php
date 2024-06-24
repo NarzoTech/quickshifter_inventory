@@ -32,31 +32,31 @@ class Payment extends Model
 
     public function purchase()
     {
-        return $this->belongsTo(Purchase::class, 'purchase_id');
+        return $this->belongsTo(Purchase::class, 'purchase_id')->withDefault();
     }
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id');
+        return $this->belongsTo(Supplier::class, 'supplier_id')->withDefault();
     }
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id');
+        return $this->belongsTo(Customer::class, 'customer_id')->withDefault();
     }
 
     public function account()
     {
-        return $this->belongsTo(Account::class, 'account_id');
+        return $this->belongsTo(Account::class, 'account_id')->withDefault();
     }
 
     public function createdBy()
     {
-        return $this->belongsTo(Admin::class, 'created_by');
+        return $this->belongsTo(Admin::class, 'created_by')->withDefault();
     }
 
     public function updatedBy()
     {
-        return $this->belongsTo(Admin::class, 'updated_by');
+        return $this->belongsTo(Admin::class, 'updated_by')->withDefault();
     }
 }

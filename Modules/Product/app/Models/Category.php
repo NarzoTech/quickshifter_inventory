@@ -19,17 +19,17 @@ class Category extends Model
 
     public function products(): HasMany
     {
-        return $this->hasMany(Product::class, 'category_id');
+        return $this->hasMany(Product::class, 'category_id')->withDefault();
     }
 
     public function parent()
     {
-        return $this->belongsTo(Category::class, 'parent_id');
+        return $this->belongsTo(Category::class, 'parent_id')->withDefault();
     }
 
     public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(Category::class, 'parent_id')->withDefault();
     }
 
 }

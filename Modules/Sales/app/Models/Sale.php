@@ -43,36 +43,36 @@ class Sale extends Model
     ];
     public function details()
     {
-        return $this->hasMany(ProductSale::class, 'sale_id');
+        return $this->hasMany(ProductSale::class, 'sale_id')->withDefault();
     }
 
     public function customer()
     {
-        return $this->belongsTo(User::class, 'customer_id','id');
+        return $this->belongsTo(User::class, 'customer_id','id')->withDefault();
     }
 
     public function warehouse()
     {
-        return $this->belongsTo(Warehouse::class, 'warehouse_id');
+        return $this->belongsTo(Warehouse::class, 'warehouse_id')->withDefault();
     }
 
     public function user()
     {
-        return $this->belongsTo(Admin::class, 'user_id');
+        return $this->belongsTo(Admin::class, 'user_id')->withDefault();
     }
 
     public function currency()
     {
-        return $this->belongsTo(MultiCurrency::class, 'currency_id','id');
+        return $this->belongsTo(MultiCurrency::class, 'currency_id','id')->withDefault();
     }
 
     public function products()
     {
-        return $this->hasMany(ProductSale::class, 'sale_id')->where('service_id', null);
+        return $this->hasMany(ProductSale::class, 'sale_id')->where('service_id', null)->withDefault();
     }
 
     public function services()
     {
-        return $this->hasMany(ProductSale::class, 'sale_id')->where('product_id', null);
+        return $this->hasMany(ProductSale::class, 'sale_id')->where('product_id', null)->withDefault();
     }
 }
