@@ -22,7 +22,7 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <form method="POST" action="{{ route('admin.purchase.store') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('admin.purchase.return.store',$purchase->id) }}" enctype="multipart/form-data">
                             @csrf
                             <div class="card">
                                 <div class="card-header">
@@ -53,7 +53,17 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>{{ __('Shipping Cost') }}</label>
+                                                <input type="text" class="form-control" name="shipping_cost"
+                                                    value="{{ old('shipping_cost',0) }}">
+                                                @error('shipping_cost')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>{{ __('Return Type') }}</label>
                                                 <select name="return_type_id" id="" class="form-control">
@@ -68,7 +78,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>{{ __('Attachment') }}</label>
                                                 <input type="file" class="form-control" name="attachment"
@@ -118,8 +128,7 @@
                                                                {{$purchaseDetail->quantity}}
                                                             </td>
                                                             <td>
-                                                                <input type="number" class="form-control" name="returned_sale[]"
-                                                                    value="{{ $purchaseDetail->returned_sale }}" readonly>
+                                                                {{ $purchaseDetail->returned_sale }}
                                                             </td>
                                                             <td>
                                                                 {{ $purchaseDetail->product?->total_stock }}
@@ -258,7 +267,7 @@
                     total_return_quantity += parseFloat($(this).val());
                 });
                 $('input[name="invoice_amount"]').val(total_return_subtotal);
-                $('input[name="received_amount"]').val(total_return_subtotal);  
+                $('input[name="received_amount"]').val(total_return_subtotal);
             }
 
             // payment type

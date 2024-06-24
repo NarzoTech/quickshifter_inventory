@@ -190,7 +190,7 @@ class PurchaseService
 
     public function getPurchase($id)
     {
-        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product', 'products')->find($id);
+        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product')->find($id);
     }
 
     public function getPurchaseDetails($id)

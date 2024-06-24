@@ -26,4 +26,5 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::post('purchase/product', [PurchaseController::class, 'product'])->name('purchase.product');
 
     Route::get('purchase/return/{id}', [PurchaseReturnController::class, 'create'])->name('purchase.return');
+    Route::post('purchase/return/{id}', [PurchaseReturnController::class, 'store'])->name('purchase.return.store');
 });

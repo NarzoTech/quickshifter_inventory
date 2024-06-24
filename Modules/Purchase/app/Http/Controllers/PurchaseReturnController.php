@@ -36,9 +36,16 @@ class PurchaseReturnController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request,$id): RedirectResponse
     {
-        //
+        dd($request->all());
+        $request->validate([
+            'supplier_id' => 'required',
+            'return_date' => 'required',
+            'reason' => 'required',
+
+        ]);
+        $this->purchaseService->storeReturn($request,$id);
     }
 
     /**
