@@ -24,17 +24,17 @@ class Variant extends Model
 
     public function options()
     {
-        return $this->hasMany(VariantOption::class)->withDefault();
+        return $this->hasMany(VariantOption::class);
     }
 
     public function variantOptions()
     {
-        return $this->hasMany(VariantOption::class)->withDefault();
+        return $this->hasMany(VariantOption::class);
     }
 
     public function optionValues()
     {
-        return $this->hasManyThrough(AttributeValue::class, VariantOption::class, 'variant_id', 'id', 'id', 'attribute_value_id')->withDefault();
+        return $this->hasManyThrough(AttributeValue::class, VariantOption::class, 'variant_id', 'id', 'id', 'attribute_value_id');
     }
 
     public function getAttributeIdsAttribute()

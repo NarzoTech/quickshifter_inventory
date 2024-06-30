@@ -37,6 +37,8 @@ function file_upload(UploadedFile $file, string $path = 'uploads/custom-images/'
 
     return $file_name;
 }
+
+
 // file upload method
 if (!function_exists('allLanguages')) {
     function allLanguages()

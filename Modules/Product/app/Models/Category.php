@@ -19,7 +19,7 @@ class Category extends Model
 
     public function products(): HasMany
     {
-        return $this->hasMany(Product::class, 'category_id')->withDefault();
+        return $this->hasMany(Product::class, 'category_id');
     }
 
     public function parent()
@@ -29,7 +29,7 @@ class Category extends Model
 
     public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id')->withDefault();
+        return $this->hasMany(Category::class, 'parent_id');
     }
 
 }

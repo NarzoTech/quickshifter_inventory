@@ -43,7 +43,7 @@ class Sale extends Model
     ];
     public function details()
     {
-        return $this->hasMany(ProductSale::class, 'sale_id')->withDefault();
+        return $this->hasMany(ProductSale::class, 'sale_id');
     }
 
     public function customer()
@@ -68,11 +68,11 @@ class Sale extends Model
 
     public function products()
     {
-        return $this->hasMany(ProductSale::class, 'sale_id')->where('service_id', null)->withDefault();
+        return $this->hasMany(ProductSale::class, 'sale_id')->where('service_id', null);
     }
 
     public function services()
     {
-        return $this->hasMany(ProductSale::class, 'sale_id')->where('product_id', null)->withDefault();
+        return $this->hasMany(ProductSale::class, 'sale_id')->where('product_id', null);
     }
 }

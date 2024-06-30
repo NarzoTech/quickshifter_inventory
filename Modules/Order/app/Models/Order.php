@@ -44,7 +44,7 @@ class Order extends Model
 
     public function orderDetails()
     {
-        return $this->hasMany(OrderDetails::class)->withDefault();
+        return $this->hasMany(OrderDetails::class);
     }
     public function getQuantityAttribute(){
         return $this->orderDetails->sum('quantity');

@@ -2,6 +2,7 @@
 
 namespace Modules\Purchase\app\Models;
 
+use App\Models\Admin;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,5 +47,13 @@ class PurchaseReturn extends Model
     public function purchaseDetails()
     {
         return $this->hasMany(PurchaseReturnDetails::class);
+    }
+
+    public function createdBy(){
+        return $this->belongsTo(Admin::class, 'created_by', 'id')->withDefault();
+    }
+
+    public function updatedBy(){
+        return $this->belongsTo(Admin::class, 'updated_by', 'id')->withDefault();
     }
 }

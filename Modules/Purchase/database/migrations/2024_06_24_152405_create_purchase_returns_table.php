@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('payment_status')->default(1);
             $table->float('shipping_cost', 10, 0)->default(0);
             $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

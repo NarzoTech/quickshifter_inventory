@@ -13,6 +13,6 @@ class Attribute extends Model
 
     public function values()
     {
-        return $this->hasMany(AttributeValue::class)->withDefault();
+        return $this->hasMany(AttributeValue::class);
     }
 }

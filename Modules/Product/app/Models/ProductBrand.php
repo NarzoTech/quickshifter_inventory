@@ -28,7 +28,7 @@ class ProductBrand extends Model
     ];
     public function products()
     {
-        return $this->hasMany(Product::class, 'brand_id', 'id')->withDefault();
+        return $this->hasMany(Product::class, 'brand_id', 'id');
     }
 
     public function getImageUrlAttribute()

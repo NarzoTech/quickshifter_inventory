@@ -45,12 +45,12 @@ class Supplier extends Model
 
     public function purchases()
     {
-        return $this->hasMany(Purchase::class, 'supplier_id')->withDefault();
+        return $this->hasMany(Purchase::class, 'supplier_id');
     }
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'supplier_id')->withDefault();
+        return $this->hasMany(Payment::class, 'supplier_id');
     }
 
     public function getTotalPurchaseAttribute()
@@ -70,7 +70,7 @@ class Supplier extends Model
 
     public function duePurchase()
     {
-        return $this->hasMany(Purchase::class, 'supplier_id')->where('payment_status', 'due')->withDefault();
+        return $this->hasMany(Purchase::class, 'supplier_id')->where('payment_status', 'due');
     }
 
 }

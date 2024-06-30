@@ -23,11 +23,11 @@ class UnitType extends Model
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'unit_type_id', 'id')->withDefault();
+        return $this->hasMany(Product::class, 'unit_type_id', 'id');
     }
 
     public function children()
     {
-        return $this->hasMany(UnitType::class, 'base_unit','id')->withDefault();
+        return $this->hasMany(UnitType::class, 'base_unit','id');
     }
 }

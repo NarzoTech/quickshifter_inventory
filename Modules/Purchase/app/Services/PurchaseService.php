@@ -16,19 +16,25 @@ use Modules\Supplier\app\Models\Supplier;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\ProductService;
 use Modules\Purchase\app\Models\PurchaseReturn;
+use Modules\Purchase\app\Models\PurchaseReturnDetails;
 use Modules\Purchase\app\Models\PurchaseReturnType;
 
 class PurchaseService
 {
 
 
-    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails, private ProductService $productService, private Supplier $supplier, private Warehouse $warehouse, private Product $product, private AccountsService $accountsService)
+    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails, private ProductService $productService, private Supplier $supplier, private Warehouse $warehouse, private Product $product, private AccountsService $accountsService, private PurchaseReturn $purchaseReturn,
+    private PurchaseReturnDetails $purchaseReturnDetials)
     {
     }
 
     public function all()
     {
         return $this->purchase->with('supplier', 'warehouse')->latest();
+    }
+
+    public function allReturn(){
+        return $this->purchaseReturn->with('purchase', 'returnType', 'purchaseDetails')->latest();
     }
     public function store($request)
     {
@@ -237,9 +243,8 @@ class PurchaseService
     }
     public function storeReturn(Request $request)
     {
-
         // store purchase return
-        $purchase = $this->purchase->create([
+        $purchase = $this->purchaseReturn->create([
             'supplier_id' => $request->supplier_id,
             'warehouse_id' => $request->warehouse_id,
             'created_by' => auth()->user()->id,
