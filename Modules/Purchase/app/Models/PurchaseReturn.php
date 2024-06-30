@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Purchase\Database\factories\PurchaseReturnFactory;
+use Modules\Supplier\app\Models\Supplier;
 
 class PurchaseReturn extends Model
 {
@@ -28,7 +29,9 @@ class PurchaseReturn extends Model
         'return_amount',
         'payment_status',
         'shipping_cost',
-        'created_by'
+        'created_by',
+        'updated_by',
+        'supplier_id'
     ];
 
     // relationships
@@ -55,5 +58,9 @@ class PurchaseReturn extends Model
 
     public function updatedBy(){
         return $this->belongsTo(Admin::class, 'updated_by', 'id')->withDefault();
+    }
+
+    public function supplier(){
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault();
     }
 }

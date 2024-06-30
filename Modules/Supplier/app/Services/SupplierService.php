@@ -16,7 +16,7 @@ class SupplierService
 
     public function all()
     {
-        return $this->supplier;
+        return $this->supplier->with('purchaseReturn');
     }
 
     public function find($id)

@@ -108,15 +108,19 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($suppliers as $index => $supplier)
+                                            @php
+                                                $totalReturn = $supplier->purchaseReturn->sum('return_amount');
+                                                $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
+                                            @endphp
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $supplier->name }}</td>
                                                     <td>{{ $supplier->phone }}</td>
                                                     <td>{{ currency($supplier->total_purchase) }}</td>
                                                     <td>{{ currency($supplier->total_paid) }}</td>
-                                                    <td>{{ currency($supplier->total_purchase_return) }}</td>
-                                                    <td>{{ currency($supplier->total_purchase_return_pay) }}</td>
-                                                    <td>{{ currency($supplier->total_due) }}</td>
+                                                    <td>{{ currency($totalReturn) }}</td>
+                                                    <td>{{ currency($totalReturnPaid) }}</td>
+                                                    <td>{{ currency($supplier->total_due - $totalReturn) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $supplier->id }}" type="button"

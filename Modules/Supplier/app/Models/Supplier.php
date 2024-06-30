@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Customer\app\Models\Area;
 use Modules\Customer\app\Models\UserGroup;
 use Modules\Purchase\app\Models\Purchase;
+use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Supplier\Database\factories\SupplierFactory;
 
 class Supplier extends Model
@@ -71,6 +72,10 @@ class Supplier extends Model
     public function duePurchase()
     {
         return $this->hasMany(Purchase::class, 'supplier_id')->where('payment_status', 'due');
+    }
+
+    public function purchaseReturn(){
+        return $this->hasMany(PurchaseReturn::class);
     }
 
 }

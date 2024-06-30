@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('purchase_returns', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('purchase_id');
+            $table->unsignedBigInteger('supplier_id');
             $table->unsignedBigInteger('return_type_id')->nullable();
             $table->unsignedBigInteger('warehouse_id')->nullable();
             $table->date('return_date')->nullable();
