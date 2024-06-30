@@ -19,10 +19,13 @@ return new class extends Migration
             $table->date('return_date')->nullable();
             $table->text('note')->nullable();
             $table->string('payment_method')->default('cash');
+            $table->string('attachment')->nullable();
             $table->integer('received_amount')->default(0);
             $table->integer('return_amount')->default(0);
             $table->boolean('payment_status')->default(1);
             $table->float('shipping_cost', 10, 0)->default(0);
+            $table->unsignedBigInteger('created_by');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

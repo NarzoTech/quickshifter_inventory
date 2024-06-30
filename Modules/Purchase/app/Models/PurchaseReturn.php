@@ -5,11 +5,12 @@ namespace Modules\Purchase\app\Models;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Purchase\Database\factories\PurchaseReturnFactory;
 
 class PurchaseReturn extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'purchase_returns';
     /**
@@ -26,6 +27,7 @@ class PurchaseReturn extends Model
         'return_amount',
         'payment_status',
         'shipping_cost',
+        'created_by'
     ];
 
     // relationships

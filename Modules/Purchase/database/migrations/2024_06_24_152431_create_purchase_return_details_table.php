@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('purchase_return_id');
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('purchase_id');
             $table->integer('quantity')->default(0);
             $table->float('total', 10, 0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

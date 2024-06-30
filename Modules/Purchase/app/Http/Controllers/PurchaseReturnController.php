@@ -2,14 +2,20 @@
 
 namespace Modules\Purchase\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Modules\Purchase\app\Services\PurchaseService;
 
 class PurchaseReturnController extends Controller
 {
+    use RedirectHelperTrait;
     public function __construct( private PurchaseService $purchaseService)
     {
         $this->middleware('auth:admin');
@@ -19,7 +25,7 @@ class PurchaseReturnController extends Controller
      */
     public function index()
     {
-        return view('purchase::index');
+        return view('purchase::return.index');
     }
 
     /**
@@ -29,7 +35,6 @@ class PurchaseReturnController extends Controller
     {
         $purchase = $this->purchaseService->getPurchase($id);
         $returnTypes = $this->purchaseService->getReturnTypes();
-        // dd($purchase);
         return view('purchase::return.create',compact('purchase','returnTypes'));
     }
 
@@ -38,14 +43,23 @@ class PurchaseReturnController extends Controller
      */
     public function store(Request $request,$id): RedirectResponse
     {
-        dd($request->all());
         $request->validate([
             'supplier_id' => 'required',
             'return_date' => 'required',
-            'reason' => 'required',
-
         ]);
-        $this->purchaseService->storeReturn($request,$id);
+
+        DB::beginTransaction();
+        try{
+            $this->purchaseService->storeReturn($request,$id);
+
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.index',[],['messege'=> 'Purchase Return Created Successfully', 'alert-type' => 'success']);
+        }catch(Exception $ex){
+
+            DB::rollBack();
+            Log::error($ex->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.purchase.return.index',[],['messege' => 'Something Went Wrong', 'alert-type' => 'error']);
+        }
     }
 
     /**

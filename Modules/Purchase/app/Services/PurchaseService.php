@@ -8,12 +8,14 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Purchase\app\Models\Purchase;
 use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Supplier\app\Models\Supplier;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\ProductService;
+use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Purchase\app\Models\PurchaseReturnType;
 
 class PurchaseService
@@ -47,7 +49,7 @@ class PurchaseService
         $purchase->total_amount = $request->total_amount;
         $purchase->paid_amount = $request->paid_amount;
         $purchase->due_amount = $request->due_amount;
-        $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due'    ;
+        $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due';
         $purchase->payment_type = $request->payment_type;
         $purchase->note = $request->note;
         $purchase->status = $request->status;
@@ -232,5 +234,72 @@ class PurchaseService
     public function getReturnTypes()
     {
         return PurchaseReturnType::all();
+    }
+    public function storeReturn(Request $request)
+    {
+
+        // store purchase return
+        $purchase = $this->purchase->create([
+            'supplier_id' => $request->supplier_id,
+            'warehouse_id' => $request->warehouse_id,
+            'created_by' => auth()->user()->id,
+            'purchase_id' => $request->purchase_id,
+            'return_type_id' => $request->return_type_id,
+            'return_date' => now()->parse($request->return_date),
+            'note' => $request->note,
+            'payment_method' => $request->payment_type,
+            'received_amount' => $request->received_amount,
+            'return_amount' => $request->invoice_amount,
+            'shipping_cost' => $request->shipping_cost,
+        ]);
+
+
+        // store purchase return details
+
+        foreach($request->product_id as $index=>$val){
+            $purchase->purchaseDetails()->create([
+                'product_id' => $val,
+                'purchase_id' => $request->purchase_id,
+                'quantity' => $request->return_quantity[$index],
+                'total' => $request->return_subtotal[$index],
+            ]);
+
+
+            // update product stock
+            $prod = Product::find($val);
+            $prod->stock = $prod->stock - $request->return_quantity[$index];
+            $prod->save();
+        }
+
+        $account = Account::where('account_type',$request->payment_type);
+        if($request->payment_type == 'cash'){
+            $account = $account->first();
+        }else{
+            $account = $account->where('id',$request->account_id)->first();
+        }
+
+        if($request->received_amount){
+            Payment::create([
+                'payment_type' => 'purchase_receive',
+                'purchase_id' => $request->purchase_id,
+                'account_id' => $account->id ,
+                'amount' => $request->received_amount,
+                'payment_date' => now(),
+                'created_by' => auth()->user()->id,
+            ]);
+        }
+
+        if($request->shipping_cost){
+            Payment::create([
+                'payment_type' => 'purchase_cost',
+                'purchase_id' => $request->purchase_id,
+                'account_id' => $account->id ,
+                'amount' => $request->shipping_cost,
+                'payment_date' => now(),
+                'created_by' => auth()->user()->id,
+                ]);
+        }
+
+        return $purchase;
     }
 }

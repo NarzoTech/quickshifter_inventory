@@ -24,7 +24,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::put('purchase/return/type/{id}', [PurchaseReturnTypeController::class, 'update'])->name('purchase.return.type.update');
 
     Route::post('purchase/product', [PurchaseController::class, 'product'])->name('purchase.product');
-
+    Route::resource('purchase/return', PurchaseReturnController::class)->names('purchase.return.index');
     Route::get('purchase/return/{id}', [PurchaseReturnController::class, 'create'])->name('purchase.return');
     Route::post('purchase/return/{id}', [PurchaseReturnController::class, 'store'])->name('purchase.return.store');
 });

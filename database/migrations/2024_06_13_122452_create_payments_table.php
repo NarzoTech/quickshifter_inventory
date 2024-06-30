@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->nullable()->constrained('supplier');
             $table->foreignId('customer_id')->nullable()->constrained('users');
             $table->foreignId('account_id')->nullable()->constrained('accounts');
-            $table->string('payment_type')->default('cash');
+            $table->string('payment_type');
             $table->decimal('amount', 10, 2);
             $table->date('payment_date');
             $table->text('note')->nullable();

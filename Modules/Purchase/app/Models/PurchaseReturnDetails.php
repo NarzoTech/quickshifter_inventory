@@ -4,12 +4,13 @@ namespace Modules\Purchase\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Product\app\Models\Product;
 use Modules\Purchase\Database\factories\PurchaseReturnDetailsFactory;
 
 class PurchaseReturnDetails extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'purchase_return_details';
     /**
@@ -18,6 +19,7 @@ class PurchaseReturnDetails extends Model
     protected $fillable = [
         'purchase_return_id',
         'product_id',
+        'purchase_id',
         'quantity',
         'total',
     ];

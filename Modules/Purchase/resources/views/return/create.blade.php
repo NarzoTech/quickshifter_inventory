@@ -24,6 +24,7 @@
 
                         <form method="POST" action="{{ route('admin.purchase.return.store',$purchase->id) }}" enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
                             <div class="card">
                                 <div class="card-header">
                                     <div class="card-title">{{ __('Purchase Return') }}</div>
