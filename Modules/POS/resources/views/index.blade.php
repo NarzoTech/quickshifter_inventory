@@ -17,6 +17,15 @@
         .table:not(.table-sm):not(.table-md):not(.dataTable) th {
             padding: 0 5px !important;
         }
+
+        .main-content{
+            padding-left: 0px !important;
+            padding-top:0px !important;
+        }
+        .main-sidebar{
+            display:none;
+            width: 0 !important;
+        }
     </style>
 @endpush
 @section('admin-content')
@@ -36,7 +45,6 @@
                             <div class="card-header">
                                 <form id="product_search_form" class="pos_pro_search_form w-100">
                                     <div class="row">
-
                                         <div class="col-md-5 d-flex align-items-center">
                                             <select name="category_id" id="category_id" class="form-control select2">
                                                 <option value="">{{ __('Select Category') }}</option>

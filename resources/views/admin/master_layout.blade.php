@@ -19,6 +19,7 @@
 <body>
     <div id="app">
         <div class="main-wrapper">
+            @if(!Route::is('admin.pos'))
             <div class="navbar-bg"></div>
             <nav class="navbar navbar-expand-lg main-navbar">
                 <div class="mr-auto form-inline">
@@ -86,7 +87,7 @@
 
                 </ul>
             </nav>
-
+            @endif
             @if (request()->routeIs(
                     'admin.general-setting',
                     'admin.crediential-setting',
