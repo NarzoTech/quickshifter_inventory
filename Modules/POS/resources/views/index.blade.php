@@ -40,7 +40,7 @@
             <div class="section-body">
 
                 <div class="row mt-4">
-                    <div class="col-md-7">
+                    <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
                                 <form id="product_search_form" class="pos_pro_search_form w-100">
@@ -79,7 +79,7 @@
                                         </div>
 
                                         <div class="col-md-12 d-flex align-items-center mt-2">
-                                            <input type="text" class="form-control" name="name"
+                                            <input type="text" class="form-control" name="name" id="name"
                                                 placeholder="{{ __('Search here..') }}" autocomplete="off"
                                                 value="{{ request()->get('name') }}">
                                         </div>
@@ -91,7 +91,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="card">
                             <div class="card-header pos_sidebar_button">
                                 <div class="row w-100">
@@ -527,8 +527,6 @@
                         });
                     })
 
-
-
                     // make payment modal
                     $("#makePaymentBtn").on("click", function() {
 
@@ -678,6 +676,16 @@
                     $('[name="delivery_method"]').on('change', function() {
                         deliveryMethod()
                     })
+
+                    $("#category_id,#brand_id,#name").on('input',function(){
+                        const category_id = $('#category_id').val();
+                        const brand = $('#brand_id').val();
+                        const name = $('#name').val();
+
+                        loadProudcts({
+                            category_id,brand,name
+                        })
+                    })
                 });
             })(jQuery);
 
@@ -775,11 +783,12 @@
 
 
 
-            function loadProudcts() {
+            function loadProudcts(data = null) {
                 $('.preloader_area').removeClass('d-none');
                 $.ajax({
                     type: 'get',
                     url: "{{ route('admin.load-products') }}",
+                    data: data,
                     success: function(response) {
                         $(".product_body").html(response)
                         $('.preloader_area').addClass('d-none');

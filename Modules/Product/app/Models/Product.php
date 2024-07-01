@@ -55,6 +55,9 @@ class Product extends Model
         return $this->variants->count() > 0;
     }
 
+    public function getActualPriceAttribute(){
+        return $this->price;
+    }
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id')->withDefault();

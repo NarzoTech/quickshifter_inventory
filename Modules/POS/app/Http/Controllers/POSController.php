@@ -94,10 +94,12 @@ class POSController extends Controller
             });
         }
 
+        if ($request->brand) {
+            $products = $products->where('brand_id',$request->brand);
+        }
+
         if ($request->name) {
-            $products = $products->whereHas('translations', function ($query) use ($request) {
-                $query->where('name', 'LIKE', '%' . $request->name . '%');
-            });
+            $products = $products->where('name', 'LIKE', '%' . $request->name . '%');
         }
 
         $products = $products->paginate(20);
