@@ -48,7 +48,7 @@ class POSController extends Controller
         })->orderBy('id', 'desc');
 
         if ($request->category_id) {
-            $products = $products->whereHas('categories', function ($query) use ($request) {
+            $products = $products->where(function ($query) use ($request) {
                 $query->where('category_id', $request->category_id)->where('status', 1);
             });
         }
@@ -84,13 +84,13 @@ class POSController extends Controller
     {
         Paginator::useBootstrap();
 
-        $products = Product::where('status', 1)->whereHas('categories', function ($query) {
+        $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
         })->orderBy('id', 'desc');
 
         if ($request->category_id) {
-            $products = $products->whereHas('categories', function ($query) use ($request) {
-                $query->where('id', $request->category_id)->where('status', 1);
+            $products = $products->where(function ($query) use ($request) {
+                $query->where('category_id', $request->category_id)->where('status', 1);
             });
         }
 

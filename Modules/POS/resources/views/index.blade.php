@@ -519,7 +519,7 @@
                         });
                     })
 
-                    
+
 
                     // make payment modal
                     $("#makePaymentBtn").on("click", function() {
@@ -778,7 +778,7 @@
                     },
                     error: function(response) {
                         toastr.error("{{ __('Server error occurred') }}")
-                        location.reload();
+                        //location.reload();
                     }
                 });
             }
