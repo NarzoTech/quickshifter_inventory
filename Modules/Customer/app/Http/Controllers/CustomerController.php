@@ -69,7 +69,7 @@ class CustomerController extends Controller
 
         // check if request is ajax
         if ($request->ajax()) {
-            $customers = User::get();
+            $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
             $view = view('pos::customer-drop-down', compact('customers'))->render();
             return response()->json([
                 'message' => 'Customer created successfully.',

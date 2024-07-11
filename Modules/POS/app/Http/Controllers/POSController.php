@@ -69,7 +69,7 @@ class POSController extends Controller
 
         $categories = Category::where('status', 1)->get();
         $brands = $this->brandService->getActiveBrands();
-        $customers = User::orderBy('id', 'desc')->where('status', 'active')->get();
+        $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
 
         $cart_contents = session('POSCART') ?? [];
 
@@ -348,13 +348,6 @@ class POSController extends Controller
 
     public function place_order(Request $request)
     {
-
-        if (env('APP_MODE') == 0) {
-            $notification = trans('This Is Demo Version. You Can Not Change Anything');
-            $notification = array('messege' => $notification, 'alert-type' => 'error');
-            return redirect()->back()->with($notification);
-        }
-
         if (session('POSCART') != null && count(session('POSCART')) == 0) {
             $notification = trans('Your cart is empty!');
             $notification = array('messege' => $notification, 'alert-type' => 'error');

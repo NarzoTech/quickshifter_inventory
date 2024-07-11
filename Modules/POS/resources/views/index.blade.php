@@ -163,9 +163,7 @@
                                             class="btn btn-primary"><i class="fa fa-plus"
                                                 aria-hidden="true"></i>{{ __('New') }}</button>
                                     </div>
-
                                     <div class="col-md-12 mt-3 address-container">
-
                                     </div>
                                 </div>
                             </div>
@@ -1022,7 +1020,7 @@
                     })
 
                     // add new customer modal
-                    $("#createNewUserForm").on("submit", function(e) {
+                    $("#add-customer-form").on("submit", function(e) {
                         e.preventDefault();
                         const from = $('#add-customer-form')
                         $.ajax({
@@ -1031,11 +1029,9 @@
                             url: $('#add-customer-form').attr('action'),
                             success: function(response) {
                                 toastr.success(response.message)
-                                form.reset();
-                                $("#createNewUserForm").modal('hide');
-
-                                $("#customer_id").html(response.customer_html)
-
+                                $("#addCustomer").modal('hide');
+                                $('#add-customer-form')[0].reset();
+                                $("#customer_id").html(response.view)
                             },
                             error: function(response) {
 
