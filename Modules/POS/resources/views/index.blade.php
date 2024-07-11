@@ -554,7 +554,7 @@
             <div class="modal-content">
                 <form method="POST" action="" id="checkoutForm" onSubmit="paymentSubmit(event)">
                     @csrf
-                    <input type="hidden" name="customer_id" id="customer_id" value="">
+                    <input type="hidden" name="order_customer_id" id="order_customer_id" value="">
                     <div class="row">
                         <!-- Left Column -->
                         <div class="col-md-3">
@@ -606,27 +606,28 @@
                                                 Paid Amount</th>
                                             <td class="text-right w-40" id="paing_amountModal">0</td>
                                         </tr>
-                                        <tr class="due">
+                                         --}}
+                                        {{-- <tr class="due">
                                             <th class="text-right w-60" colspan="2">
                                                 <label>Previous Due</label>
                                             </th>
                                             <td class="text-right w-40" id="previous_due" data-amount="0">0</td>
-                                        </tr>
+                                        </tr> --}}
 
                                         <tr class="due">
                                             <th class="text-right w-60" colspan="2">
                                                 Total Due
                                             </th>
                                             <td class="text-right w-40" id="due_amountModal">0</td>
-                                        </tr> --}}
-                                        <tr>
+                                        </tr>
+                                        {{-- <tr>
                                             <th class="text-right w-60" colspan="2">
                                                 Total Advance
                                             </th>
                                             <td class="text-center w-40">
                                                 <span id="total_advance">0</span> TK
                                             </td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             <th class="text-right w-60" colspan="2">
                                                 Sale Date
@@ -634,7 +635,7 @@
                                             <td class="text-right w-40">
 
                                                 <input type="text" class="form-control datepicker" name="sale_date"
-                                                    value="2024-07-08" autocomplete="off">
+                                                    value="{{ date('Y-m-d') }}" autocomplete="off">
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -674,39 +675,9 @@
                                     </thead>
 
                                     <tbody id="paymentRow">
-                                        <tr data-counter="1">
-                                            <td style="text-align: center; vertical-align: middle;">
-                                                <select name="payment_type[]" class="form-control form-control-sm pay_by"
-                                                    required>
-                                                    @foreach (accountList() as $key => $list)
-                                                        <option value="{{ $key }}"
-                                                            @if ($key == 'cash') selected @endif
-                                                            data-name="{{ $list }}">{{ $list }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td style="text-align: center; vertical-align: middle;" class="account_info">
-                                                <input type="text" name="account_id[]" value="Cash"
-                                                    class="form-control form-control-sm" readonly>
-                                            </td>
-                                            <td style="text-align: center; vertical-align: middle;">
-                                                <input type="text" name="paying_amount[]"
-                                                    class="form-control form-control-sm text-center paying_amount"
-                                                    id="payingAmount" placeholder="Amount" required autocomplete="off">
-                                            </td>
-                                            <td style="text-align: center; vertical-align: middle;">
-                                                <div class="btn-group btn-group-sm">
-                                                    <a href="javascript:0" class="btn btn-sm btn-danger remove-payment">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
-                                                    <a href="javascript:0" class="btn btn-sm btn-primary add-payment">
-                                                        <i class="fa fa-plus"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="bank_check_info" data-counter="0">
+                                        @include('pos::payment-row')
+
+                                        {{-- <tr class="bank_check_info" data-counter="0">
                                             <td style="text-align: center; vertical-align: middle;" class="account_info">
                                                 <input type="hidden" name="ck_due_amount[]"
                                                     class="form-control ck_due_amount" readonly value=""
@@ -727,7 +698,7 @@
                                                     class="form-control ck_issue_name" value=""
                                                     placeholder="Issue to Name" autocomplete="off" required>
                                             </td>
-                                        </tr>
+                                        </tr> --}}
                                     </tbody>
 
                                     <tfoot id="normalPayment">
@@ -863,7 +834,7 @@
         </div>
     </div>
     {{-- create payment --}}
-    <div class="modal fade" id="createPayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    {{-- <div class="modal fade" id="createPayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog mw-100 w-75" role="document">
             <div class="modal-content">
@@ -915,624 +886,595 @@
                 </div>
             </div>
         </div>
-    @endsection
+    </div> --}}
+@endsection
 
-    @push('js')
-        <script>
-            let isGuest = 1;
-            // load products
-            (function($) {
-                "use strict";
-                $(document).ready(function() {
-                    loadProudcts()
+@push('js')
+    <script>
+        let isGuest = 1;
+        // load products
+        (function($) {
+            "use strict";
+            $(document).ready(function() {
+                loadProudcts()
 
-                    // update pos quantity
-                    $(".pos_input_qty").on("change", function(e) {
-                        $('.preloader_area').removeClass('d-none');
-                        let quantity = $(this).val();
-                        let parernt_td = $(this).parents('td');
-                        let rowid = parernt_td.data('rowid')
+                // update pos quantity
+                $(".pos_input_qty").on("change", function(e) {
+                    $('.preloader_area').removeClass('d-none');
+                    let quantity = $(this).val();
+                    let parernt_td = $(this).parents('td');
+                    let rowid = parernt_td.data('rowid')
 
-                        $.ajax({
-                            type: 'get',
-                            data: {
-                                rowid,
-                                quantity
-                            },
-                            url: "{{ route('admin.cart-quantity-update') }}",
-                            success: function(response) {
-                                $(".shopping-card-body").html(response)
-                                calculateTotalFee();
-                                $('.preloader_area').addClass('d-none');
-                            },
-                            error: function(response) {
-                                if (response.status == 500) {
-                                    toastr.error("{{ __('Server error occurred') }}")
-                                }
-
-                                if (response.status == 403) {
-                                    toastr.error("{{ __('Server error occurred') }}")
-                                }
-                                $('.preloader_area').addClass('d-none');
-                            }
-                        });
-
-                    });
-
-                    // load customer address
-                    $("#customer_id").on("change", function() {
-                        let customer_id = $(this).val();
-                        if (customer_id == 'walk-in-customer') {
-                            $('.required').removeClass('d-none');
-                            $("#order_customer_id").val('walk-in-customer');
-                            return;
-                        }
-
-                        if (!customer_id) {
-                            return;
-                        }
-                        $('.required').addClass('d-none');
-                        $('.preloader_area').removeClass('d-none');
-                        $("#address_customer_id").val(customer_id);
-                        $("#order_customer_id").val(customer_id);
-                        $("#order_address_id").val('');
-                        $.ajax({
-                            type: 'get',
-                            url: "{{ route('admin.load-customer-address', '') }}" + "/" +
-                                customer_id,
-                            success: function(response) {
-                                $(".address-container").html(response)
-                                $('.preloader_area').addClass('d-none');
-                                calculateTotalFee();
-                            },
-                            error: function(response) {
-                                toastr.error("{{ __('Server error occurred') }}")
-                                $('.preloader_area').addClass('d-none');
-                            }
-                        });
-                    })
-
-                    // make payment modal
-                    $("#makePaymentBtn").on("click", function() {
-
-                        const deliveryMethod = $('[name="delivery_method"]').val()
-                        let customer_id = $("#order_customer_id").val();
-                        if (!customer_id) {
-                            toastr.error("{{ __('Please select a customer') }}")
-                            return;
-                        }
-
-                        let address_id = $("#order_address_id").val();
-                        if (!address_id && customer_id != 'walk-in-customer' && deliveryMethod == 1) {
-                            toastr.error("{{ __('Please select a address') }}")
-                            return;
-                        }
-
-
-                        // check if cart is empty
-                        let cart_sub_total = $("#cart_sub_total").val();
-                        if (cart_sub_total == 0) {
-                            toastr.error("{{ __('Cart is empty') }}")
-                            return;
-                        }
-                        // $("#placeOrderForm").submit();
-                        $("#createPayment").modal('show')
-                    })
-
-                    // add new customer modal
-                    $("#add-customer-form").on("submit", function(e) {
-                        e.preventDefault();
-                        const from = $('#add-customer-form')
-                        $.ajax({
-                            type: 'POST',
-                            data: $('#add-customer-form').serialize(),
-                            url: $('#add-customer-form').attr('action'),
-                            success: function(response) {
-                                toastr.success(response.message)
-                                $("#addCustomer").modal('hide');
-                                $('#add-customer-form')[0].reset();
-                                $("#customer_id").html(response.view)
-                            },
-                            error: function(response) {
-
-                                if (response.status == 500) {
-                                    toastr.error("{{ __('Server error occurred') }}")
-                                }
-                                console.log(response);
-
-                            }
-                        });
-
-                    })
-
-                    // product search modal
-                    $("#product_search_form").on("submit", function(e) {
-                        e.preventDefault();
-
-                        $("#search_btn_text").html(`<div class="spinner-border" role="status">
-                                            <span class="sr-only">Loading...</span></div>`)
-
-                        $.ajax({
-                            type: 'get',
-                            data: $('#product_search_form').serialize(),
-                            url: "{{ route('admin.load-products') }}",
-                            success: function(response) {
-                                $("#search_btn_text").html(
-                                    `<i class="fas fa-search fa-2x fs-25"></i>`)
-                                $(".product_body").html(response)
-                            },
-                            error: function(response) {
-                                $("#search_btn_text").html(
-                                    `<i class="fas fa-search fa-3x fs-25"></i>`)
-
-                                if (response.status == 500) {
-                                    toastr.error("{{ __('Server error occurred') }}")
-                                }
-
-                                if (response.status == 403) {
-                                    toastr.error(response.responseJSON.message);
-                                }
-
-                            }
-                        });
-                    })
-
-                    // palce order modal
-                    $('#placeOrderBtn').on('click', function() {
-
-                        const paymentMethod = $('[name="payment_method"]').val();
-
-                        if (!paymentMethod) {
-                            toastr.error("{{ __('Please select a Payment Method') }}")
-                            return;
-                        }
-                        const paymentDetails = $('[name="payment_details"]').val();
-                        if (!paymentMethod) {
-                            toastr.error("{{ __('Please select a Fill Payment Details') }}")
-                            return;
-                        }
-                        $('[name="order_delivery_date"]').val($('[name="delivery_date"]').val())
-                        $('[name="order_payment_method"]').val($('[name="payment_method"]').val());
-                        $('[name="order_payment_details"]').val($('[name="payment_details"]').val());
-                        $('[name="order_payment_notes"]').val($('[name="_payment_notes"]').val())
-                        $('[name="order_order_note"]').val($('[name="order_note"]').val())
-
-                        $("#placeOrderForm").submit();
-                    })
-
-
-                    $('.modal-reset-button').on('click', function() {
-                        const productId = $(this).data('product-id');
-                        resetCart();
-                        load_product_model(productId);
-                    })
-
-                    $('[name="discount_type"]').on('change', function() {
-                        const type = $(this).val();
-                        const symbol = type == 'percent' ? '%' : "{{ currency_icon() }}"
-                        $('.discount_icon').html(symbol)
-                    })
-
-                    $(document).on('change', '#sub_total,#delivery_fee,#tax_fee,#discount,[name="discount_type"]',
-                        function() {
-                            calculateTotalFee()
-                        })
-
-                    $('[name="delivery_method"]').on('change', function() {
-                        deliveryMethod()
-                    })
-
-                    $("#category_id,#brand_id,#name").on('input', function() {
-                        const category_id = $('#category_id').val();
-                        const brand = $('#brand_id').val();
-                        const name = $('#name').val();
-
-                        loadProudcts({
-                            category_id,
-                            brand,
-                            name
-                        })
-                    })
-
-
-                    // extra
-
-                    $(".dis-tgl").click(function() {
-                        $(".dis-form").slideToggle("fast")
-                    })
-                });
-            })(jQuery);
-
-
-
-            function load_product_model(product_id) {
-                $('.preloader_area').removeClass('d-none');
-                // check if cart has item from different restaurant using ajax request
-                $.ajax({
-                    type: 'get',
-                    url: "{{ route('admin.check-cart-restaurant', '') }}" + "/" + product_id,
-                    success: function(response) {
-                        if (response.status == true) {
-                            // add product id to reset button of modal
-                            $(".modal-reset-button").attr('data-product-id', product_id);
-                            $("#resetCartModal").modal('show');
+                    $.ajax({
+                        type: 'get',
+                        data: {
+                            rowid,
+                            quantity
+                        },
+                        url: "{{ route('admin.cart-quantity-update') }}",
+                        success: function(response) {
+                            $(".shopping-card-body").html(response)
+                            calculateTotalFee();
                             $('.preloader_area').addClass('d-none');
-                        } else {
-                            loadProductModal(product_id)
+                        },
+                        error: function(response) {
+                            if (response.status == 500) {
+                                toastr.error("{{ __('Server error occurred') }}")
+                            }
+
+                            if (response.status == 403) {
+                                toastr.error("{{ __('Server error occurred') }}")
+                            }
+                            $('.preloader_area').addClass('d-none');
                         }
-                    },
-                    error: function(response) {
-                        toastr.error("{{ __('Server error occurred') }}")
-                        $('.preloader_area').addClass('d-none');
-                    }
-                });
-            }
-
-            function loadProductModal(product_id) {
-                $('.preloader_area').removeClass('d-none');
-                $.ajax({
-                    type: 'get',
-                    url: "{{ url('admin/pos/load-product-modal') }}" + "/" + product_id,
-                    success: function(response) {
-                        $(".load_product_modal_response").html(response)
-                        $("#cartModal").modal('show');
-                        $('.preloader_area').addClass('d-none');
-                    },
-                    error: function(response) {
-                        toastr.error("{{ __('Server error occurred') }}")
-                        $('.preloader_area').addClass('d-none');
-                    }
-                });
-            }
-
-            function removeCartItem(rowId) {
-
-                $.ajax({
-                    type: 'get',
-                    url: "{{ url('admin/pos/remove-cart-item') }}" + "/" + rowId,
-                    success: function(response) {
-                        $(".shopping-card-body").html(response)
-
-                        calculateTotalFee();
-                        toastr.success("{{ __('Remove successfully') }}")
-                    },
-                    error: function(response) {
-                        toastr.error("{{ __('Server error occurred') }}")
-                    }
-                });
-            }
-
-            function calculateTotalFee() {
-
-                let subTotal = $('#sub_total').val() || '0.00';
-
-                // remove , if exists
-                if (subTotal.includes(',')) {
-                    subTotal = subTotal.replace(/,/g, '');
-                }
-                subTotal = parseFloat(subTotal);
-                let deliveryFee = parseFloat($('#delivery_fee').val()) || 0;
-
-                let tax = parseFloat($('#tax_fee').val()) || 0;
-                let discount = parseFloat($('#discount').val()) || 0;
-                let total = parseFloat($('#total_fee').val()) || 0;
-
-                let discountType = $('[name="discount_type"]').val();
-
-                if (discountType === 'percent') {
-                    discount = subTotal * (discount / 100);
-                }
-
-                // Calculate the total
-                total = subTotal + deliveryFee + tax - discount;
-
-                // Update the total field with the calculated value
-                $('#total_fee').val(total.toFixed(2));
-
-                $('[name="order_sub_total"]').val(subTotal);
-                $('[name="order_delivery_fee"]').val(deliveryFee);
-                $('[name="order_tax"]').val(tax);
-                $('[name="order_discount"]').val(discount.toFixed(2));
-                $('[name="order_total_fee"]').val(total.toFixed(2));
-            }
-
-
-
-            function loadProudcts(data = null) {
-                $('.preloader_area').removeClass('d-none');
-                $.ajax({
-                    type: 'get',
-                    url: "{{ route('admin.load-products') }}",
-                    data: data,
-                    success: function(response) {
-                        $(".product_body").html(response)
-                        $('.preloader_area').addClass('d-none');
-                    },
-                    error: function(response) {
-                        toastr.error("{{ __('Server error occurred') }}")
-                        //location.reload();
-                    }
-                });
-            }
-
-            function loadPagination(url) {
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    success: function(response) {
-                        $(".product_body").html(response)
-                    },
-                    error: function(response) {
-                        toastr.error("{{ __('Server error occurred') }}")
-                    }
-                });
-            }
-
-            function openPaymentModal() {
-
-                const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
-                const discountAmount = $('#discount_total_amount').val();
-                const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
-                const item = $('#titems').text();
-
-                $('[name="sub_total"]').val(subTotal);
-                $('#sub_totalModal').text(subTotal);
-
-                $('#discount_amountModal').text(discountAmount);
-                $('[name="discount_amount"]').val(discountAmount);
-
-                let grandTotal = Number(finalTotal) - Number(discountAmount);
-                $('#total_amountModal').text(grandTotal);
-                $('#total_amountModal2').text(grandTotal);
-
-                // total items
-
-                $('#itemModal').text(item);
-                $('#payment-modal').modal('show')
-
-
-                $('.paying_amount').val(grandTotal);
-                // hide rows
-                if (!discountAmount) {
-                    $('.discount-row').addClass('d-none');
-                }
-            }
-
-            function viewCartDetails(id) {
-                $('.preloader_area').removeClass('d-none');
-                $.ajax({
-                    type: 'get',
-                    url: "{{ route('admin.pos-cart-item-details', '') }}" + "/" + id,
-                    success: function(response) {
-                        $(".load_item_details_modal_response").html(response)
-                        $("#itemDetailsModal").modal('show');
-                        $('.preloader_area').addClass('d-none');
-                    },
-                    error: function(response) {
-                        toastr.error("{{ __('Server error occurred') }}")
-                        $('.preloader_area').addClass('d-none');
-                    }
-                });
-            }
-
-            function resetCart() {
-                $.ajax({
-                    type: 'get',
-                    url: "{{ route('admin.modal-cart-clear') }}",
-                    success: function(response) {
-                        $(".shopping-card-body").html(response)
-                        calculateTotalFee();
-                        toastr.success("{{ __('Cart reset successfully') }}")
-                        $("#resetCartModal").modal('hide');
-                    },
-                    error: function(response) {
-                        toastr.error("{{ __('Server error occurred') }}")
-                    }
-                });
-            }
-
-            function singleAddToCart(id) {
-                $('.preloader_area').removeClass('d-none');
-                $.ajax({
-                    type: 'get',
-                    data: {
-                        product_id: id,
-                        type: 'single'
-                    },
-                    url: "{{ url('/admin/pos/add-to-cart') }}",
-                    success: function(response) {
-                        $(".product-table-container").html(response)
-
-                        console.log(response);
-                        toastr.success("{{ __('Item added successfully') }}")
-                        calculateTotalFee();
-                        $('.preloader_area').addClass('d-none');
-                    },
-                    error: function(response) {
-                        if (response.status == 500) {
-                            toastr.error("{{ __('Server error occurred') }}")
-                        }
-
-                        if (response.status == 403) {
-                            toastr.error(response.responseJSON.message)
-                        }
-                        $('.preloader_area').addClass('d-none');
-                    }
-                });
-            }
-
-            function numberFormat(n) {
-                return Number(n).toFixed(2)
-            }
-
-            function showDeliveryInfo(show = false) {
-                if (show) {
-                    $('.add_delivery_info').removeClass('d-none');
-                } else {
-                    $('.add_delivery_info').addClass('d-none');
-                }
-            }
-
-            function deliveryMethod() {
-                const deliveryMethod = $('[name="delivery_method"]:checked').val();
-                if (deliveryMethod == 1) {
-                    showDeliveryInfo(true)
-                    $('.delivery-container').removeClass('d-none');
-                    $('.delivery-container').addClass('d-flex ');
-                    $('#delivery_fee').removeAttr('disabled')
-                } else {
-                    showDeliveryInfo()
-                    $('.delivery-container').addClass('d-none');
-                    $('.delivery-container').removeClass('d-flex ');
-                    $('#delivery_fee').attr('disabled', true);
-                }
-                $('[name="order_delivery_method"]').val(deliveryMethod);
-            }
-
-            function discountExist() {
-                let discount_total_amount = $('#discount_total_amount').val()
-                let discount_type = $('#discount_type').val()
-                let total_amount_get_text = Number($('#total').text().replace(/[^0-9.]/g, ''))
-                let vat_amount = Number($('#ttax2').text())
-                let totalAmount = 0
-                let percentage = null
-
-                if (discount_type == 1) {
-                    if (discount_total_amount > total_amount_get_text) {
-                        discount_total_amount = total_amount_get_text
-                    }
-                    totalAmount = numberFormat(
-                        Number(total_amount_get_text - discount_total_amount).toFixed(6)
-                    )
-                } else {
-                    if (discount_total_amount > 100) {
-                        discount_total_amount = 100
-                    }
-                    percentage = (discount_total_amount * total_amount_get_text) / 100
-                    totalAmount = total_amount_get_text - percentage
-                }
-
-                // let exchange_total = 0
-
-                // if (exchange.total > 0) {
-                //     exchange_total = exchange.total
-                // }
-
-                $('#tds').text(percentage ? percentage : discount_total_amount)
-                $('input[name=discount_amount]').val(
-                    percentage ? percentage : discount_total_amount
-                )
-                $('#discount_amountModal').text(
-                    percentage ? percentage : discount_total_amount
-                )
-                vat_amount = 0
-                let grand_total = numberFormat(
-                    // Number(exchange_total)
-                    Number(totalAmount) + Number(vat_amount) - 0
-                )
-
-                console.log(totalAmount);
-                $('#ttax2').text(vat_amount)
-                $('#gtotal').text(totalAmount)
-                $('#finalTotal').text(grand_total)
-                $('#discount_total_amount').val(discount_total_amount)
-                $('#discountModal').modal('hide')
-                $('input[name=total_amount]').val(grand_total)
-                $('#total_amountModal').text(grand_total)
-                $('input[name=paying_amount]').val(grand_total)
-                $('#paing_amountModal').text(grand_total)
-                $('#total_amountModal2').text(grand_total)
-                // calculateVat()
-            }
-
-            const accountsList = @json($accounts);
-
-            $(document).on('change', 'select[name="payment_type[]"]', function() {
-                const accounts = accountsList.filter(account => account.account_type == $(this).val());
-
-                if (accounts) {
-                    let html = '<select name="account_id[]" id="" class="form-control">';
-                    accounts.forEach(account => {
-                        switch ($(this).val()) {
-                            case 'bank':
-                                html +=
-                                    `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
-                                break;
-                            case "mobile_banking":
-                                html +=
-                                    `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
-                                break;
-                            case 'card':
-                                html +=
-                                    `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
-                                break;
-                            default:
-                                break;
-                        }
-
                     });
-                    html += '</select>';
-                    $('#paymentRow').find('.account_info').html(html);
-                }
 
-                if ($(this).val() == 'cash' || $(this).val() == 'advance') {
-                    $('#paymentRow').find('.account_info').html('');
-                    $cash =
-                        `<input type="hidden" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;
-                }
-            });
+                });
 
-            $('.receive_cash').on('input', function() {
-                const cash = $(this).val();
-                const total = $('#finalTotal').text();
-                let change_amount = 0;
-
-                if (numberOnly(total) < numberOnly(cash)) {
-                    change_amount = numberOnly(cash) - numberOnly(total);
-                }
-
-                if (change_amount < 0 || !change_amount) {
-                    $('.change_amount').val(0)
-                } else {
-                    $('.change_amount').val(change_amount)
-                }
-            })
-
-
-            $('[name="paying_amount[]"]').on('input', function() {
-                const allAmount = $('[name="paying_amount[]"]').map(function() {
-                    return $(this).val()
+                // load customer address
+                $("#customer_id").on("change", function() {
+                    let customer_id = $(this).val();
+                    $("#order_customer_id").val(customer_id ? customer_id : 'walk-in-customer');
                 })
 
-                console.log(allAmount);
-                let total = 0
+                // make payment modal
+                // $("#makePaymentBtn").on("click", function() {
 
-                // allAmount.each(function() {
-                //     total += numberOnly($(this).val())
+                //     const deliveryMethod = $('[name="delivery_method"]').val()
+                //     let customer_id = $("#order_customer_id").val();
+                //     if (!customer_id) {
+                //         toastr.error("{{ __('Please select a customer') }}")
+                //         return;
+                //     }
+
+                //     let address_id = $("#order_address_id").val();
+                //     if (!address_id && customer_id != 'walk-in-customer' && deliveryMethod == 1) {
+                //         toastr.error("{{ __('Please select a address') }}")
+                //         return;
+                //     }
+
+
+                //     // check if cart is empty
+                //     let cart_sub_total = $("#cart_sub_total").val();
+                //     if (cart_sub_total == 0) {
+                //         toastr.error("{{ __('Cart is empty') }}")
+                //         return;
+                //     }
+                //     // $("#placeOrderForm").submit();
+                //     $("#createPayment").modal('show')
                 // })
 
-                // console.log(total);
-                // $('#finalTotal').text(total)
+                // add new customer modal
 
-            })
-        </script>
+                $("#add-customer-form").on("submit", function(e) {
+                    e.preventDefault();
+                    const from = $('#add-customer-form')
+                    $.ajax({
+                        type: 'POST',
+                        data: $('#add-customer-form').serialize(),
+                        url: $('#add-customer-form').attr('action'),
+                        success: function(response) {
+                            toastr.success(response.message)
+                            $("#addCustomer").modal('hide');
+                            $('#add-customer-form')[0].reset();
+                            $("#customer_id").html(response.view)
+                        },
+                        error: function(response) {
+
+                            if (response.status == 500) {
+                                toastr.error("{{ __('Server error occurred') }}")
+                            }
+                            console.log(response);
+
+                        }
+                    });
+                })
+
+                // product search modal
+                $("#product_search_form").on("submit", function(e) {
+                    e.preventDefault();
+
+                    $("#search_btn_text").html(`<div class="spinner-border" role="status">
+                                            <span class="sr-only">Loading...</span></div>`)
+
+                    $.ajax({
+                        type: 'get',
+                        data: $('#product_search_form').serialize(),
+                        url: "{{ route('admin.load-products') }}",
+                        success: function(response) {
+                            $("#search_btn_text").html(
+                                `<i class="fas fa-search fa-2x fs-25"></i>`)
+                            $(".product_body").html(response)
+                        },
+                        error: function(response) {
+                            $("#search_btn_text").html(
+                                `<i class="fas fa-search fa-3x fs-25"></i>`)
+
+                            if (response.status == 500) {
+                                toastr.error("{{ __('Server error occurred') }}")
+                            }
+
+                            if (response.status == 403) {
+                                toastr.error(response.responseJSON.message);
+                            }
+
+                        }
+                    });
+                })
+
+                // palce order modal
+                // $('#placeOrderBtn').on('click', function() {
+
+                //     const paymentMethod = $('[name="payment_method"]').val();
+
+                //     if (!paymentMethod) {
+                //         toastr.error("{{ __('Please select a Payment Method') }}")
+                //         return;
+                //     }
+                //     const paymentDetails = $('[name="payment_details"]').val();
+                //     if (!paymentMethod) {
+                //         toastr.error("{{ __('Please select a Fill Payment Details') }}")
+                //         return;
+                //     }
+                //     $('[name="order_delivery_date"]').val($('[name="delivery_date"]').val())
+                //     $('[name="order_payment_method"]').val($('[name="payment_method"]').val());
+                //     $('[name="order_payment_details"]').val($('[name="payment_details"]').val());
+                //     $('[name="order_payment_notes"]').val($('[name="_payment_notes"]').val())
+                //     $('[name="order_order_note"]').val($('[name="order_note"]').val())
+
+                //     $("#placeOrderForm").submit();
+                // })
 
 
-        <script>
-            function modalHide(id) {
-                $(id).modal('hide')
-            }
+                $('.modal-reset-button').on('click', function() {
+                    const productId = $(this).data('product-id');
+                    resetCart();
+                    load_product_model(productId);
+                })
 
-            $(document).on('keydown', function(event) {
-                if (event.key === 'Escape' || event.keyCode === 27) {
-                    modalHide('#payment-modal')
+                $('[name="discount_type"]').on('change', function() {
+                    const type = $(this).val();
+                    const symbol = type == 'percent' ? '%' : "{{ currency_icon() }}"
+                    $('.discount_icon').html(symbol)
+                })
+
+                $(document).on('change', '#sub_total,#delivery_fee,#tax_fee,#discount,[name="discount_type"]',
+                    function() {
+                        calculateTotalFee()
+                    })
+
+                $('[name="delivery_method"]').on('change', function() {
+                    deliveryMethod()
+                })
+
+                $("#category_id,#brand_id,#name").on('input', function() {
+                    const category_id = $('#category_id').val();
+                    const brand = $('#brand_id').val();
+                    const name = $('#name').val();
+
+                    loadProudcts({
+                        category_id,
+                        brand,
+                        name
+                    })
+                })
+
+
+                // extra
+
+                $(".dis-tgl").click(function() {
+                    $(".dis-form").slideToggle("fast")
+                })
+
+
+                // add payment row
+                $('.add-payment').on('click', function() {
+                    const row = `@include('pos::payment-row', ['add' => true])`;
+                    $('#paymentRow').append(row)
+                })
+                $(document).on('click', '.remove-payment', function() {
+                    $(this).parents('tr').remove()
+                })
+            });
+        })(jQuery);
+
+
+        function load_product_model(product_id) {
+            $('.preloader_area').removeClass('d-none');
+            // check if cart has item from different restaurant using ajax request
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.check-cart-restaurant', '') }}" + "/" + product_id,
+                success: function(response) {
+                    if (response.status == true) {
+                        // add product id to reset button of modal
+                        $(".modal-reset-button").attr('data-product-id', product_id);
+                        $("#resetCartModal").modal('show');
+                        $('.preloader_area').addClass('d-none');
+                    } else {
+                        loadProductModal(product_id)
+                    }
+                },
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}")
+                    $('.preloader_area').addClass('d-none');
                 }
             });
+        }
 
-            function paymentSubmit(e) {
-                e.preventDefault();
-                const formData = $('#payment-form').serialize();
-                console.log(formData);
+        function loadProductModal(product_id) {
+            $('.preloader_area').removeClass('d-none');
+            $.ajax({
+                type: 'get',
+                url: "{{ url('admin/pos/load-product-modal') }}" + "/" + product_id,
+                success: function(response) {
+                    $(".load_product_modal_response").html(response)
+                    $("#cartModal").modal('show');
+                    $('.preloader_area').addClass('d-none');
+                },
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}")
+                    $('.preloader_area').addClass('d-none');
+                }
+            });
+        }
+
+        function removeCartItem(rowId) {
+
+            $.ajax({
+                type: 'get',
+                url: "{{ url('admin/pos/remove-cart-item') }}" + "/" + rowId,
+                success: function(response) {
+                    $(".shopping-card-body").html(response)
+
+                    calculateTotalFee();
+                    toastr.success("{{ __('Remove successfully') }}")
+                },
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}")
+                }
+            });
+        }
+
+        function calculateTotalFee() {
+
+            let subTotal = $('#sub_total').val() || '0.00';
+
+            // remove , if exists
+            if (subTotal.includes(',')) {
+                subTotal = subTotal.replace(/,/g, '');
             }
-        </script>
-    @endpush
+            subTotal = parseFloat(subTotal);
+            let deliveryFee = parseFloat($('#delivery_fee').val()) || 0;
+
+            let tax = parseFloat($('#tax_fee').val()) || 0;
+            let discount = parseFloat($('#discount').val()) || 0;
+            let total = parseFloat($('#total_fee').val()) || 0;
+
+            let discountType = $('[name="discount_type"]').val();
+
+            if (discountType === 'percent') {
+                discount = subTotal * (discount / 100);
+            }
+
+            // Calculate the total
+            total = subTotal + deliveryFee + tax - discount;
+
+            // Update the total field with the calculated value
+            $('#total_fee').val(total.toFixed(2));
+
+            $('[name="order_sub_total"]').val(subTotal);
+            $('[name="order_delivery_fee"]').val(deliveryFee);
+            $('[name="order_tax"]').val(tax);
+            $('[name="order_discount"]').val(discount.toFixed(2));
+            $('[name="order_total_fee"]').val(total.toFixed(2));
+        }
+
+
+
+        function loadProudcts(data = null) {
+            $('.preloader_area').removeClass('d-none');
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.load-products') }}",
+                data: data,
+                success: function(response) {
+                    $(".product_body").html(response)
+                    $('.preloader_area').addClass('d-none');
+                },
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}")
+                    //location.reload();
+                }
+            });
+        }
+
+        function loadPagination(url) {
+            $.ajax({
+                type: 'get',
+                url: url,
+                success: function(response) {
+                    $(".product_body").html(response)
+                },
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}")
+                }
+            });
+        }
+
+        function openPaymentModal() {
+
+            const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
+            const discountAmount = $('#discount_total_amount').val();
+            const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
+            const item = $('#titems').text();
+
+            $('[name="sub_total"]').val(subTotal);
+            $('#sub_totalModal').text(subTotal);
+
+            $('#discount_amountModal').text(discountAmount);
+            $('[name="discount_amount"]').val(discountAmount);
+
+            let grandTotal = Number(finalTotal) - Number(discountAmount);
+            $('#total_amountModal').text(grandTotal);
+            $('#total_amountModal2').text(grandTotal);
+
+            // total items
+
+            $('#itemModal').text(item);
+            $('#payment-modal').modal('show')
+
+
+            $('.paying_amount').val(grandTotal);
+            // hide rows
+            if (!discountAmount) {
+                $('.discount-row').addClass('d-none');
+            }
+        }
+
+        function resetCart() {
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.modal-cart-clear') }}",
+                success: function(response) {
+                    $(".shopping-card-body").html(response)
+                    calculateTotalFee();
+                    toastr.success("{{ __('Cart reset successfully') }}")
+                    $("#resetCartModal").modal('hide');
+                },
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}")
+                }
+            });
+        }
+
+        function singleAddToCart(id) {
+            $('.preloader_area').removeClass('d-none');
+            $.ajax({
+                type: 'get',
+                data: {
+                    product_id: id,
+                    type: 'single'
+                },
+                url: "{{ url('/admin/pos/add-to-cart') }}",
+                success: function(response) {
+                    $(".product-table-container").html(response)
+
+                    console.log(response);
+                    toastr.success("{{ __('Item added successfully') }}")
+                    calculateTotalFee();
+                    $('.preloader_area').addClass('d-none');
+                },
+                error: function(response) {
+                    if (response.status == 500) {
+                        toastr.error("{{ __('Server error occurred') }}")
+                    }
+
+                    if (response.status == 403) {
+                        toastr.error(response.responseJSON.message)
+                    }
+                    $('.preloader_area').addClass('d-none');
+                }
+            });
+        }
+
+        function numberFormat(n) {
+            return Number(n).toFixed(2)
+        }
+
+        function showDeliveryInfo(show = false) {
+            if (show) {
+                $('.add_delivery_info').removeClass('d-none');
+            } else {
+                $('.add_delivery_info').addClass('d-none');
+            }
+        }
+
+        function discountExist() {
+            let discount_total_amount = $('#discount_total_amount').val()
+            let discount_type = $('#discount_type').val()
+            let total_amount_get_text = Number($('#total').text().replace(/[^0-9.]/g, ''))
+            let vat_amount = Number($('#ttax2').text())
+            let totalAmount = 0
+            let percentage = null
+
+            if (discount_type == 1) {
+                if (discount_total_amount > total_amount_get_text) {
+                    discount_total_amount = total_amount_get_text
+                }
+                totalAmount = numberFormat(
+                    Number(total_amount_get_text - discount_total_amount).toFixed(6)
+                )
+            } else {
+                if (discount_total_amount > 100) {
+                    discount_total_amount = 100
+                }
+                percentage = (discount_total_amount * total_amount_get_text) / 100
+                totalAmount = total_amount_get_text - percentage
+            }
+
+            // let exchange_total = 0
+
+            // if (exchange.total > 0) {
+            //     exchange_total = exchange.total
+            // }
+
+            $('#tds').text(percentage ? percentage : discount_total_amount)
+            $('input[name=discount_amount]').val(
+                percentage ? percentage : discount_total_amount
+            )
+            $('#discount_amountModal').text(
+                percentage ? percentage : discount_total_amount
+            )
+            vat_amount = 0
+            let grand_total = numberFormat(
+                // Number(exchange_total)
+                Number(totalAmount) + Number(vat_amount) - 0
+            )
+            $('#ttax2').text(vat_amount)
+            $('#gtotal').text(totalAmount)
+            $('#finalTotal').text(grand_total)
+            $('#discount_total_amount').val(discount_total_amount)
+            $('#discountModal').modal('hide')
+            $('input[name=total_amount]').val(grand_total)
+            $('#total_amountModal').text(grand_total)
+            $('input[name=paying_amount]').val(grand_total)
+            $('#paing_amountModal').text(grand_total)
+            $('#total_amountModal2').text(grand_total)
+            // calculateVat()
+        }
+
+        const accountsList = @json($accounts);
+
+        $(document).on('change', 'select[name="payment_type[]"]', function() {
+            const accounts = accountsList.filter(account => account.account_type == $(this).val());
+
+            if (accounts) {
+                let html = '<select name="account_id[]" id="" class="form-control">';
+                accounts.forEach(account => {
+                    switch ($(this).val()) {
+                        case 'bank':
+                            html +=
+                                `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
+                            break;
+                        case "mobile_banking":
+                            html +=
+                                `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                            break;
+                        case 'card':
+                            html +=
+                                `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
+                            break;
+                        default:
+                            break;
+                    }
+
+                });
+                html += '</select>';
+
+                $(this).parents('td').siblings('.account_info').html(html);
+            }
+
+            console.log($(this).parents('td').siblings('.account_info'));
+
+            if ($(this).val() == 'cash' || $(this).val() == 'advance') {
+                $(this).parents('td').siblings('.account_info').html('');
+                $cash =
+                    `<input type="hidden" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;
+
+                $(this).parents('td').siblings('.account_info').html($cash);
+            }
+        });
+
+        $('.receive_cash').on('input', function() {
+            const cash = $(this).val();
+            const total = $('#finalTotal').text();
+            let change_amount = 0;
+
+            if (numberOnly(total) < numberOnly(cash)) {
+                change_amount = numberOnly(cash) - numberOnly(total);
+            }
+
+            if (change_amount < 0 || !change_amount) {
+                $('.change_amount').val(0)
+            } else {
+                $('.change_amount').val(change_amount)
+            }
+        })
+
+
+        $('[name="paying_amount[]"]').on('input', function() {
+            const allAmount = $('[name="paying_amount[]"]').map(function() {
+                return $(this).val()
+            })
+
+            console.log(allAmount);
+            let total = 0
+
+            // allAmount.each(function() {
+            //     total += numberOnly($(this).val())
+            // })
+
+            // console.log(total);
+            // $('#finalTotal').text(total)
+
+        })
+    </script>
+
+
+    <script>
+        function modalHide(id) {
+            $(id).modal('hide')
+        }
+
+        $(document).on('keydown', function(event) {
+            if (event.key === 'Escape' || event.keyCode === 27) {
+                modalHide('#payment-modal')
+            }
+        });
+
+        function paymentSubmit(e) {
+            e.preventDefault();
+            const formData = $('#checkoutForm').serialize();
+            console.log(formData);
+
+            $.ajax({
+                type: 'POST',
+                data: formData,
+                url: "{{ route('admin.place-order') }}",
+                success: function(response) {
+                    console.log(response);
+                    toastr.success(response.message)
+                    $("#payment-modal").modal('hide');
+                    $("#checkoutForm")[0].reset();
+                },
+                error: function(response) {
+                    if (response.status == 500) {
+                        toastr.error("{{ __('Server error occurred') }}")
+                    }
+                    console.log(response);
+                }
+            });
+        }
+    </script>
+@endpush

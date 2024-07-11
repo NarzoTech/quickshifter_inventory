@@ -348,6 +348,7 @@ class POSController extends Controller
 
     public function place_order(Request $request)
     {
+        dd($request->all());
         if (session('POSCART') != null && count(session('POSCART')) == 0) {
             $notification = trans('Your cart is empty!');
             $notification = array('messege' => $notification, 'alert-type' => 'error');
@@ -355,14 +356,14 @@ class POSController extends Controller
         }
 
         $validatedData = Validator::make($request->all(), [
-            'customer_id' => 'required',
+            'order_customer_id' => 'required',
         ], [
-            'customer_id.required' => trans('Customer is required'),
+            'order_customer_id.required' => trans('Customer is required'),
         ])->validate();
 
         $user = null;
-        if ($request->customer_id !=  'walk-in-customer') {
-            $user = User::find($request->customer_id);
+        if ($request->order_customer_id !=  'walk-in-customer') {
+            $user = User::find($request->order_customer_id);
         }
 
         // $calculate_amount = $this->calculate_amount($request->order_delivery_fee);

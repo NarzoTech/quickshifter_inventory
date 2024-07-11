@@ -38,11 +38,9 @@ class OrderService
         $order->order_id = substr(rand(0, time()), 0, 10);
         $order->user_id = $user != null ?  $user->id : null;
         $order->walk_in_customer = $user != null ?  0 : 1;
-        $order->address_id = $request->address_id;
-        $order->delivery_fee = $request->order_delivery_fee;
+
         $order->tax = $request->order_tax;
         $order->discount = $request->order_discount;
-        $order->order_delivery_date = $request->order_delivery_date;
         $order->total_amount = $request->order_total_fee;
         $order->currency_rate = cache()->get('currency')->currency_rate;
         $order->currency_name = cache()->get('currency')->currency_name;
@@ -52,12 +50,12 @@ class OrderService
         $order->payment_method = $request->order_payment_method;
         $order->delivery_method = $request->order_delivery_method;
 
-        if($placeFrom == 'pos'){
-            $order->payment_status = $order->payment_method == 'cod' ? 'pending': 'success';
+        if ($placeFrom == 'pos') {
+            $order->payment_status = $order->payment_method == 'cod' ? 'pending' : 'success';
             $order->order_status = 'success';
             $order->delivery_status = 2;
             $order->created_by = auth('admin')->user()->id;
-        }else{
+        } else {
             $order->order_status = 'pending';
             $order->delivery_status = 1;
         }
@@ -76,8 +74,8 @@ class OrderService
 
         $order->save();
 
-        if($user != null){
-            $this->sendOrderSuccessMail($user,$order,);
+        if ($user != null) {
+            $this->sendOrderSuccessMail($user, $order,);
         }
         foreach ($cart as $item) {
             $variant = isset($item['variant']) ?  Variant::where('sku', $item['sku'])->first() : null;
@@ -98,7 +96,8 @@ class OrderService
         return $order;
     }
 
-    public function orderStatus(Request $request, Order $order){
+    public function orderStatus(Request $request, Order $order)
+    {
 
         $order->delivery_status = $request->status;
 
@@ -119,7 +118,8 @@ class OrderService
         $order->save();
     }
 
-    public function destroy(Order $order){
+    public function destroy(Order $order)
+    {
 
         $orderProducts = $order->orderDetails;
         foreach ($orderProducts as $orderProduct) {
@@ -141,7 +141,7 @@ class OrderService
         $message = str_replace('{{order_status}}', 'Pending', $message);
         $message = str_replace('{{order_date}}', $order->created_at->format('d F, Y'), $message);
 
-        $this->sendOrderSuccessMailFromTrait($subject,$message,$user);
+        $this->sendOrderSuccessMailFromTrait($subject, $message, $user);
     }
 
 
