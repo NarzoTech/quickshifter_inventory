@@ -19,74 +19,70 @@
 <body>
     <div id="app">
         <div class="main-wrapper">
-            @if(!Route::is('admin.pos'))
-            <div class="navbar-bg"></div>
-            <nav class="navbar navbar-expand-lg main-navbar">
-                <div class="mr-auto form-inline">
-                    <ul class="mr-3 navbar-nav d-flex align-items-center">
-                        <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i
-                                    class="fas fa-bars"></i></a></li>
-                        <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-none"><i
-                                    class="fas fa-search"></i></a></li>
-                        @if (Module::isEnabled('Language') && Route::has('set-language'))
-                            <form id="setLanguageHeader" action="{{ route('set-language') }}">
-                                <select class="bg-transparent form-control-sm border-light text-light" name="code">
-                                    @forelse (allLanguages() as $language)
-                                        <option class="text-dark" value="{{ $language->code }}"
-                                            {{ getSessionLanguage() == $language->code ? 'selected' : '' }}>
-                                            {{ $language->name }}
-                                        </option>
-                                    @empty
-                                        <option value="en" {{ getSessionLanguage() == 'en' ? 'selected' : '' }}>
-                                            English
-                                        </option>
-                                    @endforelse
-                                </select>
-                            </form>
-                        @endif
-                    </ul>
-                </div>
-                <ul class="navbar-nav navbar-right">
-                    <li class="dropdown dropdown-list-toggle">
-                        <a target="_blank" href="{{ route('home') }}" class="nav-link nav-link-lg">
-                            <i class="fas fa-home"></i> {{ __('Visit Website') }}</i>
-                        </a>
-                    </li>
-
-                    <li class="dropdown dropdown-list-toggle">
-                        <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
-                            <i class="fas fa-cart-plus"></i> {{ __('POS') }}</i>
-                        </a>
-                    </li>
-
-                    <li class="dropdown"><a href="#" data-toggle="dropdown"
-                            class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                            @if ($header_admin->image)
-                                <img alt="image" src="{{ asset($header_admin->image) }}" class="mr-1 rounded-circle">
-                            @else
-                                <img alt="image" src="" class="mr-1 rounded-circle">
+            @if (!Route::is('admin.pos'))
+                <div class="navbar-bg"></div>
+                <nav class="navbar navbar-expand-lg main-navbar">
+                    <div class="mr-auto form-inline">
+                        <ul class="mr-3 navbar-nav d-flex align-items-center">
+                            <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i
+                                        class="fas fa-bars"></i></a></li>
+                            <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-none"><i
+                                        class="fas fa-search"></i></a></li>
+                            @if (Module::isEnabled('Language') && Route::has('set-language'))
+                                <form id="setLanguageHeader" action="{{ route('set-language') }}">
+                                    <select class="bg-transparent form-control-sm border-light text-light"
+                                        name="code">
+                                        @forelse (allLanguages() as $language)
+                                            <option class="text-dark" value="{{ $language->code }}"
+                                                {{ getSessionLanguage() == $language->code ? 'selected' : '' }}>
+                                                {{ $language->name }}
+                                            </option>
+                                        @empty
+                                            <option value="en" {{ getSessionLanguage() == 'en' ? 'selected' : '' }}>
+                                                English
+                                            </option>
+                                        @endforelse
+                                    </select>
+                                </form>
                             @endif
+                        </ul>
+                    </div>
+                    <ul class="navbar-nav navbar-right">
+                        <li class="dropdown dropdown-list-toggle">
+                            <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                                <i class="fas fa-cart-plus"></i> {{ __('POS') }}</i>
+                            </a>
+                        </li>
 
-                            <div class="d-sm-none d-lg-inline-block">{{ $header_admin->name }}</div>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            @adminCan(['admin.profile.view', 'admin.profile.edit'])
-                                <a href="{{ route('admin.edit-profile') }}" class="dropdown-item has-icon">
-                                    <i class="far fa-user"></i> {{ __('Profile') }}
-                                </a>
-                            @endadminCan
-                            <div class="dropdown-divider"></div>
+                        <li class="dropdown"><a href="#" data-toggle="dropdown"
+                                class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                                @if ($header_admin->image)
+                                    <img alt="image" src="{{ asset($header_admin->image) }}"
+                                        class="mr-1 rounded-circle">
+                                @else
+                                    <img alt="image" src="" class="mr-1 rounded-circle">
+                                @endif
 
-                            <button class="dropdown-item has-icon text-danger"
-                                onclick="event.preventDefault();
+                                <div class="d-sm-none d-lg-inline-block">{{ $header_admin->name }}</div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                @adminCan(['admin.profile.view', 'admin.profile.edit'])
+                                    <a href="{{ route('admin.edit-profile') }}" class="dropdown-item has-icon">
+                                        <i class="far fa-user"></i> {{ __('Profile') }}
+                                    </a>
+                                @endadminCan
+                                <div class="dropdown-divider"></div>
+
+                                <button class="dropdown-item has-icon text-danger"
+                                    onclick="event.preventDefault();
                                 document.getElementById('admin-logout-form').submit();">
-                                <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }}
-                            </button>
-                        </div>
-                    </li>
+                                    <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }}
+                                </button>
+                            </div>
+                        </li>
 
-                </ul>
-            </nav>
+                    </ul>
+                </nav>
             @endif
             @if (request()->routeIs(
                     'admin.general-setting',

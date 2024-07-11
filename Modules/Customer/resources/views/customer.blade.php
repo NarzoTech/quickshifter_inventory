@@ -172,99 +172,7 @@
     <x-admin.delete-modal />
 
     {{-- add customer --}}
-    <div class="modal" id="addCustomer">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">{{ __('Add Customer') }}</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <form action="{{ route('admin.customers.store') }}" method="POST" id="add-customer-form">
-                        @csrf
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="name">{{ __('Customer Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="group_id">{{ __('Customer Group') }}</label>
-                                <select name="group_id" id="group_id" class="form-control">
-                                    <option value="">{{ __('Select Group') }}</option>
-                                    @foreach ($groups as $group)
-                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="phone">{{ __('Phone') }}</label>
-                                <input type="text" class="form-control" id="phone" name="phone">
-                            </div>
-                            <div class="form-group col-md-4 ">
-                                <label for="email">{{ __('Email') }}</label>
-                                <input type="email" class="form-control" id="email" name="email">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="area_id">{{ __('Area') }}</label>
-                                <select name="area_id" id="area_id" class="form-control">
-                                    <option value="">{{ __('Select Area') }}</option>
-                                    @foreach ($areaList as $list)
-                                        <option value="{{ $list->id }}">{{ $list->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4 ">
-                                <label for="vehicle_id">{{ __('Vehicle') }}</label>
-                                <select name="vehicle_id" id="vehicle_id" class="form-control">
-                                    <option value="">{{ __('Select Vehicle') }}</option>
-                                    @foreach ($vehicles as $vehicle)
-                                        <option value="{{ $vehicle->id }}">{{ $vehicle->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="membership">{{ __('Membership') }}</label>
-                                <input type="text" class="form-control" id="membership" name="membership">
-                            </div>
-                            <div class="form-group col-md-4 ">
-                                <label for="date">{{ __('Date') }}</label>
-                                <input type="text" class="form-control datepicker" id="date" name="date">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="status">{{ __('Status') }}</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">{{ __('Active') }}</option>
-                                    <option value="0">{{ __('Inactive') }}</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
-                                <label class="custom-switch mt-2">
-                                    <input type="checkbox" name="guest" class="custom-switch-input" value="1">
-                                    <span class="custom-switch-indicator"></span>
-                                    <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
-                                </label>
-                            </div>
-                            <div class="form-group col-md-12">
-                                <label for="address">{{ __('Address') }}</label>
-                                <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="add-customer-form">Save</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
+    @include('customer::customer-modal')
 
 
     {{-- edit customer --}}
@@ -287,8 +195,10 @@
                             @method('PUT')
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label for="name">{{ __('Customer Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}">
+                                    <label for="name">{{ __('Customer Name') }}<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ $user->name }}">
 
                                 </div>
                                 <div class="form-group col-md-4">
@@ -304,11 +214,13 @@
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="phone">{{ __('Phone') }}</label>
-                                    <input type="text" class="form-control" id="phone" name="phone" value="{{ $user->phone }}">
+                                    <input type="text" class="form-control" id="phone" name="phone"
+                                        value="{{ $user->phone }}">
                                 </div>
                                 <div class="form-group col-md-4 ">
                                     <label for="email">{{ __('Email') }}</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}">
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="{{ $user->email }}">
                                 </div>
 
                                 <div class="form-group col-md-4">
@@ -358,14 +270,13 @@
                                 </div>
 
                                 <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
-                                <label class="custom-switch mt-2">
-                                    <input type="checkbox" name="guest" class="custom-switch-input" value="1" @if ($user->guest)
-                                        checked
-                                    @endif>
-                                    <span class="custom-switch-indicator"></span>
-                                    <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
-                                </label>
-                            </div>
+                                    <label class="custom-switch mt-2">
+                                        <input type="checkbox" name="guest" class="custom-switch-input" value="1"
+                                            @if ($user->guest) checked @endif>
+                                        <span class="custom-switch-indicator"></span>
+                                        <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
+                                    </label>
+                                </div>
 
                             </div>
                         </form>

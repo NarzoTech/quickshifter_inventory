@@ -35,24 +35,24 @@ class CustomerController extends Controller
         $query = User::query();
 
         $query->when($request->filled('keyword'), function ($q) use ($request) {
-            $q->where('name', 'like', '%'.$request->keyword.'%')
-                ->orWhere('email', 'like', '%'.$request->keyword.'%')
-                ->orWhere('phone', 'like', '%'.$request->keyword.'%')
-                ->orWhere('address', 'like', '%'.$request->keyword.'%');
+            $q->where('name', 'like', '%' . $request->keyword . '%')
+                ->orWhere('email', 'like', '%' . $request->keyword . '%')
+                ->orWhere('phone', 'like', '%' . $request->keyword . '%')
+                ->orWhere('address', 'like', '%' . $request->keyword . '%');
         });
 
-        $orderBy = $request->filled( 'order_by' ) && $request->order_by == 1 ? 'asc' : 'desc';
+        $orderBy = $request->filled('order_by') && $request->order_by == 1 ? 'asc' : 'desc';
 
         if ($request->filled('par-page')) {
-            $users = $request->get('par-page') == 'all' ? $query->orderBy( 'id', $orderBy )->get() : $query->orderBy( 'id', $orderBy )->paginate($request->get('par-page'))->withQueryString();
+            $users = $request->get('par-page') == 'all' ? $query->orderBy('id', $orderBy)->get() : $query->orderBy('id', $orderBy)->paginate($request->get('par-page'))->withQueryString();
         } else {
-            $users = $query->orderBy( 'id', $orderBy )->paginate()->withQueryString();
+            $users = $query->orderBy('id', $orderBy)->paginate()->withQueryString();
         }
 
-        $groups =$this->userGroup->getUserGroup()->where('type','customer')->where('status',1)->get();
+        $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
         $vehicles = $this->vehicle->get();
-         return view('customer::customer')->with([
+        return view('customer::customer')->with([
             'users' => $users,
             'groups' => $groups,
             'areaList' => $areaList,
@@ -65,27 +65,20 @@ class CustomerController extends Controller
     {
         checkAdminHasPermissionAndThrowException('customer.create');
 
-        $request->validate([
-            'name' => 'required',
-            'phone' => 'nullable|unique:users,phone',
-            'email' => 'nullable|email|unique:users,email',
-        ]);
+        $this->saveUser($request);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->phone = $request->phone;
-        $user->email = $request->email;
-        $user->group_id = $request->group_id;
-        $user->area_id = $request->area_id;
-        $user->vehicle_id = $request->vehicle_id;
-        $user->membership = $request->membership;
-        $user->date = now()->parse($request->date);
-        $user->status = $request->status;
-        $user->guest = $request->guest ? 1 : 0;
-        $user->address = $request->address;
-        $user->save();
+        // check if request is ajax
+        if ($request->ajax()) {
+            $customers = User::get();
+            $view = view('pos::customer-drop-down', compact('customers'))->render();
+            return response()->json([
+                'message' => 'Customer created successfully.',
+                'alert-type' => 'success',
+                'view' => $view
+            ]);
+        }
 
-        return $this->redirectWithMessage(RedirectType::CREATE->value,'admin.customers.index',[],['messege'=>'Customer created successfully.','alert-type'=>'success']);
+        return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.customers.index', [], ['messege' => 'Customer created successfully.', 'alert-type' => 'success']);
     }
     public function show($id)
     {
@@ -109,8 +102,8 @@ class CustomerController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'phone' => 'nullable|unique:users,phone,'.$id,
-            'email' => 'nullable|email|unique:users,email,'.$id,
+            'phone' => 'nullable|unique:users,phone,' . $id,
+            'email' => 'nullable|email|unique:users,email,' . $id,
         ]);
 
         $user = User::findOrFail($id);
@@ -127,6 +120,32 @@ class CustomerController extends Controller
         $user->address = $request->address;
         $user->save();
 
-        return $this->redirectWithMessage(RedirectType::UPDATE->value,'admin.customers.index',[],['messege'=>'Customer updated successfully.','alert-type'=>'success']);
+        return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customers.index', [], ['messege' => 'Customer updated successfully.', 'alert-type' => 'success']);
+    }
+
+
+    public function saveUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'nullable|unique:users,phone',
+            'email' => 'nullable|email|unique:users,email',
+        ]);
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->phone = $request->phone;
+        $user->email = $request->email;
+        $user->group_id = $request->group_id;
+        $user->area_id = $request->area_id;
+        $user->vehicle_id = $request->vehicle_id;
+        $user->membership = $request->membership;
+        $user->date = now()->parse($request->date);
+        $user->status = $request->status;
+        $user->guest = $request->guest ? 1 : 0;
+        $user->address = $request->address;
+        $user->save();
+
+        return $user;
     }
 }

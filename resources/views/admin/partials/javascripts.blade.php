@@ -46,6 +46,14 @@
     });
 </script>
 
+<script>
+    function numberOnly(str) {
+        let val = str.replace(/[^0-9.]/g, '');
+
+        return parseFloat(val)
+    }
+</script>
+
 @if ($errors->any())
     @foreach ($errors->all() as $error)
         <script>

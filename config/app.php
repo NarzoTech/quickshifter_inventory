@@ -170,6 +170,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
     ])->toArray(),
 
     /*
@@ -186,6 +187,8 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'GoogleTranslate' => Stichoza\GoogleTranslate\GoogleTranslate::class
         'Purifier' => Mews\Purifier\Facades\Purifier::class,
+        'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
+
     ])->toArray(),
 
 ];

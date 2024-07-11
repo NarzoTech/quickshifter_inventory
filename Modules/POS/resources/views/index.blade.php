@@ -4,7 +4,21 @@
         {{ __('POS') }}</title>
 @endsection
 @push('css')
+    <link rel="stylesheet" href="{{ asset('backend/css/pos.css') }}">
     <style>
+        .ui-autocomplete {
+            z-index: 215000000 !important;
+        }
+
+        .theme-primary {
+            background: #ad07b0 !important;
+        }
+
+        .product-table thead {
+            position: sticky;
+            top: -1px;
+        }
+
         .w-21 {
             width: 21%;
         }
@@ -18,13 +32,57 @@
             padding: 0 5px !important;
         }
 
-        .main-content{
+        .main-content {
             padding-left: 0px !important;
-            padding-top:0px !important;
+            padding-top: 0px !important;
         }
-        .main-sidebar{
-            display:none;
+
+        .main-sidebar {
+            display: none;
             width: 0 !important;
+        }
+
+        .pos-right-side .summary-table {
+            width: calc(100% + 40px);
+            margin-left: -20px;
+        }
+
+        .dis-form {
+            display: none;
+        }
+
+        .dis-form input {
+            width: 70px;
+            text-align: center;
+            border: 1px solid #E3E3E3;
+            margin-left: -16px;
+            outline: none;
+        }
+
+        .dis-form select {
+            position: relative;
+            width: 120px;
+            color: #fff;
+            background-color: #188ae2;
+            border-radius: 4px 0 0 4px;
+            padding: 5px;
+            z-index: 10;
+        }
+
+        @media only screen and (max-width:767px) {
+            .pos-right-side {
+                padding-bottom: 10px !important;
+            }
+        }
+
+        @media only screen and (max-width:480px) {
+            .pos-right-side {
+                padding-bottom: 5px !important;
+            }
+
+            #exchange-table {
+                display: block;
+            }
         }
     </style>
 @endpush
@@ -80,13 +138,13 @@
 
                                         <div class="col-md-12 d-flex align-items-center mt-2">
                                             <input type="text" class="form-control" name="name" id="name"
-                                                placeholder="{{ __('Search here..') }}" autocomplete="off"
-                                                value="{{ request()->get('name') }}">
+                                                placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
+                                                autocomplete="off" value="{{ request()->get('name') }}">
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            <div class="card-body product_body">
+                            <div class="card-body product_body" style="overflow: auto">
 
                             </div>
                         </div>
@@ -97,16 +155,11 @@
                                 <div class="row w-100">
                                     <div class="col-md-9">
                                         <select name="customer_id" id="customer_id" class="form-control select2">
-                                            <option value="" disabled selected>{{ __('Select Customer') }}</option>
-                                            <option value="walk-in-customer">{{ __('walk-in-customer') }}</option>
-                                            @foreach ($customers as $customer)
-                                                <option value="{{ $customer->id }}">{{ $customer->name }} -
-                                                    {{ $customer->phone }}</option>
-                                            @endforeach
+                                            @include('pos::customer-drop-down')
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <button data-toggle="modal" data-target="#createNewUser" type="button"
+                                        <button data-toggle="modal" data-target="#addCustomer" type="button"
                                             class="btn btn-primary"><i class="fa fa-plus"
                                                 aria-hidden="true"></i>{{ __('New') }}</button>
                                     </div>
@@ -118,6 +171,148 @@
                             </div>
 
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 product-table-container">
+                                        <table class="table table-bordered product-table">
+                                            <thead class="text-center" style="background: #00a65a">
+                                                <tr style="height: 25px; color: #fff;">
+                                                    <th style="padding:4px 0px; margin:0px; width: 30%;">Name</th>
+                                                    <th style="padding:4px 0px; margin:0px; width: 5%;">Qty</th>
+                                                    <th style="padding:4px 0px; margin:0px; width: 7%;">Price</th>
+                                                    <th style="padding:4px 0px; margin:0px; width: 10%;">Total</th>
+                                                    <th style="padding:4px 0px; margin:0px; width: 5%;">
+                                                        <i class="fa fa-trash"></i>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php
+                                                    $cumalitive_sub_total = 0;
+                                                @endphp
+                                                @foreach ($cart_contents as $cart_index => $cart_content)
+                                                    <tr>
+                                                        <td>
+                                                            <p>{{ $cart_content['name'] }}</p>
+                                                            @if (isset($cart_content['variant']))
+                                                                <span>
+                                                                    {{ $cart_content['variant']['attribute'] }}
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                        <td data-rowid="{{ $cart_content['rowid'] }}" class="px-3">
+                                                            <input min="1" type="number"
+                                                                value="{{ $cart_content['qty'] }}"
+                                                                class="pos_input_qty form-control">
+                                                        </td>
+
+                                                        <td>{{ currency($cart_content['price']) }}</td>
+                                                        @php
+                                                            $sub_total = $cart_content['sub_total'];
+                                                            $cumalitive_sub_total += $sub_total;
+                                                        @endphp
+
+                                                        <td>{{ currency($sub_total) }}</td>
+                                                        <td>
+                                                            <a href="javascript:;"
+                                                                onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
+                                                                class="d-block p-2 "><i class="fa fa-trash text-danger"
+                                                                    aria-hidden="true"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <table id="totalTable" class="summary-table">
+                                    <thead>
+                                        <th width="30%"></th>
+                                        <th width="20%"></th>
+                                        <th width="30%"></th>
+                                        <th width="20%"></th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding: 5px 10px;border-top: 1px solid #DDD;">Items</td>
+                                            <td class="text-right"
+                                                style="padding: 5px 10px;font-size: 14px; font-weight:bold;border-top: 1px solid #DDD;">
+                                                <span id="titems">{{ count($cart_contents) }}</span>
+                                            </td>
+                                            <td style="padding: 5px 10px;border-top: 1px solid #DDD;">Total</td>
+                                            <td class="text-right"
+                                                style="padding: 5px 10px;font-size: 14px; font-weight:bold;border-top: 1px solid #DDD;">
+                                                <span id="total">{{ currency($cumalitive_sub_total) }}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 5px 10px;">
+                                                VAT <small class="text-info">(0%)</small>
+                                            </td>
+                                            <td class="text-right"
+                                                style="padding: 5px 10px;font-size: 14px; font-weight:bold;">
+                                                <span id="ttax2">0</span>
+                                            </td>
+                                            <td style="padding: 5px 10px;">{{ __('Discount') }}
+                                                <i class="fa fa-edit dis-tgl" style="cursor: pointer;"></i>
+                                                <div class="dis-form">
+                                                    <select name="discount_type" id="discount_type"
+                                                        onchange="discountExist()">
+                                                        <option value="1" selected>{{ __('Amount') }} (TK )</option>
+                                                        <option value="2">{{ __('Percentage') }} (%)</option>
+                                                    </select>
+                                                    <input type="text" onchange="discountExist()"
+                                                        id="discount_total_amount" value="0" step="0.1"
+                                                        name="discount_total_amount" autocomplete="off" autofocus>
+                                                </div>
+                                            </td>
+
+                                            <td class="text-right" style="padding: 5px 10px;font-weight:bold;">
+                                                <span id="tds">0</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
+                                                colspan="2">
+                                                After Discount Price
+                                            </td>
+                                            <td class="text-right"
+                                                style="padding:5px 10px 5px 10px; font-size: 14px;border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
+                                                colspan="2">
+                                                <span id="gtotal">{{ currency($cumalitive_sub_total) }}</span>
+                                                <input type="hidden" value="0" id="business_vat">
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
+                                                colspan="2">
+                                                Total Vat
+                                            </td>
+                                            <td class="text-right"
+                                                style="padding:5px 10px 5px 10px; font-size: 14px;border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
+                                                colspan="2">
+                                                <span id="totalVat">0</span>
+                                                <input type="hidden" value="0" id="business_vat">
+                                            </td>
+                                        </tr>
+                                        <tr class="pay-row">
+                                            <td
+                                                style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;">
+                                                Total Payable
+                                                <span id="payable_amount"></span>
+                                            </td>
+                                            <td class="text-right" id="totalAmountWithVat" colspan="3"
+                                                style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;">
+                                                {{ currency($cumalitive_sub_total) }}
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {{-- <div class="card-body">
                                 <div class="shopping-card-body">
                                     <table class="table table-bordered">
                                         <thead>
@@ -281,12 +476,39 @@
                                     <input type="hidden" value="" name="order_payment_notes">
                                     <input type="hidden" value="" name="order_order_note">
                                 </form>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <footer class="pos-footer" style="z-index: 9000">
+            <div>
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-block back-btn">
+                    <i class="fa fa-backward fa-lg mt-3"></i>
+                </a>
+            </div>
+            <h3 class="final-text">
+                Total : <span id="finalTotal"> {{ currency($cumalitive_sub_total) }} </span>
+            </h3>
+            <div class="btn-group lg-btns">
+                <div class="btn-group">
+                    <button type="button" class="btn hold-list-btn" title="Hold Sale List">
+                        <i class="fa fa-list" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn hold-btn" title="Hold Current Sale">
+                        Hold
+                    </button>
+                </div>
+                <button type="button" class="btn cancel-btn" onclick="cancel()">
+                    Clear
+                </button>
+                <button type="button" class="btn payment-btn" onclick="openPaymentModal()">
+                    Payment
+                </button>
+            </div>
+        </footer>
     </div>
 
 
@@ -315,78 +537,7 @@
 
 
     <!-- Create new user modal -->
-    <div class="modal pos_sidebar fade" id="createNewUser" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Create new customer') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <form id="createNewUserForm" method="POST">
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-                                    <label for="">{{ __('First Name') }} *</label>
-                                    <input class="form-control" type="text" placeholder="{{ __('First Name') }}"
-                                        name="first_name" required>
-                                </div>
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-                                    <label for="">{{ __('Last Name') }} *</label>
-                                    <input class="form-control" type="text" placeholder="{{ __('Last Name') }}"
-                                        name="last_name" required>
-                                </div>
-
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-
-                                    <label for="">{{ __('Phone') }} *</label>
-                                    <input class="form-control" type="text" placeholder="{{ __('Phone') }}"
-                                        name="phone" required>
-                                </div>
-                                <div class="col-md-6 col-lg-12 col-xl-6 form-group">
-                                    <label for="">{{ __('Email') }}</label>
-                                    <input class="form-control" type="email" placeholder="{{ __('Email') }}"
-                                        name="email">
-                                </div>
-
-                                <div class="col-md-12 col-lg-12 col-xl-12 form-group">
-                                    <label for="">{{ __('Address') }} *</label>
-                                    <textarea class="form-control h-80px" name="address" cols="3" rows="4"
-                                        placeholder="{{ __('Address') }}" required></textarea>
-                                </div>
-                                <div class="col-12 form-group">
-                                    <div class="wsus__check_single_form check_area d-flex flex-wrap">
-                                        <div class="form-check mr-3">
-                                            <input value="home" class="form-check-input" type="radio"
-                                                name="address_type" id="flexRadioDefault1">
-                                            <label class="form-check-label" for="flexRadioDefault1">
-                                                {{ __('Home') }}
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input value="office" class="form-check-input" type="radio"
-                                                name="address_type" id="flexRadioDefault2">
-                                            <label class="form-check-label" for="flexRadioDefault2">
-                                                {{ __('Office') }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-
-                                    <button type="submit" class="btn btn-primary">{{ __('Save Address') }}</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('customer::customer-modal')
 
 
     {{-- item details modal --}}
@@ -399,7 +550,320 @@
         </div>
     </div>
 
+    <div class="modal fade bd-example-modal-lg" id="payment-modal" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="POST" action="" id="checkoutForm" onSubmit="paymentSubmit(event)">
+                    @csrf
+                    <input type="hidden" name="customer_id" id="customer_id" value="">
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-3">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-condensed">
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center w-10"></td>
+                                            <td class="w-70">Payment Details</td>
+                                            <td class="text-right w-20"></td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th class="text-right w-60" colspan="2">
+                                                Subtotal
+                                            </th>
+                                            <input type="hidden" name="sub_total" value="" autocomplete="off">
+                                            <td class="text-right w-40" id="sub_totalModal">0</td>
+                                        </tr>
+                                        <tr class="discount-row">
+                                            <th class="text-right w-60" colspan="2">
+                                                Discount
+                                            </th>
+                                            <input type="hidden" name="discount_amount" value="0"
+                                                autocomplete="off">
+                                            <td class="text-right w-40" id="discount_amountModal">0.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-right w-60" colspan="2">
+                                                Total Amount <br><small class="ng-binding">(<span id="itemModal">0</span>
+                                                    items)</small>
+                                            </th>
+                                            <input type="hidden" name="total_amount" value="0"
+                                                id="total_amount_modal_input" autocomplete="off">
+                                            <input type="hidden" name=exchange_amount" value="0"
+                                                id="exchange_amount_modal_input" autocomplete="off">
+                                            <td class="text-right w-40" id="total_amountModal">0.00</td>
+                                        </tr>
 
+                                        {{-- <tr class="vat-row">
+                                            <th class="text-right w-60" colspan="2">
+                                                VAT </th>
+                                            <input type="hidden" name="vat" value="0" autocomplete="off">
+                                            <td class="text-right w-40" id="vatModal">0.00</td>
+                                        </tr> --}}
+                                        {{-- <tr>
+                                            <th class="text-right w-60" colspan="2">
+                                                Paid Amount</th>
+                                            <td class="text-right w-40" id="paing_amountModal">0</td>
+                                        </tr>
+                                        <tr class="due">
+                                            <th class="text-right w-60" colspan="2">
+                                                <label>Previous Due</label>
+                                            </th>
+                                            <td class="text-right w-40" id="previous_due" data-amount="0">0</td>
+                                        </tr>
+
+                                        <tr class="due">
+                                            <th class="text-right w-60" colspan="2">
+                                                Total Due
+                                            </th>
+                                            <td class="text-right w-40" id="due_amountModal">0</td>
+                                        </tr> --}}
+                                        <tr>
+                                            <th class="text-right w-60" colspan="2">
+                                                Total Advance
+                                            </th>
+                                            <td class="text-center w-40">
+                                                <span id="total_advance">0</span> TK
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-right w-60" colspan="2">
+                                                Sale Date
+                                            </th>
+                                            <td class="text-right w-40">
+
+                                                <input type="text" class="form-control datepicker" name="sale_date"
+                                                    value="2024-07-08" autocomplete="off">
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Right Column -->
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-block"
+                                        style="background:#7a8882;color: #fff;font-weight: 900;font-size: 18px;">
+                                        Total Amount:
+                                        <span style="color: #ffd400;font-size: 22px;" id="total_amountModal2">0</span>
+                                        TK
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <table class="table payment mt-2">
+                                    <thead>
+                                        <tr>
+                                            <td style="vertical-align: middle; width: 30%; text-transform: capitalize">
+                                                Payment Type
+                                            </td>
+                                            <td style="vertical-align: middle; width: 30%; text-transform: capitalize">
+                                                Payment Option
+                                            </td>
+                                            <td style="vertical-align: middle; width: 30%; text-transform: capitalize">
+                                                Amount Received
+                                            </td>
+                                            <td style="vertical-align: middle; width: 10%; text-transform: capitalize">
+                                                Action
+                                            </td>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="paymentRow">
+                                        <tr data-counter="1">
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <select name="payment_type[]" class="form-control form-control-sm pay_by"
+                                                    required>
+                                                    @foreach (accountList() as $key => $list)
+                                                        <option value="{{ $key }}"
+                                                            @if ($key == 'cash') selected @endif
+                                                            data-name="{{ $list }}">{{ $list }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;" class="account_info">
+                                                <input type="text" name="account_id[]" value="Cash"
+                                                    class="form-control form-control-sm" readonly>
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <input type="text" name="paying_amount[]"
+                                                    class="form-control form-control-sm text-center paying_amount"
+                                                    id="payingAmount" placeholder="Amount" required autocomplete="off">
+                                            </td>
+                                            <td style="text-align: center; vertical-align: middle;">
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="javascript:0" class="btn btn-sm btn-danger remove-payment">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                    <a href="javascript:0" class="btn btn-sm btn-primary add-payment">
+                                                        <i class="fa fa-plus"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bank_check_info" data-counter="0">
+                                            <td style="text-align: center; vertical-align: middle;" class="account_info">
+                                                <input type="hidden" name="ck_due_amount[]"
+                                                    class="form-control ck_due_amount" readonly value=""
+                                                    placeholder="Cheque Amount" autocomplete="off" required>
+                                                <input type="hidden" name="ck_bank_name[]"
+                                                    class="form-control ck_bank_name" placeholder="Bank Name"
+                                                    autocomplete="off" value="">
+                                                <input type="hidden" name="ck_number[]" class="form-control ck_number"
+                                                    value="" placeholder="Cheque Number" autocomplete="off"
+                                                    required>
+                                                <input type="hidden" name="ck_issue_date[]"
+                                                    class="form-control ck_issue_date" value=""
+                                                    placeholder="Issue Date" autocomplete="off" required>
+                                                <input type="hidden" name="ck_active_date[]"
+                                                    class="form-control ck_active_date" value=""
+                                                    placeholder="Active Date" autocomplete="off" required>
+                                                <input type="hidden" name="ck_issue_name[]"
+                                                    class="form-control ck_issue_name" value=""
+                                                    placeholder="Issue to Name" autocomplete="off" required>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                    <tfoot id="normalPayment">
+                                        <tr class="due d-none">
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Due</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name="total_due" readonly>
+                                            </td>
+                                        </tr>
+                                        <tr class="due-date d-none">
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Due Date</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="date" class="form-control form-control-sm"
+                                                    name="due_date">
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Receive Cash</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="number"
+                                                    class="form-control form-control-sm receive_cash removeZero"
+                                                    name="receive_amount" value="0" step="0.01">
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Change</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="text"
+                                                    class="form-control form-control-sm change_amount removeZero"
+                                                    name="return_amount" value="0" readonly>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Remark</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="text" class="form-control form-control-sm" name="remark"
+                                                    value="" autocomplete="off" placeholder="Remark">
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+
+                                    <tfoot id="instalmentPayment" hidden>
+                                        <tr>
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Due</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name="total_due" readonly>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Tenor (in Months)</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="text"
+                                                    class="form-control form-control-sm installment_month"
+                                                    name="installment_month" autocomplete="off">
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Rate of Interest (%)</label>
+                                            </td>
+                                            <td colspan="3">
+
+                                                <div class="input-group">
+                                                    <input type="text"
+                                                        class="form-control form-control-sm interest_rate"
+                                                        name="interest_rate" max="100" id="interest_rate"
+                                                        autocomplete="off" disabled>
+                                                    <div class="input-group-prepend"
+                                                        style="padding: 7px;background: #7a888240;">
+                                                        <div class="input-group-text">
+                                                            <input type="checkbox" id="no_interest" value="1">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="pl-2" style="vertical-align: middle">
+                                                <label>Monthly Installment</label>
+                                            </td>
+                                            <td colspan="3">
+                                                <input type="text"
+                                                    class="form-control form-control-sm installment_amount"
+                                                    name="installment_amount" readonly>
+                                            </td>
+                                        </tr>
+
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="mt-4">
+                                <div class="row">
+                                    <div class="col-md-6 mt-4">
+                                        <button type="button"
+                                            style="background: #f31250;font-size: 20px;font-weight: 600;color: #fff"
+                                            class="btn btn-block" onclick="modalHide('#payment-modal')">Cancel <span
+                                                style="font-size: 14px;color: #f7e5e5;">[Esc]</span></button>
+                                    </div>
+                                    <div class="col-md-6 mt-4">
+                                        <button type="submit" id="checkout" class="btn btn-block"
+                                            style="background: #00a65a;font-size: 20px;font-weight: 600;color: #fff">
+                                            Checkout
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     {{-- create payment --}}
     <div class="modal fade" id="createPayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
@@ -420,7 +884,8 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-control" name="payment_method">
                                         @foreach (allPaymentMethods() as $key => $method)
-                                            <option value="{{ $key }}">{{ $method }}</option>
+                                            <option value="{{ $key }}">
+                                                {{ $method }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -456,13 +921,15 @@
 
     @push('js')
         <script>
+            let isGuest = 1;
+            // load products
             (function($) {
                 "use strict";
                 $(document).ready(function() {
                     loadProudcts()
 
                     // update pos quantity
-                    $(".pos_input_qty").on("change keyup", function(e) {
+                    $(".pos_input_qty").on("change", function(e) {
                         $('.preloader_area').removeClass('d-none');
                         let quantity = $(this).val();
                         let parernt_td = $(this).parents('td');
@@ -557,43 +1024,25 @@
                     // add new customer modal
                     $("#createNewUserForm").on("submit", function(e) {
                         e.preventDefault();
-
-                        var isDemo = "{{ env('APP_MODE') }}"
-                        if (isDemo == 0) {
-                            toastr.error('This Is Demo Version. You Can Not Change Anything');
-                            return;
-                        }
-
+                        const from = $('#add-customer-form')
                         $.ajax({
                             type: 'POST',
-                            data: $('#createNewUserForm').serialize(),
-                            url: "{{ route('admin.create-new-customer') }}",
+                            data: $('#add-customer-form').serialize(),
+                            url: $('#add-customer-form').attr('action'),
                             success: function(response) {
                                 toastr.success(response.message)
-                                $("#createNewUserForm").trigger("reset");
-                                $("#createNewUser").modal('hide');
+                                form.reset();
+                                $("#createNewUserForm").modal('hide');
 
                                 $("#customer_id").html(response.customer_html)
 
                             },
                             error: function(response) {
-                                if (response.status == 422) {
-                                    if (response.responseJSON.errors.name) toastr.error(response
-                                        .responseJSON.errors.name[0])
-                                    if (response.responseJSON.errors.email) toastr.error(
-                                        response.responseJSON.errors.email[0])
-                                    if (response.responseJSON.errors.phone) toastr.error(
-                                        response.responseJSON.errors.phone[0])
-
-                                }
 
                                 if (response.status == 500) {
                                     toastr.error("{{ __('Server error occurred') }}")
                                 }
-
-                                if (response.status == 403) {
-                                    toastr.error(response.responseJSON.message);
-                                }
+                                console.log(response);
 
                             }
                         });
@@ -677,17 +1126,28 @@
                         deliveryMethod()
                     })
 
-                    $("#category_id,#brand_id,#name").on('input',function(){
+                    $("#category_id,#brand_id,#name").on('input', function() {
                         const category_id = $('#category_id').val();
                         const brand = $('#brand_id').val();
                         const name = $('#name').val();
 
                         loadProudcts({
-                            category_id,brand,name
+                            category_id,
+                            brand,
+                            name
                         })
+                    })
+
+
+                    // extra
+
+                    $(".dis-tgl").click(function() {
+                        $(".dis-form").slideToggle("fast")
                     })
                 });
             })(jQuery);
+
+
 
             function load_product_model(product_id) {
                 $('.preloader_area').removeClass('d-none');
@@ -748,14 +1208,13 @@
 
             function calculateTotalFee() {
 
-                let subTotal = $('#sub_total').val() || 0;
+                let subTotal = $('#sub_total').val() || '0.00';
 
                 // remove , if exists
                 if (subTotal.includes(',')) {
                     subTotal = subTotal.replace(/,/g, '');
                 }
                 subTotal = parseFloat(subTotal);
-                console.log(subTotal);
                 let deliveryFee = parseFloat($('#delivery_fee').val()) || 0;
 
                 let tax = parseFloat($('#tax_fee').val()) || 0;
@@ -813,6 +1272,36 @@
                 });
             }
 
+            function openPaymentModal() {
+
+                const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
+                const discountAmount = $('#discount_total_amount').val();
+                const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
+                const item = $('#titems').text();
+
+                $('[name="sub_total"]').val(subTotal);
+                $('#sub_totalModal').text(subTotal);
+
+                $('#discount_amountModal').text(discountAmount);
+                $('[name="discount_amount"]').val(discountAmount);
+
+                let grandTotal = Number(finalTotal) - Number(discountAmount);
+                $('#total_amountModal').text(grandTotal);
+                $('#total_amountModal2').text(grandTotal);
+
+                // total items
+
+                $('#itemModal').text(item);
+                $('#payment-modal').modal('show')
+
+
+                $('.paying_amount').val(grandTotal);
+                // hide rows
+                if (!discountAmount) {
+                    $('.discount-row').addClass('d-none');
+                }
+            }
+
             function viewCartDetails(id) {
                 $('.preloader_area').removeClass('d-none');
                 $.ajax({
@@ -856,7 +1345,9 @@
                     },
                     url: "{{ url('/admin/pos/add-to-cart') }}",
                     success: function(response) {
-                        $(".shopping-card-body").html(response)
+                        $(".product-table-container").html(response)
+
+                        console.log(response);
                         toastr.success("{{ __('Item added successfully') }}")
                         calculateTotalFee();
                         $('.preloader_area').addClass('d-none');
@@ -872,6 +1363,10 @@
                         $('.preloader_area').addClass('d-none');
                     }
                 });
+            }
+
+            function numberFormat(n) {
+                return Number(n).toFixed(2)
             }
 
             function showDeliveryInfo(show = false) {
@@ -896,6 +1391,152 @@
                     $('#delivery_fee').attr('disabled', true);
                 }
                 $('[name="order_delivery_method"]').val(deliveryMethod);
+            }
+
+            function discountExist() {
+                let discount_total_amount = $('#discount_total_amount').val()
+                let discount_type = $('#discount_type').val()
+                let total_amount_get_text = Number($('#total').text().replace(/[^0-9.]/g, ''))
+                let vat_amount = Number($('#ttax2').text())
+                let totalAmount = 0
+                let percentage = null
+
+                if (discount_type == 1) {
+                    if (discount_total_amount > total_amount_get_text) {
+                        discount_total_amount = total_amount_get_text
+                    }
+                    totalAmount = numberFormat(
+                        Number(total_amount_get_text - discount_total_amount).toFixed(6)
+                    )
+                } else {
+                    if (discount_total_amount > 100) {
+                        discount_total_amount = 100
+                    }
+                    percentage = (discount_total_amount * total_amount_get_text) / 100
+                    totalAmount = total_amount_get_text - percentage
+                }
+
+                // let exchange_total = 0
+
+                // if (exchange.total > 0) {
+                //     exchange_total = exchange.total
+                // }
+
+                $('#tds').text(percentage ? percentage : discount_total_amount)
+                $('input[name=discount_amount]').val(
+                    percentage ? percentage : discount_total_amount
+                )
+                $('#discount_amountModal').text(
+                    percentage ? percentage : discount_total_amount
+                )
+                vat_amount = 0
+                let grand_total = numberFormat(
+                    // Number(exchange_total)
+                    Number(totalAmount) + Number(vat_amount) - 0
+                )
+
+                console.log(totalAmount);
+                $('#ttax2').text(vat_amount)
+                $('#gtotal').text(totalAmount)
+                $('#finalTotal').text(grand_total)
+                $('#discount_total_amount').val(discount_total_amount)
+                $('#discountModal').modal('hide')
+                $('input[name=total_amount]').val(grand_total)
+                $('#total_amountModal').text(grand_total)
+                $('input[name=paying_amount]').val(grand_total)
+                $('#paing_amountModal').text(grand_total)
+                $('#total_amountModal2').text(grand_total)
+                // calculateVat()
+            }
+
+            const accountsList = @json($accounts);
+
+            $(document).on('change', 'select[name="payment_type[]"]', function() {
+                const accounts = accountsList.filter(account => account.account_type == $(this).val());
+
+                if (accounts) {
+                    let html = '<select name="account_id[]" id="" class="form-control">';
+                    accounts.forEach(account => {
+                        switch ($(this).val()) {
+                            case 'bank':
+                                html +=
+                                    `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
+                                break;
+                            case "mobile_banking":
+                                html +=
+                                    `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                                break;
+                            case 'card':
+                                html +=
+                                    `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
+                                break;
+                            default:
+                                break;
+                        }
+
+                    });
+                    html += '</select>';
+                    $('#paymentRow').find('.account_info').html(html);
+                }
+
+                if ($(this).val() == 'cash' || $(this).val() == 'advance') {
+                    $('#paymentRow').find('.account_info').html('');
+                    $cash =
+                        `<input type="hidden" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;
+                }
+            });
+
+            $('.receive_cash').on('input', function() {
+                const cash = $(this).val();
+                const total = $('#finalTotal').text();
+                let change_amount = 0;
+
+                if (numberOnly(total) < numberOnly(cash)) {
+                    change_amount = numberOnly(cash) - numberOnly(total);
+                }
+
+                if (change_amount < 0 || !change_amount) {
+                    $('.change_amount').val(0)
+                } else {
+                    $('.change_amount').val(change_amount)
+                }
+            })
+
+
+            $('[name="paying_amount[]"]').on('input', function() {
+                const allAmount = $('[name="paying_amount[]"]').map(function() {
+                    return $(this).val()
+                })
+
+                console.log(allAmount);
+                let total = 0
+
+                // allAmount.each(function() {
+                //     total += numberOnly($(this).val())
+                // })
+
+                // console.log(total);
+                // $('#finalTotal').text(total)
+
+            })
+        </script>
+
+
+        <script>
+            function modalHide(id) {
+                $(id).modal('hide')
+            }
+
+            $(document).on('keydown', function(event) {
+                if (event.key === 'Escape' || event.keyCode === 27) {
+                    modalHide('#payment-modal')
+                }
+            });
+
+            function paymentSubmit(e) {
+                e.preventDefault();
+                const formData = $('#payment-form').serialize();
+                console.log(formData);
             }
         </script>
     @endpush

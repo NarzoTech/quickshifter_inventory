@@ -1,9 +1,14 @@
 <table class="table table-bordered">
-    <thead>
-        <th width="35%">{{ __('Item') }}</th>
-        <th width="30%">{{ __('Qty') }}</th>
-        <th width="30%">{{ __('Price') }}</th>
-        <th width="5%">{{ __('Action') }}</th>
+    <thead class="text-center" style="background: #00a65a">
+        <tr style="height: 25px; color: #fff;">
+            <th style="padding:4px 0px; margin:0px; width: 30%;">Name</th>
+            <th style="padding:4px 0px; margin:0px; width: 5%;">Qty</th>
+            <th style="padding:4px 0px; margin:0px; width: 7%;">Price</th>
+            <th style="padding:4px 0px; margin:0px; width: 10%;">Total</th>
+            <th style="padding:4px 0px; margin:0px; width: 5%;">
+                <i class="fa fa-trash"></i>
+            </th>
+        </tr>
     </thead>
     <tbody>
         @php
@@ -24,6 +29,7 @@
                         class="pos_input_qty form-control">
                 </td>
 
+                <td>{{ currency($cart_content['price']) }}</td>
                 @php
                     $sub_total = $cart_content['sub_total'];
                     $cumalitive_sub_total += $sub_total;
@@ -31,22 +37,8 @@
 
                 <td>{{ currency($sub_total) }}</td>
                 <td>
-                    <div class="dropdown d-inline">
-                        <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton2"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-cog"></i>
-                        </button>
-
-                        <div class="dropdown-menu" x-placement="top-start"
-                            style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -131px, 0px);">
-                            <a href="javascript:;" onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
-                                class="d-block p-2"><i class="fa fa-trash" aria-hidden="true"></i>
-                                {{ __('Delete') }}</a>
-                            <a href="javascript:;" onclick="viewCartDetails('{{ $cart_content['rowid'] }}')"
-                                class="d-block p-2">
-                                <i class="fas fa-eye"></i> {{ __('View') }}</a>
-                        </div>
-                    </div>
+                    <a href="javascript:;" onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
+                        class="d-block p-2 "><i class="fa fa-trash text-danger" aria-hidden="true"></i></a>
                 </td>
             </tr>
         @endforeach

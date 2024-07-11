@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Modules\Accounts\app\Models\Account;
+use Modules\Customer\app\Http\Services\AreaService;
+use Modules\Customer\app\Http\Services\UserGroupService;
+use Modules\Customer\app\Models\Vehicle;
 use Modules\GlobalSetting\app\Models\EmailTemplate;
 use Modules\Order\app\Models\Order;
 use Modules\Order\app\Models\OrderDetails;
@@ -28,7 +32,7 @@ class POSController extends Controller
     protected $orderService;
     protected $brandService;
 
-    public function __construct(ProductService $productService,OrderService $orderService,BrandService $brandService)
+    public function __construct(private UserGroupService $userGroup, ProductService $productService, OrderService $orderService, BrandService $brandService, private AreaService $areaService, private Vehicle $vehicle)
     {
         $this->middleware('auth:admin');
         $this->productService = $productService;
@@ -67,16 +71,22 @@ class POSController extends Controller
         $brands = $this->brandService->getActiveBrands();
         $customers = User::orderBy('id', 'desc')->where('status', 'active')->get();
 
+        $cart_contents = session('POSCART') ?? [];
 
-        $cart_contents = session('POSCART') ?? (object) session('POSCART');
-
-
+        $accounts = Account::with('bank')->get();
+        $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
+        $areaList = $this->areaService->getArea()->get();
+        $vehicles = $this->vehicle->get();
         return view('pos::index')->with([
             'products' => $products,
             'categories' => $categories,
             'customers' => $customers,
             'cart_contents' => $cart_contents,
             'brands' => $brands,
+            'groups' => $groups,
+            'accounts' => $accounts,
+            'areaList' => $areaList,
+            'vehicles' => $vehicles
         ]);
     }
 
@@ -95,11 +105,14 @@ class POSController extends Controller
         }
 
         if ($request->brand) {
-            $products = $products->where('brand_id',$request->brand);
+            $products = $products->where('brand_id', $request->brand);
         }
 
         if ($request->name) {
-            $products = $products->where('name', 'LIKE', '%' . $request->name . '%');
+            $products = $products->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->name . '%')
+                    ->orWhere('sku', 'LIKE', '%' . $request->name . '%');
+            });
         }
 
         $products = $products->paginate(20);
@@ -133,6 +146,7 @@ class POSController extends Controller
 
     public function add_to_cart(Request $request)
     {
+        session()->forget('POSCART');
         $product = $this->productService->getActiveProductById($request->product_id);
 
         $attributes = '';
@@ -267,7 +281,7 @@ class POSController extends Controller
 
             Address::create([
                 'user_id' => $user->id,
-                'name' => $request->first_name. ' ' . $request->last_name,
+                'name' => $request->first_name . ' ' . $request->last_name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,

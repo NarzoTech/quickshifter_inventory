@@ -24,7 +24,7 @@
 
     $(document).on('change', 'select[name="payment_type"]', function() {
         const accounts = accountsList.filter(account => account.account_type == $(this).val());
-        console.log(accounts);
+
         if (accounts) {
             let html = '<select name="account_id" id="" class="form-control">';
             accounts.forEach(account => {
@@ -52,7 +52,8 @@
 
         if ($(this).val() == 'cash' || $(this).val() == 'advance') {
             $(this).closest('.form-group').find('.account').html('');
-            $cash = `<input type="hidden" name="account_id" class="form-control" value="${$(this).val()}" readonly>`;
+            $cash =
+                `<input type="hidden" name="account_id" class="form-control" value="${$(this).val()}" readonly>`;
         }
     });
 </script>
