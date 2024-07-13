@@ -351,7 +351,6 @@ class POSController extends Controller
 
     public function place_order(Request $request)
     {
-        // dd($request->all());
         if (session('POSCART') != null && count(session('POSCART')) == 0) {
             $notification = trans('Your cart is empty!');
             $notification = array('messege' => $notification, 'alert-type' => 'error');
@@ -376,12 +375,11 @@ class POSController extends Controller
         try {
             $order_result = $this->orderStore($user, $request);
             DB::commit();
-
             return response()->json([
                 'order' => $order_result,
                 'message' => 'Order created successfully',
                 'alert-type' => 'success',
-            ]);
+            ], 200);
         } catch (Exception $ex) {
             DB::rollBack();
             Log::error($ex->getMessage());
@@ -389,7 +387,7 @@ class POSController extends Controller
             return response()->json([
                 'message' => $ex->getMessage(),
                 'alert-type' => 'error',
-            ]);
+            ], 500);
         }
     }
 
@@ -422,7 +420,7 @@ class POSController extends Controller
 
         $order = $this->saleService->createSale($request, $user,  $cart);
 
-        // session()->put('POSCART', []);
+        session()->put('POSCART', []);
 
         return $order;
     }

@@ -288,7 +288,7 @@
                         Hold
                     </button>
                 </div>
-                <button type="button" class="btn cancel-btn" onclick="cancel()">
+                <button type="button" class="btn cancel-btn" onclick="resetCart()">
                     Clear
                 </button>
                 <button type="button" class="btn payment-btn" onclick="openPaymentModal()">
@@ -1018,10 +1018,9 @@
                 type: 'get',
                 url: "{{ route('admin.modal-cart-clear') }}",
                 success: function(response) {
-                    $(".shopping-card-body").html(response)
-                    calculateTotalFee();
+                    $(".product-table tbody").html('')
+                    totalSummery();
                     toastr.success("{{ __('Cart reset successfully') }}")
-                    $("#resetCartModal").modal('hide');
                 },
                 error: function(response) {
                     toastr.error("{{ __('Server error occurred') }}")
@@ -1041,7 +1040,6 @@
                 success: function(response) {
                     $(".product-table-container").html(response)
 
-                    console.log(response);
                     toastr.success("{{ __('Item added successfully') }}")
                     calculateTotalFee();
                     $('.preloader_area').addClass('d-none');
@@ -1204,20 +1202,24 @@
 
         function paymentSubmit(e) {
             e.preventDefault();
+            const formData = $('#checkoutForm').serialize();
+            console.log(formData);
+
             $.ajax({
                 type: 'POST',
                 data: formData,
                 url: "{{ route('admin.place-order') }}",
                 success: function(response) {
-                    console.log(response);
-                    if (response['alert-type'] == 'success') {
-
+                    $(".product-table tbody").html('')
+                    if (response.status == 200) {
+                        totalSummery();
                         toastr.success(response.message)
                         $("#payment-modal").modal('hide');
                         $("#checkoutForm")[0].reset();
                     } else {
                         toastr.error(response.message)
                     }
+
                 },
                 error: function(response) {
                     if (response.status == 500) {
