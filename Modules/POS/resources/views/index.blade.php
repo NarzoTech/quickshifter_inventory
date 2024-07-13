@@ -170,56 +170,11 @@
 
                             <div class="card-body">
                                 <div class="row">
+                                    @php
+                                        $cumalitive_sub_total = 0;
+                                    @endphp
                                     <div class="col-md-12 product-table-container">
-                                        <table class="table table-bordered product-table">
-                                            <thead class="text-center" style="background: #00a65a">
-                                                <tr style="height: 25px; color: #fff;">
-                                                    <th style="padding:4px 0px; margin:0px; width: 30%;">Name</th>
-                                                    <th style="padding:4px 0px; margin:0px; width: 5%;">Qty</th>
-                                                    <th style="padding:4px 0px; margin:0px; width: 7%;">Price</th>
-                                                    <th style="padding:4px 0px; margin:0px; width: 10%;">Total</th>
-                                                    <th style="padding:4px 0px; margin:0px; width: 5%;">
-                                                        <i class="fa fa-trash"></i>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php
-                                                    $cumalitive_sub_total = 0;
-                                                @endphp
-                                                @foreach ($cart_contents as $cart_index => $cart_content)
-                                                    <tr>
-                                                        <td>
-                                                            <p>{{ $cart_content['name'] }}</p>
-                                                            @if (isset($cart_content['variant']))
-                                                                <span>
-                                                                    {{ $cart_content['variant']['attribute'] }}
-                                                                </span>
-                                                            @endif
-                                                        </td>
-                                                        <td data-rowid="{{ $cart_content['rowid'] }}" class="px-3">
-                                                            <input min="1" type="number"
-                                                                value="{{ $cart_content['qty'] }}"
-                                                                class="pos_input_qty form-control">
-                                                        </td>
-
-                                                        <td>{{ currency($cart_content['price']) }}</td>
-                                                        @php
-                                                            $sub_total = $cart_content['sub_total'];
-                                                            $cumalitive_sub_total += $sub_total;
-                                                        @endphp
-
-                                                        <td>{{ currency($sub_total) }}</td>
-                                                        <td>
-                                                            <a href="javascript:;"
-                                                                onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
-                                                                class="d-block p-2 "><i class="fa fa-trash text-danger"
-                                                                    aria-hidden="true"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                        @include('pos::ajax_cart')
                                     </div>
                                 </div>
                                 <table id="totalTable" class="summary-table">
@@ -309,172 +264,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            {{-- <div class="card-body">
-                                <div class="shopping-card-body">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <th width="35%">{{ __('Item') }}</th>
-                                            <th width="30%">{{ __('Qty') }}</th>
-                                            <th width="30%">{{ __('Price') }}</th>
-                                            <th width="5%">{{ __('Action') }}</th>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $cumalitive_sub_total = 0;
-                                            @endphp
-                                            @foreach ($cart_contents as $cart_index => $cart_content)
-                                                <tr>
-                                                    <td>
-                                                        <p>{{ $cart_content['name'] }}</p>
-                                                        @if (isset($cart_content['variant']))
-                                                            <span>
-                                                                {{ $cart_content['variant']['attribute'] }}
-                                                            </span>
-                                                        @endif
-                                                    </td>
-                                                    <td data-rowid="{{ $cart_content['rowid'] }}" class="px-3">
-                                                        <input min="1" type="number"
-                                                            value="{{ $cart_content['qty'] }}"
-                                                            class="pos_input_qty form-control">
-                                                    </td>
-
-                                                    @php
-                                                        $sub_total = $cart_content['sub_total'];
-                                                        $cumalitive_sub_total += $sub_total;
-                                                    @endphp
-
-                                                    <td>{{ currency($sub_total) }}</td>
-                                                    <td>
-                                                        <div class="dropdown d-inline">
-                                                            <button class="btn btn-primary btn-sm dropdown-toggle"
-                                                                type="button" id="dropdownMenuButton2"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                <i class="fas fa-cog"></i>
-                                                            </button>
-
-                                                            <div class="dropdown-menu" x-placement="top-start"
-                                                                style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -131px, 0px);">
-                                                                <a href="javascript:;"
-                                                                    onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
-                                                                    class="d-block p-2"><i class="fa fa-trash"
-                                                                        aria-hidden="true"></i> {{ __('Delete') }}</a>
-                                                                <a href="javascript:;"
-                                                                    onclick="viewCartDetails('{{ $cart_content['rowid'] }}')"
-                                                                    class="d-block p-2">
-                                                                    <i class="fas fa-eye"></i> {{ __('View') }}</a>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-
-                                    <div>
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <div class="w-25 font-weight-bolder">{{ __('Subtotal') . ' : ' }}</div>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        {{ currency_icon() }}
-                                                    </div>
-                                                </div>
-                                                <input type="text" class="form-control currency" id="sub_total"
-                                                    value="{{ remove_icon(currency($cumalitive_sub_total ?: 0.0)) }}"
-                                                    readonly>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="justify-content-between align-items-center mt-3 delivery-container d-none">
-                                            <div class="w-25 font-weight-bolder">{{ __('Delivery') . ' : ' }}</div>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        {{ currency_icon() }}
-                                                    </div>
-                                                </div>
-                                                <input type="text" class="form-control currency" id="delivery_fee"
-                                                    placeholder="{{ __('Delivery Fee') }}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <div class="w-25 font-weight-bolder">{{ __('Tax') . ' : ' }}</div>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        {{ currency_icon() }}
-                                                    </div>
-                                                </div>
-                                                <input type="text" class="form-control currency" id="tax_fee"
-                                                    placeholder="{{ __('Tax') }}">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <div class="font-weight-bolder w-21">{{ __('Discount') . ' : ' }}</div>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text discount_icon">
-                                                            %
-                                                        </div>
-                                                    </div>
-                                                    <input type="text" class="form-control currency" id="discount"
-                                                        placeholder="{{ __('Discount') }}">
-                                                </div>
-                                                <div class="w-50 ml-1">
-                                                    <select class="form-control selectric" name="discount_type">
-                                                        <option value="percent" selected>{{ __('Percent') }}</option>
-                                                        <option value="fixed">{{ __('Fixed') }}</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center my-3">
-                                            <div class="w-25 font-weight-bolder">{{ __('Total') . ' : ' }}</div>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        {{ currency_icon() }}
-                                                    </div>
-                                                </div>
-                                                <input type="text" class="form-control currency" id="total_fee"
-                                                    value="{{ remove_icon(currency($cumalitive_sub_total ?: 0.0)) }}"
-                                                    readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="cart_sub_total" value="{{ $cumalitive_sub_total }}">
-                                </div>
-
-                                <div>
-                                    <button id="makePaymentBtn" class="btn btn-success">{{ __('Make Payment') }}</button>
-                                    <a href="{{ route('admin.cart-clear') }}"
-                                        class="btn btn-danger">{{ __('Reset') }}</a>
-                                </div>
-
-                                <form id="placeOrderForm" action="{{ route('admin.place-order') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" value="{{ $cumalitive_sub_total }}" name="order_sub_total"
-                                        id="order_sub_total">
-                                    <input type="hidden" value="" name="customer_id" id="order_customer_id">
-                                    <input type="hidden" value="" name="address_id" id="order_address_id">
-                                    <input type="hidden" value="0.00" name="order_delivery_fee"
-                                        id="order_delivery_fee">
-                                    <input type="hidden" value="0.00" name="order_tax" id="order_tax">
-                                    <input type="hidden" value="0.00" name="order_discount"
-                                        id="order_order_discount">
-                                    <input type="hidden" value="{{ $cumalitive_sub_total }}" name="order_total_fee"
-                                        id="order_total_fee">
-
-                                    <input type="hidden" value="" name="order_delivery_date">
-                                    <input type="hidden" value="" name="order_payment_method">
-                                    <input type="hidden" value="" name="order_payment_details">
-                                    <input type="hidden" value="" name="order_payment_notes">
-                                    <input type="hidden" value="" name="order_order_note">
-                                </form>
-                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -899,9 +688,12 @@
                 loadProudcts()
 
                 // update pos quantity
-                $(".pos_input_qty").on("change", function(e) {
-                    $('.preloader_area').removeClass('d-none');
+                $(document).on("input", ".pos_input_qty", function(e) {
                     let quantity = $(this).val();
+                    if (quantity < 1) {
+                        return;
+                    }
+                    $('.preloader_area').removeClass('d-none');
                     let parernt_td = $(this).parents('td');
                     let rowid = parernt_td.data('rowid')
 
@@ -913,8 +705,8 @@
                         },
                         url: "{{ route('admin.cart-quantity-update') }}",
                         success: function(response) {
-                            $(".shopping-card-body").html(response)
-                            calculateTotalFee();
+                            $(".product-table-container").html(response)
+                            totalSummery();
                             $('.preloader_area').addClass('d-none');
                         },
                         error: function(response) {
@@ -1145,9 +937,8 @@
                 type: 'get',
                 url: "{{ url('admin/pos/remove-cart-item') }}" + "/" + rowId,
                 success: function(response) {
-                    $(".shopping-card-body").html(response)
-
-                    calculateTotalFee();
+                    $(".product-table-container").html(response)
+                    totalSummery();
                     toastr.success("{{ __('Remove successfully') }}")
                 },
                 error: function(response) {
@@ -1229,13 +1020,14 @@
             const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
             const item = $('#titems').text();
 
+
             $('[name="sub_total"]').val(subTotal);
             $('#sub_totalModal').text(subTotal);
 
             $('#discount_amountModal').text(discountAmount);
             $('[name="discount_amount"]').val(discountAmount);
 
-            let grandTotal = Number(finalTotal) - Number(discountAmount);
+            let grandTotal = parseFloat(finalTotal);
             $('#total_amountModal').text(grandTotal);
             $('#total_amountModal2').text(grandTotal);
 
@@ -1361,7 +1153,7 @@
             $('input[name=paying_amount]').val(grand_total)
             $('#paing_amountModal').text(grand_total)
             $('#total_amountModal2').text(grand_total)
-            // calculateVat()
+            totalSummery()
         }
 
         const accountsList = @json($accounts);
@@ -1430,14 +1222,6 @@
 
             console.log(allAmount);
             let total = 0
-
-            // allAmount.each(function() {
-            //     total += numberOnly($(this).val())
-            // })
-
-            // console.log(total);
-            // $('#finalTotal').text(total)
-
         })
     </script>
 
@@ -1475,6 +1259,52 @@
                     console.log(response);
                 }
             });
+        }
+
+
+        function totalSummery() {
+            const products = $('.product-table tbody > tr > .row_total');
+
+            let total = 0;
+
+            products.each(function() {
+                total += numberOnly($(this).text())
+            })
+
+            $('#total').text(`{{ currency_icon() }}${total}`)
+
+
+            // discount
+            const discount = $('#discount_total_amount').val();
+            const discountType = $('#discount_type').val();
+            let discountAmount = 0;
+
+            if (discountType == 2) {
+                discountAmount = total * parseFloat(discount) / 100
+            } else {
+                discountAmount = parseFloat(discount)
+            }
+
+            // total after discount = total - discount
+
+            $('#gtotal').text(`{{ currency_icon() }}${total - discountAmount}`)
+
+            // vat
+
+            const vat = $('#ttax2').text();
+
+            let vatAmount = 0;
+
+            if (vat) {
+                vatAmount = total * parseFloat(vat) / 100
+            }
+
+            $('#totalVat').text(`{{ currency_icon() }}${vatAmount}`)
+
+            // totalAmountWithVat
+            const grandTotal = total - discountAmount + vatAmount
+            $('#totalAmountWithVat').text(`{{ currency_icon() }}${grandTotal}`)
+            $('#finalTotal').text(`{{ currency_icon() }}${grandTotal}`)
         }
     </script>
 @endpush
