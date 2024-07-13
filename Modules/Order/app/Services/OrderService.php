@@ -2,15 +2,17 @@
 
 namespace Modules\Order\app\Services;
 
-
+use App\Models\Payment;
 use App\Models\User;
 
 use App\Traits\MailSenderTrait;
 use Illuminate\Http\Request;
+use Modules\Accounts\app\Models\Account;
 use Modules\GlobalSetting\app\Models\EmailTemplate;
 use Modules\GlobalSetting\app\Models\Setting;
 use Modules\Order\app\Models\Order;
 use Modules\Order\app\Models\OrderDetails;
+use Modules\Product\app\Models\Product;
 use Modules\Product\app\Models\Variant;
 
 class OrderService
@@ -32,51 +34,31 @@ class OrderService
     {
         return $this->order->where('order_id', $id)->first();
     }
-    public function storeOrder(Request $request, $user, $cart, $placeFrom = 'web')
+    public function storeOrder(Request $request, $user, $cart)
     {
         $order = new Order();
         $order->order_id = substr(rand(0, time()), 0, 10);
         $order->user_id = $user != null ?  $user->id : null;
         $order->walk_in_customer = $user != null ?  0 : 1;
-
         $order->tax = $request->order_tax;
-        $order->discount = $request->order_discount;
-        $order->total_amount = $request->order_total_fee;
+        $order->discount = $request->discount_amount;
+        $order->total_amount = $request->total_amount;
         $order->currency_rate = cache()->get('currency')->currency_rate;
         $order->currency_name = cache()->get('currency')->currency_name;
         $order->currency_icon = cache()->get('currency')->currency_icon;
-        $order->order_amount = $request->order_sub_total;
-        $order->payment_details = $request->order_payment_details;
-        $order->payment_method = $request->order_payment_method;
-        $order->delivery_method = $request->order_delivery_method;
-
-        if ($placeFrom == 'pos') {
-            $order->payment_status = $order->payment_method == 'cod' ? 'pending' : 'success';
-            $order->order_status = 'success';
-            $order->delivery_status = 2;
-            $order->created_by = auth('admin')->user()->id;
-        } else {
-            $order->order_status = 'pending';
-            $order->delivery_status = 1;
-        }
-
-
-        if ($order->walk_in_customer == 1 && $request->order_delivery_method == 1) {
-            $address = session('delivery_address');
-            $order->address = $address['address'];
-            $order->phone = $address['phone'];
-            $order->customer_name = $address['first_name'] . ' ' . $address['last_name'];
-        }
-
-        if ($order->walk_in_customer == 1 && $request->order_delivery_method == 2) {
-            $order->delivery_status = 5;
-        }
+        $order->order_amount = $request->sub_total;
+        $order->receive_amount = $request->receive_amount;
+        $order->return_amount = $request->return_amount;
+        $order->paid_amount = array_sum($request->paying_amount);
+        $order->due_amount = $request->total_amount - array_sum($request->paying_amount);
+        $order->due_date = $request->due_date;
+        $order->created_by = auth('admin')->user()->id;
 
         $order->save();
 
-        if ($user != null) {
-            $this->sendOrderSuccessMail($user, $order,);
-        }
+        // if ($user != null) {
+        //     $this->sendOrderSuccessMail($user, $order,);
+        // }
         foreach ($cart as $item) {
             $variant = isset($item['variant']) ?  Variant::where('sku', $item['sku'])->first() : null;
             $orderDetails = new OrderDetails();
@@ -91,6 +73,36 @@ class OrderService
             $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
             $orderDetails->status = 1;
             $orderDetails->save();
+
+
+            // update stock
+            $product = Product::where('id', $item['id'])->first();
+            if ($product != null) {
+                $product->stock = $product->stock - $item['qty'];
+                $product->save();
+            }
+        }
+
+
+        // update payments
+
+        foreach ($request->payment_type as $key => $item) {
+
+            $account = Account::where('account_type', $item);
+            if ($item == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id[$key])->first();
+            }
+            Payment::create([
+                'payment_type' => 'sale',
+                'sale_id' => $order->id,
+                'customer_id' => $request->order_customer_id,
+                'account_id' => $account->id,
+                'amount' => $request->paying_amount[$key],
+                'payment_date' => now(),
+                'created_by' => auth()->user()->id,
+            ]);
         }
 
         return $order;

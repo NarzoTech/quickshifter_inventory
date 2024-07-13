@@ -680,12 +680,12 @@
 
 @push('js')
     <script>
-        let isGuest = 1;
         // load products
         (function($) {
             "use strict";
             $(document).ready(function() {
-                loadProudcts()
+                totalSummery();
+                loadProudcts();
 
                 // update pos quantity
                 $(document).on("input", ".pos_input_qty", function(e) {
@@ -728,33 +728,6 @@
                     let customer_id = $(this).val();
                     $("#order_customer_id").val(customer_id ? customer_id : 'walk-in-customer');
                 })
-
-                // make payment modal
-                // $("#makePaymentBtn").on("click", function() {
-
-                //     const deliveryMethod = $('[name="delivery_method"]').val()
-                //     let customer_id = $("#order_customer_id").val();
-                //     if (!customer_id) {
-                //         toastr.error("{{ __('Please select a customer') }}")
-                //         return;
-                //     }
-
-                //     let address_id = $("#order_address_id").val();
-                //     if (!address_id && customer_id != 'walk-in-customer' && deliveryMethod == 1) {
-                //         toastr.error("{{ __('Please select a address') }}")
-                //         return;
-                //     }
-
-
-                //     // check if cart is empty
-                //     let cart_sub_total = $("#cart_sub_total").val();
-                //     if (cart_sub_total == 0) {
-                //         toastr.error("{{ __('Cart is empty') }}")
-                //         return;
-                //     }
-                //     // $("#placeOrderForm").submit();
-                //     $("#createPayment").modal('show')
-                // })
 
                 // add new customer modal
 
@@ -850,14 +823,7 @@
                     $('.discount_icon').html(symbol)
                 })
 
-                $(document).on('change', '#sub_total,#delivery_fee,#tax_fee,#discount,[name="discount_type"]',
-                    function() {
-                        calculateTotalFee()
-                    })
 
-                $('[name="delivery_method"]').on('change', function() {
-                    deliveryMethod()
-                })
 
                 $("#category_id,#brand_id,#name").on('input', function() {
                     const category_id = $('#category_id').val();
@@ -1016,7 +982,7 @@
         function openPaymentModal() {
 
             const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
-            const discountAmount = $('#discount_total_amount').val();
+            const discountAmount = $('#tds').text();
             const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
             const item = $('#titems').text();
 
@@ -1038,9 +1004,12 @@
 
 
             $('.paying_amount').val(grandTotal);
+
             // hide rows
             if (!discountAmount) {
                 $('.discount-row').addClass('d-none');
+            } else {
+                $('.discount-row').removeClass('d-none');
             }
         }
 
@@ -1125,11 +1094,6 @@
                 totalAmount = total_amount_get_text - percentage
             }
 
-            // let exchange_total = 0
-
-            // if (exchange.total > 0) {
-            //     exchange_total = exchange.total
-            // }
 
             $('#tds').text(percentage ? percentage : discount_total_amount)
             $('input[name=discount_amount]').val(
@@ -1215,13 +1179,14 @@
         })
 
 
-        $('[name="paying_amount[]"]').on('input', function() {
-            const allAmount = $('[name="paying_amount[]"]').map(function() {
-                return $(this).val()
+        $(document).on('input', '[name="paying_amount[]"]', function() {
+            const amount = [];
+            const allAmount = $('[name="paying_amount[]"]').each(function() {
+                amount.push($(this).val());
             })
 
-            console.log(allAmount);
-            let total = 0
+            const amountVal = amount.reduce((a, b) => Number(a) + Number(b), 0);
+            console.log(amountVal);
         })
     </script>
 
@@ -1239,18 +1204,20 @@
 
         function paymentSubmit(e) {
             e.preventDefault();
-            const formData = $('#checkoutForm').serialize();
-            console.log(formData);
-
             $.ajax({
                 type: 'POST',
                 data: formData,
                 url: "{{ route('admin.place-order') }}",
                 success: function(response) {
                     console.log(response);
-                    toastr.success(response.message)
-                    $("#payment-modal").modal('hide');
-                    $("#checkoutForm")[0].reset();
+                    if (response['alert-type'] == 'success') {
+
+                        toastr.success(response.message)
+                        $("#payment-modal").modal('hide');
+                        $("#checkoutForm")[0].reset();
+                    } else {
+                        toastr.error(response.message)
+                    }
                 },
                 error: function(response) {
                     if (response.status == 500) {

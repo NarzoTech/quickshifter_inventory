@@ -42,7 +42,7 @@ class Payment extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id')->withDefault();
+        return $this->belongsTo(User::class, 'customer_id')->withDefault();
     }
 
     public function account()

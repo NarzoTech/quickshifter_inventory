@@ -7,9 +7,11 @@ use App\Jobs\OrderSuccessfulMailJob;
 use App\Models\Address;
 use App\Models\User;
 use App\Models\Variant;
+use Exception;
 use Modules\Order\app\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -25,6 +27,7 @@ use Modules\Product\app\Models\Category;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductService;
+use Modules\Sales\app\Services\SaleService;
 
 class POSController extends Controller
 {
@@ -32,7 +35,7 @@ class POSController extends Controller
     protected $orderService;
     protected $brandService;
 
-    public function __construct(private UserGroupService $userGroup, ProductService $productService, OrderService $orderService, BrandService $brandService, private AreaService $areaService, private Vehicle $vehicle)
+    public function __construct(private UserGroupService $userGroup, ProductService $productService, OrderService $orderService, BrandService $brandService, private AreaService $areaService, private Vehicle $vehicle, private SaleService $saleService)
     {
         $this->middleware('auth:admin');
         $this->productService = $productService;
@@ -348,33 +351,46 @@ class POSController extends Controller
 
     public function place_order(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         if (session('POSCART') != null && count(session('POSCART')) == 0) {
             $notification = trans('Your cart is empty!');
             $notification = array('messege' => $notification, 'alert-type' => 'error');
             return redirect()->back()->with($notification);
         }
 
-        $validatedData = Validator::make($request->all(), [
-            'order_customer_id' => 'required',
-        ], [
-            'order_customer_id.required' => trans('Customer is required'),
-        ])->validate();
 
         $user = null;
-        if ($request->order_customer_id !=  'walk-in-customer') {
+        if ($request->order_customer_id && $request->order_customer_id !=  'walk-in-customer') {
+
+            $validatedData = Validator::make($request->all(), [
+                'order_customer_id' => 'required',
+            ], [
+                'order_customer_id.required' => trans('Customer is required'),
+            ])->validate();
+
             $user = User::find($request->order_customer_id);
         }
 
-        // $calculate_amount = $this->calculate_amount($request->order_delivery_fee);
 
-        $order_result = $this->orderStore($user, $request);
+        DB::beginTransaction();
+        try {
+            $order_result = $this->orderStore($user, $request);
+            DB::commit();
 
-        // $this->sendOrderSuccessMail($user, $order_result, 'Cash on Delivery', 0);
+            return response()->json([
+                'order' => $order_result,
+                'message' => 'Order created successfully',
+                'alert-type' => 'success',
+            ]);
+        } catch (Exception $ex) {
+            DB::rollBack();
+            Log::error($ex->getMessage());
 
-        $notification = trans('Order created successfully');
-        $notification = array('messege' => $notification, 'alert-type' => 'success');
-        return redirect()->route('admin.pos')->with($notification);
+            return response()->json([
+                'message' => $ex->getMessage(),
+                'alert-type' => 'error',
+            ]);
+        }
     }
 
     public function calculate_amount($delivery_charge)
@@ -404,16 +420,9 @@ class POSController extends Controller
     {
         $cart = session('POSCART');
 
-        $order = $this->orderService->storeOrder($request, $user,  $cart, 'pos');
+        $order = $this->saleService->createSale($request, $user,  $cart);
 
-
-        Session::forget('delivery_id');
-        Session::forget('delivery_charge');
-        Session::forget('coupon_price');
-        Session::forget('offer_type');
-        Session::forget('delivery_address');
-        Session::forget('offer_type');
-        session()->put('POSCART', []);
+        // session()->put('POSCART', []);
 
         return $order;
     }

@@ -2,6 +2,12 @@
 
 namespace Modules\Sales\app\Services;
 
+use App\Models\Payment;
+use Illuminate\Http\Request;
+use Modules\Accounts\app\Models\Account;
+use Modules\Product\app\Models\Product;
+use Modules\Product\app\Models\Variant;
+use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 
 class SaleService
@@ -13,9 +19,80 @@ class SaleService
     {
         return $this->sale;
     }
-    public function createSale(array $data): Sale
+    public function createSale(Request $request, $user, $cart): Sale
     {
-        return Sale::create($data);
+
+        $sale = new Sale();
+        $sale->user_id = $user != null ?  $user->id : null;
+        $sale->customer_id = $request->order_customer_id;
+        $sale->warehouse_id = 1;
+        $sale->quantity = 1;
+        $sale->total_price = $request->sub_total;
+        $sale->order_date = now()->parse($request->sale_date);
+        $sale->status = 1;
+        $sale->payment_status = 1;
+
+        $sale->payment_method = json_encode($request->payment_type);
+        $sale->order_discount = $request->discount_amount;
+        $sale->total_tax = $request->total_tax ?? 0;
+        $sale->grand_total = $request->total_amount;
+        $sale->invoice = $this->genInvoiceNumber();
+
+        $sale->paid_amount = array_sum($request->paying_amount);
+        $sale->due_amount = $request->total_amount - array_sum($request->paying_amount);
+        $sale->sale_note = $request->remark;
+        $sale->save();
+
+
+        $totalQty = 0;
+
+        foreach ($cart as $item) {
+            $totalQty += $item['qty'];
+
+            $variant = isset($item['variant']) ?  Variant::where('sku', $item['sku'])->first() : null;
+            $orderDetails = new ProductSale();
+            $orderDetails->sale_id = $sale->id;
+            $orderDetails->product_id = $item['id'];
+            $orderDetails->product_sku = $item['sku'];
+            $orderDetails->variant_id = $variant != null ? $variant->id : null;
+            $orderDetails->price = $item['price'];
+            $orderDetails->quantity = $item['qty'];
+            $orderDetails->sub_total = $item['sub_total'];
+            $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
+            $orderDetails->save();
+
+            // update stock
+            $product = Product::where('id', $item['id'])->first();
+            if ($product != null) {
+                $product->stock = $product->stock - $item['qty'];
+                $product->save();
+            }
+        }
+
+        $sale->quantity = $totalQty;
+        $sale->save();
+
+
+        // create payments
+        foreach ($request->payment_type as $key => $item) {
+            $account = Account::where('account_type', $item);
+            if ($item == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id[$key])->first();
+            }
+            Payment::create([
+                'payment_type' => 'sale',
+                'sale_id' => $sale->id,
+                'customer_id' => $request->order_customer_id,
+                'account_id' => $account->id,
+                'amount' => $request->paying_amount[$key],
+                'payment_date' => now(),
+                'created_by' => auth()->user()->id,
+            ]);
+        }
+
+        return $sale;
     }
 
     public function updateSale(Sale $sale, array $data): Sale
@@ -27,5 +104,24 @@ class SaleService
     public function deleteSale(Sale $sale): void
     {
         $sale->delete();
+    }
+
+    public function genInvoiceNumber()
+    {
+        $number = 1000000;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $sale = $this->sale->latest()->first();
+        if ($sale) {
+            $saleInvoice = $sale->invoice;
+
+            // split the invoice number
+            $split_invoice = explode('-', $saleInvoice);
+            $invoice_number = (int) $split_invoice[1] + 1;
+            $invoice_number = $prefix . $invoice_number;
+        }
+
+        return $invoice_number;
     }
 }

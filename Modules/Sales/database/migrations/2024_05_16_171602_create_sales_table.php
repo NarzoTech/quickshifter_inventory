@@ -24,16 +24,23 @@ return new class extends Migration
             $table->string('payment_method')->nullable();
             $table->string('payment_details')->nullable();
             $table->double('order_discount')->nullable();
-            $table->double('total_tax');
+            $table->double('total_tax')->nullable();
             $table->double('grand_total')->nullable();
+
+            $table->decimal('paid_amount', 8, 2);
+            $table->decimal('due_amount', 8, 2)->default(0);
+            $table->date('due_date')->nullable();
+            $table->decimal('receive_amount', 8, 2)->default(0);
+            $table->decimal('return_amount', 8, 2)->default(0);
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->string('notes')->nullable();
             $table->string('invoice')->nullable();
             $table->double('shipping_cost')->nullable();
             $table->integer('currency_id')->nullable()->default(null);
             $table->double('exchange_rate')->nullable()->default(null);
-            $table->double('paid_amount')->nullable();
             $table->text('sale_note')->nullable();
             $table->text('staff_note')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

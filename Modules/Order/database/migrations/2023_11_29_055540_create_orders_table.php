@@ -25,13 +25,19 @@ return new class extends Migration
             $table->text('payment_notes')->nullable();
             $table->text('order_note')->nullable();
             $table->decimal('total_amount', 8, 2);
+            $table->decimal('paid_amount', 8, 2);
+            $table->date('due_date')->nullable();
+            $table->decimal('due_amount', 8, 2)->default(0);
+            $table->decimal('receive_amount', 8, 2)->default(0);
+            $table->decimal('return_amount', 8, 2)->default(0);
             $table->string('transaction_id')->nullable();
-            $table->string('payment_method');
+            $table->string('payment_method')->nullable();
             $table->string('created_by')->nullable();
             $table->enum('payment_status', ['pending', 'success', 'rejected'])->default('pending');
             $table->enum('order_status', ['pending', 'success', 'rejected', 'cancelled'])->default('pending');
-            $table->integer('delivery_method')->default(1)->comment('1- Delivery, 2- Pickup');
-            $table->integer('delivery_status')->default(1)->comment('1- Pending, 2- Accept, 3- Progress, 4- On the way, 5- Delivered, 6- Cancelled');
+            $table->integer('delivery_method')->nullable()->default(1)->comment('1- Delivery, 2- Pickup');
+            $table->integer('delivery_status')->nullable()->default(1)->comment('1- Pending, 2- Accept, 3- Progress, 4- On the way, 5- Delivered, 6- Cancelled');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
