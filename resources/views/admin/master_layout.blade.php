@@ -50,6 +50,26 @@
                     <ul class="navbar-nav navbar-right">
                         <li class="dropdown dropdown-list-toggle">
                             <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                                <i class="fa fa-money"></i> {{ __('Sale Report') }}</i>
+                            </a>
+                        </li>
+                        <li class="dropdown dropdown-list-toggle">
+                            <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                                <i class="fas fa-box"></i> {{ __('Stock') }}</i>
+                            </a>
+                        </li>
+                        <li class="dropdown dropdown-list-toggle">
+                            <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                                <i class="fas fa-chart-bar"></i> {{ __('Today\'s Summery') }}</i>
+                            </a>
+                        </li>
+                        <li class="dropdown dropdown-list-toggle">
+                            <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                                <i class="fas fa-shopping-bag"></i> {{ __('Return Orders') }}</i>
+                            </a>
+                        </li>
+                        <li class="dropdown dropdown-list-toggle">
+                            <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
                                 <i class="fas fa-cart-plus"></i> {{ __('POS') }}</i>
                             </a>
                         </li>

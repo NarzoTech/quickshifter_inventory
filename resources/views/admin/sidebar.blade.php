@@ -19,12 +19,12 @@
                 </li>
             @endadminCan
 
-            @if (Module::isEnabled('Customer') && checkAdminHasPermission('customer.view'))
-                @include('customer::sidebar')
-            @endif
-
             @if (Module::isEnabled('Supplier') && checkAdminHasPermission('customer.view'))
                 @include('supplier::sidebar')
+            @endif
+
+            @if (Module::isEnabled('Customer') && checkAdminHasPermission('customer.view'))
+                @include('customer::sidebar')
             @endif
 
             @if (Module::isEnabled('Product'))
@@ -34,6 +34,24 @@
             @if (Module::isEnabled('Purchase'))
                 @include('purchase::sidebar')
             @endif
+
+            <li class="nav-item dropdown {{ Route::is('admin.products.*') ? 'active' : '' }}">
+                <a href="javascript:void()" class="nav-link has-dropdown"><i
+                        class="fas fa-box"></i><span>{{ __('Inventory') }}</span></a>
+
+                <ul class="dropdown-menu">
+                    <li class="{{ Route::is('admin.category*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.category.index') }}">
+                            {{ __('Stock') }}
+                        </a>
+                    </li>
+                    <li class="{{ Route::is('admin.category*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.category.index') }}">
+                            {{ __('Adjustments') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             @if (Module::isEnabled('Service'))
                 @include('service::sidebar')
