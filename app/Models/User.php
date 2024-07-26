@@ -65,4 +65,12 @@ class User extends Model
     {
         return $this->hasMany(Sale::class, 'customer_id');
     }
+    public function payment()
+    {
+        return $this->hasMany(Payment::class, 'customer_id');
+    }
+    public function getTotalPaidAttribute()
+    {
+        return $this->payment->sum('amount');
+    }
 }

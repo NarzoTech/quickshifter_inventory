@@ -115,8 +115,8 @@
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $user->name }}</td>
                                                     <td>{{ $user->phone }}</td>
-                                                    <td>{{ currency($user->total_sale) }}</td>
-                                                    <td>{{ currency($user->total_sale_pay) }}</td>
+                                                    <td>{{ currency($user->sales->sum('grand_total')) }}</td>
+                                                    <td>{{ currency($user->total_paid) }}</td>
                                                     <td>{{ currency($user->total_due) }}</td>
                                                     <td>{{ currency($user->total_sale_advance) }}</td>
                                                     <td>{{ currency($user->total_sale_return) }}</td>
