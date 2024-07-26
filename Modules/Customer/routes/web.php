@@ -19,6 +19,7 @@ use Modules\Customer\app\Http\Controllers\VehicleController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('customers', CustomerController::class);
+    Route::get('customers/single/{id}', [CustomerController::class, 'singleCustomer'])->name('customer.single');
 
     Route::resource('customerGroup', CustomerGroupController::class);
     Route::resource('vehicle', VehicleController::class);

@@ -148,4 +148,10 @@ class CustomerController extends Controller
 
         return $user;
     }
+
+    public function singleCustomer($id)
+    {
+        $user = User::findOrFail($id);
+        return $user;
+    }
 }

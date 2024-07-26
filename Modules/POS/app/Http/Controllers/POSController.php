@@ -190,7 +190,7 @@ class POSController extends Controller
         $data['name'] = $product->name;
         $data['image'] = $product->image_url;
         $data['qty'] = $request->qty ? $request->qty : 1;
-        $data['price'] = $request->variant_price ? $request->variant_price : $product->actual_price;
+        $data['price'] = $request->variant_price ? $request->variant_price : $product->currentPrice;
         $data['sub_total'] = $data['price'] * $data['qty'];
         $data['sku'] = $sku;
 

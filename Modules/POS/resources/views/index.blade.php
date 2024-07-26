@@ -396,14 +396,14 @@
                                             <td class="text-right w-40" id="paid_amountModal">0</td>
                                         </tr>
 
-                                        {{-- <tr class="due">
+                                        <tr class="due d-none">
                                             <th class="text-right w-60" colspan="2">
                                                 <label>Previous Due</label>
                                             </th>
                                             <td class="text-right w-40" id="previous_due" data-amount="0">0</td>
-                                        </tr> --}}
+                                        </tr>
 
-                                        <tr class="due">
+                                        <tr class="due d-none">
                                             <th class="text-right w-60" colspan="2">
                                                 Total Due
                                             </th>
@@ -837,7 +837,6 @@
                     })
                 })
 
-
                 // extra
 
                 $(".dis-tgl").click(function() {
@@ -1011,6 +1010,11 @@
             } else {
                 $('.discount-row').removeClass('d-none');
             }
+
+            // load customer info
+            let customer_id = $('#customer_id').val();
+            $("#order_customer_id").val(customer_id ? customer_id : 'walk-in-customer');
+            loadCustomer(customer_id);
         }
 
         function resetCart() {
@@ -1182,9 +1186,8 @@
             const allAmount = $('[name="paying_amount[]"]').each(function() {
                 amount.push($(this).val());
             })
-
             const amountVal = amount.reduce((a, b) => Number(a) + Number(b), 0);
-            console.log(amountVal);
+            $('#paid_amountModal').text(amountVal);
         })
     </script>
 
@@ -1203,8 +1206,6 @@
         function paymentSubmit(e) {
             e.preventDefault();
             const formData = $('#checkoutForm').serialize();
-            console.log(formData);
-
             $.ajax({
                 type: 'POST',
                 data: formData,
@@ -1275,6 +1276,20 @@
             const grandTotal = total - discountAmount + vatAmount
             $('#totalAmountWithVat').text(`{{ currency_icon() }}${grandTotal}`)
             $('#finalTotal').text(`{{ currency_icon() }}${grandTotal}`)
+        }
+
+        // load customer
+        function loadCustomer(id) {
+            if (id != 'walk-in-customer') {
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ route('admin.customer.single', '') }}/" + id,
+                    success: function(response) {
+                        $('#previous_due').text(response.total_due);
+                        $('.due').removeClass('d-none')
+                    }
+                })
+            }
         }
     </script>
 @endpush
