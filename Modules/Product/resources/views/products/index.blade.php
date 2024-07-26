@@ -44,7 +44,7 @@
                                             @foreach ($products as $index => $product)
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
-                                                    <td> <img class="rounded-circle" src="{{ $product->ImagesUrl[0] }}"
+                                                    <td> <img class="rounded-circle" src="{{ $product->singleImage }}"
                                                             alt="" width="100px" height="100px"></td>
                                                     <td>{{ $product->name }} </td>
                                                     <td>{{ $product->sku }}</td>
@@ -78,13 +78,13 @@
                                                             class="btn btn-primary btn-sm mr-2"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
 
-                                                            <button type="button" data-toggle="modal"
-                                                                @if ($product->orders->count() > 0) data-target="#canNotDeleteModal"
+                                                        <button type="button" data-toggle="modal"
+                                                            @if ($product->orders->count() > 0) data-target="#canNotDeleteModal"
                                                                 @else
                                                                 data-target="#deleteModal" onclick="deleteData({{ $product->id }})" @endif
-                                                                class="btn btn-danger btn-sm mr-2">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                            </button>
+                                                            class="btn btn-danger btn-sm mr-2">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </button>
                                                         <div class="dropdown d-inline">
                                                             <button class="btn btn-primary btn-sm dropdown-toggle"
                                                                 type="button" id="dropdownMenuButton2"

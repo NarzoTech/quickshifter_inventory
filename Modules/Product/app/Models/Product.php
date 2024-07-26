@@ -39,6 +39,15 @@ class Product extends Model
         "tax",
     ];
 
+    public function getSingleImageAttribute()
+    {
+
+        $imageUrls =  $this->getImagesUrlAttribute();
+        if ($imageUrls) {
+            return $imageUrls[0];
+        }
+        return asset('backend/img/image_icon.png');
+    }
 
     protected $casts = [
         'images' => 'array',
@@ -46,7 +55,7 @@ class Product extends Model
     ];
 
     protected $appends = [
-       'image_url','stock_status', 'has_variant','total_stock'
+        'image_url', 'stock_status', 'has_variant', 'total_stock'
     ];
 
 
@@ -55,7 +64,8 @@ class Product extends Model
         return $this->variants->count() > 0;
     }
 
-    public function getActualPriceAttribute(){
+    public function getActualPriceAttribute()
+    {
         return $this->price;
     }
     public function category()
@@ -237,5 +247,4 @@ class Product extends Model
     {
         return $this->attributes['stock'];
     }
-
 }
