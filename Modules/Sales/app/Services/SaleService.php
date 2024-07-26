@@ -5,6 +5,7 @@ namespace Modules\Sales\app\Services;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
+use Modules\Customer\app\Models\CustomerDue;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Models\Variant;
 use Modules\Sales\app\Models\ProductSale;
@@ -21,7 +22,6 @@ class SaleService
     }
     public function createSale(Request $request, $user, $cart): Sale
     {
-
         $sale = new Sale();
         $sale->user_id = $user != null ?  $user->id : null;
         $sale->customer_id = $request->order_customer_id;
@@ -92,6 +92,17 @@ class SaleService
                 'amount' => $request->paying_amount[$key],
                 'payment_date' => now(),
                 'created_by' => auth()->user()->id,
+            ]);
+        }
+
+
+        // create due
+        if ($request->total_due && $user) {
+            CustomerDue::create([
+                'due_amount' => $request->total_due,
+                'due_date' => $request->due_date,
+                'status' => 1,
+                'customer_id' => $user->id
             ]);
         }
 

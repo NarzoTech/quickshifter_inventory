@@ -543,7 +543,7 @@
                                         </tr>
                                     </tfoot>
 
-                                    <tfoot id="instalmentPayment" hidden>
+                                    {{-- <tfoot id="instalmentPayment" hidden>
                                         <tr>
                                             <td class="pl-2" style="vertical-align: middle">
                                                 <label>Due</label>
@@ -597,7 +597,7 @@
                                             </td>
                                         </tr>
 
-                                    </tfoot>
+                                    </tfoot> --}}
                                 </table>
                             </div>
                             <div class="mt-4">
@@ -979,7 +979,7 @@
         }
 
         function openPaymentModal() {
-
+            $('.pos-footer').css('z-index', 0);
             const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
             const discountAmount = $('#tds').text();
             const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
@@ -996,10 +996,15 @@
             $('#total_amountModal').text(grandTotal);
             $('#total_amountModal2').text(grandTotal);
 
+            // load customer info
+            let customer_id = $('#customer_id').val();
+            $("#order_customer_id").val(customer_id ? customer_id : 'walk-in-customer');
+            loadCustomer(customer_id);
+
             // total items
 
             $('#itemModal').text(item);
-            $('#payment-modal').modal('show')
+
 
 
             $('.paying_amount').val(grandTotal);
@@ -1011,10 +1016,7 @@
                 $('.discount-row').removeClass('d-none');
             }
 
-            // load customer info
-            let customer_id = $('#customer_id').val();
-            $("#order_customer_id").val(customer_id ? customer_id : 'walk-in-customer');
-            loadCustomer(customer_id);
+            $('#payment-modal').modal('show')
         }
 
         function resetCart() {
@@ -1188,6 +1190,14 @@
             })
             const amountVal = amount.reduce((a, b) => Number(a) + Number(b), 0);
             $('#paid_amountModal').text(amountVal);
+
+            let totalAmount = $('#total_amountModal').text();
+            totalAmount = parseFloat(totalAmount);
+            if (totalAmount > amountVal) {
+                $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
+                $(".due-date").removeClass('d-none');
+            }
+            calDue();
         })
     </script>
 
@@ -1195,6 +1205,7 @@
     <script>
         function modalHide(id) {
             $(id).modal('hide')
+            $('.pos-footer').css('z-index', 9000)
         }
 
         $(document).on('keydown', function(event) {
@@ -1213,7 +1224,7 @@
                 success: function(response) {
                     console.log(response);
                     $(".product-table tbody").html('')
-                    if (response.status == 200) {
+                    if (response['alert-type'] == 'success') {
                         totalSummery();
                         toastr.success(response.message)
                         $("#payment-modal").modal('hide');
@@ -1289,7 +1300,22 @@
                         $('.due').removeClass('d-none')
                     }
                 })
+            } else {
+                $('.due').addClass('d-none')
             }
+        }
+
+        function calDue() {
+            let previous_due = $('#previous_due').text();
+            previous_due = parseFloat(previous_due);
+            // let due_amountModal = $('#due_amountModal').text();
+            // due_amountModal = parseFloat(due_amountModal);
+
+            let currentDue = $('#normalPayment [name="total_due"]').val();
+
+            currentDue = parseFloat(currentDue ? currentDue : 0);
+            const totalDue = currentDue + previous_due;
+            $('#due_amountModal').text(`{{ currency_icon() }}${totalDue}`)
         }
     </script>
 @endpush

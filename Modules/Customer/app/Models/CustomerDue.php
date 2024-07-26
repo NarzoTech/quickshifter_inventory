@@ -23,10 +23,7 @@ class CustomerDue extends Model
         'status',
     ];
 
-    protected static function newFactory(): CustomerDueFactory
-    {
-        //return CustomerDueFactory::new();
-    }
+
 
     public function customer()
     {

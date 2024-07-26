@@ -149,7 +149,6 @@ class POSController extends Controller
 
     public function add_to_cart(Request $request)
     {
-        session()->forget('POSCART');
         $product = $this->productService->getActiveProductById($request->product_id);
 
         $attributes = '';
@@ -440,16 +439,8 @@ class POSController extends Controller
         $message = str_replace('{{order_status}}', 'Processing', $message);
         $message = str_replace('{{order_date}}', $order_result->created_at->format('d F, Y'), $message);
 
-        dispatch(new OrderSuccessfulMailJob($user, $subject, $message));
+        // dispatch(new OrderSuccessfulMailJob($user, $subject, $message));
     }
-    public function load_customer_address($id)
-    {
-        $addresses = Address::where('user_id', $id)->get();
-        return view('pos::ajax_customer_address')->with([
-            'addresses' => $addresses,
-        ]);
-    }
-
     public function posCartItemDetails($rowId)
     {
         $cart_contents = session()->get('POSCART');
