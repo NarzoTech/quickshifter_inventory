@@ -139,8 +139,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="price">{{ __('Price') }} ({{ currency_icon() }})<span
-                                                            class="text-danger">*</span></label>
+                                                    <label for="price">{{ __('Price') }}
+                                                        ({{ currency_icon() }})</label>
                                                     <input type="number" name="price" class="form-control" id="price"
                                                         value="{{ old('price') }}">
                                                     @error('price')
@@ -183,7 +183,7 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="cost">{{ __('Cost') }}
-                                                        ({{ currency_icon() }})<span class="text-danger">*</span></label>
+                                                        ({{ currency_icon() }})</label>
                                                     <input type="number" name="cost" class="form-control"
                                                         id="cost" value="{{ old('cost') }}">
                                                     @error('cost')
@@ -197,7 +197,7 @@
                                                     <label>{{ __('Stock Quantity') }} <span
                                                             class="text-danger">*</span></label>
                                                     <input type="number" class="form-control" name="stock"
-                                                        value="{{ old('stock',1) }}">
+                                                        value="{{ old('stock', 1) }}">
                                                     @error('stock')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -230,7 +230,8 @@
                                                     @if (Module::isEnabled('Media'))
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <x-media::media-input label_text="Images" name="images[]" multiple="yes"/>
+                                                                <x-media::media-input label_text="Images" name="images[]"
+                                                                    multiple="yes" />
                                                             </div>
                                                         </div>
                                                     @endif
@@ -339,20 +340,22 @@
                     $("[name='sku']").val(sku);
                 });
 
-                $('#unit_id').on('change',function(){
+                $('#unit_id').on('change', function() {
                     // admin.unit.parent
 
                     const id = $(this).val();
 
                     $.ajax({
-                        url:"{{ route('admin.unit.parent','') }}/"+id,
-                        success:function(response){
+                        url: "{{ route('admin.unit.parent', '') }}/" + id,
+                        success: function(response) {
                             console.log(response);
-                            let html = `<option value="${response.id}">${response.name} (${response.ShortName})</option>`
+                            let html =
+                                `<option value="${response.id}">${response.name} (${response.ShortName})</option>`
 
-                            if(response.children){
-                                $.each(response.children,function(index,data){
-                                    html += `<option value="${data?.id}">${data?.name} (${data?.ShortName})</option>`
+                            if (response.children) {
+                                $.each(response.children, function(index, data) {
+                                    html +=
+                                        `<option value="${data?.id}">${data?.name} (${data?.ShortName})</option>`
                                 })
                             }
 

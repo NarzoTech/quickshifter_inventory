@@ -50,7 +50,7 @@
                                                     <label for="name">{{ __('Name') }}<span
                                                             class="text-danger">*</span></label>
                                                     <input type="text" name="name" class="form-control" id="name"
-                                                        value="{{ old('name',$product->name) }}">
+                                                        value="{{ old('name', $product->name) }}">
                                                     @error('name')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -72,8 +72,9 @@
                                                             class="text-danger">*</span></label>
                                                     <select name="barcode" id="barcode" class="form-control">
                                                         @foreach ($barcode as $key => $code)
-                                                            <option value="{{ $key }}" @if (old('barcode',$product->barcode) == $key) selected
-                                                            @endif> {{ $code }}
+                                                            <option value="{{ $key }}"
+                                                                @if (old('barcode', $product->barcode) == $key) selected @endif>
+                                                                {{ $code }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -93,8 +94,8 @@
                                                         <option value="">{{ __('Select Categories') }}
                                                         </option>
                                                         @foreach ($categories as $cat)
-                                                            <option value="{{ $cat->id }}" @if (old('category_id',$product->category_id) == $cat->id) selected
-                                                            @endif>
+                                                            <option value="{{ $cat->id }}"
+                                                                @if (old('category_id', $product->category_id) == $cat->id) selected @endif>
                                                                 {{ $cat->name }}
                                                             </option>
                                                         @endforeach
@@ -111,8 +112,8 @@
                                                     <select name="brand_id" id="brand_id" class="form-control select2">
                                                         <option value="">{{ __('Select Brand') }}</option>
                                                         @foreach ($brands as $brand)
-                                                            <option value="{{ $brand->id }}" @if (old('brand_id',$product->brand_id) == $brand->id) selected
-                                                            @endif>
+                                                            <option value="{{ $brand->id }}"
+                                                                @if (old('brand_id', $product->brand_id) == $brand->id) selected @endif>
                                                                 {{ $brand->name }}
                                                             </option>
                                                         @endforeach
@@ -128,7 +129,7 @@
                                                             class="text-danger">*</span></label>
                                                     <div class="input-group">
                                                         <input type="text" name="sku" class="form-control currency"
-                                                            id="sku" value="{{ old('sku',$product->sku) }}">
+                                                            id="sku" value="{{ old('sku', $product->sku) }}">
                                                         <div class="input-group-prepend">
                                                             <div class="input-group-text generate_sku cursor-pointer">
                                                                 <i class="fas fa-barcode"></i>
@@ -143,10 +144,10 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="price">{{ __('Price') }} ({{ currency_icon() }})<span
-                                                            class="text-danger">*</span></label>
+                                                    <label for="price">{{ __('Price') }}
+                                                        ({{ currency_icon() }})</label>
                                                     <input type="number" name="price" class="form-control" id="price"
-                                                        value="{{ old('price',$product->price) }}">
+                                                        value="{{ old('price', $product->price) }}">
                                                     @error('price')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -157,7 +158,7 @@
                                                     <label for="tax">{{ __('Tax') }}</label>
                                                     <div class="input-group">
                                                         <input type="number" name="tax" class="form-control currency"
-                                                            id="tax" value="{{ old('tax',$product->tax) }}">
+                                                            id="tax" value="{{ old('tax', $product->tax) }}">
                                                         <div class="input-group-prepend">
                                                             <div class="input-group-text">
                                                                 %
@@ -173,10 +174,12 @@
                                                 <div class="form-group">
                                                     <label for="tax_type">{{ __('Tax Type') }}</label>
                                                     <select name="tax_type" id="tax_type" class="form-control">
-                                                        <option value="exclusive" @if (old('tax_type',$product->tax_type) == 'exclusive') selected
-                                                        @endif>{{ __('Exclusive') }}</option>
-                                                        <option value="inclusive" @if (old('tax_type',$product->tax_type) == 'inclusive') selected
-                                                        @endif>{{ __('Inclusive') }}</option>
+                                                        <option value="exclusive"
+                                                            @if (old('tax_type', $product->tax_type) == 'exclusive') selected @endif>
+                                                            {{ __('Exclusive') }}</option>
+                                                        <option value="inclusive"
+                                                            @if (old('tax_type', $product->tax_type) == 'inclusive') selected @endif>
+                                                            {{ __('Inclusive') }}</option>
                                                     </select>
                                                     @error('tax_type')
                                                         <span class="text-danger">{{ $message }}</span>
@@ -188,9 +191,9 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="cost">{{ __('Cost') }}
-                                                        ({{ currency_icon() }})<span class="text-danger">*</span></label>
+                                                        ({{ currency_icon() }})</label>
                                                     <input type="number" name="cost" class="form-control"
-                                                        id="cost" value="{{ old('cost',$product->cost) }}">
+                                                        id="cost" value="{{ old('cost', $product->cost) }}">
                                                     @error('cost')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -202,7 +205,7 @@
                                                     <label>{{ __('Stock Quantity') }} <span
                                                             class="text-danger">*</span></label>
                                                     <input type="number" class="form-control" name="stock"
-                                                        value="{{ old('stock',$product->stock) }}">
+                                                        value="{{ old('stock', $product->stock) }}">
                                                     @error('stock')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -212,7 +215,7 @@
                                                 <div class="form-group">
                                                     <label>{{ __('Stock alert') }}</label>
                                                     <input type="number" class="form-control" name="stock_alert"
-                                                        value="{{ old('stock_alert',$product->stock_alert) }}">
+                                                        value="{{ old('stock_alert', $product->stock_alert) }}">
                                                     @error('stock_alert')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -222,7 +225,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="short_description">{{ __('Short Description') }}</label>
-                                                    <textarea name="short_description" id="" cols="30" rows="10" class="form-control height-80px">{!! old('short_description',$product->short_description) !!}</textarea>
+                                                    <textarea name="short_description" id="" cols="30" rows="10" class="form-control height-80px">{!! old('short_description', $product->short_description) !!}</textarea>
                                                     @error('short_description')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -233,15 +236,16 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     @if (Module::isEnabled('Media'))
-                                                    @php
-                                                        $images = $product->images;
+                                                        @php
+                                                            $images = $product->images;
 
-                                                        // explode images
-                                                        $images = explode(',', $images[0]);
-                                                    @endphp
+                                                            // explode images
+                                                            $images = explode(',', $images[0]);
+                                                        @endphp
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <x-media::media-input label_text="Images" name="images[]" multiple="yes" :dataImages="$images"/>
+                                                                <x-media::media-input label_text="Images" name="images[]"
+                                                                    multiple="yes" :dataImages="$images" />
                                                             </div>
                                                         </div>
                                                     @endif
@@ -251,11 +255,11 @@
                                                             <label for="status">{{ __('Status') }}<span
                                                                     class="text-danger">*</span></label>
                                                             <select name="status" id="status" class="form-control">
-                                                                <option value="1" @if (old('status',$product->status) == 1) selected
-                                                                @endif>
+                                                                <option value="1"
+                                                                    @if (old('status', $product->status) == 1) selected @endif>
                                                                     {{ __('Active') }}</option>
-                                                                <option value="0" @if (old('status',$product->status) == 0) selected
-                                                                @endif>
+                                                                <option value="0"
+                                                                    @if (old('status', $product->status) == 0) selected @endif>
                                                                     {{ __('Inactive') }}</option>
                                                             </select>
                                                             @error('status')
@@ -273,8 +277,8 @@
                                                                 <option value="">{{ __('Select Unit') }}
                                                                 </option>
                                                                 @foreach ($units as $unit)
-                                                                    <option value="{{ $unit->id }}" @if (old('unit_id',$product->unit_id) == $unit->id) selected
-                                                                    @endif>
+                                                                    <option value="{{ $unit->id }}"
+                                                                        @if (old('unit_id', $product->unit_id) == $unit->id) selected @endif>
                                                                         {{ $unit->name }}
                                                                     </option>
                                                                 @endforeach
@@ -292,12 +296,13 @@
                                                                 class="form-control select2">
                                                                 <option value="">{{ __('Select Sale Unit') }}
                                                                 </option>
-                                                                <option value="{{ $product->unit->id }}" @if (old('unit_sale_id',$product->unit_sale_id) == $product->unit->id) selected @endif>
+                                                                <option value="{{ $product->unit->id }}"
+                                                                    @if (old('unit_sale_id', $product->unit_sale_id) == $product->unit->id) selected @endif>
                                                                     {{ $product->unit->name }}
                                                                 </option>
                                                                 @foreach ($product->unit->children as $unit)
-                                                                    <option value="{{ $unit->id }}" @if (old('unit_sale_id',$product->unit_sale_id) == $unit->id) selected
-                                                                    @endif>
+                                                                    <option value="{{ $unit->id }}"
+                                                                        @if (old('unit_sale_id', $product->unit_sale_id) == $unit->id) selected @endif>
                                                                         {{ $unit->name }}
                                                                     </option>
                                                                 @endforeach
@@ -315,12 +320,13 @@
                                                                 class="form-control select2">
                                                                 <option value="">{{ __('Select Purchase Unit') }}
                                                                 </option>
-                                                                <option value="{{ $product->unit->id }}" @if (old('unit_purchase_id',$product->unit_purchase_id) == $product->unit->id) selected @endif>
+                                                                <option value="{{ $product->unit->id }}"
+                                                                    @if (old('unit_purchase_id', $product->unit_purchase_id) == $product->unit->id) selected @endif>
                                                                     {{ $product->unit->name }}
                                                                 </option>
                                                                 @foreach ($product->unit->children as $unit)
-                                                                    <option value="{{ $unit->id }}" @if (old('unit_purchase_id',$product->unit_purchase_id) == $unit->id) selected
-                                                                    @endif>
+                                                                    <option value="{{ $unit->id }}"
+                                                                        @if (old('unit_purchase_id', $product->unit_purchase_id) == $unit->id) selected @endif>
                                                                         {{ $unit->name }}
                                                                     </option>
                                                                 @endforeach

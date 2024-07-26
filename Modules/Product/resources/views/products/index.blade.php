@@ -51,7 +51,6 @@
                                                     <td>{{ $product->brand->name }}</td>
                                                     <td>{{ $product->category->name }}</td>
                                                     <td>{{ currency($product->cost) }}</td>
-                                                    <td>{{ currency($product->price) }}</td>
                                                     <td>{{ $product->unit->name }}</td>
                                                     <td>{{ $product->stock }}{{ $product->unit->ShortName }}</td>
                                                     <td>

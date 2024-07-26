@@ -22,8 +22,8 @@ return new class extends Migration
             $table->integer('unit_sale_id')->nullable();
             $table->integer('unit_purchase_id')->nullable();
             $table->json('images')->nullable();
-            $table->decimal('cost', 10, 0);
-            $table->decimal('price', 10, 2);
+            $table->decimal('cost', 10, 0)->nullable();
+            $table->decimal('price', 10, 2)->nullable();
             $table->float('stock_alert', 10, 0)->nullable()->default(0);
             $table->boolean('is_imei')->default(0);
             $table->boolean('not_selling')->default(0);
