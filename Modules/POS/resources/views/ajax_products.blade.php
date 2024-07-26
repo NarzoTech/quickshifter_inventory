@@ -11,7 +11,7 @@
                         <p class="card-title">
                             {{ $product->name }} <br>
                         </p>
-                        <p class="price">{{ currency($product->actual_price) }}</p>
+                        <p class="price">{{ currency($product->current_price) }}</p>
                     </div>
                 </div>
             </div>

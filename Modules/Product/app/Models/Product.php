@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Modules\Media\app\Models\Media;
 use Modules\Order\app\Models\OrderDetails;
+use Modules\Purchase\app\Models\PurchaseDetails;
 
 class Product extends Model
 {
@@ -57,6 +58,20 @@ class Product extends Model
     protected $appends = [
         'image_url', 'stock_status', 'has_variant', 'total_stock'
     ];
+
+    public function getCurrentPriceAttribute()
+    {
+        // check last purchase
+        $purchase = PurchaseDetails::where('product_id', $this->id)->orderBy('id', 'desc')->first();
+
+        // get the selling price
+
+        if ($purchase) {
+            return $purchase->sale_price;
+        }
+
+        return $this->price;
+    }
 
 
     public function getHasVariantAttribute(): bool
