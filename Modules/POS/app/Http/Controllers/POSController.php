@@ -155,7 +155,6 @@ class POSController extends Controller
         $attributes = '';
         $options = collect([]);
 
-
         if ($product->has_variant) {
             $prodVar = $this->productService->getVariantBySku($request->variant_sku);
 

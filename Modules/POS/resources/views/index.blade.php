@@ -390,12 +390,12 @@
                                             <input type="hidden" name="vat" value="0" autocomplete="off">
                                             <td class="text-right w-40" id="vatModal">0.00</td>
                                         </tr> --}}
-                                        {{-- <tr>
+                                        <tr>
                                             <th class="text-right w-60" colspan="2">
                                                 Paid Amount</th>
-                                            <td class="text-right w-40" id="paing_amountModal">0</td>
+                                            <td class="text-right w-40" id="paid_amountModal">0</td>
                                         </tr>
-                                         --}}
+
                                         {{-- <tr class="due">
                                             <th class="text-right w-60" colspan="2">
                                                 <label>Previous Due</label>
@@ -1041,7 +1041,7 @@
                     $(".product-table-container").html(response)
 
                     toastr.success("{{ __('Item added successfully') }}")
-                    calculateTotalFee();
+                    totalSummery();
                     $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
@@ -1245,7 +1245,7 @@
 
 
             // discount
-            const discount = $('#discount_total_amount').val();
+            const discount = $('#discount_total_amount').val() ? $('#discount_total_amount').val() : 0;
             const discountType = $('#discount_type').val();
             let discountAmount = 0;
 
