@@ -7,25 +7,23 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Purchase Return') }}</h1>
+                <h1>{{ __('Sales Return') }}</h1>
 
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
                     </div>
-                    <div class="breadcrumb-item active"><a
-                            href="{{ route('admin.purchase.index') }}">{{ __('Purchase List') }}</a>
+                    <div class="breadcrumb-item active"><a href="{{ route('admin.sales.index') }}">{{ __('Sales List') }}</a>
                     </div>
-                    <div class="breadcrumb-item">{{ __('Purchase Return') }}</div>
+                    <div class="breadcrumb-item">{{ __('Sales Return') }}</div>
                 </div>
             </div>
             <div class="section-body">
                 <div class="row">
                     <div class="col-md-12">
 
-                        <form method="POST" action="{{ route('admin.purchase.return.store', $purchase->id) }}"
-                            enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('admin.sales.return.store') }}" enctype="multipart/form-data">
                             @csrf
-                            <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
+                            <input type="hidden" name="sale_id" value="{{ $sale->id }}">
                             <div class="card">
                                 <div class="card-header">
                                     <div class="card-title">{{ __('Purchase Return') }}</div>
@@ -35,57 +33,43 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>{{ __('Supplier Name') }}</label>
+                                                <label>{{ __('Customer Name') }}</label>
                                                 <input type="text" class="form-control" name=""
-                                                    value="{{ $purchase->supplier?->name }}" disabled>
-                                                <input type="hidden" name="supplier_id"
-                                                    value="{{ $purchase->supplier_id }}">
-                                                @error('supplier_id')
+                                                    value="{{ $sale->user?->name ?? 'Guest' }}" disabled>
+                                                <input type="hidden" name="customer_id" value="{{ $sale->customer_id }}">
+                                                @error('customer_id')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
+                                                <label>{{ __('Invoice No') }}</label>
+                                                <input type="text" class="form-control" name="invoice"
+                                                    value="{{ $sale->invoice }}" readonly>
+                                                @error('invoice')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>{{ __('Sale Date') }}</label>
+                                                <input type="text" class="form-control" name="order_date"
+                                                    value="{{ $sale->order_date }}" readonly>
+                                                @error('order_date')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
                                                 <label>{{ __('Return Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="return_date"
                                                     value="{{ old('return_date', now()->format('d-m-Y')) }}">
                                                 @error('return_date')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Shipping Cost') }}</label>
-                                                <input type="text" class="form-control" name="shipping_cost"
-                                                    value="{{ old('shipping_cost', 0) }}">
-                                                @error('shipping_cost')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Return Type') }}</label>
-                                                <select name="return_type_id" id="" class="form-control">
-                                                    @foreach ($returnTypes as $type)
-                                                        <option value="{{ $type->id }}">
-                                                            {{ $type->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('return_type_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Attachment') }}</label>
-                                                <input type="file" class="form-control" name="attachment"
-                                                    value="{{ old('attachment') }}">
-                                                @error('attachment')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
@@ -107,42 +91,33 @@
                                                 <thead>
                                                     <tr>
                                                         <th>{{ __('Product Name') }}</th>
-                                                        <th>{{ __('Purchase Price') }}</th>
-                                                        <th>{{ __('Purchase Quantity') }}</th>
-                                                        <th>{{ __('Returned, Sale') }}</th>
-                                                        <th>{{ __('Stock Quantity') }}</th>
+                                                        <th>{{ __('Unit Price') }}</th>
+                                                        <th>{{ __('Sell Quantity') }}</th>
                                                         <th>{{ __('Return Quantity') }}</th>
                                                         <th>{{ __('Return Subtotal') }}</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="purchase_table">
-                                                    @foreach ($purchase->purchaseDetails as $purchaseDetail)
+                                                <tbody id="sale_return_table">
+                                                    @foreach ($sale->products as $product)
                                                         <tr>
-                                                            <td>
-                                                                {{ $purchaseDetail->product?->name }}
+                                                            <td>{{ $product->product->name }}
                                                                 <input type="hidden" name="product_id[]"
-                                                                    value="{{ $purchaseDetail->product_id }}">
+                                                                    value="{{ $product->product_id }}">
                                                             </td>
-                                                            <td>
-                                                                {{ $purchaseDetail->purchase_price }}
+                                                            <td>{{ $product->price }}
+                                                                <input type="number" class="form-control" name="price[]"
+                                                                    value="{{ $product->price }}">
                                                             </td>
+                                                            <td>{{ $product->quantity }}</td>
                                                             <td>
-                                                                {{ $purchaseDetail->quantity }}
-                                                            </td>
-                                                            <td>
-                                                                {{ $purchaseDetail->returned_sale }}
-                                                            </td>
-                                                            <td>
-                                                                {{ $purchaseDetail->product?->total_stock }}
+                                                                <input type="number" class="form-control"
+                                                                    name="return_quantity[]">
                                                             </td>
                                                             <td>
                                                                 <input type="number" class="form-control"
-                                                                    name="return_quantity[]" value="0" min="0">
+                                                                    name="return_subtotal[]">
                                                             </td>
-                                                            <td>
-                                                                <input type="number" class="form-control"
-                                                                    name="return_subtotal[]" value="0" readonly>
-                                                            </td>
+
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
@@ -165,36 +140,36 @@
                                                     </div>
                                                     <div class="col-8">
                                                         <input type="number" class="form-control" name="paid_amount"
-                                                            value="{{ $purchase->paid_amount }}" readonly>
+                                                            value="{{ $sale->payment->sum('amount') }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group d-flex">
                                                     <div class="col-4">
-                                                        <label>{{ __('Invoice Amount') }}</label>
+                                                        <label>{{ __('Return Amount') }}</label>
                                                     </div>
                                                     <div class="col-8">
-                                                        <input type="invoice_amount" class="form-control"
-                                                            name="invoice_amount" value="0" readonly>
+                                                        <input type="return_amount" class="form-control"
+                                                            name="return_amount" value="0">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group d-flex">
                                                     <div class="col-4">
-                                                        <label>{{ __('Received Amount') }}</label>
+                                                        <label>{{ __('Paying Amount') }}</label>
                                                     </div>
                                                     <div class="col-8">
-                                                        <input type="received_amount" class="form-control"
-                                                            name="received_amount" value="0">
+                                                        <input type="paying_amount" class="form-control"
+                                                            name="paying_amount" value="0">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group row">
                                                     <div class="col-4">
-                                                        <label>{{ __('Payment Type') }}</label>
+                                                        <label>{{ __('Pay By') }}</label>
                                                     </div>
                                                     <div class="col-8">
                                                         <select name="payment_type" id="" class="form-control">
@@ -213,11 +188,10 @@
                                             <div class="col-12">
                                                 <div class="form-group row">
                                                     <div class="col-4">
-                                                        <input type="text" class="form-control" name="payment_method"
-                                                            value="cash" readonly>
+
                                                     </div>
-                                                    <div class="col-8">
-                                                        <input type="text" class="form-control" name="paid_amount">
+                                                    <div class="col-8 payment_methods">
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -268,7 +242,7 @@
                 $('input[name="return_quantity[]"]').each(function() {
                     total_return_quantity += parseFloat($(this).val());
                 });
-                $('input[name="invoice_amount"]').val(total_return_subtotal);
+                $('input[name="return_amount"]').val(total_return_subtotal);
                 $('input[name="received_amount"]').val(total_return_subtotal);
             }
 
@@ -277,6 +251,45 @@
                 let payment_type = $(this).val();
                 let payment_method = $(this).find(':selected').data('name');
                 $('input[name="payment_method"]').val(payment_method);
+            });
+
+            const accountsList = @json($accounts);
+
+            $(document).on('change', 'select[name="payment_type"]', function() {
+                const accounts = accountsList.filter(account => account.account_type == $(this).val());
+                if (accounts) {
+                    let html = '<select name="account_id" id="" class="form-control">';
+                    accounts.forEach(account => {
+                        switch ($(this).val()) {
+                            case 'bank':
+                                html +=
+                                    `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
+                                break;
+                            case "mobile_banking":
+                                html +=
+                                    `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                                break;
+                            case 'card':
+                                html +=
+                                    `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
+                                break;
+                            default:
+                                break;
+                        }
+
+                    });
+                    html += '</select>';
+
+                    $('.payment_methods').html(html);
+                }
+
+                if ($(this).val() == 'cash' || $(this).val() == 'advance') {
+                    $('.payment_methods').html('');
+                    const cash =
+                        `<input type="hidden" name="account_id" class="form-control" value="${$(this).val()}" readonly>`;
+
+                    $('.payment_methods').html(cash);
+                }
             });
         });
     </script>

@@ -3,6 +3,7 @@
 namespace Modules\Sales\app\Models;
 
 use App\Models\Admin;
+use App\Models\Payment;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
@@ -48,7 +49,7 @@ class Sale extends Model
 
     public function customer()
     {
-        return $this->belongsTo(User::class, 'customer_id','id')->withDefault();
+        return $this->belongsTo(User::class, 'customer_id', 'id')->withDefault();
     }
 
     public function warehouse()
@@ -63,7 +64,7 @@ class Sale extends Model
 
     public function currency()
     {
-        return $this->belongsTo(MultiCurrency::class, 'currency_id','id')->withDefault();
+        return $this->belongsTo(MultiCurrency::class, 'currency_id', 'id')->withDefault();
     }
 
     public function products()
@@ -74,5 +75,10 @@ class Sale extends Model
     public function services()
     {
         return $this->hasMany(ProductSale::class, 'sale_id')->where('product_id', null);
+    }
+
+    public function payment()
+    {
+        return $this->hasMany(Payment::class, 'sale_id');
     }
 }

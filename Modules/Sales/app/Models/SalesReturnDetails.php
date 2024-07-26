@@ -5,34 +5,27 @@ namespace Modules\Sales\app\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Product\app\Models\Product;
-use Modules\Sales\Database\factories\ProductSaleFactory;
+use Modules\Sales\Database\factories\SalesReturnDetailsFactory;
 
-class ProductSale extends Model
+class SalesReturnDetails extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_sales';
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'sale_id',
+        'sale_return_id',
         'product_id',
-        'service_id',
         'quantity',
-        'sale_unit_id',
-        'product_sku',
-        'variant_id',
-        'attributes',
         'price',
-        'tax',
-        'discount',
         'sub_total',
     ];
 
-    public function sale()
+
+    public function saleReturn()
     {
-        return $this->belongsTo(Sale::class, 'sale_id');
+        return $this->belongsTo(SalesReturn::class, 'sale_return_id');
     }
 
     public function product()

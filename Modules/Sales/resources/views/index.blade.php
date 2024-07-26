@@ -37,26 +37,40 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $sale->order_date }}</td>
                                                     <td>{{ $sale->invoice }}</td>
-                                                    <td>{{ $sale?->customer?->name }}</td>
+                                                    <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                                     <td>{{ $sale->user->name }}</td>
-                                                    <td>{{ $sale->products->sum('sub_total') }}</td>
+                                                    <td>{{ $sale->grand_total }}</td>
                                                     <td>{{ $sale->grand_total }}</td>
                                                     <td>{{ $sale->paid_amount }}</td>
                                                     <td>{{ $sale->grand_total - $sale->paid_amount }}</td>
                                                     <td>
-                                                        @if ($sale->payment_status == 'paid')
-                                                            <span class="badge badge-success">{{ $sale->payment_status }}</span>
+                                                        @if ($sale->payment->sum('amount') == $sale->grand_total)
+                                                            <span class="badge badge-success">Paid</span>
+                                                        @elseif ($sale->payment->sum('amount') > 0)
+                                                            <span class="badge badge-danger">Partial Due</span>
                                                         @else
-                                                            <span class="badge badge-danger">{{ $sale->payment_status }}</span>
+                                                            <span class="badge badge-danger">Due</span>
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ url('admin/order-view/' . $sale->id) }}"
-                                                            class="btn btn-primary">View</a>
-                                                        <a href="{{ url('admin/order-edit/' . $sale->id) }}"
-                                                            class="btn btn-info">Edit</a>
-                                                        <a href="javascript:void(0)" class="btn btn-danger"
-                                                            onclick="deleteData({{ $sale->id }})">Delete</a>
+                                                        <div class="btn-group mb-2">
+                                                            <button class="btn btn-info btn-sm dropdown-toggle"
+                                                                type="button" data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                Action
+                                                            </button>
+                                                            <div class="dropdown-menu">
+                                                                <a class="dropdown-item"
+                                                                    href="{{ url('admin/order-view/' . $sale->id) }}">View</a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ url('admin/order-edit/' . $sale->id) }}">Edit</a>
+                                                                <a class="dropdown-item" href="javascript:void(0)"
+                                                                    onclick="deleteData({{ $sale->id }})">Delete</a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.sales.return.create', $sale->id) }}">Sale
+                                                                    Return</a>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach

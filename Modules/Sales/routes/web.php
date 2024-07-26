@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\POS\app\Http\Controllers\POSController;
 use Modules\Sales\app\Http\Controllers\SalesController;
+use Modules\Sales\app\Http\Controllers\SalesReturnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +19,6 @@ use Modules\Sales\app\Http\Controllers\SalesController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('sales', SalesController::class)->names('sales');
     Route::get('sales/return/list', [SalesController::class, 'returnList'])->name('sales.return.list');
+    Route::get('sales/return/create/{sale_id}', [SalesReturnController::class, 'create'])->name('sales.return.create');
+    Route::post('sales/return/store', [SalesReturnController::class, 'store'])->name('sales.return.store');
 });

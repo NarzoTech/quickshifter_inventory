@@ -465,29 +465,6 @@
 
                                     <tbody id="paymentRow">
                                         @include('pos::payment-row')
-
-                                        {{-- <tr class="bank_check_info" data-counter="0">
-                                            <td style="text-align: center; vertical-align: middle;" class="account_info">
-                                                <input type="hidden" name="ck_due_amount[]"
-                                                    class="form-control ck_due_amount" readonly value=""
-                                                    placeholder="Cheque Amount" autocomplete="off" required>
-                                                <input type="hidden" name="ck_bank_name[]"
-                                                    class="form-control ck_bank_name" placeholder="Bank Name"
-                                                    autocomplete="off" value="">
-                                                <input type="hidden" name="ck_number[]" class="form-control ck_number"
-                                                    value="" placeholder="Cheque Number" autocomplete="off"
-                                                    required>
-                                                <input type="hidden" name="ck_issue_date[]"
-                                                    class="form-control ck_issue_date" value=""
-                                                    placeholder="Issue Date" autocomplete="off" required>
-                                                <input type="hidden" name="ck_active_date[]"
-                                                    class="form-control ck_active_date" value=""
-                                                    placeholder="Active Date" autocomplete="off" required>
-                                                <input type="hidden" name="ck_issue_name[]"
-                                                    class="form-control ck_issue_name" value=""
-                                                    placeholder="Issue to Name" autocomplete="off" required>
-                                            </td>
-                                        </tr> --}}
                                     </tbody>
 
                                     <tfoot id="normalPayment">
@@ -622,60 +599,6 @@
             </div>
         </div>
     </div>
-    {{-- create payment --}}
-    {{-- <div class="modal fade" id="createPayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-        aria-hidden="true">
-        <div class="modal-dialog mw-100 w-75" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Create Payment') }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="picker3">{{ __('Payment Choice') }} <span
-                                            class="text-danger">*</span></label>
-                                    <select class="form-control" name="payment_method">
-                                        @foreach (allPaymentMethods() as $key => $method)
-                                            <option value="{{ $key }}">
-                                                {{ $method }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="picker3">{{ __('Payment Details') }} <span
-                                            class="text-danger">*</span></label>
-                                    <textarea class="form-control h-80px" placeholder="{{ __('Payment Details') }}" name="payment_details"></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="picker3">{{ __('Payment Notes') }}</label>
-                                    <textarea class="form-control h-80px" placeholder="{{ __('Payment Notes') }}" name="payment_note"></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="picker3">{{ __('Order Notes') }}</label>
-                                    <textarea class="form-control h-80px" placeholder="{{ __('Order Notes') }}" name="order_note"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="placeOrderBtn">{{ __('Place Order') }}</button>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 @endsection
 
 @push('js')
@@ -1159,10 +1082,10 @@
 
             if ($(this).val() == 'cash' || $(this).val() == 'advance') {
                 $(this).parents('td').siblings('.account_info').html('');
-                $cash =
+                const cash =
                     `<input type="hidden" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;
 
-                $(this).parents('td').siblings('.account_info').html($cash);
+                $(this).parents('td').siblings('.account_info').html(cash);
             }
         });
 
