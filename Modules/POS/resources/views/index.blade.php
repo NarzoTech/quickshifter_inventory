@@ -1210,6 +1210,7 @@
                 data: formData,
                 url: "{{ route('admin.place-order') }}",
                 success: function(response) {
+                    console.log(response);
                     $(".product-table tbody").html('')
                     if (response.status == 200) {
                         totalSummery();

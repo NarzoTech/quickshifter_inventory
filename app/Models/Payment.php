@@ -26,6 +26,8 @@ class Payment extends Model
         'amount',
         'payment_date',
         'note',
+        'is_received',
+        'is_paid',
         'created_by',
         'updated_by',
     ];

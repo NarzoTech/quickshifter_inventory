@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('supplier_id')->nullable()->constrained('supplier');
             $table->foreignId('customer_id')->nullable()->constrained('users');
             $table->foreignId('account_id')->nullable()->constrained('accounts');
+            $table->boolean('is_received')->default(false);
+            $table->boolean('is_paid')->default(false);
             $table->string('payment_type');
             $table->decimal('amount', 10, 2);
             $table->date('payment_date');

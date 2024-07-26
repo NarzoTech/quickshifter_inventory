@@ -39,7 +39,9 @@ class SaleService
         $sale->invoice = $this->genInvoiceNumber();
 
         $sale->paid_amount = array_sum($request->paying_amount);
-        $sale->due_amount = $request->total_amount - array_sum($request->paying_amount);
+
+        $due = $request->total_amount - array_sum($request->paying_amount);
+        $sale->due_amount = $due < 0 ? 0 : $due;
         $sale->sale_note = $request->remark;
         $sale->save();
 
@@ -84,6 +86,7 @@ class SaleService
             Payment::create([
                 'payment_type' => 'sale',
                 'sale_id' => $sale->id,
+                'is_received' => 1,
                 'customer_id' => $request->order_customer_id,
                 'account_id' => $account->id,
                 'amount' => $request->paying_amount[$key],
