@@ -23,9 +23,17 @@ class PurchaseService
 {
 
 
-    public function __construct(private Purchase $purchase, private PurchaseDetails $purchaseDetails, private ProductService $productService, private Supplier $supplier, private Warehouse $warehouse, private Product $product, private AccountsService $accountsService, private PurchaseReturn $purchaseReturn,
-    private PurchaseReturnDetails $purchaseReturnDetials)
-    {
+    public function __construct(
+        private Purchase $purchase,
+        private PurchaseDetails $purchaseDetails,
+        private ProductService $productService,
+        private Supplier $supplier,
+        private Warehouse $warehouse,
+        private Product $product,
+        private AccountsService $accountsService,
+        private PurchaseReturn $purchaseReturn,
+        private PurchaseReturnDetails $purchaseReturnDetials
+    ) {
     }
 
     public function all()
@@ -33,7 +41,8 @@ class PurchaseService
         return $this->purchase->with('supplier', 'warehouse')->latest();
     }
 
-    public function allReturn(){
+    public function allReturn()
+    {
         return $this->purchaseReturn->with('purchase', 'returnType', 'purchaseDetails')->latest();
     }
     public function store($request)
@@ -100,6 +109,7 @@ class PurchaseService
             'payment_type' => $request->payment_type,
             'amount' => $request->paid_amount,
             'payment_date' => now()->parse($request->purchase_date),
+            'is_paid' => 1,
             'note' => $request->note,
             'created_by' => auth('admin')->user()->id,
         ]);
@@ -261,7 +271,7 @@ class PurchaseService
 
         // store purchase return details
 
-        foreach($request->product_id as $index=>$val){
+        foreach ($request->product_id as $index => $val) {
             $purchase->purchaseDetails()->create([
                 'product_id' => $val,
                 'purchase_id' => $request->purchase_id,
@@ -276,33 +286,33 @@ class PurchaseService
             $prod->save();
         }
 
-        $account = Account::where('account_type',$request->payment_type);
-        if($request->payment_type == 'cash'){
+        $account = Account::where('account_type', $request->payment_type);
+        if ($request->payment_type == 'cash') {
             $account = $account->first();
-        }else{
-            $account = $account->where('id',$request->account_id)->first();
+        } else {
+            $account = $account->where('id', $request->account_id)->first();
         }
 
-        if($request->received_amount){
+        if ($request->received_amount) {
             Payment::create([
                 'payment_type' => 'purchase_receive',
                 'purchase_id' => $request->purchase_id,
-                'account_id' => $account->id ,
+                'account_id' => $account->id,
                 'amount' => $request->received_amount,
                 'payment_date' => now(),
                 'created_by' => auth()->user()->id,
             ]);
         }
 
-        if($request->shipping_cost){
+        if ($request->shipping_cost) {
             Payment::create([
                 'payment_type' => 'purchase_cost',
                 'purchase_id' => $request->purchase_id,
-                'account_id' => $account->id ,
+                'account_id' => $account->id,
                 'amount' => $request->shipping_cost,
                 'payment_date' => now(),
                 'created_by' => auth()->user()->id,
-                ]);
+            ]);
         }
 
         return $purchase;

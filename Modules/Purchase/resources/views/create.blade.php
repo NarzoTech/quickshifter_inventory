@@ -59,7 +59,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Purchase Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="purchase_date"
-                                                    value="{{ old('purchase_date',now()->format('d-m-Y')) }}">
+                                                    value="{{ old('purchase_date', now()->format('d-m-Y')) }}">
                                                 @error('purchase_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -176,9 +176,9 @@
                                                             <option value="">{{ __('Select Payment Type') }}
                                                             </option>
                                                             @foreach (accountList() as $key => $list)
-                                                                <option value="{{ $key }}" @if ($key == 'cash')
-                                                                    selected
-                                                                @endif data-name="{{ $list }}">{{ $list }}
+                                                                <option value="{{ $key }}"
+                                                                    @if ($key == 'cash') selected @endif
+                                                                    data-name="{{ $list }}">{{ $list }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -252,7 +252,7 @@
                         <input type="number" class="form-control" name="total[]" value="${product.cost}" readonly>
                     </td>
                     <td>
-                        <input type="number" class="form-control" name="profit[]" value="${profit.toFixed(2)}">
+                        <input type="text" class="form-control" name="profit[]" value="${profit.toFixed(2)}">
                     </td>
                     <td>
                         <input type="number" class="form-control" name="selling_price[]" value="${product.price}" min="0">
@@ -334,7 +334,7 @@
             $('[name="due_amount"]').val(due_amount);
         })
 
-        $(document).on('change','[name="payment_type"]',function(){
+        $(document).on('change', '[name="payment_type"]', function() {
             let payment_type = $(this).data('name');
             $('[name="payment_method"]').val(payment_type);
         })
