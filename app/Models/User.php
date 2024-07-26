@@ -14,6 +14,7 @@ use Modules\Customer\app\Models\CustomerDue;
 use Modules\Customer\app\Models\UserGroup;
 use Modules\Customer\app\Models\Vehicle;
 use Modules\LiveChat\app\Models\Message;
+use Modules\Sales\app\Models\Sale;
 
 class User extends Model
 {
@@ -58,5 +59,10 @@ class User extends Model
     {
         $due = $this->due()->where('status', 1)->sum('due_amount');
         return $due;
+    }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'customer_id');
     }
 }

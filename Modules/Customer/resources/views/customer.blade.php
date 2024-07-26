@@ -117,7 +117,7 @@
                                                     <td>{{ $user->phone }}</td>
                                                     <td>{{ currency($user->total_sale) }}</td>
                                                     <td>{{ currency($user->total_sale_pay) }}</td>
-                                                    <td>{{ currency($user->total_sale_due) }}</td>
+                                                    <td>{{ currency($user->total_due) }}</td>
                                                     <td>{{ currency($user->total_sale_advance) }}</td>
                                                     <td>{{ currency($user->total_sale_return) }}</td>
                                                     <td>{{ currency($user->total_sale_return_pay) }}</td>

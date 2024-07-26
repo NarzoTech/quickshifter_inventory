@@ -67,6 +67,7 @@ class SaleService
             $product = Product::where('id', $item['id'])->first();
             if ($product != null) {
                 $product->stock = $product->stock - $item['qty'];
+                $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
                 $product->save();
             }
         }

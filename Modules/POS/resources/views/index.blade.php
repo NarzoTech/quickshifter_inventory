@@ -1193,9 +1193,13 @@
 
             let totalAmount = $('#total_amountModal').text();
             totalAmount = parseFloat(totalAmount);
+            console.log(totalAmount, amountVal);
             if (totalAmount > amountVal) {
                 $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
                 $(".due-date").removeClass('d-none');
+            } else {
+                $(".due-date").addClass('d-none');
+                $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
             }
             calDue();
         })
