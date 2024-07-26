@@ -1225,14 +1225,19 @@
                     console.log(response);
                     $(".product-table tbody").html('')
                     if (response['alert-type'] == 'success') {
-                        totalSummery();
+
                         toastr.success(response.message)
                         $("#payment-modal").modal('hide');
                         $("#checkoutForm")[0].reset();
+                        $('#titems').text(0);
+                        $('#discount_total_amount').val(0);
+                        $('#tds').text(0);
+                        totalSummery();
+
+                        $('.pos-footer').css('z-index', 9000);
                     } else {
                         toastr.error(response.message)
                     }
-
                 },
                 error: function(response) {
                     if (response.status == 500) {

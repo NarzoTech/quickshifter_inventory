@@ -83,7 +83,8 @@ class SaleService
             } else {
                 $account = $account->where('id', $request->account_id[$key])->first();
             }
-            Payment::create([
+            $customerId = $request->order_customer_id;
+            $data = [
                 'payment_type' => 'sale',
                 'sale_id' => $sale->id,
                 'is_received' => 1,
@@ -92,7 +93,12 @@ class SaleService
                 'amount' => $request->paying_amount[$key],
                 'payment_date' => now(),
                 'created_by' => auth()->user()->id,
-            ]);
+            ];
+            if ($customerId == 'walk-in-customer') {
+                $data['customer_id'] = null;
+                $data['is_guest'] = 1;
+            }
+            Payment::create($data);
         }
 
 
