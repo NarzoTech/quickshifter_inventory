@@ -16,6 +16,9 @@ class DashboardController extends Controller
         $data['customerDues'] = CustomerDue::where('status', 1)->sum('due_amount');
         $data['todaySales'] = Sale::whereDate('order_date', date('Y-m-d'))->sum('grand_total');
         $data['totalProducts'] = Product::count();
+
+
+
         $data['suppliersDues'] = 0;
         return view('admin.dashboard', compact('data'));
     }

@@ -105,7 +105,7 @@
                                                                     value="{{ $product->product_id }}">
                                                             </td>
                                                             <td>{{ $product->price }}
-                                                                <input type="number" class="form-control" name="price[]"
+                                                                <input type="hidden" class="form-control" name="price[]"
                                                                     value="{{ $product->price }}">
                                                             </td>
                                                             <td>{{ $product->quantity }}</td>
@@ -237,7 +237,7 @@
                 let total_paid_amount = 0;
                 let total_due_amount = 0;
                 $('input[name="return_subtotal[]"]').each(function() {
-                    total_return_subtotal += parseFloat($(this).val());
+                    total_return_subtotal += parseFloat($(this).val() ? $(this).val() : 0);
                 });
                 $('input[name="return_quantity[]"]').each(function() {
                     total_return_quantity += parseFloat($(this).val());

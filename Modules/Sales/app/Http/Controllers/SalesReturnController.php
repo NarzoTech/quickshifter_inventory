@@ -67,12 +67,15 @@ class SalesReturnController extends Controller
         DB::beginTransaction();
         // create a new sale return
         try {
+
+            $due = $request->return_amount - $request->paying_amount;
             $return = SalesReturn::create([
                 'sale_id' => $request->sale_id,
                 'customer_id' => $request->customer_id,
                 'order_date' => $request->order_date,
-                'return_date' => $request->return_date,
+                'return_date' => date($request->return_date),
                 'return_amount' => $request->return_amount,
+                'return_due' => $due > 0 ? $due : 0,
                 'note'  => $request->note,
                 'status' => 1,
             ]);
@@ -99,23 +102,27 @@ class SalesReturnController extends Controller
                 ]);
             }
 
-            // create a payment
-            $account = Account::where('account_type', $request->payment_type);
-            if ($request->payment_type == 'cash') {
-                $account = $account->first();
-            } else {
-                $account = $account->where('id', $request->account_id)->first();
+
+            if ($request->paying_amount) {
+                // create a payment
+                $account = Account::where('account_type', $request->payment_type);
+                if ($request->payment_type == 'cash') {
+                    $account = $account->first();
+                } else {
+                    $account = $account->where('id', $request->account_id)->first();
+                }
+                $data = [
+                    'payment_type' => 'sale return',
+                    'sale_return_id' => $return->id,
+                    'is_paid' => 1,
+                    'account_id' => $account->id,
+                    'amount' => $request->paying_amount,
+                    'payment_date' => now(),
+                    'created_by' => auth('admin')->user()->id,
+                ];
+                Payment::create($data);
             }
-            $data = [
-                'payment_type' => 'sale return',
-                'sale_return_id' => $return->id,
-                'is_paid' => 1,
-                'account_id' => $account->id,
-                'amount' => $request->paying_amount,
-                'payment_date' => now(),
-                'created_by' => auth('admin')->user()->id,
-            ];
-            Payment::create($data);
+
 
             DB::commit();
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.sales.index', [], ['messege' => 'Sales return created successfully', 'alert-type' => 'success']);

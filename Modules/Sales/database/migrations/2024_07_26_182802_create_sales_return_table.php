@@ -17,7 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->date('order_date');
             $table->date('return_date');
-            $table->string('return_amount');
+            $table->float('return_amount');
+            $table->float('return_due')->default(0);
             $table->string('note')->nullable();
             $table->boolean('status')->default(1);
             $table->foreign('sale_id')->references('id')->on('sales')->onDelete('cascade');
