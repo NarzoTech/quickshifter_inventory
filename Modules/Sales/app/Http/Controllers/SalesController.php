@@ -10,7 +10,7 @@ use Modules\Sales\app\Services\SaleService;
 
 class SalesController extends Controller
 {
-    public function __construct( private SaleService $saleService)
+    public function __construct(private SaleService $saleService)
     {
         $this->middleware('auth:admin');
     }
@@ -19,9 +19,14 @@ class SalesController extends Controller
      */
     public function index()
     {
-        $sales = $this->saleService->getSales()->paginate(20);
+        $sales = $this->saleService->getSales();
+
+        if (request()->customer) {
+            $sales = $sales->where('customer_id', request()->customer);
+        }
+        $sales = $sales->orderBy('id', 'desc')->paginate(20);
         $title = 'Sales List';
-        return view('sales::index',compact('sales', 'title'));
+        return view('sales::index', compact('sales', 'title'));
     }
 
     /**
