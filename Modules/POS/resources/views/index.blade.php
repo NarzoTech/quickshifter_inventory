@@ -821,6 +821,16 @@
                     })
                 })
 
+                $("#service_category_id,#service_name").on('input', function() {
+                    const category_id = $('#service_category_id').val();
+                    const name = $('#service_name').val();
+
+                    loadProudcts({
+                        service_category_id: category_id,
+                        service_name: name
+                    }, 'service')
+                })
+
                 // extra
 
                 $(".dis-tgl").click(function() {
@@ -931,8 +941,7 @@
         }
 
 
-
-        function loadProudcts(data = null) {
+        function loadProudcts(data = null, type = 'product') {
             $('.preloader_area').removeClass('d-none');
             $.ajax({
                 type: 'get',

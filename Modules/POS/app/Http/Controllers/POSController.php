@@ -127,7 +127,20 @@ class POSController extends Controller
         $products = $products->appends($request->all());
 
 
-        $services = $this->services->all()->where('status', 1)->paginate(20);
+        $services = $this->services->all()->where('status', 1);
+
+        if ($request->service_name) {
+            $services = $services->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->service_name . '%')
+                    ->orWhere('sku', 'LIKE', '%' . $request->service_name . '%');
+            });
+        }
+
+        if ($request->service_category_id) {
+            $services = $services->where('category_id', $request->service_category_id);
+        }
+
+        $services = $services->paginate(20);
         $services = $services->appends($request->all());
         $serviceView = view('pos::ajax_service')->with([
             'services' => $services,
