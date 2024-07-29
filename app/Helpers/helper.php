@@ -38,6 +38,15 @@ function file_upload(UploadedFile $file, string $path = 'uploads/custom-images/'
     return $file_name;
 }
 
+if (!function_exists('delete_file')) {
+    function delete_file($path)
+    {
+        if (File::exists(public_path($path))) {
+            unlink(public_path($path));
+        }
+    }
+}
+
 
 // file upload method
 if (!function_exists('allLanguages')) {

@@ -65,9 +65,10 @@ class ServiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(ServiceRequest $request, $id): RedirectResponse
     {
-        //
+        $this->service->update($id, $request);
+        return $this->redirectWithMessage(RedirectType::UPDATE->value, null, [], ['messege' => 'Service updated successfully', 'alert-type' => 'success']);
     }
 
     /**
@@ -75,6 +76,7 @@ class ServiceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->service->destroy($id);
+        return $this->redirectWithMessage(RedirectType::DELETE->value, null, [], ['messege' => 'Service deleted successfully', 'alert-type' => 'success']);
     }
 }

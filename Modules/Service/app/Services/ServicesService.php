@@ -48,4 +48,31 @@ class ServicesService
             'category_id' => $request->category_id
         ]);
     }
+
+    public function update(int $id, Request $request)
+    {
+        $service = $this->service->find($id);
+        $filename = $service->image;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = file_upload($image, oldFile: $service->image);
+        }
+        $service->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $filename,
+            'price' => $request->price,
+            'status' => $request->status,
+            'category_id' => $request->category_id
+        ]);
+    }
+
+    public function destroy(int $id)
+    {
+        $service = $this->service->find($id);
+        if ($service->image) {
+            delete_file($service->image);
+        }
+        $service->delete();
+    }
 }
