@@ -31,6 +31,11 @@ class ServicesService
         return $service;
     }
 
+    public function find($id)
+    {
+        return $this->service->find($id);
+    }
+
     public function store(Request $request): void
     {
         $filename = null;

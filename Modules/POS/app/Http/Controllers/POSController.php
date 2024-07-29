@@ -131,8 +131,7 @@ class POSController extends Controller
 
         if ($request->service_name) {
             $services = $services->where(function ($q) use ($request) {
-                $q->where('name', 'LIKE', '%' . $request->service_name . '%')
-                    ->orWhere('sku', 'LIKE', '%' . $request->service_name . '%');
+                $q->where('name', 'LIKE', '%' . $request->service_name . '%');
             });
         }
 
@@ -174,12 +173,17 @@ class POSController extends Controller
 
     public function add_to_cart(Request $request)
     {
-        $product = $this->productService->getActiveProductById($request->product_id);
-
+        // dd($request->all());
+        $type = $request->serviceType;
+        if ($type == 'service') {
+            // 
+        }
+        $product = $type != 'service' ? $this->productService->getActiveProductById($request->product_id) : null;
+        $service = $type == 'service' ? $this->services->find($request->product_id) : null;
         $attributes = '';
         $options = collect([]);
 
-        if ($product->has_variant) {
+        if ($product?->has_variant) {
             $prodVar = $this->productService->getVariantBySku($request->variant_sku);
 
             $attributes = $prodVar->attributes();
@@ -194,10 +198,10 @@ class POSController extends Controller
 
         // check if item already exist in cart
         $item_exist = false;
-        $sku = $request->variant_sku ? $request->variant_sku : $product->sku;
+        $sku = $type != 'service' ? ($request->variant_sku ? $request->variant_sku : $product->sku) : '';
         if (count($cart_contents) > 0) {
             foreach ($cart_contents as $index => $cart_content) {
-                if ($cart_content['sku'] == $sku) {
+                if ($cart_content['sku'] == $sku || ($service && $cart_content['id'] == $service->id && $cart_content['type'] == 'service')) {
                     $item_exist = true;
                 }
             }
@@ -210,11 +214,12 @@ class POSController extends Controller
 
         $data = array();
         $data["rowid"] = uniqid();
-        $data['id'] = $product->id;
-        $data['name'] = $product->name;
-        $data['image'] = $product->image_url;
+        $data['id'] = $type == 'service' ? $service->id : $product->id;
+        $data['name'] = $type == 'service' ? $service->name : $product->name;
+        $data['type'] = $type;
+        $data['image'] = $type == 'service' ? $service->singleImage : $product->image_url;
         $data['qty'] = $request->qty ? $request->qty : 1;
-        $data['price'] = $request->variant_price ? $request->variant_price : $product->currentPrice;
+        $data['price'] = $type == 'service' ? $service->price : ($request->variant_price ? $request->variant_price : $product->currentPrice);
         $data['sub_total'] = $data['price'] * $data['qty'];
         $data['sku'] = $sku;
 
