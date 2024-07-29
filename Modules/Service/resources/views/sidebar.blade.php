@@ -4,6 +4,11 @@
     </a>
 
     <ul class="dropdown-menu">
+        <li class="{{ isRoute('admin.service.index', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.service.index') }}">
+                {{ __('Service List') }}
+            </a>
+        </li>
         <li class="{{ isRoute('admin.serviceCategory.index', 'active') }}">
             <a class="nav-link" href="{{ route('admin.serviceCategory.index') }}">
                 {{ __('Service Category') }}
