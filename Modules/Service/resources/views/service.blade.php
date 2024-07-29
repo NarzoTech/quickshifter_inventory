@@ -93,30 +93,34 @@
                                             <tr>
                                                 <th>{{ __('SN') }}</th>
                                                 <th>{{ __('Name') }}</th>
+                                                <th>{{ __('Category') }}</th>
+                                                <th>{{ __('Price') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($categories as $index => $category)
+                                            @forelse ($services as $index => $service)
                                                 <tr>
                                                     <td>{{ $loop->first + $index }}</td>
-                                                    <td>{{ $category->name }}</td>
+                                                    <td>{{ $service->name }}</td>
+                                                    <td>{{ $service->category->name }}</td>
+                                                    <td>{{ currency($service->price) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop{{ $category->id }}" type="button"
+                                                            <button id="btnGroupDrop{{ $service->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
                                                                 data-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
-                                                                aria-labelledby="btnGroupDrop{{ $category->id }}">
+                                                                aria-labelledby="btnGroupDrop{{ $service->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#editService{{ $category->id }}">Edit</a>
+                                                                    data-target="#editService{{ $service->id }}">Edit</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
-                                                                    onclick="deleteData({{ $category->id }})">
+                                                                    onclick="deleteData({{ $service->id }})">
                                                                     Delete</a>
                                                             </div>
                                                         </div>
@@ -131,7 +135,7 @@
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{ $categories->onEachSide(0)->links() }}
+                                        {{ $services->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>
@@ -157,12 +161,34 @@
 
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <form action="{{ route('admin.service.store') }}" method="POST" id="add-service-form">
+                    <form action="{{ route('admin.service.store') }}" method="POST" id="add-service-form"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="form-group col-12">
                                 <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="category_id">{{ __('Category') }}<span class="text-danger">*</span></label>
+                                <select name="category_id" id="status" class="form-control select2">
+                                    <option value="">{{ __('Select Category') }}</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="price">{{ __('Price') }}</label>
+                                <input type="number" class="form-control" id="price" name="price">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="image">{{ __('Image') }}</label>
+                                <input type="file" class="form-control" id="image" name="image">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="description">{{ __('Description') }}</label>
+                                <textarea name="description" class="form-control height-80px" id="description" cols="30" rows="10"></textarea>
                             </div>
                             <div class="form-group col-12">
                                 <label for="name">{{ __('Status') }}<span class="text-danger">*</span></label>
@@ -187,8 +213,8 @@
 
 
     {{-- edit area --}}
-    @foreach ($categories as $index => $category)
-        <div class="modal" id="editService{{ $category->id }}">
+    @foreach ($services as $index => $service)
+        <div class="modal" id="editService{{ $service->id }}">
             <div class="modal-dialog">
                 <div class="modal-content">
 
@@ -200,23 +226,50 @@
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <form action="{{ route('admin.service.update', $category->id) }}" method="POST"
-                            id="edit-service-form{{ $category->id }}">
+                        <form action="{{ route('admin.service.update', $service->id) }}" method="POST"
+                            id="edit-service-form{{ $service->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
                                 <div class="form-group col-12">
                                     <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $category->name }}">
+                                        value="{{ $service->name }}">
                                 </div>
+
+                                <div class="form-group col-12">
+                                    <label for="category_id">{{ __('Category') }}<span
+                                            class="text-danger">*</span></label>
+                                    <select name="category_id" id="status" class="form-control select2">
+                                        <option value="">{{ __('Select Category') }}</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ $service->category_id == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group col-12">
+                                    <label for="price">{{ __('Price') }}</label>
+                                    <input type="number" class="form-control" id="price" name="price"
+                                        value="{{ $service->price }}">
+                                </div>
+                                <div class="form-group col-12">
+                                    <label for="image">{{ __('Image') }}</label>
+                                    <input type="file" class="form-control" id="image" name="image">
+                                </div>
+                                <div class="form-group col-12">
+                                    <label for="description">{{ __('Description') }}</label>
+                                    <textarea name="description" class="form-control height-80px" id="description" cols="30" rows="10">{{ $service->description }}</textarea>
+                                </div>
+
                                 <div class="form-group col-12">
                                     <label for="status">{{ __('Status') }}<span class="text-danger">*</span></label>
                                     <select name="status" id="status" class="form-control">
-                                        <option value="1" {{ $category->status == 1 ? 'selected' : '' }}>
+                                        <option value="1" {{ $service->status == 1 ? 'selected' : '' }}>
                                             {{ __('Active') }}
                                         </option>
-                                        <option value="0" {{ $category->status == 0 ? 'selected' : '' }}>
+                                        <option value="0" {{ $service->status == 0 ? 'selected' : '' }}>
                                             {{ __('Inactive') }}
                                         </option>
                                     </select>
@@ -230,7 +283,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
-                            form="edit-service-form{{ $category->id }}">{{ __('Update') }}</button>
+                            form="edit-service-form{{ $service->id }}">{{ __('Update') }}</button>
                     </div>
 
                 </div>

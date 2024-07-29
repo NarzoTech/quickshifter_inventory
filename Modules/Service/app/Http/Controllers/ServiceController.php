@@ -2,19 +2,31 @@
 
 namespace Modules\Service\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Service\app\Http\Requests\ServiceRequest;
+use Modules\Service\app\Services\ServiceCategoryService;
+use Modules\Service\app\Services\ServicesService;
 
 class ServiceController extends Controller
 {
+    use RedirectHelperTrait;
+    public function __construct(private ServiceCategoryService $category, private ServicesService $service)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('service::service');
+        $categories = $this->category->all()->get();
+        $services = $this->service->all()->paginate(20);
+        return view('service::service', compact('categories', 'services'));
     }
 
     /**
@@ -28,9 +40,10 @@ class ServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(ServiceRequest $request): RedirectResponse
     {
-        //
+        $this->service->store($request);
+        return $this->redirectWithMessage(RedirectType::CREATE->value, null, [], ['messege' => 'Service created successfully', 'alert-type' => 'success']);
     }
 
     /**

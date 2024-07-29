@@ -2,6 +2,7 @@
 
 namespace Modules\Service\app\Services;
 
+use Illuminate\Http\Request;
 use Modules\Service\app\Models\Service;
 
 
@@ -30,8 +31,21 @@ class ServicesService
         return $service;
     }
 
-    public function store(array $data): void
+    public function store(Request $request): void
     {
-        $this->service->create($data);
+        $filename = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = file_upload($image);
+        }
+
+        $this->service->create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $filename,
+            'price' => $request->price,
+            'status' => $request->status,
+            'category_id' => $request->category_id
+        ]);
     }
 }
