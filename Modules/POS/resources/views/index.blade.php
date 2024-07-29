@@ -96,58 +96,86 @@
             </div>
 
             <div class="section-body">
-
                 <div class="row mt-4">
                     <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <form id="product_search_form" class="pos_pro_search_form w-100">
-                                    <div class="row">
-                                        <div class="col-md-5 d-flex align-items-center">
-                                            <select name="category_id" id="category_id" class="form-control select2">
-                                                <option value="">{{ __('Select Category') }}</option>
-                                                @if (request()->has('category_id'))
-                                                    @foreach ($categories as $category)
-                                                        <option
-                                                            {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
-                                                            value="{{ $category->id }}">{{ $category->name }}</option>
-                                                    @endforeach
-                                                @else
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-                                        <div class="col-md-5 d-flex align-items-center ">
-                                            <select name="brand_id" id="brand_id" class="form-control select2">
-                                                <option value="">{{ __('Select brand') }}</option>
-                                                @if (request()->has('brand_id'))
-                                                    @foreach ($brands as $brand)
-                                                        <option
-                                                            {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
-                                                            value="{{ $brand->id }}">{{ $brand->name }}</option>
-                                                    @endforeach
-                                                @else
-                                                    @foreach ($categories as $brand)
-                                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-12 d-flex align-items-center mt-2">
-                                            <input type="text" class="form-control" name="name" id="name"
-                                                placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
-                                                autocomplete="off" value="{{ request()->get('name') }}">
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="card-body product_body" style="overflow: auto">
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="products-tab" data-toggle="tab"
+                                            data-target="#products" type="button" role="tab" aria-controls="products"
+                                            aria-selected="true">{{ __('Products') }}</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="service-tab" data-toggle="tab" data-target="#service"
+                                            type="button" role="tab" aria-controls="profile"
+                                            aria-selected="false">{{ __('Service') }}</button>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="products" role="tabpanel"
+                                aria-labelledby="products-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <form id="product_search_form" class="pos_pro_search_form w-100">
+                                            <div class="row">
+                                                <div class="col-md-5 d-flex align-items-center">
+                                                    <select name="category_id" id="category_id"
+                                                        class="form-control select2">
+                                                        <option value="">{{ __('Select Category') }}</option>
+                                                        @if (request()->has('category_id'))
+                                                            @foreach ($categories as $category)
+                                                                <option
+                                                                    {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
+                                                                    value="{{ $category->id }}">{{ $category->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($categories as $category)
+                                                                <option value="{{ $category->id }}">{{ $category->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-5 d-flex align-items-center">
+                                                    <select name="brand_id" id="brand_id" class="form-control select2">
+                                                        <option value="">{{ __('Select brand') }}</option>
+                                                        @if (request()->has('brand_id'))
+                                                            @foreach ($brands as $brand)
+                                                                <option
+                                                                    {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
+                                                                    value="{{ $brand->id }}">{{ $brand->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($categories as $brand)
+                                                                <option value="{{ $brand->id }}">{{ $brand->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-12 d-flex align-items-center mt-2">
+                                                    <input type="text" class="form-control" name="name" id="name"
+                                                        placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
+                                                        autocomplete="off" value="{{ request()->get('name') }}">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-body product_body" style="overflow: auto">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">...
+                            </div>
+                        </div>
+
                     </div>
                     <div class="col-md-6">
                         <div class="card">
@@ -159,11 +187,8 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <button data-toggle="modal" data-target="#addCustomer" type="button"
-                                            class="btn btn-primary"><i class="fa fa-plus"
+                                        <button type="button" class="btn btn-primary addCustomer"><i class="fa fa-plus"
                                                 aria-hidden="true"></i>{{ __('New') }}</button>
-                                    </div>
-                                    <div class="col-md-12 mt-3 address-container">
                                     </div>
                                 </div>
                             </div>
@@ -1078,8 +1103,6 @@
                 $(this).parents('td').siblings('.account_info').html(html);
             }
 
-            console.log($(this).parents('td').siblings('.account_info'));
-
             if ($(this).val() == 'cash' || $(this).val() == 'advance') {
                 $(this).parents('td').siblings('.account_info').html('');
                 const cash =
@@ -1125,6 +1148,15 @@
                 $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
             }
             calDue();
+        })
+
+        $('.addCustomer').on('click', function(e) {
+            e.preventDefault();
+            $('#addCustomer').modal('show');
+            $('.pos-footer').css('z-index', 0)
+        })
+        $('#addCustomer .close').on('click', function() {
+            modalHide('#addCustomer')
         })
     </script>
 

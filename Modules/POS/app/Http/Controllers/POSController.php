@@ -47,7 +47,6 @@ class POSController extends Controller
      */
     public function index(Request $request)
     {
-
         Paginator::useBootstrap();
 
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
@@ -80,6 +79,8 @@ class POSController extends Controller
         $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
         $vehicles = $this->vehicle->get();
+
+        $services = ';';
         return view('pos::index')->with([
             'products' => $products,
             'categories' => $categories,
