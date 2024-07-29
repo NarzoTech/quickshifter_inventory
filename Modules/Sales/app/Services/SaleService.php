@@ -106,6 +106,7 @@ class SaleService
         // create due
         if ($request->total_due && $user) {
             CustomerDue::create([
+                'invoice' => $sale->invoice,
                 'due_amount' => $request->total_due,
                 'due_date' => $request->due_date,
                 'status' => 1,

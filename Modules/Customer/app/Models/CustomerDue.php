@@ -18,6 +18,7 @@ class CustomerDue extends Model
      */
     protected $fillable = [
         'customer_id',
+        'invoice',
         'due_date',
         'due_amount',
         'status',

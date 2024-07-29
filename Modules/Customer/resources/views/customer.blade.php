@@ -142,6 +142,9 @@
                                                                     data-target="#editCustomer{{ $user->id }}">Edit</a>
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
+                                                                    Receive</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $user->id }})">

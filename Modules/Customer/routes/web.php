@@ -20,7 +20,8 @@ use Modules\Customer\app\Http\Controllers\VehicleController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('customers', CustomerController::class);
     Route::get('customers/single/{id}', [CustomerController::class, 'singleCustomer'])->name('customer.single');
-
+    Route::get('customers-due-receive', [CustomerController::class, 'dueReceiveForm'])->name('customer.due-receive');
+    Route::post('customers-due-receive', [CustomerController::class, 'dueReceive'])->name('customer.due-receive.store');
     Route::resource('customerGroup', CustomerGroupController::class);
     Route::resource('vehicle', VehicleController::class);
     Route::resource('area', AreaController::class);

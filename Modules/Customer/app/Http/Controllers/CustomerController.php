@@ -154,4 +154,16 @@ class CustomerController extends Controller
         $user = User::findOrFail($id);
         return $user;
     }
+
+    public function dueReceiveForm(Request $request)
+    {
+        if (!$request->customer) {
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Customer Not Found', 'alert-type' => 'error']);
+        }
+
+
+        $customer = User::where('id', $request->customer)->first();
+
+        return view('customer::due-receive', compact('customer'));
+    }
 }
