@@ -10,7 +10,7 @@ class ServicesService
 {
     protected $service;
 
-    public function __construct(Service $service)
+    public function __construct(Service $service, private ServiceCategoryService $category)
     {
         $this->service = $service;
     }
@@ -74,5 +74,10 @@ class ServicesService
             delete_file($service->image);
         }
         $service->delete();
+    }
+
+    public function getCategories()
+    {
+        return $this->category->all()->where('status', 1)->get();
     }
 }

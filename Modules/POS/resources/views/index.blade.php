@@ -172,7 +172,43 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">...
+                            <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <form id="service_search_form" class="pos_pro_search_form w-100">
+                                            <div class="row">
+                                                <div class="col-md-12 d-flex align-items-center">
+                                                    <select name="service_category_id" id="service_category_id"
+                                                        class="form-control select2">
+                                                        <option value="">{{ __('Select Category') }}</option>
+                                                        @if (request()->has('service_category_id'))
+                                                            @foreach ($serviceCategories as $category)
+                                                                <option
+                                                                    {{ request()->get('service_category_id') == $category->id ? 'selected' : '' }}
+                                                                    value="{{ $category->id }}">{{ $category->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($serviceCategories as $category)
+                                                                <option value="{{ $category->id }}">
+                                                                    {{ $category->name }}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-12 d-flex align-items-center mt-2">
+                                                    <input type="text" class="form-control" name="name"
+                                                        id="service_name" placeholder="{{ __('Enter Service name') }}"
+                                                        autocomplete="off" value="{{ request()->get('name') }}">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-body service_body" style="overflow: auto">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -903,7 +939,8 @@
                 url: "{{ route('admin.load-products') }}",
                 data: data,
                 success: function(response) {
-                    $(".product_body").html(response)
+                    $(".product_body").html(response.productView)
+                    $(".service_body").html(response.serviceView)
                     $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
@@ -982,13 +1019,14 @@
             });
         }
 
-        function singleAddToCart(id) {
+        function singleAddToCart(id, serviceType = 'product') {
             $('.preloader_area').removeClass('d-none');
             $.ajax({
                 type: 'get',
                 data: {
                     product_id: id,
-                    type: 'single'
+                    type: 'single',
+                    serviceType: serviceType
                 },
                 url: "{{ url('/admin/pos/add-to-cart') }}",
                 success: function(response) {

@@ -28,6 +28,7 @@ use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductService;
 use Modules\Sales\app\Services\SaleService;
+use Modules\Service\app\Services\ServicesService;
 
 class POSController extends Controller
 {
@@ -35,7 +36,7 @@ class POSController extends Controller
     protected $orderService;
     protected $brandService;
 
-    public function __construct(private UserGroupService $userGroup, ProductService $productService, OrderService $orderService, BrandService $brandService, private AreaService $areaService, private Vehicle $vehicle, private SaleService $saleService)
+    public function __construct(private UserGroupService $userGroup, ProductService $productService, OrderService $orderService, BrandService $brandService, private AreaService $areaService, private Vehicle $vehicle, private SaleService $saleService, private ServicesService $services)
     {
         $this->middleware('auth:admin');
         $this->productService = $productService;
@@ -80,7 +81,8 @@ class POSController extends Controller
         $areaList = $this->areaService->getArea()->get();
         $vehicles = $this->vehicle->get();
 
-        $services = ';';
+        $services = $this->services->all()->where('status', 1)->paginate(20);
+        $serviceCategories = $this->services->getCategories();
         return view('pos::index')->with([
             'products' => $products,
             'categories' => $categories,
@@ -90,7 +92,9 @@ class POSController extends Controller
             'groups' => $groups,
             'accounts' => $accounts,
             'areaList' => $areaList,
-            'vehicles' => $vehicles
+            'vehicles' => $vehicles,
+            'services' => $services,
+            'serviceCategories' => $serviceCategories
         ]);
     }
 
@@ -122,9 +126,16 @@ class POSController extends Controller
         $products = $products->paginate(20);
         $products = $products->appends($request->all());
 
-        return view('pos::ajax_products')->with([
+
+        $services = $this->services->all()->where('status', 1)->paginate(20);
+        $services = $services->appends($request->all());
+        $serviceView = view('pos::ajax_service')->with([
+            'services' => $services,
+        ])->render();
+        $productView =  view('pos::ajax_products')->with([
             'products' => $products,
-        ]);
+        ])->render();
+        return response()->json(['productView' => $productView, 'serviceView' => $serviceView]);
     }
 
     public function load_product_modal($product_id)
@@ -281,15 +292,6 @@ class POSController extends Controller
 
             $customers = User::orderBy('id', 'desc')->where('status', 'active')->get();
 
-            Address::create([
-                'user_id' => $user->id,
-                'name' => $request->first_name . ' ' . $request->last_name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'type' => $request->address_type,
-                'default' => 1,
-            ]);
             $customer_html = "<option value=''>" . trans('Select Customer') . "</option><option value='walk-in-customer'>walk-in-customer</option>";
             foreach ($customers as $customer) {
                 $customer_html .= "<option value=" . $customer->id . ">" . $customer->name . "-" . $customer->phone . "</option>";
@@ -302,51 +304,6 @@ class POSController extends Controller
         }
     }
 
-    public function create_new_address(Request $request)
-    {
-        if ($request->customer_id == null) {
-            session()->put('delivery_address', $request->except('_token'));
-
-            $address = session('delivery_address');
-
-            $notification = trans('Address Create Successfully');
-            $view = view('pos::ajax_walk_in_customer_address')->with([
-                'address' => $address,
-            ])->render();
-            return [
-                'message' => $notification,
-                'view' => $view,
-            ];
-        }
-        $validatedData = Validator::make($request->all(), [
-            'address' => 'required',
-            'address_type' => 'required',
-        ], [
-            'address.required' => trans('Address is required'),
-            'address_type.required' => trans('Address type is required'),
-        ])->validate();
-
-        $user = User::find($request->customer_id);
-        $is_exist = Address::where(['user_id' => $user->id])->count();
-
-        $address = new Address();
-        $address->user_id = $user->id;
-        $address->first_name = $request->first_name;
-        $address->last_name = $request->last_name;
-        $address->email = $request->email;
-        $address->phone = $request->phone;
-        $address->address = $request->address;
-        $address->type = $request->address_type;
-        if ($is_exist == 0) {
-            $address->default = 1;
-        } else {
-            $address->default = 0;
-        }
-        $address->save();
-
-        $notification = trans('Create Successfully');
-        return response()->json(['address' => $address, 'message' => $notification]);
-    }
 
     public function place_order(Request $request)
     {

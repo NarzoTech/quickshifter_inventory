@@ -22,8 +22,18 @@ class Service extends Model
         'status',
     ];
 
+    protected $appends = ['singleImage'];
+
     public function category()
     {
         return $this->belongsTo(ServiceCategory::class, 'category_id');
+    }
+
+    public function getSingleImageAttribute()
+    {
+        if (!$this->image) {
+            return asset('backend/img/service.png');
+        }
+        return asset($this->image);
     }
 }
