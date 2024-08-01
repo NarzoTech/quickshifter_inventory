@@ -23,6 +23,7 @@ use Modules\Customer\app\Models\Vehicle;
 use Modules\GlobalSetting\app\Models\EmailTemplate;
 use Modules\Order\app\Models\Order;
 use Modules\Order\app\Models\OrderDetails;
+use Modules\POS\app\Models\CartHold;
 use Modules\Product\app\Models\Category;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\BrandService;
@@ -478,5 +479,28 @@ class POSController extends Controller
         return view('pos::ajax_cart')->with([
             'cart_contents' => $cart_contents,
         ]);
+    }
+
+    public function cartHold(Request $request)
+    {
+        if (!session()->get('POSCART') || count(session()->get('POSCART')) == 0) {
+            return back()->with(['alert-type' => 'error', 'messege' => 'Cart is Empty']);
+        }
+        $this->validate($request, [
+            'note' => 'required',
+        ]);
+
+
+        CartHold::create([
+            'user_id' => $request->user_id,
+            'contents' => json_encode(session()->get('POSCART')),
+            'status' => 'hold',
+            'note' => $request->note
+        ]);
+
+        // forget pos cart
+        session()->forget('POSCART');
+
+        return back()->with(['alert-type' => 'success', 'messege' => 'Cart Hold Successfully']);
     }
 }

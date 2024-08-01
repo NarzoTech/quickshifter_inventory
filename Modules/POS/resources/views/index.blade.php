@@ -660,6 +660,42 @@
             </div>
         </div>
     </div>
+
+    {{-- hold modal --}}
+
+    <div class="modal fade" id="hold-modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content hold-modal">
+                <div class="modal-header">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Hold Sale</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="javascript:;" id="hold-sale-form" method="post">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="">Note</label>
+                                    <input type="text" class="form-control hold-sale-note" name="note">
+                                    <input type="hidden" class="form-control" name="user_id">
+                                </div>
+                                <div class="text-center mt-1">
+                                    <button class="btn btn-primary" type="submit">Hold</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -861,6 +897,17 @@
 
                     updatePrice(rowId, value)
                 });
+
+                $('.hold-btn').on('click', function() {
+                    $('#hold-modal').modal('show')
+                })
+                $('#hold-sale-form').on('submit', function() {
+                    let customer_id = $('#customer_id').val();
+                    customer_id = customer_id == 'walk-in-customer' ? 0 : customer_id;
+                    $('#hold-sale-form [name="user_id"]').val(customer_id)
+
+                    $('#hold-sale-form').prop('action', "{{ route('admin.cart.hold') }}").submit()
+                })
             });
         })(jQuery);
 
