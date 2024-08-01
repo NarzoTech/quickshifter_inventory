@@ -854,7 +854,7 @@
                     // remove child span
                     child.siblings('span').addClass('d-none');
                 })
-                $(document).on('change', '.price > input', function() {
+                $(document).on('focusout', '.price > input', function() {
                     const $this = $(this);
                     const rowId = $this.data('rowid');
                     const value = $this.val();
