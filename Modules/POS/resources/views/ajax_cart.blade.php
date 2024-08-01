@@ -2,6 +2,7 @@
     <thead class="text-center" style="background: #00a65a">
         <tr style="height: 25px; color: #fff;">
             <th style="padding:4px 0px; margin:0px; width: 30%;">Name</th>
+            <th style="padding:4px 0px; margin:0px; width: 5%;">Source</th>
             <th style="padding:4px 0px; margin:0px; width: 5%;">Qty</th>
             <th style="padding:4px 0px; margin:0px; width: 7%;">Price</th>
             <th style="padding:4px 0px; margin:0px; width: 10%;">Total</th>
@@ -24,12 +25,26 @@
                         </span>
                     @endif
                 </td>
+                <td>
+                    @if ($cart_content['type'] == 'product')
+                        <select name="source" id="source">
+                            <option value="1">From Stock</option>
+                            <option value="2">From Out Side</option>
+                        </select>
+                    @endif
+                </td>
                 <td data-rowid="{{ $cart_content['rowid'] }}" class="px-3">
                     <input min="1" type="number" value="{{ $cart_content['qty'] }}"
                         class="pos_input_qty form-control">
                 </td>
 
-                <td>{{ currency($cart_content['price']) }}</td>
+                <td class="price">
+                    <span>
+                        {{ currency($cart_content['price']) }}
+                    </span>
+                    <input type="text" value="{{ $cart_content['price'] }}" name="table_price[]" style="width:100px"
+                        data-rowid="{{ $cart_content['rowid'] }}" class="d-none">
+                </td>
                 @php
                     $sub_total = $cart_content['sub_total'];
                     $cumalitive_sub_total += $sub_total;

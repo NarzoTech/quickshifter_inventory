@@ -23,6 +23,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
         Route::get('/pos/load-customer-address/{id}', [POSController::class, 'load_customer_address'])->name('load-customer-address');
         Route::get('/add-to-cart', [POSController::class, 'add_to_cart'])->name('add-to-cart');
         Route::get('/cart-quantity-update', [POSController::class, 'cart_quantity_update'])->name('cart-quantity-update');
+        Route::get('cart-price-update', [POSController::class, 'cart_price_update'])->name('cart-price-update');
         Route::get('/remove-cart-item/{id}', [POSController::class, 'remove_cart_item'])->name('remove-cart-item');
         Route::get('/cart-clear', [POSController::class, 'cart_clear'])->name('cart-clear');
         Route::get('/pos-cart-item-details/{id}', [POSController::class, 'posCartItemDetails'])->name('pos-cart-item-details');
@@ -32,9 +33,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
 
         Route::get('/check-cart-restaurant/{id}', [POSController::class, 'check_cart_restaurant'])->name('check-cart-restaurant');
         Route::get('/modal-cart-clear', [POSController::class, 'modalClearCart'])->name('modal-cart-clear');
-
     });
 
-    Route::get('pos/settings',[PosSettingsController::class,'index'])->name('pos.settings');
-    Route::post('pos/settings',[PosSettingsController::class,'store'])->name('pos.settings.store');
+    Route::get('pos/settings', [PosSettingsController::class, 'index'])->name('pos.settings');
+    Route::post('pos/settings', [PosSettingsController::class, 'store'])->name('pos.settings.store');
 });

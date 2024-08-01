@@ -176,7 +176,7 @@ class POSController extends Controller
         // dd($request->all());
         $type = $request->serviceType;
         if ($type == 'service') {
-            // 
+            //
         }
         $product = $type != 'service' ? $this->productService->getActiveProductById($request->product_id) : null;
         $service = $type == 'service' ? $this->services->find($request->product_id) : null;
@@ -459,5 +459,24 @@ class POSController extends Controller
     {
         session()->put('POSCART', []);
         return response()->json(['status' => true]);
+    }
+    public function cart_price_update(Request $request)
+    {
+        // get the item
+        $cart_contents = session()->get('POSCART');
+
+        if ($cart_contents != null && count($cart_contents) > 0) {
+            $item = $cart_contents[$request->rowId];
+            $item['price'] = $request->price;
+            $item['sub_total'] = $request->price * $item['qty'];
+            $cart_contents[$request->rowId] = $item;
+
+            session()->put('POSCART', $cart_contents);
+        }
+        $cart_contents = session()->get('POSCART');
+
+        return view('pos::ajax_cart')->with([
+            'cart_contents' => $cart_contents,
+        ]);
     }
 }

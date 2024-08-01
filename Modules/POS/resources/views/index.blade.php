@@ -97,7 +97,7 @@
 
             <div class="section-body">
                 <div class="row mt-4">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="row">
                             <div class="col-md-12">
                                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -213,7 +213,7 @@
                         </div>
 
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-7">
                         <div class="card">
                             <div class="card-header pos_sidebar_button">
                                 <div class="row w-100">
@@ -260,11 +260,11 @@
                                         </tr>
                                         <tr>
                                             <td style="padding: 5px 10px;">
-                                                VAT <small class="text-info">(0%)</small>
+                                                Extra <small class="text-info"></small>
                                             </td>
                                             <td class="text-right"
                                                 style="padding: 5px 10px;font-size: 14px; font-weight:bold;">
-                                                <span id="ttax2">0</span>
+                                                <span id="extra">0</span>
                                             </td>
                                             <td style="padding: 5px 10px;">{{ __('Discount') }}
                                                 <i class="fa fa-edit dis-tgl" style="cursor: pointer;"></i>
@@ -846,9 +846,38 @@
                 $(document).on('click', '.remove-payment', function() {
                     $(this).parents('tr').remove()
                 })
+
+                $(document).on('click', '.price', function() {
+                    let child = $(this).children('input');
+
+                    child.removeClass('d-none');
+                    // remove child span
+                    child.siblings('span').addClass('d-none');
+                })
+                $(document).on('change', '.price > input', function() {
+                    const $this = $(this);
+                    const rowId = $this.data('rowid');
+                    const value = $this.val();
+
+                    updatePrice(rowId, value)
+                });
             });
         })(jQuery);
 
+        function updatePrice(rowId, price) {
+            $.ajax({
+                type: 'get',
+                data: {
+                    rowId,
+                    price
+                },
+                url: "{{ route('admin.cart-price-update') }}",
+                success: function(response) {
+                    $(".product-table-container").html(response)
+                    totalSummery();
+                }
+            });
+        }
 
         function load_product_model(product_id) {
             $('.preloader_area').removeClass('d-none');
