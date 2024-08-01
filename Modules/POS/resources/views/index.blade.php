@@ -696,6 +696,60 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="hold-list-modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content hold-modal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Hold Sale List</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Sl.</th>
+                                        <th>Customer</th>
+                                        <th>Time</th>
+                                        <th>Note</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($cart_holds as $key => $hold_sale)
+                                        <tr>
+                                            <td>{{ $key + 1 }}</td>
+                                            <td>{{ $hold_sale->user?->name }}</td>
+                                            <td>{{ $hold_sale->created_at->format('d-m-Y h:i a') }}</td>
+                                            <td>{{ $hold_sale->note }}</td>
+                                            <td>
+                                                <a href="javascript:;" class="btn btn-sm btn-danger"
+                                                    onclick="deleteFromHold({{ $hold_sale->id }},this)">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+
+                                                <a href="javascript:;" class="btn btn-sm btn-primary"
+                                                    onclick="editFromHold({{ $hold_sale->id }},this)">
+                                                    <i class="fas fa-check"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -908,8 +962,37 @@
 
                     $('#hold-sale-form').prop('action', "{{ route('admin.cart.hold') }}").submit()
                 })
+                $('.hold-list-btn').on('click', function() {
+                    $('#hold-list-modal').modal('show')
+                })
+
             });
         })(jQuery);
+
+        function deleteFromHold(id, parent) {
+            $.ajax({
+                url: "{{ route('admin.cart.hold.delete', '') }}/" + id,
+                success: function(response) {
+                    $(parent).parents('tr').remove()
+                    totalSummery();
+                    $('#hold-list-modal').modal('hide')
+                }
+            });
+        }
+
+        function editFromHold(id, parent) {
+            $.ajax({
+                url: "{{ route('admin.cart.hold.edit', '') }}/" + id,
+                success: function(response) {
+                    $(".product-table-container").html(response)
+                    totalSummery();
+
+                    $(parent).parents('tr').remove()
+                    $('#hold-list-modal').modal('hide')
+
+                }
+            });
+        }
 
         function updatePrice(rowId, price) {
             $.ajax({

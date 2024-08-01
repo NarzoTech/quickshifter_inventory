@@ -84,6 +84,8 @@ class POSController extends Controller
 
         $services = $this->services->all()->where('status', 1)->paginate(20);
         $serviceCategories = $this->services->getCategories();
+
+        $cart_holds = CartHold::where('status', 'hold')->orderBy('id', 'desc')->get();
         return view('pos::index')->with([
             'products' => $products,
             'categories' => $categories,
@@ -95,6 +97,7 @@ class POSController extends Controller
             'areaList' => $areaList,
             'vehicles' => $vehicles,
             'services' => $services,
+            'cart_holds' => $cart_holds,
             'serviceCategories' => $serviceCategories
         ]);
     }
@@ -502,5 +505,28 @@ class POSController extends Controller
         session()->forget('POSCART');
 
         return back()->with(['alert-type' => 'success', 'messege' => 'Cart Hold Successfully']);
+    }
+
+    public function cartHoldDelete($id)
+    {
+        $cartHold = CartHold::find($id);
+        $cartHold->delete();
+        return back()->with(['alert-type' => 'success', 'messege' => 'Cart Hold Successfully']);
+    }
+
+    public function cartHoldEdit($id)
+    {
+        $cartHold = CartHold::find($id);
+
+        // store in session
+        session()->put('POSCART', json_decode($cartHold->contents, true));
+
+        // delete from cart hold
+        $cartHold->delete();
+        $cart_contents = session()->get('POSCART');
+
+        return view('pos::ajax_cart')->with([
+            'cart_contents' => $cart_contents,
+        ]);
     }
 }
