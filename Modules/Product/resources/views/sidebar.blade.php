@@ -5,6 +5,21 @@
             class="fas fa-newspaper"></i><span>{{ __('Manage Products') }}</span></a>
 
     <ul class="dropdown-menu">
+        <li class="{{ Route::is('admin.product.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.product.index') }}">
+                {{ __('Product List') }}
+            </a>
+        </li>
+        <li class="{{ Route::is('admin.product.create') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.product.create') }}">
+                {{ __('Add Product') }}
+            </a>
+        </li>
+        <li class="{{ Route::is('admin.unit*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.unit.index') }}">
+                {{ __('Unit Type') }}
+            </a>
+        </li>
         <li class="{{ Route::is('admin.category*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.category.index') }}">
                 {{ __('Category') }}
@@ -20,21 +35,8 @@
                 {{ __('Attribute') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.unit*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.unit.index') }}">
-                {{ __('Unit Type') }}
-            </a>
-        </li>
-        <li class="{{ Route::is('admin.product.*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.product.index') }}">
-                {{ __('Product List') }}
-            </a>
-        </li>
-        <li class="{{ Route::is('admin.product.create') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.product.create') }}">
-                {{ __('Add Product') }}
-            </a>
-        </li>
+
+
         {{-- <li class="{{ Route::is('admin.product.import') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.product.import') }}">
                 {{ __('Bulk Product Import') }}

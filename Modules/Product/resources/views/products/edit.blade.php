@@ -57,27 +57,11 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                @php
-                                                    $barcode = [
-                                                        'c128' => 'Code 128',
-                                                        'c39' => 'Code 39',
-                                                        'ean13' => 'EAN-13',
-                                                        'upca' => 'UPC-A',
-                                                        'upce' => 'UPC-E',
-                                                        'ean8' => 'EAN-8',
-                                                    ];
-                                                @endphp
                                                 <div class="form-group">
                                                     <label for="barcode">{{ __('Barcode') }}<span
                                                             class="text-danger">*</span></label>
-                                                    <select name="barcode" id="barcode" class="form-control">
-                                                        @foreach ($barcode as $key => $code)
-                                                            <option value="{{ $key }}"
-                                                                @if (old('barcode', $product->barcode) == $key) selected @endif>
-                                                                {{ $code }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" name="barcode" class="form-control" id="barcode"
+                                                        value="{{ old('barcode', $product->barcode) }}">
                                                     @error('barcode')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -153,7 +137,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            {{-- <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="tax">{{ __('Tax') }}</label>
                                                     <div class="input-group">
@@ -185,15 +169,15 @@
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="cost">{{ __('Cost') }}
                                                         ({{ currency_icon() }})</label>
-                                                    <input type="number" name="cost" class="form-control"
-                                                        id="cost" value="{{ old('cost', $product->cost) }}">
+                                                    <input type="number" name="cost" class="form-control" id="cost"
+                                                        value="{{ old('cost', $product->cost) }}">
                                                     @error('cost')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror

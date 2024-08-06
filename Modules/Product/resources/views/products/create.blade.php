@@ -57,24 +57,15 @@
                                             </div>
                                             <div class="col-md-6">
                                                 @php
-                                                    $barcode = [
-                                                        'c128' => 'Code 128',
-                                                        'c39' => 'Code 39',
-                                                        'ean13' => 'EAN-13',
-                                                        'upca' => 'UPC-A',
-                                                        'upce' => 'UPC-E',
-                                                        'ean8' => 'EAN-8',
-                                                    ];
+                                                    // generate random barcode
+                                                    $barcode = rand(10000000, 99999999);
+
                                                 @endphp
                                                 <div class="form-group">
                                                     <label for="barcode">{{ __('Barcode') }}<span
                                                             class="text-danger">*</span></label>
-                                                    <select name="barcode" id="barcode" class="form-control">
-                                                        @foreach ($barcode as $key => $code)
-                                                            <option value="{{ $key }}"> {{ $code }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" name="barcode" class="form-control" id="barcode"
+                                                        value="{{ old('barcode', $barcode) }}">
                                                     @error('barcode')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -148,44 +139,13 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="tax">{{ __('Tax') }}</label>
-                                                    <div class="input-group">
-
-                                                        <input type="number" name="tax" class="form-control currency"
-                                                            id="tax" value="{{ old('tax') }}">
-                                                        <div class="input-group-prepend">
-                                                            <div class="input-group-text">
-                                                                %
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @error('tax')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="tax_type">{{ __('Tax Type') }}</label>
-                                                    <select name="tax_type" id="tax_type" class="form-control">
-                                                        <option value="exclusive" selected>{{ __('Exclusive') }}</option>
-                                                        <option value="inclusive">{{ __('Inclusive') }}</option>
-                                                    </select>
-                                                    @error('tax_type')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="cost">{{ __('Cost') }}
                                                         ({{ currency_icon() }})</label>
-                                                    <input type="number" name="cost" class="form-control"
-                                                        id="cost" value="{{ old('cost') }}">
+                                                    <input type="number" name="cost" class="form-control" id="cost"
+                                                        value="{{ old('cost') }}">
                                                     @error('cost')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
