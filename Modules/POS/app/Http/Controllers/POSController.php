@@ -205,7 +205,7 @@ class POSController extends Controller
         $sku = $type != 'service' ? ($request->variant_sku ? $request->variant_sku : $product->sku) : '';
         if (count($cart_contents) > 0) {
             foreach ($cart_contents as $index => $cart_content) {
-                if ($cart_content['sku'] == $sku || ($service && $cart_content['id'] == $service->id && $cart_content['type'] == 'service')) {
+                if (($sku && $cart_content['sku'] == $sku) || ($service && $cart_content['id'] == $service->id && $cart_content['type'] == 'service')) {
                     $item_exist = true;
                 }
             }
