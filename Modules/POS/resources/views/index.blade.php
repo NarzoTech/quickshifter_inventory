@@ -264,7 +264,7 @@
                                             </td>
                                             <td class="text-right"
                                                 style="padding: 5px 10px;font-size: 14px; font-weight:bold;">
-                                                <span id="extra">0</span>
+                                                <span id="extra">{{ currency(0) }}</span>
                                             </td>
                                             <td style="padding: 5px 10px;">{{ __('Discount') }}
                                                 <i class="fa fa-edit dis-tgl" style="cursor: pointer;"></i>
@@ -950,6 +950,7 @@
                     const value = $this.val();
 
                     updatePrice(rowId, value)
+                    calculateExtra()
                 });
 
                 $('.hold-btn').on('click', function() {
@@ -966,8 +967,36 @@
                     $('#hold-list-modal').modal('show')
                 })
 
+                $('[name="source"]').on('change', function() {
+                    let source = $(this).parents('tr').data('rowid');
+                    $.ajax({
+                        type: 'get',
+                        data: {
+                            rowid: source,
+                            source: $(this).val()
+                        },
+                        url: "{{ route('admin.cart.source.update') }}",
+                        success: function(response) {}
+                    });
+                    calculateExtra()
+                })
+
             });
         })(jQuery);
+
+
+        function calculateExtra() {
+            let total = 0;
+            $('[name="source"]').each(function() {
+                if ($(this).val() == '2') {
+                    let price = $(this).closest('td').siblings('td.row_total').text();
+                    price = parseFloat(price.replace(/[^0-9\.]/g, ''));
+                    total += isNaN(price) ? 0 : price;
+                }
+            });
+
+            $('#extra').text(`{{ currency_icon() }}${total}`)
+        }
 
         function deleteFromHold(id, parent) {
             $.ajax({
@@ -1457,6 +1486,7 @@
             const grandTotal = total - discountAmount + vatAmount
             $('#totalAmountWithVat').text(`{{ currency_icon() }}${grandTotal}`)
             $('#finalTotal').text(`{{ currency_icon() }}${grandTotal}`)
+            calculateExtra()
         }
 
         // load customer

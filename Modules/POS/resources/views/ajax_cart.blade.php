@@ -16,7 +16,7 @@
             $cumalitive_sub_total = $cumalitive_sub_total ?? 0;
         @endphp
         @foreach ($cart_contents as $cart_index => $cart_content)
-            <tr>
+            <tr data-rowid="{{ $cart_content['rowid'] }}">
                 <td>
                     <p>{{ $cart_content['name'] }}</p>
                     @if (isset($cart_content['variant']))
@@ -28,8 +28,9 @@
                 <td>
                     @if ($cart_content['type'] == 'product')
                         <select name="source" id="source">
-                            <option value="1">From Stock</option>
-                            <option value="2">From Out Side</option>
+                            <option value="1" @if ($cart_content['source'] == '1') selected @endif>From Stock</option>
+                            <option value="2" @if ($cart_content['source'] == '2') selected @endif>From Out Side
+                            </option>
                         </select>
                     @endif
                 </td>

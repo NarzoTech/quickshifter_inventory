@@ -226,6 +226,7 @@ class POSController extends Controller
         $data['price'] = $type == 'service' ? $service->price : ($request->variant_price ? $request->variant_price : $product->currentPrice);
         $data['sub_total'] = $data['price'] * $data['qty'];
         $data['sku'] = $sku;
+        $data['source'] = 1;
 
         if ($request->type == null) {
             $data['variant']['attribute'] =  $attributes;
@@ -528,5 +529,18 @@ class POSController extends Controller
         return view('pos::ajax_cart')->with([
             'cart_contents' => $cart_contents,
         ]);
+    }
+
+    public function cartSourceUpdate(Request $request)
+    {
+        $cart_contents = session()->get('POSCART');
+
+        $cart_contents = $cart_contents ? $cart_contents : [];
+
+        $cart_contents[$request->rowid]['source'] = $request->source;
+
+        session()->put('POSCART', $cart_contents);
+
+        return response()->json(['status' => true, 'cart' => session()->get('POSCART')]);
     }
 }
