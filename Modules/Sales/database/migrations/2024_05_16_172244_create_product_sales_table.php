@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('product_sku')->nullable();
             $table->string('variant_id')->nullable();
             $table->string('attributes')->nullable();
+            $table->tinyInteger('source')->default(1)->comment(
+                '1: From Stock, 2: From Out side'
+            );
             $table->double('price');
             $table->double('tax')->default(0);
             $table->double('discount')->default(0);

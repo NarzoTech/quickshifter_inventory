@@ -17,6 +17,8 @@ class SalesReturnDetails extends Model
     protected $fillable = [
         'sale_return_id',
         'product_id',
+        'service_id',
+        'source',
         'quantity',
         'price',
         'sub_total',

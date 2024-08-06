@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sale_return_id');
             $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('service_id')->nullable();
+            $table->tinyInteger('source')->default(1)->comment(
+                '1: From Stock, 2: From Out side'
+            );
             $table->string('quantity');
             $table->string('price');
             $table->string('sub_total');

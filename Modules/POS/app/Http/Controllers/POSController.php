@@ -336,7 +336,6 @@ class POSController extends Controller
             return redirect()->back()->with($notification);
         }
 
-
         $user = null;
         if ($request->order_customer_id && $request->order_customer_id !=  'walk-in-customer') {
 

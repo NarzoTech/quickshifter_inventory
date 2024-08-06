@@ -28,6 +28,7 @@ class ProductSale extends Model
         'tax',
         'discount',
         'sub_total',
+        'source',
     ];
 
     public function sale()
