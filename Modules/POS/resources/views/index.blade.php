@@ -967,7 +967,7 @@
                     $('#hold-list-modal').modal('show')
                 })
 
-                $('[name="source"]').on('change', function() {
+                $(document).on('change', '[name="source"]', function() {
                     let source = $(this).parents('tr').data('rowid');
                     $.ajax({
                         type: 'get',
@@ -994,7 +994,6 @@
                     total += isNaN(price) ? 0 : price;
                 }
             });
-
             $('#extra').text(`{{ currency_icon() }}${total}`)
         }
 
