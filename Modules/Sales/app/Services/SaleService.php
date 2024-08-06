@@ -54,10 +54,12 @@ class SaleService
             $variant = isset($item['variant']) ?  Variant::where('sku', $item['sku'])->first() : null;
             $orderDetails = new ProductSale();
             $orderDetails->sale_id = $sale->id;
-            $orderDetails->product_id = $item['id'];
+            $orderDetails->product_id = $item['type'] == 'product' ? $item['id'] : null;
+            $orderDetails->service_id = $item['type'] == 'service' ? $item['id'] : null;
             $orderDetails->product_sku = $item['sku'];
             $orderDetails->variant_id = $variant != null ? $variant->id : null;
             $orderDetails->price = $item['price'];
+            $orderDetails->source = $item['source'];
             $orderDetails->quantity = $item['qty'];
             $orderDetails->sub_total = $item['sub_total'];
             $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
@@ -65,7 +67,7 @@ class SaleService
 
             // update stock
             $product = Product::where('id', $item['id'])->first();
-            if ($product != null) {
+            if ($product != null && $item['type'] == 'product' && $item['source'] == 1) {
                 $product->stock = $product->stock - $item['qty'];
                 $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
                 $product->save();
@@ -130,7 +132,7 @@ class SaleService
 
     public function genInvoiceNumber()
     {
-        $number = 1000000;
+        $number = 001;
         $prefix = 'INV-';
         $invoice_number = $prefix . $number;
 
