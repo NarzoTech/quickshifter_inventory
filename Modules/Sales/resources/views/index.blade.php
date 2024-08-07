@@ -45,35 +45,33 @@
                                                     <td>{{ $sale->due_amount }}</td>
                                                     <td>
                                                         @if ($sale->paid_amount == $sale->total_price)
-                                                            <span class="badge badge-success">Paid</span>
+                                                            <span class="badge badge-success">{{ __('Paid') }}</span>
                                                         @elseif ($sale->due_amount > 0 && $sale->paid_amount < $sale->total_price)
-                                                            <span class="badge badge-danger">Partial Due</span>
+                                                            <span class="badge badge-danger">{{ __('Partial Due') }}</span>
                                                         @else
-                                                            <span class="badge badge-danger">Due</span>
+                                                            <span class="badge badge-danger">{{ __('Due') }}</span>
                                                         @endif
                                                     </td>
                                                     <td>
                                                         <div class="btn-group mb-2">
                                                             <button class="btn btn-info btn-sm dropdown-toggle"
                                                                 type="button" data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                Action
-                                                            </button>
+                                                                aria-expanded="false">{{ __('Action') }}</button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item view-sale" href="javascript:;"
-                                                                    data-id="{{ $sale->id }}">View</a>
+                                                                    data-id="{{ $sale->id }}">{{ __('View') }}</a>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ url('admin/order-edit/' . $sale->id) }}">Edit</a>
+                                                                    href="{{ url('admin/order-edit/' . $sale->id) }}">{{ __('Edit') }}</a>
                                                                 <a class="dropdown-item" href="javascript:void(0)"
-                                                                    onclick="deleteData({{ $sale->id }})">Delete</a>
+                                                                    onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ route('admin.sales.return.create', $sale->id) }}">Sale
-                                                                    Return</a>
+                                                                    href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
                                                             </div>
                                                         </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -115,7 +113,7 @@
 
         function deleteData(id) {
             const modal = $('#deleteModal');
-            $('#deleteForm').attr('action', "{{ url('admin/order-delete') }}/" + id);
+            $('#deleteForm').attr('action', "{{ route('admin.sales.destroy') }}/" + id);
             modal.modal('show');
         }
     </script>

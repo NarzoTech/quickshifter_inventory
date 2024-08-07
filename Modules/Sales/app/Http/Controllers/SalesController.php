@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Services\SaleService;
 
@@ -76,6 +77,12 @@ class SalesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $this->saleService->deleteSale($id);
+            return back()->with(['alert-type' => 'success', 'messege' => 'Sale deleted successfully']);
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return back()->with(['alert-type' => 'danger', 'messege' => 'Something went wrong!']);
+        }
     }
 }

@@ -126,8 +126,22 @@ class SaleService
         return $sale;
     }
 
-    public function deleteSale(Sale $sale): void
+    public function deleteSale($id): void
     {
+        $sale = $this->sale->find($id);
+
+        // delete sales related all info
+
+        // delete payments
+        $sale->payments()->delete();
+
+        // delete due
+        $sale->customer_due()->delete();
+
+        // delete sale details
+        $sale->details()->delete();
+
+        // delete sale
         $sale->delete();
     }
 
