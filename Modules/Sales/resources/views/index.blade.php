@@ -113,7 +113,7 @@
 
         function deleteData(id) {
             const modal = $('#deleteModal');
-            $('#deleteForm').attr('action', "{{ route('admin.sales.destroy') }}/" + id);
+            $('#deleteForm').attr('action', "{{ route('admin.sales.destroy', '') }}/" + id);
             modal.modal('show');
         }
     </script>

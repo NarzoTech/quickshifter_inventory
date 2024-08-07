@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Http\Requests\AccountRequest;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Accounts\app\Services\BankService;
+use Modules\Sales\app\Models\ProductSale;
+use Modules\Sales\app\Models\Sale;
 
 class AccountsController extends Controller
 {
@@ -27,14 +29,14 @@ class AccountsController extends Controller
     public function index()
     {
         $accounts = $this->accountsService->all()->paginate(20);
-        $bankAccounts = $this->accountsService->all()->where('account_type','bank')->get();
-        $cashAccounts = $this->accountsService->all()->where('account_type','cash')->get();
+        $bankAccounts = $this->accountsService->all()->where('account_type', 'bank')->get();
+        $cashAccounts = $this->accountsService->all()->where('account_type', 'cash')->get();
         $mobileAccounts = $this->accountsService->all()->where('account_type', 'mobile_banking')->get();
         $cardAccounts = $this->accountsService->all()->where('account_type', 'card')->get();
         $advanceAccounts = $this->accountsService->all()->where('account_type', 'advance')->get();
 
 
-        return view('accounts::index', compact('accounts','bankAccounts','cashAccounts','mobileAccounts','cardAccounts','advanceAccounts'));
+        return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccounts', 'mobileAccounts', 'cardAccounts', 'advanceAccounts'));
     }
 
     /**
@@ -53,10 +55,10 @@ class AccountsController extends Controller
     {
         try {
             $this->accountsService->create($request->except('_token'));
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.accounts.create',[],['messege'=>'Account created successfully', 'alert-type'=>'success']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.accounts.create', [], ['messege' => 'Account created successfully', 'alert-type' => 'success']);
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.accounts.create',[],['messege'=>'Something went wrong', 'alert-type'=>'error']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.accounts.create', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
         }
     }
 
@@ -90,5 +92,14 @@ class AccountsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function cashflow()
+    {
+        $data = [];
+        $data['productSale'] = ProductSale::whereNotNull('product_id')->where('source', 1)->sum('sub_total');
+        $data['serviceSale'] = ProductSale::whereNotNull('service_id')->sum('sub_total');
+        $data['customer_due'] = Sale::whereNotNull('customer_id')->sum('due_amount');
+        return view('accounts::cash-flow', compact('data'));
     }
 }

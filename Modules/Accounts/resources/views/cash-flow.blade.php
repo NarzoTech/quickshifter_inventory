@@ -1,0 +1,399 @@
+@extends('admin.master_layout')
+@section('title')
+    <title>{{ __('Cash Flow') }}</title>
+@endsection
+
+@section('admin-content')
+    <div class="main-content">
+        <section class="section">
+            <div class="section-header">
+                <h1>{{ __('Cash Flow') }}</h1>
+            </div>
+
+            <div class="section-body">
+                <div class="row">
+                    {{-- Search filter --}}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <form action="{{ route('admin.accounts.index') }}" method="GET" onchange="this.submit()"
+                                    class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4 form-group">
+                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                                class="form-control" placeholder="{{ __('Search') }}">
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="order_by" id="order_by" class="form-control">
+                                                <option value="">{{ __('Order By') }}</option>
+                                                <option value="1" {{ request('order_by') == '1' ? 'selected' : '' }}>
+                                                    {{ __('ASC') }}
+                                                </option>
+                                                <option value="0" {{ request('order_by') == '0' ? 'selected' : '' }}>
+                                                    {{ __('DESC') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="par-page" id="par-page" class="form-control">
+                                                <option value="">{{ __('Per Page') }}</option>
+                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('10') }}
+                                                </option>
+                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('50') }}
+                                                </option>
+                                                <option value="100"
+                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('100') }}
+                                                </option>
+                                                <option value="all"
+                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('All') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row mt-4">
+
+                                    <div class="col-12 text-center summary-head" id="summary-head">
+                                    </div>
+                                    <div class="col-12">
+                                        <table class="table summary-table table-striped table-bordered table-responsive"
+                                            id="cash-summary-table">
+                                            <thead>
+                                                <tr>
+                                                    <td colspan="2" class="text-center">
+                                                        <h5>Cash In</h5>
+                                                    </td>
+                                                    <td colspan="2" class="text-center">
+                                                        <h5>Cash Out</h5>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Amount</th>
+                                                    <th>Description</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/1.png"
+                                                            class="icon-img" />
+                                                        Product Sale
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            {{ currency($data['productSale']) }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/12.png"
+                                                            class="icon-img" />
+                                                        Sale Return
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/2.png"
+                                                            class="icon-img" />
+                                                        Service
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            {{ currency($data['serviceSale']) }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/2.png"
+                                                            class="icon-img" />
+                                                        Service Transfers
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/4.png"
+                                                            class="icon-img" />
+                                                        Balance Deposit
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/13.png"
+                                                            class="icon-img" />
+                                                        Balance Withdraw
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/3.png"
+                                                            class="icon-img" />
+                                                        Customer Due
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            {{ currency($data['customer_due']) }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/3.png"
+                                                            class="icon-img" />
+                                                        Customer Due Send
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/15.png"
+                                                            class="icon-img" />
+                                                        Customer Advance
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/6.png"
+                                                            class="icon-img" />
+                                                        Customer Advance Refund
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK
+                                                            0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/10.png"
+                                                            class="icon-img" />
+                                                        Supplier Due Receive
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/10.png"
+                                                            class="icon-img" />
+                                                        Supplier Due Pay
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/15.png"
+                                                            class="icon-img" />
+                                                        Supplier Advance Refund
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK
+                                                            0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/15.png"
+                                                            class="icon-img" />
+                                                        Supplier Advance
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK
+                                                            0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/6.png"
+                                                            class="icon-img" />
+                                                        Purchase Return
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/6.png"
+                                                            class="icon-img" />
+                                                        Purchase
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/7.png"
+                                                            class="icon-img" />
+                                                        Investment
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/11.png"
+                                                            class="icon-img" />
+                                                        Expense
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/1.png"
+                                                            class="icon-img" />
+                                                        Installment
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/14.png"
+                                                            class="icon-img" />
+                                                        Salary
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/8.png"
+                                                            class="icon-img" />
+                                                        Balance Transfer
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/17.png"
+                                                            class="icon-img" />
+                                                        Balance Transfer
+                                                    </td>
+                                                    <td>
+                                                        <span>
+                                                            TK 0.00
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td></td>
+                                                    <td colspan="" class="text-left">
+                                                        <b>
+                                                            Total : 0.00
+                                                        </b>
+                                                    </td>
+                                                    <td></td>
+                                                    <td colspan="" class="text-left">
+                                                        <b>
+                                                            Total : 0.00
+                                                        </b>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border-none"></td>
+                                                    <td colspan="" class="text-left">
+                                                        <h4 class="m-0">
+                                                            Opening Balance =
+                                                        </h4>
+                                                    </td>
+                                                    <td colspan="" class="text-left border-none">
+                                                        <h4 class="m-0">
+                                                            12,496.00
+                                                        </h4>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="border-none"></td>
+                                                    <td class="text-left">
+                                                        <h4 class="m-0">
+                                                            Current Balance =
+                                                        </h4>
+                                                    </td>
+                                                    <td class="text-left border-none">
+                                                        <h4 class="m-0">
+                                                            12,496.00
+                                                        </h4>
+                                                        (Opening Balance + Cash In - Cash Out)
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+    </div>
+@endsection

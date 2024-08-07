@@ -18,4 +18,5 @@ use Modules\Accounts\app\Http\Controllers\BankController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('accounts', AccountsController::class)->names('accounts');
     Route::resource('bank', BankController::class)->names('bank');
+    Route::get('cashflow', [AccountsController::class, 'cashflow'])->name('cashflow');
 });
