@@ -81,6 +81,35 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
+                                    <table class="table table-bordered mt-4" cellspacing="0" width="100%">
+                                        <tr class="theme-primary">
+                                            <th class="text-center">Cash Amount</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">
+                                                <h4 class="header-title">{{ currency($cashAccount->balance()) }}</h4>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">
+                                                <a href="https://amarsolution.com/account-type/ledger/1358"
+                                                    class="btn btn-sm btn-info">Ledger</a>
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                @if (request()->get('par-page') !== 'all')
+                                    <div class="float-right">
+                                        {{ $accounts->onEachSide(0)->links() }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive table-invoice">
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
@@ -103,7 +132,7 @@
                                                     <td>{{ $account->bank_account_name }}</td>
                                                     <td>{{ $account->bank_account_number }}</td>
                                                     <td>{{ $account->bank_account_branch }}</td>
-                                                    <td>0</td>
+                                                    <td>{{ currency($account->balance()) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $account->id }}" type="button"
@@ -140,6 +169,8 @@
                             </div>
                         </div>
                     </div>
+
+
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
@@ -160,7 +191,7 @@
                                                     <td>{{ $loop->first + $index }}</td>
                                                     <td>{{ $account->mobile_bank_name }}</td>
                                                     <td>{{ $account->mobile_number }}</td>
-                                                    <td>0</td>
+                                                    <td>{{ currency($account->balance()) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $account->id }}" type="button"
@@ -221,7 +252,7 @@
                                                     <td>{{ $account->bank?->name }}</td>
                                                     <td>{{ $account->card_holder_name }}</td>
                                                     <td>{{ $account->card_number }}</td>
-                                                    <td>0</td>
+                                                    <td>{{ currency($account->balance()) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $account->id }}" type="button"
