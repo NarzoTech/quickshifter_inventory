@@ -60,8 +60,8 @@
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu">
-                                                                <a class="dropdown-item"
-                                                                    href="{{ url('admin/order-view/' . $sale->id) }}">View</a>
+                                                                <a class="dropdown-item view-sale" href="javascript:;"
+                                                                    data-id="{{ $sale->id }}">View</a>
                                                                 <a class="dropdown-item"
                                                                     href="{{ url('admin/order-edit/' . $sale->id) }}">Edit</a>
                                                                 <a class="dropdown-item" href="javascript:void(0)"
@@ -84,20 +84,39 @@
             </div>
         </section>
     </div>
-
     @include('components.admin.preloader')
 
-    @push('js')
-        <script>
-            'use strict'
+    <div class="modal fade bd-example-modal-xl" id="salemodal" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" style="width: 100%">
+            <div class="modal-content" id="modalcontent" style="width: 100%">
 
-            $(document).ready(function() {})
-
-            function deleteData(id) {
-                const modal = $('#deleteModal');
-                $('#deleteForm').attr('action', "{{ url('admin/order-delete') }}/" + id);
-                modal.modal('show');
-            }
-        </script>
-    @endpush
+            </div>
+        </div>
+    </div>
 @endsection
+@push('js')
+    <script>
+        'use strict'
+
+        $(document).ready(function() {
+            $(document).on('click', '.view-sale', function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('admin.sales.show', '') }}/" + id,
+                    success: function(data) {
+                        $('#modalcontent').html(data);
+                        $('#salemodal').modal('show');
+                    }
+                });
+            })
+        })
+
+        function deleteData(id) {
+            const modal = $('#deleteModal');
+            $('#deleteForm').attr('action', "{{ url('admin/order-delete') }}/" + id);
+            modal.modal('show');
+        }
+    </script>
+@endpush

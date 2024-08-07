@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Services\SaleService;
 
 class SalesController extends Controller
@@ -50,7 +51,8 @@ class SalesController extends Controller
      */
     public function show($id)
     {
-        return view('sales::show');
+        $sale = $this->saleService->getSales()->find($id);
+        return view('sales::view-modal', compact('sale'));
     }
 
     /**

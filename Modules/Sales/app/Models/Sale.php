@@ -40,7 +40,8 @@ class Sale extends Model
         'paid_amount',
         'sale_note',
         'staff_note',
-        'order_date'
+        'order_date',
+        'created_by',
     ];
     public function details()
     {
@@ -80,5 +81,10 @@ class Sale extends Model
     public function payment()
     {
         return $this->hasMany(Payment::class, 'sale_id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(Admin::class, 'created_by')->withDefault();
     }
 }

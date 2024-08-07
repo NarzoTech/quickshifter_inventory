@@ -18,7 +18,7 @@ class SaleService
     }
     public function getSales()
     {
-        return $this->sale;
+        return $this->sale->with('products', 'user', 'services', 'details');
     }
     public function createSale(Request $request, $user, $cart): Sale
     {
@@ -43,6 +43,7 @@ class SaleService
         $due = $request->total_amount - array_sum($request->paying_amount);
         $sale->due_amount = $due < 0 ? 0 : $due;
         $sale->sale_note = $request->remark;
+        $sale->created_by = auth('admin')->id();
         $sale->save();
 
 

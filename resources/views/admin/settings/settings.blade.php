@@ -43,19 +43,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="card card-large-icons">
-                                <div class="text-white card-icon bg-primary">
-                                    <i class="fas fa-key"></i>
-                                </div>
-                                <div class="card-body">
-                                    <h4>{{ __('Credential Settings') }}</h4>
-                                    <a href="{{ route('admin.crediential-setting') }}"
-                                        class="card-cta">{{ __('Change Setting') }} <i
-                                            class="fas fa-chevron-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="col-lg-6">
                             <div class="card card-large-icons">
                                 <div class="text-white card-icon bg-primary">
@@ -84,21 +72,7 @@
                             </div>
                         </div>
                     @endadminCan
-                    @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('setting.view'))
-                        <div class="col-lg-6">
-                            <div class="card card-large-icons">
-                                <div class="text-white card-icon bg-primary">
-                                    <i class="fas fa-arrow-circle-up"></i>
-                                </div>
-                                <div class="card-body">
-                                    <h4>{{ __('System Update') }}</h4>
-                                    <a href="{{ route('admin.system-update.index') }}"
-                                        class="card-cta">{{ __('Change Setting') }} <i
-                                            class="fas fa-chevron-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
+
                 </div>
             </div>
         </section>
