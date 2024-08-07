@@ -39,14 +39,14 @@
                                                     <td>{{ $sale->invoice }}</td>
                                                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                                     <td>{{ $sale->user->name }}</td>
-                                                    <td>{{ $sale->grand_total }}</td>
-                                                    <td>{{ $sale->grand_total }}</td>
+                                                    <td>{{ $sale->total_price }}</td>
+                                                    <td>{{ $sale->total_price }}</td>
                                                     <td>{{ $sale->paid_amount }}</td>
-                                                    <td>{{ $sale->grand_total - $sale->paid_amount }}</td>
+                                                    <td>{{ $sale->due_amount }}</td>
                                                     <td>
-                                                        @if ($sale->payment->sum('amount') == $sale->grand_total)
+                                                        @if ($sale->paid_amount == $sale->total_price)
                                                             <span class="badge badge-success">Paid</span>
-                                                        @elseif ($sale->payment->sum('amount') > 0)
+                                                        @elseif ($sale->due_amount > 0 && $sale->paid_amount < $sale->total_price)
                                                             <span class="badge badge-danger">Partial Due</span>
                                                         @else
                                                             <span class="badge badge-danger">Due</span>
