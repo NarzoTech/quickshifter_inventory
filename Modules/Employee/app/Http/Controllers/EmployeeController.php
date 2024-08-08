@@ -101,4 +101,10 @@ class EmployeeController extends Controller
         $this->employee->destroy($id);
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['messege' => 'Employee deleted successfully', 'alert-type' => 'success']);
     }
+
+    public function status($id)
+    {
+        $this->employee->changeStatus($id);
+        return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee status updated successfully', 'alert-type' => 'success']);
+    }
 }

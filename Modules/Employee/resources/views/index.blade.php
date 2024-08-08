@@ -118,7 +118,17 @@
                                                 <td>{{ $employee->mobile }}</td>
                                                 <td>{{ $employee->email }}</td>
                                                 <td>{{ $employee->salary }}</td>
-                                                <td>{{ $employee->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                                <td>
+                                                    @if ($employee->status == 1)
+                                                        <span class="badge badge-success">
+                                                            {{ __('Active') }}
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-danger">
+                                                            {{ __('Inactive') }}
+                                                        </span>
+                                                    @endif
+                                                </td>
                                                 <td>{{ $employee->join_date }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group">
@@ -130,6 +140,9 @@
                                                             aria-labelledby="btnGroupDrop{{ $employee->id }}">
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
+
                                                             <a href="javascript:;" data-toggle="modal"
                                                                 data-target="#deleteModal" class="dropdown-item"
                                                                 onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>

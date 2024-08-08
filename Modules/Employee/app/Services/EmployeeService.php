@@ -33,4 +33,10 @@ class EmployeeService
     {
         $this->employee->find($id)->delete();
     }
+
+    public function changeStatus($id)
+    {
+        $employee = $this->employee->find($id);
+        $employee->update(['status' => $employee->status == 1 ? 0 : 1]);
+    }
 }
