@@ -98,6 +98,7 @@ class EmployeeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->employee->destroy($id);
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['messege' => 'Employee deleted successfully', 'alert-type' => 'success']);
     }
 }
