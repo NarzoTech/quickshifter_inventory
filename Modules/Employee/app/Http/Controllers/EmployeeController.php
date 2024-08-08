@@ -2,14 +2,19 @@
 
 namespace Modules\Employee\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+use Modules\Employee\app\Http\Requests\EmployeeRequest;
 use Modules\Employee\app\Services\EmployeeService;
 
 class EmployeeController extends Controller
 {
+    use RedirectHelperTrait;
     public function __construct(private EmployeeService $employee)
     {
     }
@@ -33,9 +38,21 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(EmployeeRequest $request): RedirectResponse
     {
-        //
+        try {
+            $data = $request->validated();
+            if ($request->hasFile('image')) {
+                $data['image'] = file_upload($request->file('image'));
+            }
+            $this->employee->store($data);
+
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => 'Employee added successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => $e->getMessage(), 'alert-type' => 'danger']);
+        }
     }
 
     /**

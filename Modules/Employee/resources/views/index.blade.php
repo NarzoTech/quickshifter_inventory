@@ -122,17 +122,17 @@
                                                 <td>{{ $employee->joining_date }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group">
-                                                        <button id="btnGroupDrop{{ $account->id }}" type="button"
+                                                        <button id="btnGroupDrop{{ $employee->id }}" type="button"
                                                             class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
                                                             aria-haspopup="true"
                                                             aria-expanded="false">{{ __('Action') }}</button>
                                                         <div class="dropdown-menu"
-                                                            aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                            aria-labelledby="btnGroupDrop{{ $employee->id }}">
                                                             <a class="dropdown-item" href="javascript:;" data-toggle="modal"
-                                                                data-target="#editbank{{ $account->id }}">{{ __('Edit') }}</a>
+                                                                data-target="#editbank{{ $employee->id }}">{{ __('Edit') }}</a>
                                                             <a href="javascript:;" data-toggle="modal"
                                                                 data-target="#deleteModal" class="dropdown-item"
-                                                                onclick="deleteData({{ $account->id }})">{{ __('Delete') }}</a>
+                                                                onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
                                                         </div>
                                                     </div>
                                                 </td>

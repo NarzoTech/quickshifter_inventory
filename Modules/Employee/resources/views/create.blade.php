@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Account List') }}</title>
+    <title>{{ __('Create Employee') }}</title>
 @endsection
 
 @push('css')
@@ -17,200 +17,86 @@
 @section('admin-content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Account List') }}</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a
-                            href="{{ route('admin.accounts.index') }}">{{ __('Account List') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Add Account') }}</div>
-                </div>
-            </div>
             <div class="section-body">
                 <div class="mt-4 row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4>{{ __('Add Account') }}</h4>
+                                <h4>{{ __('Add Employee') }}</h4>
                                 <div>
-                                    <a href="{{ route('admin.accounts.index') }}" class="btn btn-primary"><i
+                                    <a href="{{ route('admin.employee.index') }}" class="btn btn-primary"><i
                                             class="fas fa-arrow-left"></i>{{ __('Back') }}</a>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('admin.accounts.store') }}" method="post" id="accountForm">
+                                <form action="{{ route('admin.employee.store') }}" method="post" id="add-employee-form"
+                                    enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="account_type">{{ __('Account Type') }}<span
-                                                        class="text-danger">*</span></label>
-                                                <select name="account_type" id="account_type" class="form-control">
-                                                    <option value="">{{ __('Select Account Type') }}</option>
-                                                    @foreach (accountList() as $key => $list)
-                                                        <option value="{{ $key }}">{{ $list }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                            <label for="">{{ __('Employee Name') }}<span
+                                                    class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" class="form-control" name="name"
+                                                placeholder="Employee Name">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="">{{ __('Designation') }}</label>
+                                            <input type="text" class="form-control" name="designation"
+                                                placeholder="Designation">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('Email') }}</label>
+                                            <input type="email" class="form-control" name="email" placeholder="Email"
+                                                id="email">
                                         </div>
 
-                                        {{-- for mobile banking --}}
-
-                                        <div class="col-12 row d-none mobile_section">
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="mobile_bank_name">{{ __('Mobile Bank Name') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <select name="mobile_bank_name" id="mobile_bank_name"
-                                                        class="form-control" disabled>
-                                                        <option value="">{{ __('Select Mobile Bank Name') }}</option>
-                                                        @foreach (mobileBankList() as $key => $list)
-                                                            <option value="{{ $key }}">{{ $list }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="mobile_number">{{ __('Mobile Number') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="mobile_number" id="mobile_number"
-                                                        class="form-control" placeholder="{{ __('Mobile Number') }}"
-                                                        disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="service_charge">{{ __('Service Charge') }}(%)</label>
-                                                    <input type="text" name="service_charge" id="service_charge"
-                                                        class="form-control" placeholder="{{ __('Service Charge') }}"
-                                                        disabled>
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('Mobile') }}</label>
+                                            <input type="text" class="form-control" name="mobile" placeholder="Mobile"
+                                                id="mobile">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('NID Number') }}</label>
+                                            <input type="text" class="form-control" name="nid"
+                                                placeholder="NID Number" id="nid">
                                         </div>
 
-                                        {{-- for card --}}
-
-                                        <div class="col-12 row d-none bank-card">
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="card_type">{{ __('Card Type') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <select name="card_type" id="card_type" class="form-control" disabled>
-                                                        <option value="">{{ __('Select Mobile Bank Name') }}</option>
-                                                        @foreach (cardTypeList() as $key => $list)
-                                                            <option value="{{ $key }}">{{ $list }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="bank_id">{{ __('Bank Name') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <select name="bank_id" id="bank_id" class="form-control select2"
-                                                        disabled>
-                                                        <option value="">{{ __('Select Bank') }}</option>
-                                                        @foreach ($accounts as $bank)
-                                                            <option value="{{ $bank->id }}">{{ $bank->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="card_holder_name">{{ __('Card Holder Name') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="card_holder_name" id="card_holder_name"
-                                                        class="form-control" placeholder="{{ __('Card Holder Name') }}"
-                                                        disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="card_number">{{ __('Card Number') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="card_number" id="card_number"
-                                                        class="form-control" placeholder="{{ __('Card Number') }}"
-                                                        disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="service_charge">{{ __('Service Charge') }}(%)</label>
-                                                    <input type="text" name="service_charge" id="service_charge"
-                                                        class="form-control" placeholder="{{ __('Service Charge') }}"
-                                                        disabled>
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('Image') }}</label>
+                                            <input type="file" class="form-control" name="image" placeholder="Image"
+                                                id="image">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('Address') }}
+                                            </label>
+                                            <input type="text" class="form-control" name="address" placeholder="Address"
+                                                id="address">
                                         </div>
 
-                                        {{-- for bank --}}
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('Joining Date') }}
+                                            </label>
+                                            <input type="date" class="form-control" name="join_date">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('Salary') }}
+                                            </label>
+                                            <input type="text" class="form-control" name="salary" placeholder="Salary"
+                                                id="salary">
+                                        </div>
 
-                                        <div class="col-12 row d-none bank">
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="bank_id">{{ __('Bank Name') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <select name="bank_id" id="bank_id" class="form-control select2"
-                                                        disabled>
-                                                        <option value="">{{ __('Select Bank') }}</option>
-                                                        @foreach ($accounts as $bank)
-                                                            <option value="{{ $bank->id }}">{{ $bank->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="bank_account_type">{{ __('Bank Account Type') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="bank_account_type" id="bank_account_type"
-                                                        class="form-control"
-                                                        placeholder="{{ __('Bank Account Type') }}"disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="bank_account_name">{{ __('Bank Account Name') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="bank_account_name" id="bank_account_name"
-                                                        class="form-control" placeholder="{{ __('Bank Account Name') }}"
-                                                        disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="bank_account_number">{{ __('Bank Account Number') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="bank_account_number"
-                                                        id="bank_account_number" class="form-control"
-                                                        placeholder="{{ __('Bank Account Number') }}" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="bank_account_branch">{{ __('Bank Account Branch') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="bank_account_branch"
-                                                        id="bank_account_branch" class="form-control"
-                                                        placeholder="{{ __('Bank Account Branch') }}" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6">
-                                                <div class="form-group">
-                                                    <label for="service_charge">{{ __('Service Charge') }}(%)</label>
-                                                    <input type="text" name="service_charge" id="service_charge"
-                                                        class="form-control" placeholder="{{ __('Service Charge') }}"
-                                                        disabled>
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="">{{ __('Status') }}
+                                            </label>
+                                            <select name="status" id="status" class="form-control">
+                                                <option value="1">{{ __('Active') }}</option>
+                                                <option value="0">{{ __('Inactive') }}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -264,8 +150,8 @@
         });
 
         function removeDisabled(selector) {
-            // remove all disabled attribute 
-            
+            // remove all disabled attribute
+
             $('.mobile_section').find('input, select').each(function() {
                 $(this).attr('disabled', true);
             });
