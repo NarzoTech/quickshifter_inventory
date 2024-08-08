@@ -35,14 +35,6 @@ class ExpenseController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('expense::create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(ExpenseRequest $request): RedirectResponse
@@ -57,27 +49,17 @@ class ExpenseController extends Controller
     }
 
     /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('expense::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('expense::edit');
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        try {
+            $this->expense->update($request, $id);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.index', [], ['messege' => 'Expense updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, null, [], ['messege' => $exception->getMessage(), 'alert-type' => 'danger']);
+        }
     }
 
     /**

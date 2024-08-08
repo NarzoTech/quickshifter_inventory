@@ -57,4 +57,38 @@ class ExpenseService
 
         return $expense;
     }
+
+    public function update(Request $request, $id)
+    {
+        if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
+            $account = $this->account->where('account_type', 'cash')->first();
+        } else {
+            $account = $this->account->find($request->account_id);
+        }
+        $expense = $this->expense->find($id);
+        $expense->update([
+            'date' => date($request->date),
+            'amount' => $request->amount,
+            'note' => $request->note,
+            'updated_by' => auth('admin')->user()->id,
+            'account_id' => $account->id,
+            'payment_type' => $request->payment_type,
+            'expense_type_id' => $request->expense_type_id,
+        ]);
+
+
+        // update payment
+        $payment = Payment::where('expense_id', $id)->first();
+        $payment->update([
+            'account_id' => $account->id,
+            'payment_type' => 'expense',
+            'amount' => $request->amount,
+            'payment_date' => now()->parse($request->purchase_date),
+            'is_paid' => 1,
+            'note' => $request->note,
+            'updated_by' => auth('admin')->user()->id,
+        ]);
+
+        return $expense;
+    }
 }
