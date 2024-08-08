@@ -49,7 +49,7 @@ class ExpenseController extends Controller
     {
         try {
             $this->expense->store($request);
-            return $this->redirectWithMessage(RedirectType::CREATE->value, null, [], ['messege' => 'Expense created successfully', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.expense.index', [], ['messege' => 'Expense created successfully', 'alert-type' => 'success']);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return $this->redirectWithMessage(RedirectType::CREATE->value, null, [], ['messege' => $exception->getMessage(), 'alert-type' => 'danger']);

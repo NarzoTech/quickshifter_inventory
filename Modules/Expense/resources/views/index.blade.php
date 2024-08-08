@@ -91,8 +91,13 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('SN') }}</th>
-                                                <th>{{ __('Name') }}</th>
+                                                <th style="width: 5%">{{ __('Sl') }}</th>
+                                                <th style="width: 15%">{{ __('Date') }}</th>
+                                                <th style="width: 25%">{{ __('Created By') }}</th>
+                                                <th style="width: 25%">{{ __('Type') }}</th>
+                                                <th style="width: 15%">{{ __('Amount') }}</th>
+                                                <th style="width: 15%">{{ __('Payment Type') }}</th>
+                                                <th style="width: 30%">{{ __('Note') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
@@ -100,24 +105,26 @@
                                             @forelse ($expenses as $index => $expense)
                                                 <tr>
                                                     <td>{{ $loop->first + $index }}</td>
-                                                    <td>{{ $expense->name }}</td>
+                                                    <td>{{ $expense->date }}</td>
+                                                    <td>{{ $expense->createdBy->name }}</td>
+                                                    <td>{{ $expense->expenseType->name }}</td>
+                                                    <td>{{ $expense->amount }}</td>
+                                                    <td>{{ ucfirst($expense->payment_type) }}</td>
+                                                    <td>{{ $expense->note }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $expense->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
                                                                 data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                Action
-                                                            </button>
+                                                                aria-expanded="false">{{ __('Action') }}</button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $expense->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
-                                                                    data-target="#editType{{ $expense->id }}">Edit</a>
+                                                                    data-target="#editType{{ $expense->id }}">{{ __('Edit') }}</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
-                                                                    onclick="deleteData({{ $expense->id }})">
-                                                                    Delete</a>
+                                                                    onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -152,7 +159,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Expense') }}</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal">{{ __('×') }}</button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -199,8 +206,8 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="add-bank-form">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="submit" class="btn btn-primary" form="add-bank-form">{{ __('Save') }}</button>
                 </div>
 
             </div>
@@ -216,7 +223,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Expense') }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal">{{ __('×') }}</button>
                     </div>
 
                     <!-- Modal body -->
