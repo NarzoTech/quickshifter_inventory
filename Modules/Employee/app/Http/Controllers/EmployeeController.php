@@ -6,15 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Employee\app\Services\EmployeeService;
 
 class EmployeeController extends Controller
 {
+    public function __construct(private EmployeeService $employee)
+    {
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('employee::index');
+        $employees = $this->employee->all()->paginate(20);
+        return view('employee::index', compact('employees'));
     }
 
     /**

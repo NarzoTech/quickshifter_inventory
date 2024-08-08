@@ -79,80 +79,83 @@
 
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Sl</th>
-                                                <th>Employee Name</th>
-                                                <th>Employee Picture</th>
-                                                <th>Designation</th>
-                                                {{-- <th style="display: none;">Business Branch</th> --}}
-                                                <th>Phone</th>
-                                                <th>Email</th>
-                                                <th>Salary</th>
-                                                <th>Status</th>
-                                                <th>Joining Date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($employees as $index => $employee)
-                                                <tr>
-                                                    <td>{{ ++$index }}</td>
-                                                    <td>{{ $employee->name }}</td>
-                                                    <td>
-                                                        <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
-                                                            alt="" width="50px" height="50px">
-                                                    </td>
-                                                    <td>{{ $employee->designation }}</td>
-                                                    {{-- <td style="display: none;">{{ $employee->business_branch->name }}</td> --}}
-                                                    <td>{{ $employee->phone }}</td>
-                                                    <td>{{ $employee->email }}</td>
-                                                    <td>{{ $employee->salary }}</td>
-                                                    <td>{{ $employee->status == 1 ? 'Active' : 'Inactive' }}</td>
-                                                    <td>{{ $employee->joining_date }}</td>
-                                                    <td>
-                                                        <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop{{ $account->id }}" type="button"
-                                                                class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                Action
-                                                            </button>
-                                                            <div class="dropdown-menu"
-                                                                aria-labelledby="btnGroupDrop{{ $account->id }}">
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editbank{{ $account->id }}">Edit</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
-                                                                    onclick="deleteData({{ $account->id }})">
-                                                                    Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <x-empty-table :name="__('Bank')" route="" create="no"
-                                                    :message="__('No data found!')" colspan="6"></x-empty-table>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                                @if (request()->get('par-page') !== 'all')
-                                    <div class="float-right">
-                                        {{ $accounts->onEachSide(0)->links() }}
-                                    </div>
-                                @endif
+                            <div class="card-header">
+                                <h4>
+                                    <a href="{{ route('admin.employee.create') }}" class="btn btn-primary"><i
+                                            class="fa fa-plus"></i>
+                                        {{ __('Add New Employee') }}</a>
+                                </h4>
                             </div>
+                            <div class="card-body"></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('Sl') }}</th>
+                                            <th>{{ __('Employee Name') }}</th>
+                                            <th>{{ __('Employee Picture') }}</th>
+                                            <th>{{ __('Designation') }}</th>
+                                            {{-- <th style="display: none;">Business Branch</th> --}}
+                                            <th>{{ __('Phone') }}</th>
+                                            <th>{{ __('Email') }}</th>
+                                            <th>{{ __('Salary') }}</th>
+                                            <th>{{ __('Status') }}</th>
+                                            <th>{{ __('Joining Date') }}</th>
+                                            <th>{{ __('Action') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($employees as $index => $employee)
+                                            <tr>
+                                                <td>{{ ++$index }}</td>
+                                                <td>{{ $employee->name }}</td>
+                                                <td>
+                                                    <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
+                                                        alt="" width="50px" height="50px">
+                                                </td>
+                                                <td>{{ $employee->designation }}</td>
+                                                {{-- <td style="display: none;">{{ $employee->business_branch->name }}</td> --}}
+                                                <td>{{ $employee->phone }}</td>
+                                                <td>{{ $employee->email }}</td>
+                                                <td>{{ $employee->salary }}</td>
+                                                <td>{{ $employee->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                                <td>{{ $employee->joining_date }}</td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button id="btnGroupDrop{{ $account->id }}" type="button"
+                                                            class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false">{{ __('Action') }}</button>
+                                                        <div class="dropdown-menu"
+                                                            aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                            <a class="dropdown-item" href="javascript:;" data-toggle="modal"
+                                                                data-target="#editbank{{ $account->id }}">{{ __('Edit') }}</a>
+                                                            <a href="javascript:;" data-toggle="modal"
+                                                                data-target="#deleteModal" class="dropdown-item"
+                                                                onclick="deleteData({{ $account->id }})">{{ __('Delete') }}</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                                colspan="10"></x-empty-table>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                            @if (request()->get('par-page') !== 'all')
+                                <div class="float-right">
+                                    {{ $employees->onEachSide(0)->links() }}
+                                </div>
+                            @endif
                         </div>
                     </div>
-
                 </div>
+
             </div>
-        </section>
+    </div>
+    </section>
     </div>
 
     <x-admin.delete-modal />
@@ -161,7 +164,7 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.bank.destroy', '') }}' + "/" + id)
+                $("#deleteForm").attr("action", '{{ route('admin.employee.destroy', '') }}' + "/" + id)
             }
         </script>
     @endpush
