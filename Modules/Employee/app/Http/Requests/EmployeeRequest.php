@@ -15,6 +15,7 @@ class EmployeeRequest extends FormRequest
             'name' => 'required',
             'email' => 'nullable|email',
             'mobile' => 'nullable',
+            'designation' => 'nullable',
             'nid' => 'nullable',
             'address' => 'nullable',
             'join_date' => 'nullable|date',

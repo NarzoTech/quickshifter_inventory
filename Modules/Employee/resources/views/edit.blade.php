@@ -29,21 +29,22 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('admin.employee.store') }}" method="post" id="add-employee-form"
-                                    enctype="multipart/form-data">
+                                <form action="{{ route('admin.employee.update', $employee->id) }}" method="post"
+                                    id="add-employee-form" enctype="multipart/form-data">
                                     @csrf
+                                    @method('PUT')
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="">{{ __('Employee Name') }}<span
                                                     class="text-danger">*</span>
                                             </label>
                                             <input type="text" class="form-control" name="name"
-                                                placeholder="Employee Name">
+                                                placeholder="Employee Name" value="{{ $employee->name }}">
                                         </div>
                                         <div class="col-md-6">
                                             <label for="">{{ __('Designation') }}</label>
                                             <input type="text" class="form-control" name="designation"
-                                                placeholder="Designation">
+                                                placeholder="Designation" value="{{ $employee->designation }}">
                                         </div>
                                     </div>
 
@@ -52,18 +53,18 @@
                                         <div class="col-md-6 mb-3">
                                             <label for="">{{ __('Email') }}</label>
                                             <input type="email" class="form-control" name="email" placeholder="Email"
-                                                id="email">
+                                                id="email" value="{{ $employee->email }}">
                                         </div>
 
                                         <div class="col-md-6 mb-3">
                                             <label for="">{{ __('Mobile') }}</label>
                                             <input type="text" class="form-control" name="mobile" placeholder="Mobile"
-                                                id="mobile">
+                                                id="mobile" value="{{ $employee->mobile }}">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="">{{ __('NID Number') }}</label>
                                             <input type="text" class="form-control" name="nid"
-                                                placeholder="NID Number" id="nid">
+                                                placeholder="NID Number" id="nid" value="{{ $employee->nid }}">
                                         </div>
 
                                         <div class="col-md-6 mb-3">
@@ -75,27 +76,30 @@
                                             <label for="">{{ __('Address') }}
                                             </label>
                                             <input type="text" class="form-control" name="address" placeholder="Address"
-                                                id="address">
+                                                id="address" value="{{ $employee->address }}">
                                         </div>
 
                                         <div class="col-md-6 mb-3">
                                             <label for="">{{ __('Joining Date') }}
                                             </label>
-                                            <input type="text" class="form-control datepicker" name="join_date">
+                                            <input type="text" class="form-control datepicker" name="join_date"
+                                                value="{{ $employee->join_date }}">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="">{{ __('Salary') }}
                                             </label>
                                             <input type="text" class="form-control" name="salary" placeholder="Salary"
-                                                id="salary">
+                                                id="salary" value="{{ $employee->salary }}">
                                         </div>
 
                                         <div class="col-md-6 mb-3">
                                             <label for="">{{ __('Status') }}
                                             </label>
                                             <select name="status" id="status" class="form-control">
-                                                <option value="1">{{ __('Active') }}</option>
-                                                <option value="0">{{ __('Inactive') }}</option>
+                                                <option value="1" @if ($employee->status == 1) selected @endif>
+                                                    {{ __('Active') }}</option>
+                                                <option value="0" @if ($employee->status == 0) selected @endif>
+                                                    {{ __('Inactive') }}</option>
                                             </select>
                                         </div>
                                     </div>

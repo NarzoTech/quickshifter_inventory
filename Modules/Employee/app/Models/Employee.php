@@ -18,6 +18,7 @@ class Employee extends Model
         'email',
         'mobile',
         'nid',
+        'designation',
         'address',
         'join_date',
         'salary',

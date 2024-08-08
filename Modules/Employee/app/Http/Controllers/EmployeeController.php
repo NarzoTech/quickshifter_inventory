@@ -42,6 +42,7 @@ class EmployeeController extends Controller
     {
         try {
             $data = $request->validated();
+            $data['join_date'] = now()->parse($request->join_date);
             if ($request->hasFile('image')) {
                 $data['image'] = file_upload($request->file('image'));
             }
@@ -68,15 +69,28 @@ class EmployeeController extends Controller
      */
     public function edit($id)
     {
-        return view('employee::edit');
+        $employee = $this->employee->find($id);
+        return view('employee::edit', compact('employee'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(EmployeeRequest $request, $id): RedirectResponse
     {
-        //
+        try {
+            $data = $request->validated();
+            $data['join_date'] = now()->parse($request->join_date);
+            if ($request->hasFile('image')) {
+                $data['image'] = file_upload($request->file('image'), oldFile: $this->employee->find($id)->image);
+            }
+            $this->employee->update($id, $data);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee updated successfully', 'alert-type' => 'success']);
+        } catch (\Throwable $th) {
+
+            Log::error($th->getMessage());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => $th->getMessage(), 'alert-type' => 'danger']);
+        }
     }
 
     /**

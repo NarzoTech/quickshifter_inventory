@@ -15,6 +15,10 @@ class EmployeeService
         return $this->employee;
     }
 
+    public function find($id)
+    {
+        return $this->employee->find($id);
+    }
     public function store(array $data)
     {
         $this->employee->create($data);

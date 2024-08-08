@@ -115,11 +115,11 @@
                                                 </td>
                                                 <td>{{ $employee->designation }}</td>
                                                 {{-- <td style="display: none;">{{ $employee->business_branch->name }}</td> --}}
-                                                <td>{{ $employee->phone }}</td>
+                                                <td>{{ $employee->mobile }}</td>
                                                 <td>{{ $employee->email }}</td>
                                                 <td>{{ $employee->salary }}</td>
                                                 <td>{{ $employee->status == 1 ? 'Active' : 'Inactive' }}</td>
-                                                <td>{{ $employee->joining_date }}</td>
+                                                <td>{{ $employee->join_date }}</td>
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         <button id="btnGroupDrop{{ $employee->id }}" type="button"
@@ -128,8 +128,8 @@
                                                             aria-expanded="false">{{ __('Action') }}</button>
                                                         <div class="dropdown-menu"
                                                             aria-labelledby="btnGroupDrop{{ $employee->id }}">
-                                                            <a class="dropdown-item" href="javascript:;" data-toggle="modal"
-                                                                data-target="#editbank{{ $employee->id }}">{{ __('Edit') }}</a>
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
                                                             <a href="javascript:;" data-toggle="modal"
                                                                 data-target="#deleteModal" class="dropdown-item"
                                                                 onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
