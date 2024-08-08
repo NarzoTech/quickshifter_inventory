@@ -32,7 +32,7 @@ class PurchaseService
         private Product $product,
         private AccountsService $accountsService,
         private PurchaseReturn $purchaseReturn,
-        private PurchaseReturnDetails $purchaseReturnDetials
+        private PurchaseReturnDetails $purchaseReturnDetials,
     ) {
     }
 
@@ -101,12 +101,17 @@ class PurchaseService
             ]);
         }
 
+        if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
+            $account = $this->accountsService->all()->where('account', 'cash')->first();
+        } else {
+            $account = $this->accountsService->find($request->account_id);
+        }
         // create payment data
         Payment::create([
             'purchase_id' => $purchase->id,
             'supplier_id' => $request->supplier_id,
-            'account_id' => $purchase->id,
-            'payment_type' => $request->payment_type,
+            'account_id' => $account->id,
+            'payment_type' => 'purchase',
             'amount' => $request->paid_amount,
             'payment_date' => now()->parse($request->purchase_date),
             'is_paid' => 1,
@@ -189,7 +194,7 @@ class PurchaseService
 
     public function genInvoiceNumber()
     {
-        $number = 1000000;
+        $number = 001;
         $prefix = 'INV-';
         $invoice_number = $prefix . $number;
 

@@ -63,8 +63,33 @@
 @endif
 
 
+{{-- account type function --}}
 
 
+<script>
+    function accountsType(accounts, html, val) {
+        accounts.forEach(account => {
+            switch (val) {
+                case 'bank':
+                    html +=
+                        `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
+                    break;
+                case "mobile_banking":
+                    html +=
+                        `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                    break;
+                case 'card':
+                    html +=
+                        `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
+                    break;
+                default:
+                    break;
+            }
+        });
+        html += '</select>';
+        return html;
+    }
+</script>
 
 
 

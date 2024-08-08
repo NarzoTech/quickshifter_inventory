@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('purchase_id')->nullable()->constrained('purchases');
             $table->foreignId('sale_id')->nullable()->constrained('sales');
+            $table->foreignId('expense_id')->nullable()->constrained('expenses');
             $table->foreignId('sale_return_id')->nullable()->constrained('sales');
             $table->foreignId('supplier_id')->nullable()->constrained('supplier');
             $table->foreignId('customer_id')->nullable()->constrained('users');

@@ -22,7 +22,6 @@ class Expense extends Model
         'note',
         'amount',
         'expense_type_id',
-        'expense_type_id',
         'created_by',
         'updated_by',
     ];

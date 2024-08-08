@@ -5,7 +5,7 @@
 
     <ul class="dropdown-menu">
         <li class="{{ isRoute('admin.expense.create', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.expense.index') }}">
+            <a class="nav-link" href="{{ route('admin.expense.index') }}?type=new">
                 {{ __('New Expense') }}
             </a>
         </li>

@@ -44,7 +44,6 @@
                     default:
                         break;
                 }
-
             });
             html += '</select>';
             $(this).closest('.form-group').find('.account').html(html);

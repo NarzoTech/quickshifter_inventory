@@ -145,9 +145,9 @@
     <x-admin.delete-modal />
 
 
-    {{-- add Expense type--}}
+    {{-- add Expense type --}}
     <div class="modal" id="addExpense">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
@@ -161,21 +161,18 @@
                         <div class="row">
                             <div class="form-group col-12">
                                 <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control datepicker" id="date" name="date">
+                                <input type="text" class="form-control datepicker" id="date" name="date"
+                                    value="{{ date('Y-m-d') }}">
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="form-group col-12">
-                                <label for="name">{{ __('Select Type') }}<span class="text-danger">*</span></label>
+                                <label for="name">{{ __('Expense Type') }}<span class="text-danger">*</span></label>
                                 <select name="expense_type_id" id="" class="form-control">
-                                    <option value="">{{ __('Select Type') }}</option>
+                                    <option value="">{{ __('Expense Type') }}</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="form-group col-12">
                                 <label for="name">{{ __('Payment Type') }}<span class="text-danger">*</span></label>
                                 <select name="payment_type" id="" class="form-control">
@@ -185,10 +182,17 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="form-group col-12 accounts">
-                                
+
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="amount">{{ __('Amount') }}<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="amount" name="amount"
+                                    value="{{ old('amount') }}">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="amount">{{ __('Note') }}</label>
+                                <textarea name="note" id="note" cols="30" rows="10" class="form-control"></textarea>
                             </div>
                         </div>
                     </form>
@@ -244,24 +248,27 @@
     @endforeach
     @push('js')
         <script>
-
             $(document).ready(function() {
-                const accounts = '@json($accounts)';
-                
+                const reqType = '{{ request()->type }}';
+                if (reqType) {
+                    $('#addExpense').modal('show');
+                }
+
+                let accounts = @json($accounts);
+                // accounts = JSON.parse(accounts);
                 $('select[name="payment_type"]').on('change', function() {
                     const paymentType = $(this).val();
-                    let html = '';
-                    const filterAccount = accounts.filter(account => account.payment_type == paymentType);
-                    filterAccount.forEach(account => {
-                        html += `
-                            <label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
-                            <select name="account_id" id="" class="form-control">
-                                <option value="">{{ __('Select Account') }}</option>
-                                <option value="${account.id}">${account.name}</option>
-                            </select>
-                        `;
-                    });
+                    let html = `<label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
+                    <select name="account_id" id="" class="form-control">`;
+                    const filterAccount = accounts.filter(account => account.account_type === paymentType);
+                    html = accountsType(filterAccount, html, paymentType);
                     $('.accounts').html(html);
+
+                    if ($(this).val() == 'cash' || $(this).val() == 'advance') {
+                        const cash =
+                            `<input type="hidden" name="account_id" class="form-control" value="${$(this).val()}" readonly>`;
+                        $('.accounts').html(cash);
+                    }
                 });
             });
 

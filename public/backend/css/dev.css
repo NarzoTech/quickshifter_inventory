@@ -1,5 +1,5 @@
 .btn,
-.form-group > label {
+.form-group>label {
     font-size: 14px !important;
 }
 
@@ -184,7 +184,7 @@ img.mr-3.ml-3.rounded-circle {
     object-fit: cover;
 }
 
-#toast-container > .toast:before {
+#toast-container>.toast:before {
     display: none !important;
 }
 
@@ -341,6 +341,7 @@ img.mr-3.ml-3.rounded-circle {
     .service_detail {
         width: 78%;
     }
+
     .service_image {
         width: 19% !important;
     }
@@ -350,6 +351,7 @@ img.mr-3.ml-3.rounded-circle {
     .service_detail {
         width: 73%;
     }
+
     .service_image {
         width: 25% !important;
     }
@@ -365,6 +367,7 @@ img.mr-3.ml-3.rounded-circle {
     .service_detail {
         width: 66%;
     }
+
     .service_detail h4 {
         font-size: 20px;
     }
@@ -375,6 +378,7 @@ img.mr-3.ml-3.rounded-circle {
         margin-top: 15px;
         width: 100%;
     }
+
     .service_detail h4 {
         font-size: 20px;
     }
@@ -385,9 +389,11 @@ img.mr-3.ml-3.rounded-circle {
         margin-top: 15px;
         width: 100%;
     }
+
     .service_detail h4 {
         font-size: 20px;
     }
+
     .service_detail .btn {
         font-size: 12px !important;
     }
@@ -453,17 +459,17 @@ img.mr-3.ml-3.rounded-circle {
     display: block;
     padding: 8px;
 }
-.select2-container--default
-    .select2-selection--multiple
-    .select2-selection__choice,
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice,
 .select2-container--default .select2-results__option[aria-selected="true"],
-.select2-container--default
-    .select2-results__option--highlighted[aria-selected] {
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: #6777ef !important;
 }
+
 .select2-container--default .select2-selection--multiple {
     border-color: #e4e6fc !important;
 }
+
 .fade.in {
     opacity: 1 !important;
 }
@@ -476,7 +482,8 @@ img.mr-3.ml-3.rounded-circle {
 #setLanguageHeader select {
     outline: none;
 }
-.file-preview-box{
+
+.file-preview-box {
     height: 300px;
     overflow-y: auto;
 }
@@ -506,17 +513,19 @@ img.mr-3.ml-3.rounded-circle {
     -ms-border-radius: 50%;
     -o-border-radius: 50%;
 }
-.danger-bg
-{
+
+.danger-bg {
     background-color: #ffb1a9 !important;
 }
 
-.height-80px
-{
+.height-80px {
     height: 80px !important;
 }
 
-.cursor-pointer
-{
+.cursor-pointer {
     cursor: pointer;
+}
+
+textarea {
+    height: 65px !important;
 }

@@ -2,16 +2,27 @@
 
 namespace Modules\Expense\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Models\Account;
+use Modules\Expense\app\Http\Requests\ExpenseRequest;
 use Modules\Expense\app\Models\Expense;
 use Modules\Expense\app\Models\ExpenseType;
+use Modules\Expense\app\Services\ExpenseService;
 
 class ExpenseController extends Controller
 {
+
+    use RedirectHelperTrait;
+    public function __construct(private ExpenseService $expense)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -34,9 +45,15 @@ class ExpenseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(ExpenseRequest $request): RedirectResponse
     {
-        //
+        try {
+            $this->expense->store($request);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, null, [], ['messege' => 'Expense created successfully', 'alert-type' => 'success']);
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, null, [], ['messege' => $exception->getMessage(), 'alert-type' => 'danger']);
+        }
     }
 
     /**
