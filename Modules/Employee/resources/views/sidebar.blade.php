@@ -1,27 +1,22 @@
-<li class="nav-item dropdown {{ isRoute(['admin.accounts.*', 'admin.bank.index', 'admin.cashflow'], 'active') }}">
+<li class="nav-item dropdown {{ isRoute(['admin.employee.*'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
-        <i class="fas fa-cart-arrow-down"></i><span>{{ __('Manage Accounts') }}</span>
+        <i class="fas fa-cart-arrow-down"></i><span>{{ __('Employees') }}</span>
     </a>
 
     <ul class="dropdown-menu">
-        <li class="{{ isRoute('admin.cashflow', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.cashflow') }}">
-                {{ __('Cash Flow') }}
+        <li class="{{ isRoute('admin.employee.index', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.employee.index') }}">
+                {{ __('Employee List') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.accounts.index', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.accounts.index') }}">
-                {{ __('Account List') }}
+        <li class="{{ isRoute('admin.employee.create', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.employee.create') }}">
+                {{ __('Add New Employee') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.accounts.create', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.accounts.create') }}">
-                {{ __('Create Account') }}
-            </a>
-        </li>
-        <li class="{{ isRoute('admin.bank.index', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.bank.index') }}">
-                {{ __('Bank') }}
+        <li class="{{ isRoute('admin.employee.index', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.employee.index') }}">
+                {{ __('All Paid Salary') }}
             </a>
         </li>
     </ul>

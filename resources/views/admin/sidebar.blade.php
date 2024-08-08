@@ -67,6 +67,10 @@
                 @include('expense::sidebar')
             @endif
 
+            @if (Module::isEnabled('Employee'))
+                @include('employee::sidebar')
+            @endif
+
             {{-- <li class="menu-header">{{ __('Manage Contents') }}</li> --}}
 
             {{-- @if (Module::isEnabled('Media') && checkAdminHasPermission('media.view'))
@@ -78,7 +82,7 @@
 
             <li class="menu-header">{{ __('Settings') }}</li>
 
-            <li class="{{ isRoute('admin.warehouse.*', 'active') }}">
+            {{-- <li class="{{ isRoute('admin.warehouse.*', 'active') }}">
                 <a class="nav-link" href="{{ route('admin.warehouse.index') }}"><i class="fas fa-store"></i>
                     <span>{{ __('Warehouse') }}</span>
                 </a>
@@ -87,7 +91,7 @@
                 <a class="nav-link" href="{{ route('admin.pos.settings') }}"><i class="fas fa-store"></i>
                     <span>{{ __('Pos Settings') }}</span>
                 </a>
-            </li>
+            </li> --}}
 
             @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('setting.view'))
                 <li class="{{ isRoute('admin.settings', 'active') }}">

@@ -13,10 +13,20 @@ class Employee extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
-    
-    protected static function newFactory(): EmployeeFactory
+    protected $fillable = [
+        'name',
+        'email',
+        'mobile',
+        'nid',
+        'address',
+        'join_date',
+        'salary',
+        'image',
+        'status',
+    ];
+
+    public function getImageUrlAttribute()
     {
-        //return EmployeeFactory::new();
+        return $this->image ? asset($this->image) : null;
     }
 }
