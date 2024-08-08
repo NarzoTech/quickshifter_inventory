@@ -14,6 +14,6 @@ use Modules\Employee\app\Http\Controllers\EmployeeController;
 |
 */
 
-Route::group([], function () {
+Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('employee', EmployeeController::class)->names('employee');
 });
