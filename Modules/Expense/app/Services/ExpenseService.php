@@ -91,4 +91,13 @@ class ExpenseService
 
         return $expense;
     }
+
+    public function destroy($id)
+    {
+        // delete payment
+        $payment = Payment::where('expense_id', $id)->first();
+        $payment->delete();
+
+        $this->expense->find($id)->delete();
+    }
 }

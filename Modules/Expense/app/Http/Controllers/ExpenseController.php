@@ -67,6 +67,7 @@ class ExpenseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->expense->destroy($id);
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.expense.index', [], ['messege' => 'Expense deleted successfully', 'alert-type' => 'success']);
     }
 }

@@ -316,7 +316,7 @@
             });
 
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.expense.type.destroy', '') }}' + "/" + id)
+                $("#deleteForm").attr("action", '{{ route('admin.expense.destroy', '') }}' + "/" + id)
             }
         </script>
     @endpush
