@@ -179,7 +179,7 @@
                                 </select>
                             </div>
                             <div class="form-group col-12">
-                                <label for="price">{{ __('Price') }}</label>
+                                <label for="price">{{ __('Price') }} <span class="text-danger">*</span> </label>
                                 <input type="number" class="form-control" id="price" name="price">
                             </div>
                             <div class="form-group col-12">

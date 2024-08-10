@@ -1,4 +1,4 @@
-<li class="nav-item dropdown {{ isRoute(['admin.serviceCategory.*'], 'active') }}">
+<li class="nav-item dropdown {{ isRoute(['admin.serviceCategory.*', 'admin.service.*'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
         <i class="fas fa-cart-arrow-down"></i><span>{{ __('Manage Services') }}</span>
     </a>

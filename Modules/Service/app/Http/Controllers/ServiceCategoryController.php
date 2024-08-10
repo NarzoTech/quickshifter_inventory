@@ -66,7 +66,16 @@ class ServiceCategoryController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+        try {
+            $this->serviceCategoryService->update($id, $request->only('name'));
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.serviceCategory.index', [], ['messege' => 'Service Category updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.serviceCategory.index', [], ['messege' => 'Service Category update failed', 'alert-type' => 'error']);
+        }
     }
 
     /**
@@ -74,6 +83,7 @@ class ServiceCategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->serviceCategoryService->delete($id);
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.serviceCategory.index', [], ['messege' => 'Service Category deleted successfully', 'alert-type' => 'success']);
     }
 }

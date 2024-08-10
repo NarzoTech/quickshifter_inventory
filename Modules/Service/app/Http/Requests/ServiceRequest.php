@@ -16,7 +16,7 @@ class ServiceRequest extends FormRequest
             'status' => 'required|boolean',
             'category_id' => 'required|exists:service_categories,id',
             'description' => 'nullable|string',
-            'price' => 'nullable|numeric'
+            'price' => 'required|numeric'
         ];
     }
 
