@@ -395,6 +395,7 @@
             <div class="modal-content">
                 <form method="POST" action="" id="checkoutForm" onSubmit="paymentSubmit(event)">
                     @csrf
+                    @method('PUT')
                     <input type="hidden" name="order_customer_id" id="order_customer_id" value="">
                     <div class="row">
                         <!-- Left Column -->
@@ -1237,9 +1238,9 @@
             e.preventDefault();
             const formData = $('#checkoutForm').serialize();
             $.ajax({
-                type: 'POST',
+                type: 'PUT',
                 data: formData,
-                url: "{{ route('admin.place-order') }}",
+                url: "{{ route('admin.sales.update', $sale->id) }}",
                 success: function(response) {
                     console.log(response);
                     $(".product-table tbody").html('')

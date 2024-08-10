@@ -4,10 +4,14 @@ namespace Modules\Sales\app\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Modules\Accounts\app\Models\Account;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
@@ -16,7 +20,6 @@ use Modules\POS\app\Models\CartHold;
 use Modules\Product\app\Models\Category;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\BrandService;
-use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Services\SaleService;
 use Modules\Service\app\Services\ServicesService;
 
@@ -109,9 +112,41 @@ class SalesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id): JsonResponse
     {
-        //
+        $user = null;
+        if ($request->order_customer_id && $request->order_customer_id !=  'walk-in-customer') {
+
+            Validator::make($request->all(), [
+                'order_customer_id' => 'required',
+            ], [
+                'order_customer_id.required' => trans('Customer is required'),
+            ])->validate();
+
+            $user = User::find($request->order_customer_id);
+        }
+
+        $cart = session('UPDATE_CART');
+
+        DB::beginTransaction();
+        try {
+            $order = $this->saleService->updateSale($request, $user,  $cart, $id);
+            DB::commit();
+            session()->put('UPDATE_CART', []);
+            return response()->json([
+                'order' => $order,
+                'message' => 'Order Updated successfully',
+                'alert-type' => 'success',
+            ], 200);
+        } catch (Exception $ex) {
+            DB::rollBack();
+            Log::error($ex->getMessage());
+
+            return response()->json([
+                'message' => $ex->getMessage(),
+                'alert-type' => 'error',
+            ], 500);
+        }
     }
 
     /**

@@ -43,6 +43,7 @@ class Sale extends Model
         'staff_note',
         'order_date',
         'created_by',
+        'updated_by',
         'receive_amount',
         'due_amount',
         'discount_amount',

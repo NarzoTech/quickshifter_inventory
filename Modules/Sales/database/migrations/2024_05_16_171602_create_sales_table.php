@@ -33,6 +33,7 @@ return new class extends Migration
             $table->decimal('receive_amount', 8, 2)->default(0);
             $table->decimal('return_amount', 8, 2)->default(0);
             $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->string('notes')->nullable();
             $table->string('invoice')->nullable();
             $table->double('shipping_cost')->nullable();
