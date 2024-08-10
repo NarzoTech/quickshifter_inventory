@@ -11,7 +11,7 @@ class AccountRequest extends FormRequest
      */
     public function rules(): array
     {
-        if($this->account_type == 'bank'){
+        if ($this->account_type == 'bank') {
             return [
                 'account_type' => 'required',
                 'bank_id' => 'required|integer',
@@ -21,7 +21,7 @@ class AccountRequest extends FormRequest
                 'bank_account_branch' => 'required|string',
             ];
         }
-        if($this->account_type == 'card'){
+        if ($this->account_type == 'card') {
             return [
                 'account_type' => 'required',
                 'card_type' => 'required|string',
@@ -34,12 +34,15 @@ class AccountRequest extends FormRequest
                 'bank_account_branch' => 'required|string',
             ];
         }
-        if($this->account_type == 'mobile_banking'){
+        if ($this->account_type == 'mobile_banking') {
             return [
                 'account_type' => 'required',
                 'mobile_bank_name' => 'required|string',
                 'mobile_number' => 'required',
             ];
+        }
+        if ($this->account_type == 'cash') {
+            return [];
         }
     }
 

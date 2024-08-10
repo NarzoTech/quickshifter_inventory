@@ -87,7 +87,7 @@
                                         </tr>
                                         <tr>
                                             <th class="text-center">
-                                                <h4 class="header-title">{{ currency($cashAccount->balance()) }}</h4>
+                                                <h4 class="header-title">{{ currency($cashAccount?->balance()) }}</h4>
                                             </th>
                                         </tr>
                                         <tr>
@@ -143,9 +143,8 @@
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $account->id }}">
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editbank{{ $account->id }}">Edit</a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.accounts.edit', $account->id) }}">Edit</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $account->id }})">

@@ -6,9 +6,7 @@ use Modules\Accounts\app\Models\Account;
 
 class AccountsService
 {
-    public function __construct(private Account $account)
-    {
-    }
+    public function __construct(private Account $account) {}
     public function all()
     {
         return $this->account;

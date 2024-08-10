@@ -263,7 +263,7 @@
                         <input type="number" class="form-control" name="total[]" value="${product.cost}" readonly>
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="profit[]" value="${profit.toFixed(2)}">
+                        <input type="text" class="form-control" name="profit[]" value="${0}">
                     </td>
                     <td>
                         <input type="number" class="form-control" name="selling_price[]" value="${product.price}" min="0">

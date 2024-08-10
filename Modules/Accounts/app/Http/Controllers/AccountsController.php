@@ -74,15 +74,24 @@ class AccountsController extends Controller
      */
     public function edit($id)
     {
-        return view('accounts::edit');
+        $account = $this->accountsService->find($id);
+        $accounts = $this->bankService->all()->get();
+        return view('accounts::edit', compact('account', 'accounts'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(AccountRequest $request, $id): RedirectResponse
     {
-        //
+        try {
+            $account = $this->accountsService->find($id);
+            $this->accountsService->update($account, $request->except('_token'));
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.accounts.edit', ['account' => $id], ['messege' => 'Account updated successfully', 'alert-type' => 'success']);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.accounts.edit', ['account' => $id], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 
     /**
