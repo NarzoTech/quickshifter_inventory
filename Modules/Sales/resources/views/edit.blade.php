@@ -275,13 +275,14 @@
                                                         <option value="2">{{ __('Percentage') }} (%)</option>
                                                     </select>
                                                     <input type="text" onchange="discountExist()"
-                                                        id="discount_total_amount" value="0" step="0.1"
-                                                        name="discount_total_amount" autocomplete="off" autofocus>
+                                                        id="discount_total_amount" value="{{ $sale->order_discount }}"
+                                                        step="0.1" name="discount_total_amount" autocomplete="off"
+                                                        autofocus>
                                                 </div>
                                             </td>
 
                                             <td class="text-right" style="padding: 5px 10px;font-weight:bold;">
-                                                <span id="tds">0</span>
+                                                <span id="tds">{{ currency($sale->order_discount) }}</span>
                                             </td>
                                         </tr>
 

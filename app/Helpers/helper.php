@@ -72,7 +72,6 @@ if (!function_exists('accountList')) {
             'bank' => 'Bank',
             'mobile_banking' => 'Mobile Banking',
             'card' => 'Card',
-            'advance' => 'Advance',
         ];
 
         return $list;

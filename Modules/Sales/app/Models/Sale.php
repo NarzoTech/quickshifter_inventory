@@ -106,4 +106,9 @@ class Sale extends Model
     {
         return $this->hasOne(CustomerDue::class, 'invoice', 'invoice');
     }
+
+    public function saleReturns()
+    {
+        return $this->hasMany(SalesReturn::class, 'sale_id');
+    }
 }
