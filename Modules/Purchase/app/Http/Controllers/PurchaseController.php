@@ -74,9 +74,15 @@ class PurchaseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        return view('purchase::edit');
+        $suppliers = $this->purchaseService->getSuppliers();
+        $warehouses = $this->purchaseService->getWarehouses();
+        $products = $this->purchaseService->getProducts($request);
+        $invoiceNumber = $this->purchaseService->genInvoiceNumber();
+        $accounts = $this->purchaseService->getAccounts();
+        $purchase = $this->purchaseService->getPurchase($id);
+        return view('purchase::edit', compact('suppliers', 'warehouses', 'products', 'invoiceNumber', 'purchase', 'accounts'));
     }
 
     /**

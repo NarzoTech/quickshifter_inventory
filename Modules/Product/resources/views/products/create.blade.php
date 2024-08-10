@@ -154,8 +154,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>{{ __('Stock Quantity') }} <span
-                                                            class="text-danger">*</span></label>
+                                                    <label>{{ __('Stock Quantity') }}</label>
                                                     <input type="number" class="form-control" name="stock"
                                                         value="{{ old('stock', 1) }}">
                                                     @error('stock')

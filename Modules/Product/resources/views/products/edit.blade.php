@@ -137,40 +137,6 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="tax">{{ __('Tax') }}</label>
-                                                    <div class="input-group">
-                                                        <input type="number" name="tax" class="form-control currency"
-                                                            id="tax" value="{{ old('tax', $product->tax) }}">
-                                                        <div class="input-group-prepend">
-                                                            <div class="input-group-text">
-                                                                %
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @error('tax')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="tax_type">{{ __('Tax Type') }}</label>
-                                                    <select name="tax_type" id="tax_type" class="form-control">
-                                                        <option value="exclusive"
-                                                            @if (old('tax_type', $product->tax_type) == 'exclusive') selected @endif>
-                                                            {{ __('Exclusive') }}</option>
-                                                        <option value="inclusive"
-                                                            @if (old('tax_type', $product->tax_type) == 'inclusive') selected @endif>
-                                                            {{ __('Inclusive') }}</option>
-                                                    </select>
-                                                    @error('tax_type')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div> --}}
-
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
@@ -186,8 +152,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>{{ __('Stock Quantity') }} <span
-                                                            class="text-danger">*</span></label>
+                                                    <label>{{ __('Stock Quantity') }} </label>
                                                     <input type="number" class="form-control" name="stock"
                                                         value="{{ old('stock', $product->stock) }}">
                                                     @error('stock')

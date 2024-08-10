@@ -26,8 +26,6 @@ return new class extends Migration
             $table->decimal('balance', 10, 2)->default(0);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->foreign('group_id')->references('id')->on('user_group')->onDelete('cascade');
-            $table->foreign('area_id')->references('id')->on('area')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Purchase List') }}</title>
+    <title>{{ __('Edit Purchase') }}</title>
 @endsection
 
 @section('admin-content')
@@ -15,18 +15,20 @@
                     <div class="breadcrumb-item active"><a
                             href="{{ route('admin.purchase.index') }}">{{ __('Purchase List') }}</a>
                     </div>
-                    <div class="breadcrumb-item">{{ __('Add Purchase') }}</div>
+                    <div class="breadcrumb-item">{{ __('Edit Purchase') }}</div>
                 </div>
             </div>
             <div class="section-body">
                 <div class="row">
                     <div class="col-md-12">
 
-                        <form method="POST" action="{{ route('admin.purchase.store') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('admin.purchase.update', $purchase->id) }}"
+                            enctype="multipart/form-data">
                             @csrf
+                            @method('PUT')
                             <div class="card">
                                 <div class="card-header">
-                                    <div class="card-title">{{ __('Create Purchase') }}</div>
+                                    <div class="card-title">{{ __('Edit Purchase') }}</div>
                                 </div>
 
                                 <div class="card-body">
@@ -37,7 +39,9 @@
                                                 <select class="form-control select2" name="supplier_id">
                                                     <option value="">{{ __('Select Supplier') }}</option>
                                                     @foreach ($suppliers as $supplier)
-                                                        <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                                        <option value="{{ $supplier->id }}"
+                                                            {{ $supplier->id == $purchase->supplier_id ? 'selected' : '' }}>
+                                                            {{ $supplier->name }}</option>
                                                     @endforeach
                                                 </select>
                                                 @error('supplier_id')
@@ -49,7 +53,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Invoice Number') }}</label>
                                                 <input type="text" class="form-control" name="invoice_number"
-                                                    value="{{ old('invoice_number', $invoiceNumber) }}">
+                                                    value="{{ $purchase->invoice_number }}">
                                                 @error('invoice_number')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -59,7 +63,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Memo No') }}</label>
                                                 <input type="text" class="form-control" name="memo_no"
-                                                    value="{{ old('memo_no') }}">
+                                                    value="{{ $purchase->memo_no }}">
                                                 @error('memo_no')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -69,7 +73,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Purchase Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="purchase_date"
-                                                    value="{{ old('purchase_date', now()->format('d-m-Y')) }}">
+                                                    value="{{ $purchase->purchase_date }}">
                                                 @error('purchase_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -79,7 +83,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Reference No') }}</label>
                                                 <input type="text" class="form-control" name="reference_no"
-                                                    value="{{ old('reference_no') }}">
+                                                    value="{{ $purchase->reference_no }}">
                                                 @error('reference_no')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -88,8 +92,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ __('Attachment') }}</label>
-                                                <input type="file" class="form-control" name="attachment"
-                                                    value="{{ old('attachment') }}">
+                                                <input type="file" class="form-control" name="attachment" value="">
                                                 @error('attachment')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -101,8 +104,12 @@
                                                 <label>{{ __('Purchase Status') }}</label>
                                                 <select class="form-control" name="status">
                                                     <option value="">{{ __('Select Status') }}</option>
-                                                    <option value="1" selected>{{ __('Pending') }}</option>
-                                                    <option value="2">{{ __('Received') }}</option>
+                                                    <option value="1"
+                                                        {{ $purchase->status == 'pending' ? 'selected' : '' }}>
+                                                        {{ __('Pending') }}</option>
+                                                    <option value="2"
+                                                        {{ $purchase->status == 'completed' ? 'selected' : '' }}>
+                                                        {{ __('Received') }}</option>
                                                 </select>
                                                 @error('status')
                                                     <span class="text-danger">{{ $message }}</span>
@@ -142,6 +149,59 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="purchase_table">
+                                                    @php
+                                                        $qty = 0;
+                                                        $sub_total = 0;
+                                                    @endphp
+                                                    @foreach ($purchase->purchaseDetails as $purchaseDetail)
+                                                        @php
+                                                            $qty += $purchaseDetail->quantity;
+                                                            $sub_total += $purchaseDetail->sub_total;
+                                                        @endphp
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" class="form-control"
+                                                                    name="product_name[]"
+                                                                    value="{{ $purchaseDetail->product->name }}" readonly>
+                                                                <input type="hidden" name="product_id[]"
+                                                                    value="{{ $purchaseDetail->product_id }}">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" name="stock[]"
+                                                                    value="{{ $purchaseDetail->product->stock }}" readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" name="quantity[]"
+                                                                    value="{{ $purchaseDetail->quantity }}" min="1">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control"
+                                                                    name="unit_price[]"
+                                                                    value="{{ $purchaseDetail->purchase_price }}"
+                                                                    min="0">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" name="total[]"
+                                                                    value="{{ $purchaseDetail->sub_total }}" readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control"
+                                                                    name="profit[]"
+                                                                    value="{{ $purchaseDetail->profit }}">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control"
+                                                                    name="selling_price[]"
+                                                                    value="{{ $purchaseDetail->sale_price }}"
+                                                                    min="0">
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-white"
+                                                                    onclick="removePurchaseRow(this)"><i
+                                                                        class="fas fa-trash text-danger"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
@@ -162,7 +222,7 @@
                                                     </div>
                                                     <div class="col-8">
                                                         <input type="number" class="form-control" name="items"
-                                                            value="0" readonly>
+                                                            value="{{ $qty }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -172,11 +232,12 @@
                                                         <label>{{ __('Total Amount') }}</label>
                                                     </div>
                                                     <div class="col-8">
-                                                        <input type="total_amount" class="form-control" name="total_amount"
-                                                            value="0" readonly>
+                                                        <input type="total_amount" class="form-control"
+                                                            name="total_amount" value="{{ $sub_total }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
+                                            @dd($purchase)
                                             <div class="col-12">
                                                 <div class="form-group row">
                                                     <div class="col-4">

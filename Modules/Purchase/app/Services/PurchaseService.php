@@ -33,8 +33,7 @@ class PurchaseService
         private AccountsService $accountsService,
         private PurchaseReturn $purchaseReturn,
         private PurchaseReturnDetails $purchaseReturnDetials,
-    ) {
-    }
+    ) {}
 
     public function all()
     {
@@ -57,6 +56,7 @@ class PurchaseService
         $purchase->supplier_id = $request->supplier_id;
         $purchase->warehouse_id = $request->warehouse_id;
         $purchase->invoice_number = $request->invoice_number;
+        $purchase->memo_no = $request->memo_no;
         $purchase->reference_no = $request->reference_no;
         $purchase->purchase_date = now()->parse($request->purchase_date);
         $purchase->items = $request->items;
@@ -136,6 +136,7 @@ class PurchaseService
             $purchase->warehouse_id = $request->warehouse_id;
             $purchase->invoice_number = $request->invoice_number;
             $purchase->reference_no = $request->reference_no;
+            $purchase->memo_no = $request->memo_no;
             $purchase->purchase_date = $request->purchase_date;
             $purchase->items = $request->items;
             $purchase->total_amount = $request->total_amount;
@@ -213,7 +214,7 @@ class PurchaseService
 
     public function getPurchase($id)
     {
-        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product')->find($id);
+        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product', 'payments')->find($id);
     }
 
     public function getPurchaseDetails($id)

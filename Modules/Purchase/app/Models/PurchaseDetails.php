@@ -2,6 +2,7 @@
 
 namespace Modules\Purchase\app\Models;
 
+use App\Models\Payment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Product\app\Models\Product;
@@ -31,11 +32,16 @@ class PurchaseDetails extends Model
 
     public function purchase()
     {
-        return $this->belongsTo(Purchase::class,'purchase_id','id')->withDefault();
+        return $this->belongsTo(Purchase::class, 'purchase_id', 'id')->withDefault();
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class,'product_id','id')->withDefault();
+        return $this->belongsTo(Product::class, 'product_id', 'id')->withDefault();
+    }
+
+    public function purchaseReturn()
+    {
+        return $this->hasMany(PurchaseReturn::class, 'purchase_id', 'id');
     }
 }

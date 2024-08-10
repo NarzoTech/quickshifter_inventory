@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained('supplier');
             $table->integer('warehouse_id')->nullable();
             $table->string('invoice_number');
+            $table->string('memo_no')->nullable();
             $table->string('reference_no')->nullable();
             $table->date('purchase_date');
             $table->integer('items');
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->string('payment_status')->default('due');
             $table->string('payment_type')->default('cash');
             $table->text('note')->nullable();
-            $table->enum('status', ['pending', 'completed', 'canceled','return'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'canceled', 'return'])->default('pending');
             $table->foreignId('created_by')->constrained('admins');
             $table->foreignId('updated_by')->nullable()->constrained('admins');
             $table->softDeletes();

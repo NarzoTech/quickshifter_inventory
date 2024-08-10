@@ -2,6 +2,7 @@
 
 namespace Modules\Purchase\app\Models;
 
+use App\Models\Payment;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,7 @@ class Purchase extends Model
     protected $fillable = [
         'supplier_id',
         'warehouse_id',
+        'memo_no',
         'invoice_number',
         'reference_no',
         'purchase_date',
@@ -37,17 +39,17 @@ class Purchase extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class,'supplier_id','id');
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 
     public function warehouse()
     {
-        return $this->belongsTo(Warehouse::class,'warehouse_id','id');
+        return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
 
     public function purchaseDetails()
     {
-        return $this->hasMany(PurchaseDetails::class,'purchase_id','id');
+        return $this->hasMany(PurchaseDetails::class, 'purchase_id', 'id');
     }
 
     // public function purchaseReturn()
@@ -57,6 +59,11 @@ class Purchase extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class,'purchase_details','purchase_id','product_id')->withPivot('quantity','purchase_price','sub_total','profit','sale_price','discount','tax','created_by','updated_by')->withDefault();
+        return $this->belongsToMany(Product::class, 'purchase_details', 'purchase_id', 'product_id')->withPivot('quantity', 'purchase_price', 'sub_total', 'profit', 'sale_price', 'discount', 'tax', 'created_by', 'updated_by')->withDefault();
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'purchase_id');
     }
 }

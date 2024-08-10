@@ -81,8 +81,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="{{ route('admin.purchase.create') }}"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i>
+                                    <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary"><i
+                                            class="fa fa-plus"></i>
                                         {{ __('Add Purchase') }}</a>
                                 </h4>
                             </div>
@@ -124,10 +124,11 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#showCustomer{{ $purchase->id }}">Show</a>
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editCustomer{{ $purchase->id }}">Edit</a>
-                                                                <a class="dropdown-item" href="{{ route('admin.purchase.return',$purchase->id) }}">Purchase Return</a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.purchase.edit', $purchase->id) }}">Edit</a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.purchase.return', $purchase->id) }}">Purchase
+                                                                    Return</a>
                                                                 <a class="dropdown-item" href="#">Sales</a>
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
