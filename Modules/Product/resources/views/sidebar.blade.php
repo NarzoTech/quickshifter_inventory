@@ -6,7 +6,7 @@
             class="fas fa-newspaper"></i><span>{{ __('Manage Products') }}</span></a>
 
     <ul class="dropdown-menu">
-        <li class="{{ Route::is('admin.product.index') ? 'active' : '' }}">
+        <li class="{{ Route::is('admin.product.index') || Route::is('admin.product.edit') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.product.index') }}">
                 {{ __('Product List') }}
             </a>

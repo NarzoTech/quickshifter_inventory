@@ -156,7 +156,7 @@
                                                 <div class="form-group">
                                                     <label>{{ __('Stock Quantity') }}</label>
                                                     <input type="number" class="form-control" name="stock"
-                                                        value="{{ old('stock', 1) }}">
+                                                        value="{{ old('stock', 0) }}">
                                                     @error('stock')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror

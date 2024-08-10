@@ -31,8 +31,6 @@
                                                 <th>{{ __('Sku') }}</th>
                                                 <th>{{ __('Brand') }}</th>
                                                 <th>{{ __('Category') }}</th>
-                                                <th>{{ __('Cost') }}</th>
-                                                <th>{{ __('Price') }}</th>
                                                 <th>{{ __('Unit') }}</th>
                                                 <th>{{ __('Stock Quantity') }}</th>
                                                 <th>{{ __('Status') }}</th>
@@ -50,7 +48,6 @@
                                                     <td>{{ $product->sku }}</td>
                                                     <td>{{ $product->brand->name }}</td>
                                                     <td>{{ $product->category->name }}</td>
-                                                    <td>{{ currency($product->cost) }}</td>
                                                     <td>{{ $product->unit->name }}</td>
                                                     <td>{{ $product->stock }}{{ $product->unit->ShortName }}</td>
                                                     <td>
@@ -97,7 +94,6 @@
                                                                 <a class="dropdown-item has-icon"
                                                                     href="{{ route('admin.product-variant', $product->id) }}"><i
                                                                         class="fas fa-cog"></i>{{ __('Product Variant') }}</a>
-
                                                             </div>
                                                         </div>
 
