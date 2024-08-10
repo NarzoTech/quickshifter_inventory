@@ -3,6 +3,7 @@
 namespace Modules\Sales\app\Models;
 
 use App\Models\Payment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Sales\Database\factories\SalesReturnFactory;
@@ -34,5 +35,9 @@ class SalesReturn extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class, 'sale_return_id');
+    }
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id')->withDefault();
     }
 }

@@ -21,15 +21,15 @@ use Modules\Sales\app\Models\SalesReturnDetails;
 class SalesReturnController extends Controller
 {
     use RedirectHelperTrait;
-    public function __construct(private AccountsService $service)
-    {
-    }
+    public function __construct(private AccountsService $service) {}
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function returnList()
     {
-        return view('sales::index');
+        $lists = SalesReturn::orderBy('id', 'desc')->paginate(20);
+
+        return view('sales::return.index', compact('lists'));
     }
 
     /**

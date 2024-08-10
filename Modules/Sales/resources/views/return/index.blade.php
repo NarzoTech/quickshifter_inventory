@@ -1,12 +1,12 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ $title }}</title>
+    <title>{{ __('Sales Return List') }}</title>
 @endsection
 @section('admin-content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ $title }}</h1>
+                <h1>{{ __('Sales Return List') }}</h1>
             </div>
 
             <div class="section-body">
@@ -18,40 +18,35 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('SN') }}</th>
+                                                <th>{{ __('Sl') }}</th>
                                                 <th>{{ __('Date') }}</th>
                                                 <th>{{ __('Invoice No') }}</th>
+                                                {{-- <th style="display: none;">Business Branch</th> --}}
                                                 <th>{{ __('Customer') }}</th>
-                                                <th>{{ __('Sale By') }}</th>
-                                                <th>{{ __('Sale Amount') }}</th>
                                                 <th>{{ __('Total Amount') }}</th>
-                                                <th>{{ __('Paid Amount') }}</th>
-                                                <th>{{ __('Due') }}</th>
+                                                <th>{{ __('Paying Amount') }}</th>
                                                 <th>{{ __('Payment Status') }}</th>
+                                                <th>{{ __('Due') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($sales as $key => $sale)
+                                            @foreach ($lists as $key => $sale)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $sale->order_date }}</td>
-                                                    <td>{{ $sale->invoice }}</td>
+                                                    <td>{{ $sale->return_date }}</td>
+                                                    <td>{{ $sale->sale->invoice }}</td>
                                                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
-                                                    <td>{{ $sale->user->name }}</td>
-                                                    <td>{{ $sale->total_price }}</td>
-                                                    <td>{{ $sale->grand_total }}</td>
-                                                    <td>{{ $sale->paid_amount }}</td>
-                                                    <td>{{ $sale->due_amount }}</td>
+                                                    <td>{{ $sale->return_amount }}</td>
+                                                    <td>{{ $sale->return_amount - $sale->return_due }}</td>
                                                     <td>
-                                                        @if ($sale->paid_amount == $sale->grand_total)
+                                                        @if ($sale->return_due == 0)
                                                             <span class="badge badge-success">{{ __('Paid') }}</span>
-                                                        @elseif ($sale->due_amount > 0 && $sale->paid_amount < $sale->total_price)
-                                                            <span class="badge badge-danger">{{ __('Partial Due') }}</span>
                                                         @else
                                                             <span class="badge badge-danger">{{ __('Due') }}</span>
                                                         @endif
                                                     </td>
+                                                    <td>{{ $sale->return_due }}</td>
                                                     <td>
                                                         <div class="btn-group mb-2">
                                                             <button class="btn btn-info btn-sm dropdown-toggle"
@@ -60,16 +55,13 @@
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item view-sale" href="javascript:;"
                                                                     data-id="{{ $sale->id }}">{{ __('View') }}</a>
-                                                                @if ($sale->saleReturns->count() == 0)
-                                                                    <a class="dropdown-item"
-                                                                        href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>
-                                                                @endif
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>
 
 
                                                                 <a class="dropdown-item" href="javascript:void(0)"
                                                                     onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
                                                             </div>
                                                         </div>
                                                     </td>

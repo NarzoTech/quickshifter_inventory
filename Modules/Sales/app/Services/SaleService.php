@@ -124,11 +124,11 @@ class SaleService
     {
         $sale = $this->sale->find($id);
 
+
         // update sales
         $sale->user_id = $user != null ?  $user->id : null;
         $sale->customer_id = $request->order_customer_id;
         $sale->warehouse_id = 1;
-        $sale->quantity = 1;
         $sale->total_price = $request->sub_total;
         $sale->order_date = now()->parse($request->sale_date);
         $sale->status = 1;
@@ -146,6 +146,18 @@ class SaleService
         $sale->receive_amount = $request->receive_amount;
         $sale->return_amount = $request->return_amount;
         $sale->updated_by = auth('admin')->user()->id;
+
+        // restore product stock
+        foreach ($sale->products as $item) {
+            $product = Product::where('id', $item->product_id)->first();
+            if ($product != null && $item->source == 1) {
+                $product->stock = $product->stock + $item->quantity;
+                $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
+                $product->save();
+            }
+        }
+
+
 
         // delete old details
         $sale->details()->delete();

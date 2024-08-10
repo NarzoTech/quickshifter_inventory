@@ -433,8 +433,6 @@
                                             </th>
                                             <input type="hidden" name="total_amount" value="0"
                                                 id="total_amount_modal_input" autocomplete="off">
-                                            <input type="hidden" name=exchange_amount" value="0"
-                                                id="exchange_amount_modal_input" autocomplete="off">
                                             <td class="text-right w-40" id="total_amountModal">0.00</td>
                                         </tr>
 
@@ -1004,6 +1002,7 @@
 
             let grandTotal = parseFloat(finalTotal);
             $('#total_amountModal').text(grandTotal);
+            $('#total_amount_modal_input').val(grandTotal);
             $('#total_amountModal2').text(grandTotal);
 
             // load customer info
