@@ -43,7 +43,19 @@ class Sale extends Model
         'staff_note',
         'order_date',
         'created_by',
+        'receive_amount',
+        'due_amount',
+        'discount_amount',
+        'due_date',
+        'return_amount',
+
     ];
+
+    protected $casts = [
+        'order_date' => 'date',
+        'payment_method' => 'array',
+    ];
+
     public function details()
     {
         return $this->hasMany(ProductSale::class, 'sale_id');

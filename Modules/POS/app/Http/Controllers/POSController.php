@@ -177,7 +177,10 @@ class POSController extends Controller
 
     public function add_to_cart(Request $request)
     {
-        // dd($request->all());
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
         $type = $request->serviceType;
         if ($type == 'service') {
             //
@@ -196,7 +199,7 @@ class POSController extends Controller
 
 
 
-        $cart_contents = session()->get('POSCART');
+        $cart_contents = session()->get($cartName);
         $cart_contents = $cart_contents ? $cart_contents : [];
 
 
@@ -234,9 +237,9 @@ class POSController extends Controller
         }
 
 
-        session()->put('POSCART', [...$cart_contents, $data["rowid"] => $data]);
+        session()->put($cartName, [...$cart_contents, $data["rowid"] => $data]);
 
-        $cart_contents = session('POSCART');
+        $cart_contents = session($cartName);
 
         return view('pos::ajax_cart')->with([
             'cart_contents' => $cart_contents,
@@ -245,39 +248,52 @@ class POSController extends Controller
 
     public function cart_quantity_update(Request $request)
     {
-        $cart_contents = session()->get('POSCART');
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
+        $cart_contents = session()->get($cartName);
 
         $cart_contents = $cart_contents ? $cart_contents : [];
 
         $cart_contents[$request->rowid]['qty'] = $request->quantity;
         $cart_contents[$request->rowid]['sub_total'] = $cart_contents[$request->rowid]['price'] * $request->quantity;
 
-        session()->put('POSCART', $cart_contents);
+        session()->put($cartName, $cart_contents);
 
-        $cart_contents = session()->get('POSCART');
+        $cart_contents = session()->get($cartName);
 
         return view('pos::ajax_cart')->with([
             'cart_contents' => $cart_contents,
         ]);
     }
 
-    public function remove_cart_item($rowId)
+    public function remove_cart_item(Request $request, $rowId)
     {
-        $cart_contents = session()->get('POSCART');
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
+        $cart_contents = session()->get($cartName);
         $cart_contents = $cart_contents ? $cart_contents : [];
         unset($cart_contents[$rowId]);
-        session()->put('POSCART', $cart_contents);
+        session()->put($cartName, $cart_contents);
 
-        $cart_contents = session()->get('POSCART');
+        $cart_contents = session()->get($cartName);
 
         return view('pos::ajax_cart')->with([
             'cart_contents' => $cart_contents,
         ]);
     }
 
-    public function cart_clear()
+    public function cart_clear(Request $request)
     {
-        session()->put('POSCART', []);
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
+
+        session()->put($cartName, []);
 
         $notification = trans('Cart clear successfully');
         $notification = array('messege' => $notification, 'alert-type' => 'success');
@@ -286,8 +302,6 @@ class POSController extends Controller
 
     public function create_new_customer(Request $request)
     {
-
-
         $validatedData = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -421,9 +435,13 @@ class POSController extends Controller
 
         // dispatch(new OrderSuccessfulMailJob($user, $subject, $message));
     }
-    public function posCartItemDetails($rowId)
+    public function posCartItemDetails(Request $request, $rowId)
     {
-        $cart_contents = session()->get('POSCART');
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
+        $cart_contents = session()->get($cartName);
 
         if ($cart_contents != null && count($cart_contents) > 0) {
             $item = $cart_contents[$rowId];
@@ -437,37 +455,23 @@ class POSController extends Controller
         }
     }
 
-    public function check_cart_restaurant($id)
+    public function modalClearCart(Request $request)
     {
-        $menuItem = Product::find($id);
-
-        $cart_contents = session()->get('POSCART');
-        $cart_contents = $cart_contents ? $cart_contents : [];
-
-        // clear cart if item from different restaurant
-        if (isset($cart_contents) && count($cart_contents) > 0) {
-            $currentRestaurantId = $menuItem->restaurant_id;
-            foreach ($cart_contents as $index => $cart_content) {
-                $cartItem = Product::find($cart_content['id']);
-                if ($cartItem->restaurant_id != $currentRestaurantId) {
-
-                    return response()->json(['status' => true]);
-                } else {
-                    return response()->json(['status' => false]);
-                }
-            }
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
         }
-    }
-
-    public function modalClearCart()
-    {
-        session()->put('POSCART', []);
+        session()->put($cartName, []);
         return response()->json(['status' => true]);
     }
     public function cart_price_update(Request $request)
     {
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
         // get the item
-        $cart_contents = session()->get('POSCART');
+        $cart_contents = session()->get($cartName);
 
         if ($cart_contents != null && count($cart_contents) > 0) {
             $item = $cart_contents[$request->rowId];
@@ -475,9 +479,9 @@ class POSController extends Controller
             $item['sub_total'] = $request->price * $item['qty'];
             $cart_contents[$request->rowId] = $item;
 
-            session()->put('POSCART', $cart_contents);
+            session()->put($cartName, $cart_contents);
         }
-        $cart_contents = session()->get('POSCART');
+        $cart_contents = session()->get($cartName);
 
         return view('pos::ajax_cart')->with([
             'cart_contents' => $cart_contents,
@@ -532,14 +536,18 @@ class POSController extends Controller
 
     public function cartSourceUpdate(Request $request)
     {
-        $cart_contents = session()->get('POSCART');
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
+        $cart_contents = session()->get($cartName);
 
         $cart_contents = $cart_contents ? $cart_contents : [];
 
         $cart_contents[$request->rowid]['source'] = $request->source;
 
-        session()->put('POSCART', $cart_contents);
+        session()->put($cartName, $cart_contents);
 
-        return response()->json(['status' => true, 'cart' => session()->get('POSCART')]);
+        return response()->json(['status' => true, 'cart' => session()->get($cartName)]);
     }
 }

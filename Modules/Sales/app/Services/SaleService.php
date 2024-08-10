@@ -10,15 +10,14 @@ use Modules\Product\app\Models\Product;
 use Modules\Product\app\Models\Variant;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
+use Modules\Service\app\Models\Service;
 
 class SaleService
 {
-    public function __construct(private Sale $sale)
-    {
-    }
+    public function __construct(private Sale $sale) {}
     public function getSales()
     {
-        return $this->sale->with('products', 'user', 'services', 'details');
+        return $this->sale->with('products', 'user', 'services', 'details', 'payment');
     }
     public function createSale(Request $request, $user, $cart): Sale
     {
@@ -162,5 +161,46 @@ class SaleService
         }
 
         return $invoice_number;
+    }
+    public function editSale($id)
+    {
+        $sale = $this->getSales()->find($id);
+
+        foreach ($sale->details as $key => $detail) {
+            $service = null;
+            $product = null;
+            if ($detail->product_id) {
+                $product = Product::where('id', $detail->product_id)->first();
+                $type = 'product';
+            } else {
+                $product = Service::where('id', $detail->service_id)->first();
+                $type = 'service';
+            }
+
+            $attributes = $detail->attributes;
+            $options = $detail->options;
+
+            $data = array();
+            $data["rowid"] = uniqid();
+            $data['id'] = $service ? $service->id : $product->id;
+            $data['name'] = $service ? $service->name : $product->name;
+            $data['type'] = $type;
+            $data['image'] = $service ? $service->singleImage : $product->image_url;
+            $data['qty'] = $detail->quantity;
+            $data['price'] = $detail->price;
+            $data['sub_total'] = $detail->sub_total;
+            $data['sku'] = $detail->product_sku;
+            $data['source'] = $detail->source;
+
+            if ($detail->variant_id) {
+                $data['variant']['attribute'] =  $attributes;
+                $data['variant']['options'] =  $options;
+            }
+            $cart_contents = session()->get('UPDATE_CART');
+            $cart_contents = $cart_contents ? $cart_contents : [];
+            session()->put('UPDATE_CART', [...$cart_contents, $data["rowid"] => $data]);
+        }
+        $cart_contents = session()->get('UPDATE_CART');
+        return [$cart_contents, $sale];
     }
 }

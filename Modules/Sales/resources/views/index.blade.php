@@ -61,7 +61,7 @@
                                                                 <a class="dropdown-item view-sale" href="javascript:;"
                                                                     data-id="{{ $sale->id }}">{{ __('View') }}</a>
                                                                 <a class="dropdown-item"
-                                                                    href="{{ url('admin/order-edit/' . $sale->id) }}">{{ __('Edit') }}</a>
+                                                                    href="{{ route('admin.sales.edit' , $sale->id) }}">{{ __('Edit') }}</a>
                                                                 <a class="dropdown-item" href="javascript:void(0)"
                                                                     onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
                                                                 <a class="dropdown-item"
