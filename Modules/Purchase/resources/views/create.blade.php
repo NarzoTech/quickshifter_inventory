@@ -153,68 +153,62 @@
                                 <div class="card-body">
                                     {{-- summery --}}
                                     <div class="row">
-                                        <div class="col-7"></div>
-                                        <div class="col-5 row">
-                                            <div class="col-12">
-                                                <div class="form-group d-flex">
-                                                    <div class="col-4">
-                                                        <label>{{ __('Item Count') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <input type="number" class="form-control" name="items"
-                                                            value="0" readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group d-flex">
-                                                    <div class="col-4">
-                                                        <label>{{ __('Total Amount') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <input type="total_amount" class="form-control" name="total_amount"
-                                                            value="0" readonly>
+                                        <div class="col-md-12">
+                                            <div class="row d-flex justify-content-end">
+                                                <div class="col-md-10">
+                                                    <div class="form-group row">
+                                                        <div class="col-md-4"></div>
+                                                        <div class="col-md-3 text-md-right">
+                                                            <label for="" class="mt-2">Item Count</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <input type="number" class="form-control" name="items"
+                                                                value="0" readonly>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
-                                                <div class="form-group row">
-                                                    <div class="col-4">
-                                                        <label>{{ __('Payment Type') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <select name="payment_type" id="" class="form-control">
-                                                            <option value="">{{ __('Select Payment Type') }}
-                                                            </option>
-                                                            @foreach (accountList() as $key => $list)
-                                                                <option value="{{ $key }}"
-                                                                    @if ($key == 'cash') selected @endif
-                                                                    data-name="{{ $list }}">{{ $list }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
+                                            <div class="row d-flex justify-content-end">
+                                                <div class="col-md-10">
+                                                    <div class="form-group row">
+                                                        <div class="col-md-4"></div>
+                                                        <div class="col-md-3 text-md-right">
+                                                            <label for="" class="mt-2">Total Amount</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <input type="total_amount" class="form-control"
+                                                                name="total_amount" value="0" readonly>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
-                                                <div class="form-group row">
-                                                    <div class="col-4">
-                                                        <input type="text" class="form-control" name="payment_method"
-                                                            value="cash" readonly>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <input type="text" class="form-control" name="paid_amount">
+
+                                            <div class="row d-flex justify-content-end">
+
+                                                <div class="col-md-10">
+                                                    <div class="">
+                                                        <div class="form-group row">
+                                                            <div class="col-md-4"></div>
+                                                            <div class="col-md-3 text-md-right">
+                                                                <label for="" class="mt-2">Payment Type</label>
+                                                            </div>
+                                                            <div class="col-md-5 paymentsystem">
+                                                                @include('purchase::add-payment-method')
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group row">
-                                                    <div class="col-4">
-                                                        <label>{{ __('Due') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <input type="text" class="form-control" name="due_amount"
-                                                            readonly>
+                                                <div class="offset-md-10 col-md-10">
+                                                    <div class="form-group row">
+                                                        <div class="col-md-4"></div>
+                                                        <div class="col-md-3 text-md-right">
+                                                            <label for="" class="mt-2">Due</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <input type="text" class="form-control" name="due_amount"
+                                                                readonly>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -240,6 +234,57 @@
 @push('js')
     <script>
         'use strict';
+
+        $(document).ready(function() {
+            const accountsList = @json($accounts);
+            $(document).on('change', 'select[name="payment_type[]"]', function() {
+                const accounts = accountsList.filter(account => account.account_type == $(this).val());
+                const accountInput = $(this).closest('.payment-row').find('.account');
+                if (accounts) {
+                    let html = '<select name="account_id[]" id="" class="form-control">';
+                    accounts.forEach(account => {
+                        switch ($(this).val()) {
+                            case 'bank':
+                                html +=
+                                    `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
+                                break;
+                            case "mobile_banking":
+                                html +=
+                                    `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                                break;
+                            case 'card':
+                                html +=
+                                    `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
+                                break;
+                            default:
+                                break;
+                        }
+
+                    });
+                    html += '</select>';
+
+
+                    accountInput.html(html);
+                }
+
+                if ($(this).val() == 'cash') {
+                    accountInput.html('');
+                    const cash =
+                        `<input type="text" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;
+
+                    accountInput.html(cash);
+                }
+            });
+
+            $('.addPayment').on('click', function() {
+                const add = `@include('purchase::add-payment-method', ['add' => true])`
+
+                $('.paymentsystem').append(add);
+            })
+            $(document).on('click', '.removePayment', function() {
+                $(this).parents('.payment-row').remove();
+            })
+        })
 
         function addPurchaseRow(product) {
             // calculation profit per product on product cost and product price
@@ -338,11 +383,8 @@
                 $('[name="payment_method"]').val(payment_type);
             }
         })
-        $(document).on('input', '[name="paid_amount"]', function() {
-            let total_amount = parseFloat($('[name="total_amount"]').val());
-            let paid_amount = parseFloat($(this).val());
-            let due_amount = total_amount - paid_amount;
-            $('[name="due_amount"]').val(due_amount);
+        $(document).on('input', '[name="paid_amount[]"]', function() {
+            calculateDue()
         })
 
         $(document).on('change', '[name="payment_type"]', function() {
@@ -368,6 +410,18 @@
             $('[name="total_amount"]').val(totalAmount);
         }
 
+        function calculateDue() {
+
+            let totalAmount = $('[name="total_amount"]').val();
+            let paidAmount = $('[name="paid_amount[]"]');
+
+            let dueAmount = totalAmount;
+            paidAmount.each(function() {
+                dueAmount -= parseFloat($(this).val());
+            })
+
+            $('[name="due_amount"]').val(dueAmount);
+        }
 
         // calculate profit % per row on purchase price and selling price changes
         $(document).on('input', 'input[name="unit_price[]"], input[name="selling_price[]"]', function() {

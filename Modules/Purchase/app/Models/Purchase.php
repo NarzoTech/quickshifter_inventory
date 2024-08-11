@@ -37,6 +37,10 @@ class Purchase extends Model
         'updated_by',
     ];
 
+    protected $casts = [
+        'payment_type' => 'array',
+    ];
+
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');

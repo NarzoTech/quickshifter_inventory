@@ -25,7 +25,7 @@ return new class extends Migration
             $table->decimal('paid_amount', 10, 2);
             $table->decimal('due_amount', 10, 2);
             $table->string('payment_status')->default('due');
-            $table->string('payment_type')->default('cash');
+            $table->json('payment_type')->nullable();
             $table->text('note')->nullable();
             $table->enum('status', ['pending', 'completed', 'canceled', 'return'])->default('pending');
             $table->foreignId('created_by')->constrained('admins');

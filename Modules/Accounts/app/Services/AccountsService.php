@@ -9,7 +9,7 @@ class AccountsService
     public function __construct(private Account $account) {}
     public function all()
     {
-        return $this->account;
+        return $this->account->with('bank', 'payments');
     }
 
     public function find(int $id): Account

@@ -8,6 +8,7 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Purchase\app\Models\Purchase;
@@ -52,6 +53,7 @@ class PurchaseService
             $attachment_name = time() . '.' . $attachment->getClientOriginalExtension();
             $attachment->move(public_path('uploads/purchase/'), $attachment_name);
         }
+        $paidAmount = $request->total_amount - $request->due_amount;
         $purchase = new Purchase();
         $purchase->supplier_id = $request->supplier_id;
         $purchase->warehouse_id = $request->warehouse_id;
@@ -62,7 +64,7 @@ class PurchaseService
         $purchase->items = $request->items;
         $purchase->attachment = $attachment_name;
         $purchase->total_amount = $request->total_amount;
-        $purchase->paid_amount = $request->paid_amount;
+        $purchase->paid_amount = $paidAmount;
         $purchase->due_amount = $request->due_amount;
         $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due';
         $purchase->payment_type = $request->payment_type;
@@ -101,23 +103,28 @@ class PurchaseService
             ]);
         }
 
-        if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
-            $account = $this->accountsService->all()->where('account', 'cash')->first();
-        } else {
-            $account = $this->accountsService->find($request->account_id);
+
+        // create payments
+        foreach ($request->payment_type as $key => $item) {
+            $account = Account::where('account_type', $item);
+            if ($item == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id[$key])->first();
+            }
+            $data = [
+                'payment_type' => 'purchase',
+                'purchase_id' => $purchase->id,
+                'is_paid' => 1,
+                'supplier_id' => $request->supplier_id,
+                'account_id' => $account->id,
+                'amount' => $request->paid_amount[$key],
+                'payment_date' => now()->parse($request->purchase_date),
+                'note' => $request->note,
+                'created_by' => auth('admin')->user()->id,
+            ];
+            Payment::create($data);
         }
-        // create payment data
-        Payment::create([
-            'purchase_id' => $purchase->id,
-            'supplier_id' => $request->supplier_id,
-            'account_id' => $account->id,
-            'payment_type' => 'purchase',
-            'amount' => $request->paid_amount,
-            'payment_date' => now()->parse($request->purchase_date),
-            'is_paid' => 1,
-            'note' => $request->note,
-            'created_by' => auth('admin')->user()->id,
-        ]);
 
         // update supplier balance
         $supplier = Supplier::find($request->supplier_id);
@@ -129,20 +136,22 @@ class PurchaseService
 
     public function update($request, $id)
     {
+
         DB::beginTransaction();
         try {
+            $paidAmount = $request->total_amount - $request->due_amount;
             $purchase = $this->purchase->find($id);
             $purchase->supplier_id = $request->supplier_id;
             $purchase->warehouse_id = $request->warehouse_id;
             $purchase->invoice_number = $request->invoice_number;
             $purchase->reference_no = $request->reference_no;
             $purchase->memo_no = $request->memo_no;
-            $purchase->purchase_date = $request->purchase_date;
+            $purchase->purchase_date = date($request->purchase_date);
             $purchase->items = $request->items;
             $purchase->total_amount = $request->total_amount;
-            $purchase->paid_amount = $request->paid_amount;
+            $purchase->paid_amount = $paidAmount;
             $purchase->due_amount = $request->due_amount;
-            $purchase->payment_status = $request->payment_status;
+            $purchase->payment_status = $request->due_amount == 0 ? 'paid' : 'due';
             $purchase->payment_type = $request->payment_type;
             $purchase->note = $request->note;
             $purchase->status = $request->status;
@@ -171,9 +180,30 @@ class PurchaseService
                 $product->save();
             }
 
+            // create payments
+            foreach ($request->payment_type as $key => $item) {
+                $account = Account::where('account_type', $item);
+                if ($item == 'cash') {
+                    $account = $account->first();
+                } else {
+                    $account = $account->where('id', $request->account_id[$key])->first();
+                }
+                $data = [
+                    'payment_type' => 'purchase',
+                    'purchase_id' => $purchase->id,
+                    'is_paid' => 1,
+                    'supplier_id' => $request->supplier_id,
+                    'account_id' => $account->id,
+                    'amount' => $request->paid_amount[$key],
+                    'payment_date' => now(),
+                    'created_by' => auth()->user()->id,
+                ];
+                Payment::create($data);
+            }
             DB::commit();
             return $purchase;
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             DB::rollBack();
             return $e->getMessage();
         }
