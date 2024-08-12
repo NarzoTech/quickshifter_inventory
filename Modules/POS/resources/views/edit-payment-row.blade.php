@@ -1,5 +1,4 @@
 @foreach ($sale->payment as $index => $payment)
-    {{-- @dd($payment, $accounts) --}}
     <tr data-counter="1">
         <td style="text-align: center; vertical-align: middle;">
             <select name="payment_type[]" class="form-control form-control-sm pay_by" required>

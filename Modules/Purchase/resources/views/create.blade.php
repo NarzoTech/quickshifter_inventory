@@ -159,7 +159,8 @@
                                                     <div class="form-group row">
                                                         <div class="col-md-4"></div>
                                                         <div class="col-md-3 text-md-right">
-                                                            <label for="" class="mt-2">Item Count</label>
+                                                            <label for=""
+                                                                class="mt-2">{{ __('Item Count') }}</label>
                                                         </div>
                                                         <div class="col-md-5">
                                                             <input type="number" class="form-control" name="items"
@@ -173,7 +174,8 @@
                                                     <div class="form-group row">
                                                         <div class="col-md-4"></div>
                                                         <div class="col-md-3 text-md-right">
-                                                            <label for="" class="mt-2">Total Amount</label>
+                                                            <label for=""
+                                                                class="mt-2">{{ __('Total Amount') }}</label>
                                                         </div>
                                                         <div class="col-md-5">
                                                             <input type="total_amount" class="form-control"
@@ -190,7 +192,8 @@
                                                         <div class="form-group row">
                                                             <div class="col-md-4"></div>
                                                             <div class="col-md-3 text-md-right">
-                                                                <label for="" class="mt-2">Payment Type</label>
+                                                                <label for=""
+                                                                    class="mt-2">{{ __('Payment Type') }}</label>
                                                             </div>
                                                             <div class="col-md-5 paymentsystem">
                                                                 @include('purchase::add-payment-method')
@@ -203,7 +206,8 @@
                                                     <div class="form-group row">
                                                         <div class="col-md-4"></div>
                                                         <div class="col-md-3 text-md-right">
-                                                            <label for="" class="mt-2">Due</label>
+                                                            <label for=""
+                                                                class="mt-2">{{ __('Due') }}</label>
                                                         </div>
                                                         <div class="col-md-5">
                                                             <input type="text" class="form-control" name="due_amount"

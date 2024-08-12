@@ -46,7 +46,7 @@
     }
     if ($value == 'cash' || $value == 'advance') {
         $html = '';
-        $cash = '<input type="hidden" name="account_id[]" class="form-control" value="' . $value . '" readonly>';
+        $cash = '<input type="text" name="account_id[]" class="form-control" value="' . $value . '" readonly>';
         echo $cash;
     }
 @endphp
