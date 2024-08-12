@@ -53,8 +53,8 @@ class PurchaseService
             $attachment_name = time() . '.' . $attachment->getClientOriginalExtension();
             $attachment->move(public_path('uploads/purchase/'), $attachment_name);
         }
-        $paidAmount = $request->total_amount - $request->due_amount;
         $purchase = new Purchase();
+        $paidAmount = $request->total_amount - $request->due_amount;
         $purchase->supplier_id = $request->supplier_id;
         $purchase->warehouse_id = $request->warehouse_id;
         $purchase->invoice_number = $request->invoice_number;
@@ -77,7 +77,7 @@ class PurchaseService
             $purchaseDetails = new PurchaseDetails();
             $purchaseDetails->purchase_id = $purchase->id;
             $purchaseDetails->product_id = $id;
-            $purchaseDetails->quantity = $request->stock[$index];
+            $purchaseDetails->quantity = $request->quantity[$index];
             $purchaseDetails->purchase_price = $request->unit_price[$index];
             $purchaseDetails->sale_price = $request->selling_price[$index];
             $purchaseDetails->sub_total = $request->total[$index];
@@ -86,7 +86,7 @@ class PurchaseService
             $purchaseDetails->save();
 
             $product = Product::find($id);
-            $product->stock += $request->stock[$index];
+            $product->stock += $request->quantity[$index];
             $product->save();
 
 
@@ -126,87 +126,105 @@ class PurchaseService
             Payment::create($data);
         }
 
-        // update supplier balance
-        $supplier = Supplier::find($request->supplier_id);
-        $supplier->balance += $request->due_amount;
-        $supplier->save();
-
         return $purchase;
     }
 
     public function update($request, $id)
     {
+        $purchase = $this->purchase->find($id);
 
-        DB::beginTransaction();
-        try {
-            $paidAmount = $request->total_amount - $request->due_amount;
-            $purchase = $this->purchase->find($id);
-            $purchase->supplier_id = $request->supplier_id;
-            $purchase->warehouse_id = $request->warehouse_id;
-            $purchase->invoice_number = $request->invoice_number;
-            $purchase->reference_no = $request->reference_no;
-            $purchase->memo_no = $request->memo_no;
-            $purchase->purchase_date = date($request->purchase_date);
-            $purchase->items = $request->items;
-            $purchase->total_amount = $request->total_amount;
-            $purchase->paid_amount = $paidAmount;
-            $purchase->due_amount = $request->due_amount;
-            $purchase->payment_status = $request->due_amount == 0 ? 'paid' : 'due';
-            $purchase->payment_type = $request->payment_type;
-            $purchase->note = $request->note;
-            $purchase->status = $request->status;
-            $purchase->updated_by = Auth::id();
-            $purchase->save();
-
-            PurchaseDetails::where('purchase_id', $id)->delete();
-
-            foreach ($request->items as $item) {
-                $purchaseDetails = new PurchaseDetails();
-                $purchaseDetails->purchase_id = $purchase->id;
-                $purchaseDetails->product_id = $item['product_id'];
-                $purchaseDetails->quantity = $item['quantity'];
-                $purchaseDetails->purchase_price = $item['purchase_price'];
-                $purchaseDetails->sub_total = $item['sub_total'];
-                $purchaseDetails->profit = $item['profit'];
-                $purchaseDetails->sale_price = $item['sale_price'];
-                $purchaseDetails->discount = $item['discount'];
-                $purchaseDetails->tax = $item['tax'];
-                $purchaseDetails->created_by = Auth::id();
-                $purchaseDetails->save();
-
-                $product = Product::find($item['product_id']);
-                $product->purchase_price = $item['purchase_price'];
-                $product->sale_price = $item['sale_price'];
-                $product->save();
-            }
-
-            // create payments
-            foreach ($request->payment_type as $key => $item) {
-                $account = Account::where('account_type', $item);
-                if ($item == 'cash') {
-                    $account = $account->first();
-                } else {
-                    $account = $account->where('id', $request->account_id[$key])->first();
-                }
-                $data = [
-                    'payment_type' => 'purchase',
-                    'purchase_id' => $purchase->id,
-                    'is_paid' => 1,
-                    'supplier_id' => $request->supplier_id,
-                    'account_id' => $account->id,
-                    'amount' => $request->paid_amount[$key],
-                    'payment_date' => now(),
-                    'created_by' => auth()->user()->id,
-                ];
-                Payment::create($data);
-            }
-            DB::commit();
-            return $purchase;
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            DB::rollBack();
-            return $e->getMessage();
+        $attachment_name = null;
+        if ($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment');
+            $attachment_name = file_upload($attachment, oldFile: $purchase->attachment);
         }
+
+
+        $paidAmount = $request->total_amount - $request->due_amount;
+        $purchase->supplier_id = $request->supplier_id;
+        $purchase->warehouse_id = $request->warehouse_id;
+        $purchase->invoice_number = $request->invoice_number;
+        $purchase->memo_no = $request->memo_no;
+        $purchase->reference_no = $request->reference_no;
+        $purchase->purchase_date = now()->parse($request->purchase_date);
+        $purchase->items = $request->items;
+        $purchase->attachment = $attachment_name;
+        $purchase->total_amount = $request->total_amount;
+        $purchase->paid_amount = $paidAmount;
+        $purchase->due_amount = $request->due_amount;
+        $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due';
+        $purchase->payment_type = $request->payment_type;
+        $purchase->note = $request->note;
+        $purchase->status = $request->status;
+        $purchase->updated_by = Auth::id();
+        $purchase->save();
+
+        // restore product stock
+        foreach ($purchase->purchaseDetails as $purchaseDetail) {
+            $product = Product::find($purchaseDetail->product_id);
+            $product->stock -= $purchaseDetail->quantity;
+            $product->save();
+        }
+
+        // delete old purchase details
+        $purchase->purchaseDetails()->delete();
+        $purchase->payments()->delete();
+        $purchase->stock()->delete();
+
+        // store new purchase details
+        foreach ($request->product_id as $index => $id) {
+            $purchaseDetails = new PurchaseDetails();
+            $purchaseDetails->purchase_id = $purchase->id;
+            $purchaseDetails->product_id = $id;
+            $purchaseDetails->quantity = $request->quantity[$index];
+            $purchaseDetails->purchase_price = $request->unit_price[$index];
+            $purchaseDetails->sale_price = $request->selling_price[$index];
+            $purchaseDetails->sub_total = $request->total[$index];
+            $purchaseDetails->profit = $request->profit[$index];
+            $purchaseDetails->created_by = Auth::id();
+            $purchaseDetails->save();
+
+            $product = Product::find($id);
+            $product->stock += $request->quantity[$index];
+            $product->save();
+
+
+            // create stock
+            Stock::create([
+                'purchase_id' => $purchase->id,
+                'product_id' => $product->id,
+                'quantity' => $request->stock[$index],
+                'sku' => $product->sku,
+                'purchase_price' => $request->unit_price[$index],
+                'sale_price' => $request->selling_price[$index],
+                'profit' => $request->profit[$index],
+                'created_by' => auth('admin')->user()->id,
+            ]);
+        }
+
+        // create payments
+        foreach ($request->payment_type as $key => $item) {
+            $account = Account::where('account_type', $item);
+            if ($item == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id[$key])->first();
+            }
+            $data = [
+                'payment_type' => 'purchase',
+                'purchase_id' => $purchase->id,
+                'is_paid' => 1,
+                'supplier_id' => $request->supplier_id,
+                'account_id' => $account->id,
+                'amount' => $request->paid_amount[$key],
+                'payment_date' => now()->parse($request->purchase_date),
+                'note' => $request->note,
+                'created_by' => auth('admin')->user()->id,
+            ];
+            Payment::create($data);
+        }
+
+        return $purchase;
     }
 
     public function destroy($id)

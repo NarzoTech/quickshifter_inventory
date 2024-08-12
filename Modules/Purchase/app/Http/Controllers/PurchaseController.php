@@ -88,9 +88,19 @@ class PurchaseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(PurchaseRequest $request, $id): RedirectResponse
     {
-        //
+        DB::beginTransaction();
+        try {
+            $this->purchaseService->update($request, $id);
+
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.purchase.index', [], ['messege' => 'Product Purchase successfully', 'alert-type' => 'success']);
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            DB::rollBack();
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 
     /**

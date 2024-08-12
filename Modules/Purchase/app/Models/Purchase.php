@@ -3,6 +3,7 @@
 namespace Modules\Purchase\app\Models;
 
 use App\Models\Payment;
+use App\Models\Stock;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -69,5 +70,10 @@ class Purchase extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class, 'purchase_id');
+    }
+
+    public function stock()
+    {
+        return $this->hasMany(Stock::class, 'purchase_id');
     }
 }
