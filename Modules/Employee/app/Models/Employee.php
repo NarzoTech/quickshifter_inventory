@@ -30,4 +30,29 @@ class Employee extends Model
     {
         return $this->image ? asset($this->image) : null;
     }
+    public function employeeSalary()
+    {
+        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id');
+    }
+    public function getAdvanceAmountAttribute($month = null, $year = null)
+    {
+        $month = $month ?? now()->format('F');
+        $year = $year ?? now()->format('Y');
+
+        if ($this->employeeSalary->count()) {
+            return $this->employeeSalary->where('type', 'advance')->where('month', $month)->where('year', $year)->sum('amount');
+        } else {
+
+            return 0;
+        }
+    }
+
+    // due amount
+
+    public function getDueAmountAttribute($month = null, $year = null)
+    {
+        $month = $month ?? now()->format('F');
+        $year = $year ?? now()->format('Y');
+        return $this->salary - $this->getAdvanceAmountAttribute($month, $year);
+    }
 }

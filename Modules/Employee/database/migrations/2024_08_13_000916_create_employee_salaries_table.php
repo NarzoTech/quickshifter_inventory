@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('payment_type');
             $table->unsignedBigInteger('account_id')->nullable();
             $table->float('amount', 10, 2);
+            $table->enum('type', ['salary', 'advance'])->default('salary');
             $table->string('note')->nullable();
             $table->timestamps();
         });

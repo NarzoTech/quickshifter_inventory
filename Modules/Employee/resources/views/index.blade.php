@@ -140,6 +140,14 @@
                                                             aria-labelledby="btnGroupDrop{{ $employee->id }}">
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
+
+
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
+
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
+
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
 

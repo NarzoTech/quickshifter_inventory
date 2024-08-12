@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Employee\app\Http\Controllers\EmployeeController;
+use Modules\Employee\app\Http\Controllers\EmployeeSalaryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,4 +18,7 @@ use Modules\Employee\app\Http\Controllers\EmployeeController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('employee', EmployeeController::class)->names('employee');
     Route::get('employee/status/{id}', [EmployeeController::class, 'status'])->name('employee.status');
+    Route::get('employee/{id}/salary-pay/', [EmployeeSalaryController::class, 'create'])->name('employee.salary.create');
+    Route::post('employee/{id}/salary-pay/', [EmployeeSalaryController::class, 'store'])->name('employee.salary.store');
+    Route::get('employee/{id}/salary-pay/info', [EmployeeSalaryController::class, 'salaryInfo'])->name('employee.salary.info');
 });

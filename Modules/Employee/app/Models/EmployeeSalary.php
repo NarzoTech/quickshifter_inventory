@@ -19,5 +19,11 @@ class EmployeeSalary extends Model
         'account_id',
         'amount',
         'note',
+        'type'
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 }
