@@ -1,16 +1,17 @@
-<div class="modal" id="categoryModal">
+<div class="modal" id="brandModal">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">{{ __('Create Category') }}</h4>
+                <h4 class="modal-title">{{ __('Create Brand') }}</h4>
                 <button type="button" class="close" data-dismiss="modal">{{ __('×') }}</button>
             </div>
 
             <!-- Modal body -->
             <div class="modal-body">
-                <form action="{{ route('admin.category.store') }}" method="post" id="categoryForm">
+                <form action="{{ route('admin.brand.store') }}" method="post" enctype="multipart/form-data"
+                    id="brandForm">
                     @csrf
                     <div class="row">
                         <div class="col-md-8 offset-md-2">
@@ -23,7 +24,6 @@
                                 @enderror
                             </div>
                         </div>
-
                         <div class="col-md-8 offset-md-2">
                             <div class="form-group">
                                 <label for="slug">{{ __('Status') }}<span class="text-danger">*</span></label>
@@ -40,15 +40,10 @@
                         </div>
                         <div class="col-md-8 offset-md-2">
                             <div class="form-group">
-                                <label for="parent">{{ __('Parent Id') }}</label>
-                                <select name="parent_id" id="parent" class="form-control select2">
-                                    <option value="">{{ __('Select One') }}</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">
-                                            {{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('parent')
+                                <label for="description">{{ __('Short Description') }}</label>
+                                <textarea name="description" id="description" cols="30" rows="10"
+                                    placeholder="{{ __('Enter Short Description') }}" class="form-control"></textarea>
+                                @error('description')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -60,7 +55,7 @@
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
-                <button type="submit" class="btn btn-success" form="categoryForm"><i class="fa fa-save"></i>
+                <button type="submit" class="btn btn-success" form="brandForm"><i class="fa fa-save"></i>
                     {{ __('Save') }}</button>
 
             </div>

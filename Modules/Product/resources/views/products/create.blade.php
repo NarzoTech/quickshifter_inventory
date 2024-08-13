@@ -104,14 +104,21 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="brand_id">{{ __('Brand') }}</label>
-                                                    <select name="brand_id" id="brand_id" class="form-control select2">
-                                                        <option value="">{{ __('Select Brand') }}</option>
-                                                        @foreach ($brands as $brand)
-                                                            <option value="{{ $brand->id }}">
-                                                                {{ $brand->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <div class="input-group">
+                                                        <select name="brand_id" id="brand_id" class="form-control select2">
+                                                            <option value="">{{ __('Select Brand') }}</option>
+                                                            @foreach ($brands as $brand)
+                                                                <option value="{{ $brand->id }}">
+                                                                    {{ $brand->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <a href="javascript:;" data-toggle="modal"
+                                                                data-target="#brandModal" class="btn btn-primary"><i
+                                                                    class="fa fa-plus"></i></a>
+                                                        </div>
+                                                    </div>
                                                     @error('brand_id')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -152,8 +159,8 @@
                                                 <div class="form-group">
                                                     <label for="cost">{{ __('Cost') }}
                                                         ({{ currency_icon() }})</label>
-                                                    <input type="number" name="cost" class="form-control" id="cost"
-                                                        value="{{ old('cost') }}">
+                                                    <input type="number" name="cost" class="form-control"
+                                                        id="cost" value="{{ old('cost') }}">
                                                     @error('cost')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -287,6 +294,7 @@
 
     {{-- category create modal --}}
     @include('product::products.category.create-modal')
+    @include('product::products.brand.create-modal')
 
     {{-- Media Modal Show --}}
     @if (Module::isEnabled('Media'))
@@ -350,6 +358,31 @@
                                 let html =
                                     `<option value="${response.categories.id}">${response.categories.name}</option>`
                                 $('#categories').append(html)
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function(error) {
+                            handleError(error)
+                        }
+                    })
+                })
+                $('#brandForm').on('submit', function(e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: "{{ route('admin.brand.store') }}",
+                        type: 'POST',
+                        data: $('#brandForm').serialize(),
+                        success: function(response) {
+                            if (response.status == 200) {
+                                toastr.success(response.message);
+                                $('#brandModal').modal('hide');
+                                $('#brandForm').trigger('reset');
+
+                                let html =
+                                    `<option value="${response.brand.id}">${response.brand.name}</option>`
+                                $('#brand_id').append(html)
                             } else {
                                 toastr.error(response.message);
                             }

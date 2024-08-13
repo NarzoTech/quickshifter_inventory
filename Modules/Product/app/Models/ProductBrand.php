@@ -23,8 +23,6 @@ class ProductBrand extends Model
 
     protected $appends = [
         'image_url',
-        'name',
-        'description',
     ];
     public function products()
     {

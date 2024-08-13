@@ -40,7 +40,7 @@ class BrandController extends Controller
             return view('product::products.brand.create');
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
-            return back()->with(['messege'=> 'Something Went Wrong','alert-type' => 'error']);
+            return back()->with(['messege' => 'Something Went Wrong', 'alert-type' => 'error']);
         }
     }
 
@@ -49,11 +49,13 @@ class BrandController extends Controller
      */
     public function store(BrandRequest $request)
     {
-
         try {
             $brand = $this->brandService->store($request);
 
             if ($brand->id) {
+                if ($request->ajax()) {
+                    return response()->json(['message' => 'Brand created successfully', 'status' => 200, 'brand' => $brand], 200);
+                }
                 return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.brand.create', [], [
                     'messege' => 'Brand created successfully',
                     'alert-type' => 'success',
@@ -88,10 +90,10 @@ class BrandController extends Controller
     {
         $brand = $this->brandService->find($id);
         try {
-            return view('product::products.brand.edit',compact('brand'));
+            return view('product::products.brand.edit', compact('brand'));
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
-            return back()->with(['messege'=> 'Something Went Wrong','alert-type' => 'error']);
+            return back()->with(['messege' => 'Something Went Wrong', 'alert-type' => 'error']);
         }
     }
 
