@@ -78,15 +78,23 @@
                                                 <div class="form-group">
                                                     <label for="category_id">{{ __('Category') }}<span
                                                             class="text-danger">*</span></label>
-                                                    <select name="category_id" id="categories" class="form-control select2">
-                                                        <option value="">{{ __('Select Categories') }}
-                                                        </option>
-                                                        @foreach ($categories as $cat)
-                                                            <option value="{{ $cat->id }}">
-                                                                {{ $cat->name }}
+                                                    <div class="input-group">
+                                                        <select name="category_id" id="categories"
+                                                            class="form-control select2">
+                                                            <option value="">{{ __('Select Categories') }}
                                                             </option>
-                                                        @endforeach
-                                                    </select>
+                                                            @foreach ($categories as $cat)
+                                                                <option value="{{ $cat->id }}">
+                                                                    {{ $cat->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <a href="javascript:;" data-toggle="modal"
+                                                                data-target="#categoryModal" class="btn btn-primary"><i
+                                                                    class="fa fa-plus"></i></a>
+                                                        </div>
+                                                    </div>
                                                     @error('category_id')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -277,6 +285,9 @@
         </section>
     </div>
 
+    {{-- category create modal --}}
+    @include('product::products.category.create-modal')
+
     {{-- Media Modal Show --}}
     @if (Module::isEnabled('Media'))
         @stack('media_list_html')
@@ -321,6 +332,32 @@
                             $('[name="unit_sale_id"],[name="unit_purchase_id"]').html(html)
                         }
                     });
+                })
+
+                $('#categoryForm').on('submit', function(e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: "{{ route('admin.category.store') }}",
+                        type: 'POST',
+                        data: $('#categoryForm').serialize(),
+                        success: function(response) {
+                            if (response.status == 200) {
+                                toastr.success(response.message);
+                                $('#categoryModal').modal('hide');
+                                $('#categoryForm').trigger('reset');
+
+                                let html =
+                                    `<option value="${response.categories.id}">${response.categories.name}</option>`
+                                $('#categories').append(html)
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function(error) {
+                            handleError(error)
+                        }
+                    })
                 })
             });
 

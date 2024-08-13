@@ -52,6 +52,22 @@
 
         return parseFloat(val)
     }
+
+    function handleError(error) {
+        console.log(error);
+        if (error.responseJSON) {
+            $.each(error.responseJSON.errors, function(index, data) {
+                toastr.error(data);
+            })
+        }
+    }
+
+    function convertToSlug(text) {
+        return text
+            .toLowerCase()
+            .replace(/ /g, '-')
+            .replace(/[^\w-]+/g, '');
+    }
 </script>
 
 @if ($errors->any())

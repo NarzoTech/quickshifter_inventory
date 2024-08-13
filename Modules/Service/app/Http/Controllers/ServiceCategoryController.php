@@ -5,6 +5,7 @@ namespace Modules\Service\app\Http\Controllers;
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -30,14 +31,15 @@ class ServiceCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
         try {
-            $this->serviceCategoryService->store($request->only('name'));
+            $categories = $this->serviceCategoryService->store($request->only('name'));
+
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.serviceCategory.index', [], ['messege' => 'Service Category created successfully', 'alert-type' => 'success']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());

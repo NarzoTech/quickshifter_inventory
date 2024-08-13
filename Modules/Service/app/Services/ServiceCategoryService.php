@@ -27,9 +27,9 @@ class ServiceCategoryService
         }
         return $service;
     }
-    public function store(array $data): void
+    public function store(array $data)
     {
-        $this->serviceCategory->create($data);
+        return $this->serviceCategory->create($data);
     }
 
     public function update(int $id, array $data)

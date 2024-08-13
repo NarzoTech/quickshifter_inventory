@@ -47,23 +47,21 @@ class ProductCategoryController extends Controller
         try {
             $category = $this->category->storeProductCategory($request);
             DB::commit();
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Service Category created successfully', 'categories' => $category, 'status' => 200], 200);
+            }
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.category.index', ['category' => $category->id, 'code' => getSessionLanguage()]);
-
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
             return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.category.index');
         }
-
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-
-    }
+    public function show(string $id) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -73,7 +71,6 @@ class ProductCategoryController extends Controller
         $cat = $this->category->getProductCategory($id);
         $categories = $this->category->getAllProductCategoriesForSelect();
         return view('product::products.category.edit', compact('categories', 'cat'));
-
     }
 
     /**
@@ -87,7 +84,6 @@ class ProductCategoryController extends Controller
             $this->category->updateProductCategory($request, $id);
             DB::commit();
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.category.index');
-
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
@@ -110,7 +106,6 @@ class ProductCategoryController extends Controller
             } else {
                 return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.category.index');
             }
-
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.category.index');
@@ -121,7 +116,7 @@ class ProductCategoryController extends Controller
     {
         try {
             $this->category->deleteAll($request);
-            return response()->json(['success'=> true,'message' => 'Deleted successfully'], 200);
+            return response()->json(['success' => true, 'message' => 'Deleted successfully'], 200);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             return response()->json(['message' => 'Something went wrong'], 500);
