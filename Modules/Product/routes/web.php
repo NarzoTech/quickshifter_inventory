@@ -21,8 +21,10 @@ use Modules\Product\app\Http\Controllers\UnitTypeController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
 
     // Products
-    Route::resource('product', ProductController::class);
     Route::get('product/barcode', [ProductController::class, 'barcode'])->name('product.barcode');
+    Route::get('product/barcode/print', [ProductController::class, 'barcodePrint'])->name('product.barcode.print');
+    Route::get('product/search', [ProductController::class, 'search'])->name('product.search');
+    Route::resource('product', ProductController::class);
 
     // bulk product import
 

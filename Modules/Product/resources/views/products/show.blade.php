@@ -39,31 +39,31 @@
                                             alt="Product Picture" width="100">
                                     </div>
                                     <div class="col-md-9">
-                                        <h5>Product Details</h5>
+                                        <h5>{{ __('Product Details') }}</h5>
                                         <table class="table table-bordered">
                                             <tr>
-                                                <th style="width: 35%">Name</th>
+                                                <th style="width: 35%">{{ __('Name') }}</th>
                                                 <th>{{ $product->name }}</th>
                                             </tr>
                                             <tr>
-                                                <th>Category</th>
+                                                <th>{{ __('Category') }}</th>
                                                 <td>{{ $product->category->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Brand</th>
+                                                <th>{{ __('Brand') }}</th>
                                                 <td>{{ $product->brand->name }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Unit</th>
+                                                <th>{{ __('Unit') }}</th>
                                                 <td>{{ $product->unit->name }}</td>
                                             </tr>
                                         </table>
                                         <table class="table table-bordered text-center">
                                             <tr>
-                                                <th>Barcode</th>
-                                                <th>Purchase Price</th>
-                                                <th>Selling Price</th>
-                                                <th>Qty</th>
+                                                <th>{{ __('Barcode') }}</th>
+                                                <th>{{ __('Purchase Price') }}</th>
+                                                <th>{{ __('Selling Price') }}</th>
+                                                <th>{{ __('Qty') }}</th>
                                             </tr>
                                             <tr>
                                                 <th>{{ $product->barcode }}</th>

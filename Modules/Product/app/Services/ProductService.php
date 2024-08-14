@@ -24,9 +24,18 @@ class ProductService
     {
         $this->product = $product;
     }
-    public function getProducts(): Product
+    public function getProducts()
     {
-        return $this->product;
+        $query = $this->product;
+
+        if (request('search')) {
+            $query = $query->where(function ($q) {
+                $q->where('name', 'like', '%' . request()->search . '%')
+                    ->orWhere('sku', 'like', '%' . request()->search . '%')
+                    ->orWhere('barcode', 'like', '%' . request()->search . '%');
+            });
+        }
+        return $query;
     }
 
     // get all active products

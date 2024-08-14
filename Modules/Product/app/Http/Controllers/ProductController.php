@@ -94,6 +94,7 @@ class ProductController extends Controller
     {
         try {
             $product = $this->productService->getProduct($id);
+
             return view('product::products.show', compact('product'));
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
@@ -358,4 +359,27 @@ class ProductController extends Controller
             ]);
         }
     }
+
+    // search  product
+    function search()
+    {
+        $product =  $this->productService->getProducts()->first();
+        if (!$product) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Product not found',
+            ]);
+        } else {
+            return response()->json([
+                'status' => true,
+                'data' => $product,
+            ]);
+        }
+    }
+    public function barcode()
+    {
+        return view('product::products.barcode-table');
+    }
+
+    public function barcodePrint(Request $request) {}
 }
