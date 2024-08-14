@@ -3,6 +3,7 @@
 namespace Modules\Product\app\Models;
 
 use App\Http\Resources\ProductResource;
+use App\Models\Stock;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -56,7 +57,10 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'image_url', 'stock_status', 'has_variant', 'total_stock'
+        'image_url',
+        'stock_status',
+        'has_variant',
+        'total_stock'
     ];
 
     public function getCurrentPriceAttribute()
@@ -73,6 +77,31 @@ class Product extends Model
         return $this->price;
     }
 
+    public function getAvgPurchasePriceAttribute()
+    {
+        $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->get();
+        $totalPrice = $purchase->sum('purchase_price');
+        $totalQuantity = $purchase->count();
+
+        return $totalQuantity > 0 ? $totalPrice / $totalQuantity : 0;
+    }
+
+    public function getSellingPriceAttribute()
+    {
+        $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->first();
+
+        return $purchase ? $purchase->sale_price : $this->price;
+    }
+
+    public function stockDetails(): HasMany
+    {
+        return $this->hasMany(Stock::class, 'product_id', 'id');
+    }
+
+    public function purchaseDetails(): HasMany
+    {
+        return $this->hasMany(PurchaseDetails::class, 'product_id', 'id');
+    }
 
     public function getHasVariantAttribute(): bool
     {

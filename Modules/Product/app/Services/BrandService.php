@@ -25,7 +25,12 @@ class BrandService
     // get product paginate
     public function getPaginateBrands()
     {
-        return $this->brand;
+        $brand = $this->brand->orderBy('id', 'DESC');
+        if (request()->search) {
+            $brand = $brand->where('name', 'like', '%' . request()->search . '%')->orWhere('description', 'like', '%' . request()->search . '%');
+        }
+
+        return $brand;
     }
 
     // store product brand
@@ -36,7 +41,6 @@ class BrandService
         $brand = $this->brand->create($request->all());
 
         return $brand;
-
     }
 
     public function find($id)
@@ -49,7 +53,7 @@ class BrandService
         $brand = $this->brand->find($id);
         $brand->update($request->all());
 
-        
+
         return $brand;
     }
 
@@ -86,5 +90,4 @@ class BrandService
         $ids = $request->ids;
         return $this->brand->whereIn('id', $ids)->delete();
     }
-
 }

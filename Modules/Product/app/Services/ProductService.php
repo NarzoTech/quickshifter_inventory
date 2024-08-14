@@ -33,31 +33,31 @@ class ProductService
     public function allActiveProducts($request)
     {
         $products = $this->product->where('status', 1)->with('category');
-        if ($request->has('category')) {
+        if ($request->category) {
             $products = $products->whereHas('category', function ($query) use ($request) {
                 $query->where('slug', $request->category);
             });
         }
-        if ($request->has('brand')) {
+        if ($request->brand) {
             $products = $products->whereHas('brand', function ($query) use ($request) {
                 $query->where('slug', $request->brand);
             });
         }
-        if ($request->has('min_price')) {
+        if ($request->min_price) {
             $products = $products->where('price', '>=', $request->min_price);
         }
 
-        if ($request->has('max_price')) {
+        if ($request->max_price) {
             $products = $products->where('price', '<=', $request->max_price);
         }
 
-        if ($request->has('search')) {
+        if ($request->search) {
             $products = $products->whereHas('translation', function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->search . '%');
             });
         }
 
-        if ($request->has('sort')) {
+        if ($request->sort) {
             $products = $products->orderBy('price', $request->sort);
         }
 
@@ -75,7 +75,7 @@ class ProductService
         );
         if ($request->stock) {
             Stock::create([
-                'purchase_id' => null, 
+                'purchase_id' => null,
                 'product_id' => $product->id,
                 'quantity' => $request->stock,
                 'sku' => $request->sku,

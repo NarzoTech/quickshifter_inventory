@@ -35,13 +35,13 @@
                 @include('purchase::sidebar')
             @endif
 
-            <li class="nav-item dropdown {{ Route::is('admin.products.*') ? 'active' : '' }}">
+            <li class="nav-item dropdown {{ Route::is('admin.stock.index') ? 'active' : '' }}">
                 <a href="javascript:void()" class="nav-link has-dropdown"><i
                         class="fas fa-box"></i><span>{{ __('Inventory') }}</span></a>
 
                 <ul class="dropdown-menu">
-                    <li class="{{ Route::is('admin.category*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('admin.category.index') }}">
+                    <li class="{{ Route::is('admin.stock.index') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.stock.index') }}">
                             {{ __('Stock') }}
                         </a>
                     </li>
