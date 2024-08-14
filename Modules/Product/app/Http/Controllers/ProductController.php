@@ -31,7 +31,6 @@ class ProductController extends Controller
         $this->brandService = $brandService;
         $this->unitService = $unitService;
         $this->middleware('auth:admin');
-
     }
     /**
      * Display a listing of the resource.
@@ -55,7 +54,7 @@ class ProductController extends Controller
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         $brands = $this->brandService->getActiveBrands();
         $units = $this->unitService->getParentUnits();
-        return view('product::products.create', compact('categories', 'brands','units'));
+        return view('product::products.create', compact('categories', 'brands', 'units'));
     }
 
     /**
@@ -93,7 +92,13 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $product = $this->productService->getProduct($id);
+            return view('product::products.show', compact('product'));
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            abort(500);
+        }
     }
 
     /**
@@ -106,8 +111,7 @@ class ProductController extends Controller
             $categories = $this->categoryService->getAllProductCategoriesForSelect();
             $brands = $this->brandService->getActiveBrands();
             $units = $this->unitService->getParentUnits();
-            return view('product::products.edit', compact('categories', 'brands', 'product','units'));
-
+            return view('product::products.edit', compact('categories', 'brands', 'product', 'units'));
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             abort(500);
@@ -245,7 +249,6 @@ class ProductController extends Controller
                 'messege' => 'Product Variant created successfully',
                 'alert-type' => 'success',
             ]);
-
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
@@ -295,7 +298,6 @@ class ProductController extends Controller
                 'messege' => 'Product Variant updated successfully',
                 'alert-type' => 'success',
             ]);
-
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
@@ -323,7 +325,6 @@ class ProductController extends Controller
                 'messege' => 'Product Variant deleted successfully',
                 'alert-type' => 'success',
             ]);
-
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();

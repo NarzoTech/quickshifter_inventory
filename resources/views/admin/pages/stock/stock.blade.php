@@ -78,63 +78,58 @@
 
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="{{ route('admin.employee.create') }}" class="btn btn-primary"><i
-                                            class="fa fa-plus"></i>
-                                        {{ __('Add New Employee') }}</a>
-                                </h4>
-                            </div>
-                            <div class="card-body"></div>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ __('Sl') }}</th>
-                                            <th>{{ __('Picture') }}</th>
-                                            <th>{{ __('Name') }}</th>
-                                            <th>{{ __('Avg P.P') }}</th>
-                                            <th>{{ __('Selling Price') }}</th>
-                                            {{-- <th style="display: none;">Business Branch</th> --}}
-                                            <th>{{ __('In Quantity') }}</th>
-                                            <th>{{ __('Out Quantity') }}</th>
-                                            <th>{{ __('Stock') }}</th>
-                                            <th>{{ __('Stock P.P') }}</th>
-                                            <th>{{ __('Stock S.P') }}</th>
-                                            <th>{{ __('Action') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($products as $product)
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>
-                                                    <img src="{{ asset($product->single_image) }}" alt="Product Picture"
-                                                        width="100">
-                                                </td>
-                                                <td>{{ $product->name }}</td>
-                                                <td>{{ $product->avg_purchase_price }}</td>
-                                                <td>{{ $product->selling_price }}</td>
-                                                {{-- <td style="display: none;">{{ $product->business_branch->name }}</td> --}}
-                                                <td>{{ $product->stockDetails->sum('quantity') }}</td>
-                                                <td>{{ $product->stockDetails->sum('quantity') - $product->stock }}</td>
-                                                <td>{{ $product->stock }}</td>
-                                                <td>{{ $product->stock * $product->avg_purchase_price }}</td>
-                                                <td>{{ $product->stock * $product->selling_price }}</td>
-                                                <td>
-                                                    <a href="{{ route('admin.employee.edit', $product->id) }}"
-                                                        class="btn btn-primary"><i class="fa fa-edit"></i></a>
-                                                </td>
+                                                <th>{{ __('Sl') }}</th>
+                                                <th>{{ __('Picture') }}</th>
+                                                <th>{{ __('Name') }}</th>
+                                                <th>{{ __('Avg P.P') }}</th>
+                                                <th>{{ __('Selling Price') }}</th>
+                                                {{-- <th style="display: none;">Business Branch</th> --}}
+                                                <th>{{ __('In Quantity') }}</th>
+                                                <th>{{ __('Out Quantity') }}</th>
+                                                <th>{{ __('Stock') }}</th>
+                                                <th>{{ __('Stock P.P') }}</th>
+                                                <th>{{ __('Stock S.P') }}</th>
+                                                <th>{{ __('Action') }}</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if (request()->get('par-page') !== 'all')
-                                <div class="float-right">
-
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($products as $product)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>
+                                                        <img src="{{ asset($product->single_image) }}"
+                                                            alt="Product Picture" width="100">
+                                                    </td>
+                                                    <td>{{ $product->name }}</td>
+                                                    <td>{{ $product->avg_purchase_price }}</td>
+                                                    <td>{{ $product->selling_price }}</td>
+                                                    {{-- <td style="display: none;">{{ $product->business_branch->name }}</td> --}}
+                                                    <td>{{ $product->stockDetails->sum('quantity') }}</td>
+                                                    <td>{{ $product->stockDetails->sum('quantity') - $product->stock }}
+                                                    </td>
+                                                    <td>{{ $product->stock }}</td>
+                                                    <td>{{ $product->stock * $product->avg_purchase_price }}</td>
+                                                    <td>{{ $product->stock * $product->selling_price }}</td>
+                                                    <td>
+                                                        <a href="{{ route('admin.product.show', $product->id) }}"
+                                                            class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
-                            @endif
+                                @if (request()->get('par-page') !== 'all')
+                                    <div class="float-right">
+                                        {{ $products->links() }}
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,6 +137,4 @@
             </div>
         </section>
     </div>
-
-    <x-admin.delete-modal />
 @endsection
