@@ -8,6 +8,7 @@ use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Milon\Barcode\DNS1D;
 use Modules\Product\app\Http\Requests\ProductRequest;
 use Modules\Product\app\Services\AttributeService;
 use Modules\Product\app\Services\BrandService;
@@ -381,5 +382,26 @@ class ProductController extends Controller
         return view('product::products.barcode-table');
     }
 
-    public function barcodePrint(Request $request) {}
+    public function barcodePrint(Request $request)
+    {
+
+        $setting = cache()->get('setting');
+        $products = $this->productService->getProducts()->whereIn('id', $request->product_id)->get();
+        $d = new DNS1D();
+        $codes = [];
+
+
+        foreach ($request->barcode_id as $key => $value) {
+            for ($i = 1; $i <= (int) $request->qty[$key]; $i++) {
+                $code = [
+                    'code' => $value,
+                    'qrcode' => $d->getBarcodeSVG($value, 'C39+', .53),
+                ];
+                $codes[] = $code;
+            }
+        }
+
+        $action = $request->action;
+        return view('product::products.barcode-print', compact('products', 'codes', 'setting', 'action'));
+    }
 }

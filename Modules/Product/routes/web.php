@@ -22,7 +22,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
 
     // Products
     Route::get('product/barcode', [ProductController::class, 'barcode'])->name('product.barcode');
-    Route::get('product/barcode/print', [ProductController::class, 'barcodePrint'])->name('product.barcode.print');
+    Route::post('product/barcode/print', [ProductController::class, 'barcodePrint'])->name('product.barcode.print');
     Route::get('product/search', [ProductController::class, 'search'])->name('product.search');
     Route::resource('product', ProductController::class);
 
