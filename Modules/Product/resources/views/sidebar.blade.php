@@ -6,7 +6,8 @@
             class="fas fa-newspaper"></i><span>{{ __('Manage Products') }}</span></a>
 
     <ul class="dropdown-menu">
-        <li class="{{ Route::is('admin.product.index') || Route::is('admin.product.edit') ? 'active' : '' }}">
+        <li
+            class="{{ Route::is('admin.product.index') || Route::is('admin.product.edit') || Route::is('admin.product.show') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.product.index') }}">
                 {{ __('Product List') }}
             </a>
@@ -38,10 +39,10 @@
         </li>
 
 
-        {{-- <li class="{{ Route::is('admin.product.import') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.product.import') }}">
-                {{ __('Bulk Product Import') }}
+        <li class="{{ Route::is('admin.product.barcode') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.product.barcode') }}">
+                {{ __('Print Barcode') }} / {{ __('Label') }}
             </a>
-        </li> --}}
+        </li>
     </ul>
 </li>

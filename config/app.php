@@ -170,7 +170,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
-        Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
+        Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class,
+        Milon\Barcode\BarcodeServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -188,6 +189,8 @@ return [
         // 'GoogleTranslate' => Stichoza\GoogleTranslate\GoogleTranslate::class
         'Purifier' => Mews\Purifier\Facades\Purifier::class,
         'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
+        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
 
     ])->toArray(),
 

@@ -18,10 +18,11 @@ use Modules\Product\app\Http\Controllers\UnitTypeController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin','translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
 
     // Products
     Route::resource('product', ProductController::class);
+    Route::get('product/barcode', [ProductController::class, 'barcode'])->name('product.barcode');
 
     // bulk product import
 
@@ -82,6 +83,6 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
         Route::post('attribute/value/delete', [ProductAttributeController::class, 'deleteValue'])->name('attribute.value.delete');
         Route::post('/attribute/has-value', [ProductAttributeController::class, 'checkHasValue'])->name('attribute.has-value');
         Route::resource('unit', UnitTypeController::class);
-        Route::get('unit/parent/{id}',[UnitTypeController::class,'unitByParent'])->name('unit.parent');
+        Route::get('unit/parent/{id}', [UnitTypeController::class, 'unitByParent'])->name('unit.parent');
     });
 });
