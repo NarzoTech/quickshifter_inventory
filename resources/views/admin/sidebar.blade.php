@@ -67,6 +67,24 @@
                 @include('expense::sidebar')
             @endif
 
+            <li class="nav-item dropdown {{ Route::is('admin.asset-category*') ? 'active' : '' }}">
+                <a href="javascript:void()" class="nav-link has-dropdown"><i
+                        class="fas fa-box"></i><span>{{ __('Assets') }}</span></a>
+
+                <ul class="dropdown-menu">
+                    <li class="{{ Route::is('admin.assets.*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.assets.index') }}">
+                            {{ __('Asset List') }}
+                        </a>
+                    </li>
+                    <li class="{{ Route::is('admin.asset-category*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.asset-category.index') }}">
+                            {{ __('Asset Type') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             @if (Module::isEnabled('Employee'))
                 @include('employee::sidebar')
             @endif

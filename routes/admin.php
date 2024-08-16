@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AddonsController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AssetController;
+use App\Http\Controllers\Admin\AssetTypeController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 /*  Start Admin panel Controller  */
 use App\Http\Controllers\Admin\Auth\NewPasswordController;
@@ -32,6 +34,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
         Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
+        Route::resource('asset-category', AssetTypeController::class);
+        Route::resource('assets', AssetController::class);
         Route::controller(AdminProfileController::class)->group(function () {
             Route::get('edit-profile', 'edit_profile')->name('edit-profile');
             Route::put('profile-update', 'profile_update')->name('profile-update');
