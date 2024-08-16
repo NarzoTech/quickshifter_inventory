@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Purchase List') }}</title>
+    <title>{{ __('Invoice') }}</title>
 @endsection
 
 @push('css')
@@ -15,7 +15,7 @@
                     <div class="col-5">
                         <div>
                             <div>
-                                <p class="title">Quick Shifter</p>
+                                <p class="title">{{ ucfirst($setting->app_name) }}</p>
                                 <div class="property">
 
                                     <span class="value">
@@ -41,29 +41,30 @@
                             <p class="title">Purchase</p>
                             <div class="property">
                                 <span class="key">Invoice No:</span>
-                                <span class="value">IN-12171722259126</span>
+                                <span class="value">{{ $purchase->invoice_number }}</span>
                             </div>
                             <div class="property">
                                 <span class="key">Date:</span>
-                                <span class="value">27 - Jul - 2024</span>
+                                <span
+                                    class="value">{{ now()->parse($purchase->purchase_date)->format('d - M - Y') }}</span>
                             </div>
                             <p class="subtitle">Billing To</p>
 
                             <div class="property">
                                 <span class="key">Name:</span>
-                                <span class="value">Bajaj Corner</span>
+                                <span class="value">{{ $purchase->supplier->name }}</span>
                             </div>
                             <div class="property">
                                 <span class="key">Address:</span>
-                                <span class="value"></span>
+                                <span class="value">{{ $purchase->supplier->address }}</span>
                             </div>
                             <div class="property">
                                 <span class="key">Mobile:</span>
-                                <span class="value">01858444443</span>
+                                <span class="value">{{ $purchase->supplier->phone }}</span>
                             </div>
                             <div class="property">
                                 <span class="key">Email:</span>
-                                <span class="value"></span>
+                                <span class="value">{{ $purchase->supplier->email }}</span>
                             </div>
                         </div>
                     </div>
@@ -86,93 +87,55 @@
                             </tr>
                         </thead>
 
+                        @php
+                            $unit = [];
+                            $subTotal = 0;
+                        @endphp
                         <tbody>
-                            <tr>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    1
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    Yamalube Semi Synthetic 10w40 indian
-                                    (89458139)
+                            @foreach ($purchase->purchaseDetails as $index => $details)
+                                <tr>
+                                    <td style="border-left: none !important; border-right: none !important; border-top: none !important"
+                                        class="text-center">
+                                        {{ $index + 1 }}
+                                    </td>
+                                    <td style="border-left: none !important; border-right: none !important; border-top: none !important"
+                                        class="text-center">
+                                        {{ $details->product->name }}({{ $details->product->barcode }})
+                                    </td>
+                                    <td style="border-left: none !important; border-right: none !important; border-top: none !important"
+                                        class="text-center qty" id="qty1" data-qty="">
 
 
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center qty" id="qty1" data-qty="">
+                                        @php
+                                            $unitName = $details->product->unit->name;
+                                            $unitQty = isset($unit[$unitName]) ? $unit[$unitName] : 0;
+                                            $newQty = $details->quantity + $unitQty;
+                                            $unit[$unitName] = $newQty;
 
-                                    2 1 Litre
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    635.00
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-right pr-2" id="totalPriceInvoice1">
-                                    1,270.00
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    2
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    Battery-5AH-Short-Hamko
-                                    (79996966)
-
-
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center qty" id="qty2" data-qty="">
-
-                                    3 Piece
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    1,200.00
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-right pr-2" id="totalPriceInvoice2">
-                                    3,600.00
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    3
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    Engine Oil - Yamalube - Optima - Mineral - 10W-40 - India
-                                    (21765314)
-
-
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center qty" id="qty3" data-qty="">
-
-                                    20 1 Litre
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-center">
-                                    520.00
-                                </td>
-                                <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                                    class="text-right pr-2" id="totalPriceInvoice3">
-                                    10,400.00
-                                </td>
-                            </tr>
+                                            $subTotal += $details->sub_total;
+                                        @endphp
+                                        {{ $details->quantity }} {{ $unitName }}
+                                    </td>
+                                    <td style="border-left: none !important; border-right: none !important; border-top: none !important"
+                                        class="text-center">
+                                        {{ $details->purchase_price }}
+                                    </td>
+                                    <td style="border-left: none !important; border-right: none !important; border-top: none !important"
+                                        class="text-right pr-2" id="totalPriceInvoice1">
+                                        {{ $details->sub_total }}
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                         <tfoot>
                             <td></td>
                             <td></td>
                             <td style="border-left: none !important; border-right: none !important; border-top: none !important"
                                 class="text-center qty">
-                                22 1 Litre
-                                3 Piece
+                                {{ array_sum(array_values($unit)) }}
+                                @foreach ($unit as $key => $value)
+                                    {{ $key }} {{ $value }}
+                                @endforeach
                             <td></td>
                             <td></td>
                         </tfoot>
@@ -189,7 +152,7 @@
                                 <td class="text-right pr-2"
                                     style="border:none !important; border-bottom: 1px solid #fff !important;">
                                     TK
-                                    15,270.00
+                                    {{ $subTotal }}
                                 </td>
                             </tr>
                             <tr>
@@ -211,7 +174,7 @@
                                 </td>
                                 <td class="text-right pr-2"
                                     style="border:none !important; border-bottom: 1px solid #fff !important;">
-                                    TK 15,270.00
+                                    TK {{ $subTotal }}
                                 </td>
                             </tr>
                             <tr>
@@ -221,7 +184,7 @@
                                     Paid:</td>
                                 <td class="text-right pr-2"
                                     style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important;">
-                                    TK 0.00</td>
+                                    TK {{ $purchase->paid_amount }}</td>
                             </tr>
                             <tr>
                                 <td colspan="3" style="border: none !important"></td>
@@ -231,7 +194,7 @@
                                 </td>
                                 <td class="text-right pr-2"
                                     style="border:none !important; border-bottom: 1px solid #fff !important;">
-                                    TK 15,270.00</td>
+                                    TK {{ $purchase->due_amount }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -253,20 +216,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td style="border-left: none !important; border-right: none !important"
-                                            class="text-center">1</td>
-                                        <td style="border-left: none !important; border-right: none !important"
-                                            class="text-center">Cash</td>
-                                        <td style="border-left: none !important; border-right: none !important"
-                                            class="text-center">
-
-
-                                            -
-                                        </td>
-                                        <td style="border-left: none !important; border-right: none !important"
-                                            class="text-center">0.00</td>
-                                    </tr>
+                                    @foreach ($purchase->payments as $index => $payment)
+                                        <tr>
+                                            <td style="border-left: none !important; border-right: none !important"
+                                                class="text-center">{{ $index + 1 }}</td>
+                                            <td style="border-left: none !important; border-right: none !important"
+                                                class="text-center">{{ ucfirst($payment->account->account_type) }}</td>
+                                            <td style="border-left: none !important; border-right: none !important"
+                                                class="text-center">
+                                                -
+                                            </td>
+                                            <td style="border-left: none !important; border-right: none !important"
+                                                class="text-center">TK.{{ $payment->amount }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
