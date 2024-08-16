@@ -110,4 +110,10 @@ class PurchaseController extends Controller
     {
         //
     }
+
+    public function invoice($id)
+    {
+        $purchase = $this->purchaseService->getPurchase($id);
+        return view('purchase::invoice', compact('purchase'));
+    }
 }

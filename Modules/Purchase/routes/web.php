@@ -19,6 +19,7 @@ use Modules\Purchase\app\Http\Controllers\PurchaseReturnTypeController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('purchase', PurchaseController::class)->names('purchase');
     Route::get('purchase/returns/type/list', [PurchaseReturnTypeController::class, 'index'])->name('purchase.return.type.list');
+    Route::get('purchase/{id}/invoice', [PurchaseController::class, 'invoice'])->name('purchase.invoice');
     Route::post('purchase/returns/type', [PurchaseReturnTypeController::class, 'store'])->name('purchase.return.type.store');
     Route::delete('purchase/returns/type/{id}', [PurchaseReturnTypeController::class, 'destroy'])->name('purchase.return.type.destroy');
     Route::put('purchase/returns/type/{id}', [PurchaseReturnTypeController::class, 'update'])->name('purchase.return.type.update');
@@ -27,6 +28,4 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('purchase/list/return', [PurchaseReturnController::class, 'index'])->name('purchase.return.index');
     Route::get('purchase/return/{id}', [PurchaseReturnController::class, 'create'])->name('purchase.return');
     Route::post('purchase/return/{id}', [PurchaseReturnController::class, 'store'])->name('purchase.return.store');
-
-
 });

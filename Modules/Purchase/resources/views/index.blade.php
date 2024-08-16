@@ -125,6 +125,8 @@
                                                                     data-toggle="modal"
                                                                     data-target="#showCustomer{{ $purchase->id }}">Show</a>
                                                                 <a class="dropdown-item"
+                                                                    href="{{ route('admin.purchase.invoice', $purchase->id) }}">Invoice</a>
+                                                                <a class="dropdown-item"
                                                                     href="{{ route('admin.purchase.edit', $purchase->id) }}">Edit</a>
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.purchase.return', $purchase->id) }}">Purchase
