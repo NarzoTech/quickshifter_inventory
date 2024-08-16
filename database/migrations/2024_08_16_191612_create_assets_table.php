@@ -14,11 +14,15 @@ return new class extends Migration
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('type_id');
             $table->unsignedBigInteger('account_id');
+            $table->string('payment_type');
             $table->float('amount');
             $table->text('note')->nullable();
             $table->date('date');
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by');
             $table->timestamps();
         });
     }
