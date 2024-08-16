@@ -162,4 +162,10 @@ class SalesController extends Controller
             return back()->with(['alert-type' => 'danger', 'messege' => 'Something went wrong!']);
         }
     }
+
+    public function invoice($id)
+    {
+        $sale = $this->saleService->getSales()->find($id);
+        return view('sales::invoice', compact('sale'));
+    }
 }

@@ -60,6 +60,12 @@
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item view-sale" href="javascript:;"
                                                                     data-id="{{ $sale->id }}">{{ __('View') }}</a>
+
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.sales.invoice', $sale->id) }}">{{ __('Invoice') }}</a>
+
+
                                                                 @if ($sale->saleReturns->count() == 0)
                                                                     <a class="dropdown-item"
                                                                         href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>

@@ -18,6 +18,7 @@ use Modules\Sales\app\Http\Controllers\SalesReturnController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('sales', SalesController::class)->names('sales');
+    Route::get('sales/{id}/invoice', [SalesController::class, 'invoice'])->name('sales.invoice');
     Route::get('sales/return/list', [SalesReturnController::class, 'returnList'])->name('sales.return.list');
     Route::get('sales/return/create/{sale_id}', [SalesReturnController::class, 'create'])->name('sales.return.create');
     Route::post('sales/return/store', [SalesReturnController::class, 'store'])->name('sales.return.store');
