@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Accounts\app\Models\Account;
 
 class Balance extends Model
 {
@@ -20,4 +21,9 @@ class Balance extends Model
         'amount',
         'note',
     ];
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

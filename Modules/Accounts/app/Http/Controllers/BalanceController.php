@@ -22,7 +22,19 @@ class BalanceController extends Controller
         $accounts = $this->account->all()->get();
         $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
         $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
-        return view('accounts::balance', compact('accounts', 'deposits', 'withdraws'));
+
+        $totalDeposits = Balance::where('balance_type', 'deposit')->sum('amount');
+        $totalWithdraws = Balance::where('balance_type', 'withdraw')->sum('amount');
+
+        $accountBalance = 0;
+        $accounts->map(function ($account) use (&$accountBalance) {
+            // dd($account->deposits);
+            // if ($account->account_type == 'bank') {
+            //     dd($account->deposits);
+            // }
+            $accountBalance += $account->balance();
+        });
+        return view('accounts::balance', compact('accounts', 'deposits', 'withdraws', 'totalDeposits', 'totalWithdraws', 'accountBalance'));
     }
 
 
@@ -73,12 +85,19 @@ class BalanceController extends Controller
      */
     public function edit($id)
     {
-        $accounts = $this->account->all()->get();
+        $accounts = $this->account->all()->orderBy('id', 'desc')->get();
         $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
         $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
-
+        $totalDeposits = Balance::where('balance_type', 'deposit')->sum('amount');
+        $totalWithdraws = Balance::where('balance_type', 'withdraw')->sum('amount');
         $balance = Balance::find($id);
-        return view('accounts::balance-edit', compact('accounts', 'deposits', 'withdraws', 'balance'));
+
+        $accountBalance = 0;
+        $accounts->map(function ($account) use (&$accountBalance) {
+
+            $accountBalance += $account->balance();
+        });
+        return view('accounts::balance-edit', compact('accounts', 'deposits', 'withdraws', 'balance', 'totalDeposits', 'totalWithdraws', 'accountBalance'));
     }
 
     /**
@@ -86,8 +105,19 @@ class BalanceController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
+            $account = $this->account->all()->where('account_type', 'cash')->first();
+        } else {
+            $account = $this->account->find($request->account_id);
+        }
+
         $balance = Balance::find($id);
-        $balance->update($request->except('_token'));
+
+        $data = $request->except('_token');
+        $data['updated_by'] = auth('admin')->id();
+        $data['account_id'] = $account->id;
+        $data['date'] = now()->parse($request->date);
+        $balance->update($data);
         return to_route('admin.opening-balance')->with(['messege' => 'Balance updated successfully.', 'alert-type' => 'success']);
     }
 

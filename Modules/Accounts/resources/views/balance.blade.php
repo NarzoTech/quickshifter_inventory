@@ -40,7 +40,7 @@
                                     <h4>Current Balance</h4>
                                 </div>
                                 <div class="card-body">
-                                    ৳50.00
+                                    {{ currency($accountBalance) }}
                                 </div>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                                     <h4>Total Deposit</h4>
                                 </div>
                                 <div class="card-body">
-                                    ৳50.00
+                                    {{ currency($totalDeposits) }}
                                 </div>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
                                     <h4>Total Withdraw</h4>
                                 </div>
                                 <div class="card-body">
-                                    ৳50.00
+                                    {{ currency($totalWithdraws) }}
                                 </div>
                             </div>
                         </div>
