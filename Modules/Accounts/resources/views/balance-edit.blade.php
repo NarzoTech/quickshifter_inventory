@@ -88,19 +88,25 @@
                                 </div>
 
                                 <div class="card-body">
-                                    <form method="POST" action="{{ route('admin.opening-balance.store') }}" class="">
+                                    <form method="POST" action="{{ route('admin.opening-balance.update', $balance->id) }}"
+                                        class="">
                                         @csrf
+                                        @method('PUT')
                                         <div class="form-group">
                                             <label for="">Balance Type</label>
                                             <select name="balance_type" class="form-control" required>
-                                                <option value="deposit">Deposit</option>
-                                                <option value="withdraw">Withdraw</option>
+                                                <option value="deposit"
+                                                    {{ $balance->balance_type == 'deposit' ? 'selected' : '' }}>Deposit
+                                                </option>
+                                                <option value="withdraw"
+                                                    {{ $balance->balance_type == 'withdraw' ? 'selected' : '' }}>Withdraw
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="">Date</label>
                                             <input type="date" class="form-control" name="date"
-                                                value="{{ now()->format('Y-m-d') }}" required>
+                                                value="{{ $balance->date }}" required>
                                         </div>
 
                                         {{-- <div class="form-group" style="display: none;">
@@ -117,7 +123,8 @@
                                             <select name="payment_type" id="" class="form-control">
                                                 <option value="">{{ __('Payment Type') }}</option>
                                                 @foreach (accountList() as $key => $list)
-                                                    <option value="{{ $key }}">
+                                                    <option value="{{ $key }}"
+                                                        {{ $balance->payment_type == $key ? 'selected' : '' }}>
                                                         {{ $list }}
                                                     </option>
                                                 @endforeach
@@ -125,18 +132,18 @@
                                         </div>
 
                                         <div class="form-group accounts">
-
+                                            <input type="hidden" name="account_id" value="{{ $balance->account_id }}">
                                         </div>
 
                                         <div class="form-group">
                                             <label for="">Amount</label>
                                             <input type="text" class="form-control" name="amount" required
-                                                placeholder="Amount" autocomplete="off">
+                                                placeholder="Amount" autocomplete="off" value="{{ $balance->amount }}">
                                         </div>
 
                                         <div class="form-group">
                                             <label for="">Remark</label>
-                                            <textarea name="note" rows="2" class="form-control" placeholder="Note"></textarea>
+                                            <textarea name="note" rows="2" class="form-control" placeholder="Note">{{ $balance->note }}</textarea>
                                         </div>
 
                                         <div class="text-right">
@@ -203,11 +210,11 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            @if (request()->get('par-page') !== 'all')
+                                            {{-- @if (request()->get('par-page') !== 'all')
                                                 <div class="float-right">
-                                                    {{ $deposits->onEachSide(0)->links() }}
+                                                    {{ $accounts->onEachSide(0)->links() }}
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     </div>
                                     <div role="tabpanel" class="tab-pane fade" id="profile1">
@@ -244,11 +251,6 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            @if (request()->get('par-page') !== 'all')
-                                                <div class="float-right">
-                                                    {{ $withdraws->onEachSide(0)->links() }}
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 </div>

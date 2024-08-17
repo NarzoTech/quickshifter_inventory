@@ -20,7 +20,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::resource('accounts', AccountsController::class)->names('accounts');
     Route::get('opening-balance', [BalanceController::class, 'openingBalance'])->name('opening-balance');
     Route::post('opening-balance', [BalanceController::class, 'store'])->name('opening-balance.store');
-    Route::post('opening-balance/{id}/update', [BalanceController::class, 'update'])->name('opening-balance.update');
+    Route::get('opening-balance/{id}/edit', [BalanceController::class, 'edit'])->name('opening-balance.edit');
+    Route::put('opening-balance/{id}/update', [BalanceController::class, 'update'])->name('opening-balance.update');
     Route::delete('opening-balance/{id}/destroy', [BalanceController::class, 'destroy'])->name('opening-balance.destroy');
     Route::resource('bank', BankController::class)->names('bank');
     Route::get('cashflow', [AccountsController::class, 'cashflow'])->name('cashflow');

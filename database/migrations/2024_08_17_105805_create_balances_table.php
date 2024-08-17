@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('balances', function (Blueprint $table) {
             $table->id();
             $table->enum('balance_type', ['deposit', 'withdraw'])->default('deposit');
-            $table->string('account_type');
+            $table->string('payment_type');
             $table->date('date');
             $table->unsignedBigInteger('branch_id')->nullable();
             $table->unsignedBigInteger('account_id');

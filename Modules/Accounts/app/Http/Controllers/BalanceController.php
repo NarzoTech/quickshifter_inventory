@@ -20,18 +20,12 @@ class BalanceController extends Controller
     public function openingBalance()
     {
         $accounts = $this->account->all()->get();
-        $deposits = Balance::where('balance_type', 'deposit')->get();
-        $withdraws = Balance::where('balance_type', 'withdraw')->get();
+        $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
+        $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
         return view('accounts::balance', compact('accounts', 'deposits', 'withdraws'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('accounts::create');
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -79,7 +73,12 @@ class BalanceController extends Controller
      */
     public function edit($id)
     {
-        return view('accounts::edit');
+        $accounts = $this->account->all()->get();
+        $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
+        $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
+
+        $balance = Balance::find($id);
+        return view('accounts::balance-edit', compact('accounts', 'deposits', 'withdraws', 'balance'));
     }
 
     /**
@@ -87,7 +86,9 @@ class BalanceController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        $balance = Balance::find($id);
+        $balance->update($request->except('_token'));
+        return to_route('admin.opening-balance')->with(['messege' => 'Balance updated successfully.', 'alert-type' => 'success']);
     }
 
     /**
@@ -95,6 +96,8 @@ class BalanceController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $balance = Balance::find($id);
+        $balance->delete();
+        return back()->with(['messege' => 'Balance deleted successfully.', 'alert-type' => 'success']);
     }
 }

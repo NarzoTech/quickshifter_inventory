@@ -11,7 +11,7 @@ class Balance extends Model
 
     protected $fillable = [
         'balance_type',
-        'account_type',
+        'payment_type',
         'date',
         'branch_id',
         'account_id',
