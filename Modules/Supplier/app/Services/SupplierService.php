@@ -10,9 +10,7 @@ use Modules\Supplier\app\Models\Supplier;
 
 class SupplierService
 {
-    public function __construct(private Supplier $supplier)
-    {
-    }
+    public function __construct(private Supplier $supplier) {}
 
     public function all()
     {
@@ -56,14 +54,14 @@ class SupplierService
 
         $account = $request->account_id;
 
-        if($account == 'cash' || $account == 'advance'){
+        if ($account == 'cash' || $account == 'advance') {
             $account = Account::where('account_type', $account)?->first();
-        }else{
+        } else {
             $account = Account::find($account);
         }
-        
 
-        foreach ($request->invoice_no as $index=>$invo) {
+
+        foreach ($request->invoice_no as $index => $invo) {
             $purchase = Purchase::where('invoice_number', $invo)->first();
 
             $purchase->paid_amount = $purchase->paid_amount + $request->amount[$index];
@@ -77,6 +75,7 @@ class SupplierService
                 'supplier_id' => $id,
                 'account_id' => $account->id,
                 'payment_type' => 'due_pay',
+                'is_paid' => 1,
                 'amount' => $request->amount[$index],
                 'payment_date' => now()->parse($request->payment_date),
                 'note' => $request->note,

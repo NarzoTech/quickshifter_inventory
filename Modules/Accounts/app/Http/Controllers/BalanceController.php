@@ -13,7 +13,10 @@ use Modules\Accounts\app\Services\AccountsService;
 
 class BalanceController extends Controller
 {
-    public function __construct(private AccountsService $account) {}
+    public function __construct(private AccountsService $account)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */

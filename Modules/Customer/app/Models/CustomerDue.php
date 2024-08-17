@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Customer\Database\factories\CustomerDueFactory;
+use Modules\Sales\app\Models\Sale;
 
 class CustomerDue extends Model
 {
@@ -21,6 +22,7 @@ class CustomerDue extends Model
         'invoice',
         'due_date',
         'due_amount',
+        'paid_amount',
         'status',
     ];
 
@@ -29,5 +31,10 @@ class CustomerDue extends Model
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id')->withDefault();
+    }
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'invoice', 'invoice')->withDefault();
     }
 }

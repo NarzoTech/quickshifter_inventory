@@ -22,7 +22,7 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <form method="POST" action="{{ route('admin.customer.due-receive.store', $customer->id) }}"
+                        <form method="POST" action="{{ route('admin.customer.due-receive.store') }}"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="card">
@@ -57,16 +57,18 @@
                                                                     class="custom-control-label">&nbsp;</label>
                                                             </div>
                                                         </th>
-                                                        {{-- <th>{{ __('Invoice No') }}</th> --}}
-                                                        <th>{{ __('Purchase Date') }}</th>
+                                                        <th>{{ __('Invoice No') }}</th>
+                                                        <th>{{ __('Date') }}</th>
                                                         <th>{{ __('Invoice Amount') }}</th>
                                                         <th>{{ __('Due Amount') }}</th>
-                                                        <th>{{ __('Paying Amount') }}</th>
+                                                        <th>{{ __('Receiving Amount') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="purchase_table">
+                                                    @php
+                                                        $totalDue = 0;
+                                                    @endphp
                                                     @foreach ($customer->due as $due)
-                                                        @dd($due)
                                                         <tr>
                                                             <td>
                                                                 <div class="custom-checkbox custom-control">
@@ -83,13 +85,16 @@
                                                                     readonly>
                                                             </td>
                                                             <td>
-                                                                {{ $purchase->due_date }}
+                                                                {{ $due->due_date }}
                                                             </td>
                                                             <td>
-                                                                {{ currency($purchase->due_amount) }}
+                                                                {{ currency($due->sale->grand_total) }}
                                                             </td>
                                                             <td>
-                                                                {{ currency($purchase->due_amount) }}
+                                                                @php
+                                                                    $totalDue += $due->due_amount;
+                                                                @endphp
+                                                                {{ currency($due->due_amount) }}
                                                             </td>
                                                             <td>
                                                                 <input type="text" class="form-control" name="amount[]"
@@ -113,7 +118,7 @@
                                             <div class="col-12">
                                                 <div class="form-group d-flex">
                                                     <div class="col-4">
-                                                        <label>{{ __('Total Payable') }}</label>
+                                                        <label>{{ __('Total Receivable') }}</label>
                                                     </div>
                                                     <div class="col-8">
                                                         <div class="input-group">
@@ -123,8 +128,7 @@
                                                                 </div>
                                                             </div>
                                                             <input type="number" class="form-control" name="total_payable"
-                                                                value="{{ $supplier->duePurchase->sum('due_amount') }}"
-                                                                readonly>
+                                                                value="{{ $totalDue }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -132,17 +136,17 @@
                                             <div class="col-12">
                                                 <div class="form-group row">
                                                     <div class="col-4">
-                                                        <label>{{ __('Paying Amount') }}</label>
+                                                        <label>{{ __('Receiving Amount') }}</label>
                                                     </div>
                                                     <div class="col-8">
-                                                        <input type="number" class="form-control" name="paying_amount">
+                                                        <input type="number" class="form-control" name="receiving_amount">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="form-group row">
                                                     <div class="col-4">
-                                                        <label>{{ __('Paying Date') }}</label>
+                                                        <label>{{ __('Receiving Date') }}</label>
                                                     </div>
                                                     <div class="col-8">
                                                         <input type="text" class="form-control datepicker"
@@ -151,7 +155,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-12">
-                                                @include('components.account-type')
+                                                @include('components.account-type', ['text' => 'Receive'])
                                             </div>
                                         </div>
                                     </div>
@@ -246,7 +250,7 @@
                 $('input[name="amount[]"]').val(total_due);
 
                 if (number == 0) {
-                    $('input[name="paying_amount"]').val(0);
+                    $('input[name="receiving_amount"]').val(0);
                 }
 
                 totalAmount()
@@ -280,7 +284,7 @@
             $('input[name="amount[]"]').each(function() {
                 total += parseFloat($(this).val());
             });
-            $('input[name="paying_amount"]').val(total);
+            $('input[name="receiving_amount"]').val(total);
         }
     </script>
 @endpush

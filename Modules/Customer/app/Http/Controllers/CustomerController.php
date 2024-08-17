@@ -4,6 +4,7 @@ namespace Modules\Customer\app\Http\Controllers;
 
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use App\Models\User;
 use App\Services\MailSenderService;
 use App\Traits\GetGlobalInformationTrait;
@@ -12,18 +13,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
 use Modules\Customer\app\Jobs\SendBulkEmailToUser;
 use Modules\Customer\app\Jobs\SendUserBannedMailJob;
 use Modules\Customer\app\Models\BannedHistory;
+use Modules\Customer\app\Models\CustomerDue;
 use Modules\Customer\app\Models\Vehicle;
+use Modules\Sales\app\Models\Sale;
 
 class CustomerController extends Controller
 {
     use RedirectHelperTrait;
 
-    public function __construct(private UserGroupService $userGroup, private AreaService $areaService, private Vehicle $vehicle)
+    public function __construct(private UserGroupService $userGroup, private AreaService $areaService, private Vehicle $vehicle, private AccountsService $account)
     {
         $this->middleware('auth:admin');
     }
@@ -161,9 +165,63 @@ class CustomerController extends Controller
             return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Customer Not Found', 'alert-type' => 'error']);
         }
 
-
+        $accounts = $this->account->all()->get();
         $customer = User::where('id', $request->customer)->first();
 
-        return view('customer::due-receive', compact('customer'));
+        return view('customer::due-receive', compact('customer', 'accounts'));
+    }
+
+    public function dueReceive(Request $request)
+    {
+        $request->validate([
+            'receiving_amount' => 'required',
+        ]);
+
+        $account = $request->account_id;
+
+        if ($account == 'cash' || $account == 'advance') {
+            $account = $this->account->all()->where('account_type', $account)->first();
+        } else {
+            $account = $this->account->all()->find($account);
+        }
+        foreach ($request->invoice_no as $index => $invo) {
+            $sale = Sale::where('invoice', $invo)->first();
+
+            $sale->payment_status = $sale->due_amount == $request->amount[$index] ? 'paid' : 'due';
+
+            $sale->paid_amount = $sale->paid_amount + $request->amount[$index];
+            $sale->due_amount = $sale->due_amount - $request->amount[$index];
+            $sale->save();
+
+            // create payment data
+            Payment::create([
+                'sale_id' => $sale->id,
+                'customer_id' => $sale->customer_id,
+                'account_id' => $account->id,
+                'payment_type' => 'due_receive',
+                'is_received' => 1,
+                'amount' => $request->amount[$index],
+                'payment_date' => now()->parse($request->payment_date),
+                'note' => $request->note,
+                'created_by' => auth('admin')->user()->id,
+            ]);
+
+            // update customer due amount
+            $due = CustomerDue::where('invoice', $invo)->first();
+            $due->due_amount = $due->due_amount - $request->amount[$index];
+            $due->paid_amount = $due->paid_amount + $request->amount[$index];
+            $due->save();
+        }
+
+        return to_route('admin.customer.due-receive.list')->with([
+            'messege' => 'Customer due receive successfully.',
+            'alert-type' => 'success'
+        ]);
+    }
+
+    public function dueReceiveList()
+    {
+        $list  = Payment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->get();
+        return $list;
     }
 }

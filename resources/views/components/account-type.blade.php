@@ -1,6 +1,12 @@
 <div class="form-group row">
     <div class="col-4">
-        <label>{{ __('Paying With') }}</label>
+        <label>
+            @if ($text)
+                {{ $text . 'With' }}
+            @else
+                {{ __('Paying With') }}
+            @endif
+        </label>
     </div>
     <div class="col-8">
         <select name="payment_type" id="" class="form-control">
