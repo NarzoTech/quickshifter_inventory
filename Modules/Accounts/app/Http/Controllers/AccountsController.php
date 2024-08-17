@@ -35,7 +35,14 @@ class AccountsController extends Controller
         $cardAccounts = $this->accountsService->all()->where('account_type', 'card')->with('payments')->get();
         $advanceAccounts = $this->accountsService->all()->where('account_type', 'advance')->with('payments')->get();
 
-        return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccount', 'mobileAccounts', 'cardAccounts', 'advanceAccounts'));
+        $totalAccounts = $this->accountsService->all()->get();
+
+        $accountBalance = 0;
+        $totalAccounts->map(function ($account) use (&$accountBalance) {
+            $accountBalance += $account->balance();
+        });
+
+        return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccount', 'mobileAccounts', 'cardAccounts', 'advanceAccounts', 'accountBalance'));
     }
 
     /**

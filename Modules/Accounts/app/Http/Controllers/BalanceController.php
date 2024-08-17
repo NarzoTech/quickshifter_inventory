@@ -28,10 +28,6 @@ class BalanceController extends Controller
 
         $accountBalance = 0;
         $accounts->map(function ($account) use (&$accountBalance) {
-            // dd($account->deposits);
-            // if ($account->account_type == 'bank') {
-            //     dd($account->deposits);
-            // }
             $accountBalance += $account->balance();
         });
         return view('accounts::balance', compact('accounts', 'deposits', 'withdraws', 'totalDeposits', 'totalWithdraws', 'accountBalance'));

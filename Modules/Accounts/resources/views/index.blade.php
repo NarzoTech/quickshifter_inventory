@@ -77,7 +77,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
+                    <div class="col-12 col-md-6">
                         <div class="card">
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
@@ -94,6 +94,29 @@
                                             <th class="text-center">
                                                 <a href="https://amarsolution.com/account-type/ledger/1358"
                                                     class="btn btn-sm btn-info">Ledger</a>
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                                @if (request()->get('par-page') !== 'all')
+                                    <div class="float-right">
+                                        {{ $accounts->onEachSide(0)->links() }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive table-invoice">
+                                    <table class="table table-bordered mt-4" cellspacing="0" width="100%">
+                                        <tr class="theme-primary">
+                                            <th class="text-center">Total Amount</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">
+                                                <h4 class="header-title">{{ currency($accountBalance) }}</h4>
                                             </th>
                                         </tr>
                                     </table>
