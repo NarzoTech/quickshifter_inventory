@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Accounts\app\Http\Controllers\AccountsController;
+use Modules\Accounts\app\Http\Controllers\BalanceController;
 use Modules\Accounts\app\Http\Controllers\BankController;
 
 /*
@@ -17,6 +18,10 @@ use Modules\Accounts\app\Http\Controllers\BankController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('accounts', AccountsController::class)->names('accounts');
+    Route::get('opening-balance', [BalanceController::class, 'openingBalance'])->name('opening-balance');
+    Route::post('opening-balance', [BalanceController::class, 'store'])->name('opening-balance.store');
+    Route::post('opening-balance/{id}/update', [BalanceController::class, 'update'])->name('opening-balance.update');
+    Route::delete('opening-balance/{id}/destroy', [BalanceController::class, 'destroy'])->name('opening-balance.destroy');
     Route::resource('bank', BankController::class)->names('bank');
     Route::get('cashflow', [AccountsController::class, 'cashflow'])->name('cashflow');
 });
