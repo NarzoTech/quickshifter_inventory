@@ -221,7 +221,14 @@ class CustomerController extends Controller
 
     public function dueReceiveList()
     {
-        $list  = Payment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->get();
-        return $list;
+        $payments  = Payment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->paginate(20);
+        return view('customer::due-list', compact('payments'));
+    }
+
+    public function dueReceiveEdit($id)
+    {
+        $payment = Payment::findOrFail($id);
+        $accounts = $this->account->all()->get();
+        return view('customer::due-receive-edit', compact('payment', 'accounts'));
     }
 }

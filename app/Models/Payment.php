@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Accounts\app\Models\Account;
 use Modules\Purchase\app\Models\Purchase;
+use Modules\Sales\app\Models\Sale;
 use Modules\Supplier\app\Models\Supplier;
 use Mollie\Api\Resources\Customer;
 
@@ -61,5 +62,10 @@ class Payment extends Model
     public function updatedBy()
     {
         return $this->belongsTo(Admin::class, 'updated_by')->withDefault();
+    }
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'sale_id')->withDefault();
     }
 }

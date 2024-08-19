@@ -23,6 +23,9 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('customers-due-receive/create', [CustomerController::class, 'dueReceiveForm'])->name('customer.due-receive');
     Route::post('customers-due-receive', [CustomerController::class, 'dueReceive'])->name('customer.due-receive.store');
     Route::get('customer/due-receive', [CustomerController::class, 'dueReceiveList'])->name('customer.due-receive.list');
+    Route::get('customer-due-receive/edit/{id}', [CustomerController::class, 'dueReceiveEdit'])->name('customer.due-receive.edit');
+    Route::post('customer-due-receive/update/{id}', [CustomerController::class, 'dueReceiveUpdate'])->name('customer.due-receive.update');
+    Route::delete('customer-due-receive/delete/{id}', [CustomerController::class, 'dueReceiveDelete'])->name('customer.due-receive.delete');
     Route::resource('customerGroup', CustomerGroupController::class);
     Route::resource('vehicle', VehicleController::class);
     Route::resource('area', AreaController::class);
