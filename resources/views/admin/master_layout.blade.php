@@ -54,7 +54,7 @@
                             </a>
                         </li>
                         <li class="dropdown dropdown-list-toggle">
-                            <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                            <a href="{{ route('admin.stock.index') }}" class="nav-link nav-link-lg">
                                 <i class="fas fa-box"></i> {{ __('Stock') }}</i>
                             </a>
                         </li>
@@ -64,7 +64,7 @@
                             </a>
                         </li>
                         <li class="dropdown dropdown-list-toggle">
-                            <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                            <a href="{{ route('admin.sales.return.list') }}" class="nav-link nav-link-lg">
                                 <i class="fas fa-shopping-bag"></i> {{ __('Return Orders') }}</i>
                             </a>
                         </li>
