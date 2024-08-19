@@ -60,7 +60,8 @@ class Product extends Model
         'image_url',
         'stock_status',
         'has_variant',
-        'total_stock'
+        'total_stock',
+        'current_price',
     ];
 
     public function getCurrentPriceAttribute()

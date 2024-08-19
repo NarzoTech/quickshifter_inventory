@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\QuotationController;
 use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\WarehouseController;
@@ -34,6 +35,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
         Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
+        Route::resource('quotation', QuotationController::class);
         Route::resource('asset-category', AssetTypeController::class);
         Route::resource('assets', AssetController::class);
         Route::controller(AdminProfileController::class)->group(function () {

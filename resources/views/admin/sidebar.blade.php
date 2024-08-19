@@ -63,6 +63,24 @@
             @if (Module::isEnabled('Accounts'))
                 @include('accounts::sidebar')
             @endif
+            <li class="nav-item dropdown {{ Route::is('admin.quotation*') ? 'active' : '' }}">
+                <a href="javascript:void()" class="nav-link has-dropdown"><i
+                        class="fas fa-box"></i><span>{{ __('Quotations') }}</span></a>
+
+                <ul class="dropdown-menu">
+                    <li class="{{ Route::is('admin.quotation.create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.quotation.create') }}">
+                            {{ __('Add Quotation') }}
+                        </a>
+                    </li>
+                    <li
+                        class="{{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.quotation.index') }}">
+                            {{ __('Quotation Manage') }}
+                        </a>
+                    </li>
+                </ul>
+            </li>
             @if (Module::isEnabled('Expense'))
                 @include('expense::sidebar')
             @endif
