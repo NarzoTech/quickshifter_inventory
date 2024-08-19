@@ -322,6 +322,20 @@
                     </td>
                 </tr>
             `;
+
+            // check if product is already added
+            if ($('#purchase_table tr').length > 0) {
+                let isProductAdded = false;
+                $('#purchase_table tr').each(function() {
+                    let product_id = $(this).find('input[name="product_id[]"]').val();
+                    if (product_id == product.id) {
+                        isProductAdded = true;
+                    }
+                });
+                if (isProductAdded) {
+                    return;
+                }
+            }
             $('#purchase_table').append(tr);
             calculateTotalAmount();
         }
