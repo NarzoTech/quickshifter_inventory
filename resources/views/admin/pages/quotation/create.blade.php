@@ -48,13 +48,21 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>{{ __('quotation Status') }}</label>
-                                                <select class="form-control" name="status">
-                                                    <option value="">{{ __('Select Status') }}</option>
-                                                    <option value="1" selected>{{ __('Pending') }}</option>
-                                                    <option value="2">{{ __('Received') }}</option>
-                                                </select>
-                                                @error('status')
+                                                <label>{{ __('Date') }}</label>
+                                                <input type="text" class="form-control datepicker" name="date"
+                                                    value="{{ date('d-m-Y') }}">
+                                                @error('date')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Note') }}</label>
+                                                <textarea name="note" id="note" class="form-control" cols="30" rows="10"></textarea>
+                                                @error('note')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>

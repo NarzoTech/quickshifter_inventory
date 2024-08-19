@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QuotationRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Modules\Product\app\Models\Product;
@@ -32,9 +33,14 @@ class QuotationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(QuotationRequest $request)
     {
-        //
+
+        try {
+            // create quotation
+        } catch (\Exception $ex) {
+            //throw $th;
+        }
     }
 
     /**
