@@ -1,7 +1,7 @@
 <div class="form-group row">
     <div class="col-4">
         <label>
-            @if ($text)
+            @if (isset($text))
                 {{ $text . 'With' }}
             @else
                 {{ __('Paying With') }}

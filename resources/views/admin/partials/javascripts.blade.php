@@ -124,3 +124,18 @@
         localStorage.setItem('sidebarScrollPos', sidebar.scrollTop);
     };
 </script>
+
+<script>
+    function handleStatus(route) {
+        $.ajax({
+            url: route,
+            type: 'post',
+            success: function(res) {
+                toastr.success(res.message);
+            },
+            error: function(err) {
+                handleError(err)
+            }
+        })
+    }
+</script>

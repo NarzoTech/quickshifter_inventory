@@ -111,7 +111,7 @@ class SupplierController extends Controller
     }
 
     public function duePayStore(Request $request, $id)
-    {        
+    {
         $rule = [
             'invoice_no' => 'required|array',
             'invoice_no.*' => 'required',
@@ -148,5 +148,19 @@ class SupplierController extends Controller
     {
         $payments = $this->supplierService->duePayHistory();
         return view('supplier::due-pay-history', compact('payments'));
+    }
+
+    public function changeStatus($id)
+    {
+        $supplier = $this->supplierService->find($id);
+
+        $status = $supplier->status == 1 ? 0 : 1;
+
+        $supplier->status = $status;
+        $supplier->save();
+
+        $notification = $status == 1 ? 'Supplier activated' : 'Supplier deactivated';
+
+        return response()->json(['status' => 'success', 'message' => $notification]);
     }
 }

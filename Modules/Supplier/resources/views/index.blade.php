@@ -97,6 +97,8 @@
                                                 <th colspan="2">{{ __('Purchase') }}</th>
                                                 <th colspan="2">{{ __('Purchase Return') }}</th>
                                                 <th rowspan="2">{{ __('Total Due') }}</th>
+                                                <th rowspan="2">{{ __('Advance') }}</th>
+                                                <th rowspan="2">{{ __('Due Dismiss') }}</th>
                                                 <th rowspan="2">{{ __('Action') }}</th>
                                             </tr>
                                             <tr>
@@ -108,10 +110,12 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($suppliers as $index => $supplier)
-                                            @php
-                                                $totalReturn = $supplier->purchaseReturn->sum('return_amount');
-                                                $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
-                                            @endphp
+                                                @php
+                                                    $totalReturn = $supplier->purchaseReturn->sum('return_amount');
+                                                    $totalReturnPaid = $supplier->purchaseReturn->sum(
+                                                        'received_amount',
+                                                    );
+                                                @endphp
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $supplier->name }}</td>
@@ -121,6 +125,8 @@
                                                     <td>{{ currency($totalReturn) }}</td>
                                                     <td>{{ currency($totalReturnPaid) }}</td>
                                                     <td>{{ currency($supplier->total_due - $totalReturn) }}</td>
+                                                    <td>{{ currency($supplier->total_advance) }}</td>
+                                                    <td>{{ currency($supplier->total_due_dismiss) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $supplier->id }}" type="button"
@@ -138,8 +144,15 @@
                                                                     data-toggle="modal"
                                                                     data-target="#editSupplier{{ $supplier->id }}">Edit</a>
 
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                    onclick="status('{{ $supplier->id }}')"
+                                                                    data-status="{{ $supplier->id }}">
+                                                                    {{ $supplier->status == 1 ? 'Deactivated' : 'Activate' }}
+                                                                </a>
+                                                                @if($supplier->total_due - $totalReturn)
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
+                                                                @endif
                                                                 <a class="dropdown-item"
                                                                     href="#">{{ __('Sales') }}</a>
                                                                 <a href="javascript:;" data-toggle="modal"
@@ -449,6 +462,16 @@
         <script>
             function deleteData(id) {
                 $("#deleteForm").attr("action", '{{ route('admin.suppliers.destroy', '') }}' + "/" + id)
+            }
+
+            function status(id) {
+                handleStatus("{{ route('admin.suppliers.status', '') }}/" + id)
+
+                let status = $('[data-status=' + id + ']').text()
+                // remove whitespaces using regex
+                status = status.replaceAll(/\s/g, '');
+                $('[data-status=' + id + ']').text(status != 'Deactivated' ? 'Deactivated' :
+                    'Activate')
             }
         </script>
     @endpush
