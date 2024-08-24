@@ -144,14 +144,18 @@
                                                                     data-toggle="modal"
                                                                     data-target="#editSupplier{{ $supplier->id }}">Edit</a>
 
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.suppliers.advance', $supplier->id) }}">{{ __('Advance') }}</a>
+
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     onclick="status('{{ $supplier->id }}')"
                                                                     data-status="{{ $supplier->id }}">
                                                                     {{ $supplier->status == 1 ? 'Deactivated' : 'Activate' }}
                                                                 </a>
-                                                                @if($supplier->total_due - $totalReturn)
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
+
+                                                                @if ($supplier->total_due - $totalReturn)
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
                                                                 @endif
                                                                 <a class="dropdown-item"
                                                                     href="#">{{ __('Sales') }}</a>

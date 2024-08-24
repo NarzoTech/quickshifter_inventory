@@ -7,12 +7,18 @@ use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
 use Modules\Purchase\app\Models\Purchase;
 use Modules\Supplier\app\Models\Supplier;
+use Modules\Supplier\app\Models\SupplierPayment;
 
 class SupplierService
 {
     public function __construct(private Supplier $supplier) {}
 
     public function all()
+    {
+        return $this->supplier->where('status', 1)->with('purchaseReturn');
+    }
+
+    public function allSupplier()
     {
         return $this->supplier->with('purchaseReturn');
     }
@@ -88,5 +94,51 @@ class SupplierService
     {
         $list  = Payment::whereNotNull('purchase_id')->where('payment_type', 'due_pay')->get();
         return $list;
+    }
+
+    public function genInvoiceNumber()
+    {
+        $number = 001;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $purchase = SupplierPayment::latest()->first();
+        if ($purchase) {
+            $purchaseInvoice = $purchase->invoice;
+
+            // split the invoice number
+            $split_invoice = explode('-', $purchaseInvoice);
+            $invoice_number = (int) $split_invoice[1] + 1;
+            $invoice_number = $prefix . $invoice_number;
+        }
+
+        return $invoice_number;
+    }
+
+
+    public function advancePay(Request $request, $id)
+    {
+        $account = $request->account_id;
+
+        if ($account == 'cash' || $account == 'advance') {
+            $account = Account::where('account_type', $account)?->first();
+        } else {
+            $account = Account::find($account);
+        }
+
+        // create payment data
+        SupplierPayment::create([
+            'supplier_id' => $id,
+            'account_id' => $account->id,
+            'payment_type' => $request->refund_amount != null ? 'advance_refund' : 'advance_pay',
+            'is_paid' => $request->refund_amount != null ? 0 : 1,
+            'is_received' => $request->refund_amount != null ? 1 : 0,
+            'amount' => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
+            'account_type' => accountList()[$account->account_type],
+            'note' => $request->note,
+            'created_by' => auth('admin')->user()->id,
+            'payment_date' => now()->parse($request->date),
+            'invoice' => $this->genInvoiceNumber()
+        ]);
     }
 }

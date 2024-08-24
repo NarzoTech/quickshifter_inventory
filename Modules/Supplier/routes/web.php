@@ -20,6 +20,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::post('suppliers/status/{id}', [SupplierController::class, 'changeStatus'])->name('suppliers.status');
     Route::get('suppliers/due-pay/{id}', [SupplierController::class, 'duePay'])->name('suppliers.due-pay');
     Route::post('suppliers/due-pay-store/{id}', [SupplierController::class, 'duePayStore'])->name('suppliers.due-pay-store');
+    Route::get('suppliers/advance/{id}', [SupplierController::class, 'advance'])->name('suppliers.advance');
+    Route::post('suppliers/advance-store/{id}', [SupplierController::class, 'advanceStore'])->name('supplier.advance.pay');
 
     Route::get('suppliers/due-pay-history', [SupplierController::class, 'duePayHistory'])->name('suppliers.due-pay-history');
     Route::resource('supplierGroup', SupplierGroupController::class);

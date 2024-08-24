@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->boolean('guest')->default(false);
             $table->decimal('balance', 10, 2)->default(0);
+            $table->decimal('advance', 10, 2)->default(0);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->softDeletes();
