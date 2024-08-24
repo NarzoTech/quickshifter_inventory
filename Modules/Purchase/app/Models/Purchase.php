@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Product\app\Models\Product;
 use Modules\Purchase\Database\factories\PurchaseFactory;
 use Modules\Supplier\app\Models\Supplier;
+use Modules\Supplier\app\Models\SupplierPayment;
 
 class Purchase extends Model
 {
@@ -69,7 +70,7 @@ class Purchase extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'purchase_id');
+        return $this->hasMany(SupplierPayment::class, 'purchase_id');
     }
 
     public function stock()

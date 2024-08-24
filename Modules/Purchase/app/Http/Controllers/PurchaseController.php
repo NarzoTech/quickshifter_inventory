@@ -108,7 +108,16 @@ class PurchaseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $this->purchaseService->destroy($id);
+
+            DB::commit();
+            return back()->with(['messege' => 'Product Purchase deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->with(['messege' => 'Something went wrong', 'alert-type' => 'error']);
+        }
     }
 
     public function invoice($id)

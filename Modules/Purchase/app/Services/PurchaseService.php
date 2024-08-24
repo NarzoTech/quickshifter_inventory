@@ -2,6 +2,7 @@
 
 namespace Modules\Purchase\app\Services;
 
+use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
 use App\Models\Warehouse;
@@ -129,6 +130,26 @@ class PurchaseService
             SupplierPayment::create($data);
         }
 
+        // create Ledger
+
+        $lastLedger = Ledger::latest()->first();
+        $openingBalance = $lastLedger ? $lastLedger->closing_balance : 0;
+
+        $ledger = new Ledger();
+        $ledger->supplier_id = $request->supplier_id;
+        $ledger->opening_balance = $openingBalance;
+        $ledger->closing_balance = $openingBalance + $request->due_amount;
+        $ledger->debit_amount = $request->due_amount;
+        $ledger->credit_amount = $paidAmount;
+        $ledger->amount = $request->total_amount;
+        $ledger->invoice_type = 'purchase';
+        $ledger->invoice_url = route('admin.purchase.invoice', $purchase->id);
+        $ledger->invoice_no = $request->invoice_number;
+        $ledger->note = $request->note;
+        $ledger->date = now()->parse($request->purchase_date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
+
         return $purchase;
     }
 
@@ -229,21 +250,27 @@ class PurchaseService
             SupplierPayment::create($data);
         }
 
+
+
         return $purchase;
     }
 
     public function destroy($id)
     {
-        DB::beginTransaction();
-        try {
-            $this->purchase->find($id)->delete();
-            PurchaseDetails::where('purchase_id', $id)->delete();
-            DB::commit();
-            return true;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return $e->getMessage();
+        // restore product stock
+        foreach ($this->purchase->find($id)->purchaseDetails as $purchaseDetail) {
+            $product = Product::find($purchaseDetail->product_id);
+            $product->stock -= $purchaseDetail->quantity;
+            $product->save();
         }
+
+        PurchaseDetails::where('purchase_id', $id)?->delete();
+        Stock::where('purchase_id', $id)?->delete();
+        SupplierPayment::where('purchase_id', $id)?->delete();
+
+        // delete ledger
+        Ledger::where('invoice_no', $this->purchase->find($id)->invoice_number)->delete();
+        $this->purchase->find($id)->delete();
     }
 
     public function genInvoiceNumber()

@@ -299,7 +299,7 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.customers.destroy', '') }}' + "/" + id)
+                $("#deleteForm").attr("action", '{{ route('admin.purchase.destroy', '') }}' + "/" + id)
             }
         </script>
     @endpush
