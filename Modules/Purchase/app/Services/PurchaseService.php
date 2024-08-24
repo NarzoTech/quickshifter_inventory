@@ -19,6 +19,7 @@ use Modules\Product\app\Services\ProductService;
 use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Purchase\app\Models\PurchaseReturnDetails;
 use Modules\Purchase\app\Models\PurchaseReturnType;
+use Modules\Supplier\app\Models\SupplierPayment;
 
 class PurchaseService
 {
@@ -122,8 +123,10 @@ class PurchaseService
                 'payment_date' => now()->parse($request->purchase_date),
                 'note' => $request->note,
                 'created_by' => auth('admin')->user()->id,
+                'account_type' => accountList()[$item],
+                'invoice' => $request->invoice_number,
             ];
-            Payment::create($data);
+            SupplierPayment::create($data);
         }
 
         return $purchase;
@@ -220,8 +223,10 @@ class PurchaseService
                 'payment_date' => now()->parse($request->purchase_date),
                 'note' => $request->note,
                 'created_by' => auth('admin')->user()->id,
+                'invoice' => $request->invoice_number,
+                'account_type' => accountList()[$item],
             ];
-            Payment::create($data);
+            SupplierPayment::create($data);
         }
 
         return $purchase;

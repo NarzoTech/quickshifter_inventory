@@ -29,9 +29,4 @@ class SupplierPayment extends Model
         'created_by',
         'updated_by',
     ];
-
-    protected static function newFactory(): SupplierPaymentFactory
-    {
-        //return SupplierPaymentFactory::new();
-    }
 }

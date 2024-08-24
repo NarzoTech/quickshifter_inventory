@@ -125,7 +125,7 @@
                                                     <td>{{ currency($totalReturn) }}</td>
                                                     <td>{{ currency($totalReturnPaid) }}</td>
                                                     <td>{{ currency($supplier->total_due - $totalReturn) }}</td>
-                                                    <td>{{ currency($supplier->total_advance) }}</td>
+                                                    <td>{{ currency($supplier->advance) }}</td>
                                                     <td>{{ currency($supplier->total_due_dismiss) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">

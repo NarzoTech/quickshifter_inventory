@@ -51,7 +51,14 @@ class Supplier extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'supplier_id');
+        return $this->hasMany(SupplierPayment::class, 'supplier_id');
+    }
+
+    public function getAdvanceAttribute()
+    {
+        $advance = $this->payments()->where('payment_type', 'advance_pay')->sum('amount');
+        $advance_return = $this->payments()->where('payment_type', 'advance_refund')->sum('amount');
+        return $advance - $advance_return;
     }
 
     public function getTotalPurchaseAttribute()
@@ -74,8 +81,8 @@ class Supplier extends Model
         return $this->hasMany(Purchase::class, 'supplier_id')->where('payment_status', 'due');
     }
 
-    public function purchaseReturn(){
+    public function purchaseReturn()
+    {
         return $this->hasMany(PurchaseReturn::class);
     }
-
 }
