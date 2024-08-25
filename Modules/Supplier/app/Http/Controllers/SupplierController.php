@@ -4,6 +4,7 @@ namespace Modules\Supplier\app\Http\Controllers;
 
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Models\Ledger;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -207,5 +208,13 @@ class SupplierController extends Controller
             DB::rollBack();
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.suppliers.index', [], ['messege' => 'Advance payment failed.', 'alert-type' => 'error']);
         }
+    }
+
+    public function ledger($id)
+    {
+        $supplier = $this->supplierService->find($id);
+
+        $ledgers = Ledger::where('supplier_id', $supplier->id)->orderBy('date', 'desc')->paginate(20);
+        return view('supplier::ledger', compact('supplier', 'ledgers'));
     }
 }

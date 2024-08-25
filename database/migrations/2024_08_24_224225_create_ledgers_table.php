@@ -20,6 +20,7 @@ return new class extends Migration
             $table->float('debit_amount')->default(0);
             $table->float('credit_amount')->default(0);
             $table->float('amount')->default(0);
+            $table->float('incremental_due')->default(0);
             $table->string('invoice_type')->nullable();
             $table->text('invoice_url')->nullable();
             $table->text('invoice_no')->nullable();

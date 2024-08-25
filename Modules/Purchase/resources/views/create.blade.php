@@ -426,6 +426,7 @@
                 totalAmount += parseFloat($(this).val());
             });
             $('[name="total_amount"]').val(totalAmount);
+            $('[name="due_amount"]').val(totalAmount);
         }
 
         function calculateDue() {
@@ -435,7 +436,7 @@
 
             let dueAmount = totalAmount;
             paidAmount.each(function() {
-                dueAmount -= parseFloat($(this).val());
+                dueAmount -= parseFloat($(this).val() || 0);
             })
 
             $('[name="due_amount"]').val(dueAmount);

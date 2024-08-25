@@ -147,6 +147,9 @@
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.suppliers.advance', $supplier->id) }}">{{ __('Advance') }}</a>
 
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.suppliers.ledger', $supplier->id) }}">{{ __('Ledger') }}</a>
+
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     onclick="status('{{ $supplier->id }}')"
                                                                     data-status="{{ $supplier->id }}">

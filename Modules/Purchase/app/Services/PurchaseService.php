@@ -49,6 +49,7 @@ class PurchaseService
     }
     public function store($request)
     {
+        // dd($request->all());
         $attachment_name = null;
         if ($request->hasFile('attachment')) {
             $attachment = $request->file('attachment');
@@ -68,12 +69,14 @@ class PurchaseService
         $purchase->total_amount = $request->total_amount;
         $purchase->paid_amount = $paidAmount;
         $purchase->due_amount = $request->due_amount;
-        $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due';
+        $purchase->payment_status = $paidAmount == $request->total_amount ? 'paid' : 'due';
         $purchase->payment_type = $request->payment_type;
         $purchase->note = $request->note;
         $purchase->status = $request->status;
         $purchase->created_by = Auth::id();
         $purchase->save();
+
+        $this->updateLedger($request, $purchase->id, 0, $request->total_amount, 'purchase');
 
         foreach ($request->product_id as $index => $id) {
             $purchaseDetails = new PurchaseDetails();
@@ -130,8 +133,9 @@ class PurchaseService
             SupplierPayment::create($data);
         }
 
-        // update ledger
-        $this->updateLedger($request, $purchase->id, $paidAmount);
+        if ($paidAmount > 0) {
+            $this->updateLedger($request, $purchase->id, $paidAmount, 0, 'purchase payment');
+        }
 
         return $purchase;
     }
@@ -390,20 +394,20 @@ class PurchaseService
     }
 
 
-    public function updateLedger($request, $id, $paidAmount)
+    public function updateLedger($request, $id, $creditAmount, $debitAmount, $type = 'purchase')
     {
         $purchase = $this->purchase->find($id);
 
         // check if ledger already exist
 
-        $ledger = Ledger::where('supplier_id', $request->supplier_id)
-            ->where('invoice_type', 'purchase')
-            ->where('invoice_no', $purchase->invoice_number)
-            ->first();
-        if ($ledger) {
-            // delete ledger
-            $ledger->delete();
-        }
+        // $ledger = Ledger::where('supplier_id', $request->supplier_id)
+        //     ->where('invoice_type', 'purchase')
+        //     ->where('invoice_no', $purchase->invoice_number)
+        //     ->first();
+        // if ($ledger) {
+        //     // delete ledger
+        //     $ledger->delete();
+        // }
 
         $lastLedger = Ledger::latest()->first();
         $openingBalance = $lastLedger ? $lastLedger->closing_balance : 0;
@@ -411,14 +415,15 @@ class PurchaseService
         $ledger = new Ledger();
         $ledger->supplier_id = $request->supplier_id;
         $ledger->opening_balance = $openingBalance;
-        $ledger->closing_balance = $openingBalance + $request->due_amount;
-        $ledger->debit_amount = $request->due_amount;
-        $ledger->credit_amount = $paidAmount;
+        $ledger->closing_balance = $openingBalance + $debitAmount;
+        $ledger->debit_amount = $debitAmount;
+        $ledger->credit_amount = $creditAmount;
         $ledger->amount = $request->total_amount;
-        $ledger->invoice_type = 'purchase';
+        $ledger->invoice_type = $type;
         $ledger->invoice_url = route('admin.purchase.invoice', $purchase->id);
         $ledger->invoice_no = $request->invoice_number;
         $ledger->note = $request->note;
+        $ledger->incremental_due = $openingBalance + $debitAmount - $creditAmount;
         $ledger->date = now()->parse($request->purchase_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();

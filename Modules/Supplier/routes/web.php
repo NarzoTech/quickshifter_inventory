@@ -23,6 +23,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('suppliers/advance/{id}', [SupplierController::class, 'advance'])->name('suppliers.advance');
     Route::post('suppliers/advance-store/{id}', [SupplierController::class, 'advanceStore'])->name('supplier.advance.pay');
 
+    Route::get('suppliers/ledger/{id}', [SupplierController::class, 'ledger'])->name('suppliers.ledger');
     Route::get('suppliers/due-pay-history', [SupplierController::class, 'duePayHistory'])->name('suppliers.due-pay-history');
     Route::resource('supplierGroup', SupplierGroupController::class);
 });
