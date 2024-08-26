@@ -37,4 +37,9 @@ class Ledger extends Model
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
+
+    public function details()
+    {
+        return $this->hasMany(LedgerDetails::class, 'ledger_id', 'id');
+    }
 }

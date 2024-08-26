@@ -118,7 +118,7 @@ class SupplierController extends Controller
             'invoice_no' => 'required|array',
             'invoice_no.*' => 'required',
             'amount' => 'required|array',
-            'amount.*' => 'required',
+            'amount.*' => 'numeric',
             'payment_date' => 'required|date',
             'paying_amount' => 'required',
             'payment_type' => 'required',

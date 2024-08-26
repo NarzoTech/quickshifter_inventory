@@ -22,7 +22,8 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <form method="POST" action="{{ route('admin.suppliers.due-pay-store',$supplier->id) }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('admin.suppliers.due-pay-store', $supplier->id) }}"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="card">
                                 <div class="card-header">
@@ -90,9 +91,8 @@
                                                                 {{ currency($purchase->due_amount) }}
                                                             </td>
                                                             <td>
-                                                                <input type="text" class="form-control"
-                                                                    name="amount[]"
-                                                                    value="">
+                                                                <input type="text" class="form-control" name="amount[]"
+                                                                    value="0">
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -122,7 +122,8 @@
                                                                 </div>
                                                             </div>
                                                             <input type="number" class="form-control" name="total_payable"
-                                                                value="{{ $supplier->duePurchase->sum('due_amount') }}" readonly>
+                                                                value="{{ $supplier->duePurchase->sum('due_amount') }}"
+                                                                readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -232,7 +233,7 @@
                     $('.delete-section').removeClass('d-flex');
                 }
 
-                
+
                 // get the due amount of selected items
                 let total_due = 0;
                 $('input[name="select"]:checked').each(function() {
@@ -240,23 +241,29 @@
                     // remove icon
                     due = due.replace(/[^0-9.]/g, '');
                     total_due += parseFloat(due);
-                });
-                $('input[name="amount[]"]').val(total_due);
 
-                if(number == 0){
+                    // set the total due amount to nearest input field
+                    $(this).closest('tr').find('input[name="amount[]"]').val(due);
+                });
+
+
+
+                // $('input[name="amount[]"]').val(total_due);
+
+                if (number == 0) {
                     $('input[name="paying_amount"]').val(0);
                 }
 
                 totalAmount()
             });
 
-            $('[name="amount[]"]').on('input',function(){
+            $('[name="amount[]"]').on('input', function() {
                 const value = $(this).val();
 
-                if(value > 0){
-                    $(this).closest('tr').find('input[name="select"]').prop('checked',true);
-                }else{
-                    $(this).closest('tr').find('input[name="select"]').prop('checked',false);
+                if (value > 0) {
+                    $(this).closest('tr').find('input[name="select"]').prop('checked', true);
+                } else {
+                    $(this).closest('tr').find('input[name="select"]').prop('checked', false);
                 }
 
                 // check checkbox-all if all are checked
@@ -273,10 +280,10 @@
         });
 
 
-        function totalAmount(){
+        function totalAmount() {
             let total = 0;
-            $('input[name="amount[]"]').each(function(){
-                total += parseFloat($(this).val());
+            $('input[name="amount[]"]').each(function() {
+                total += parseFloat($(this).val() || 0);
             });
             $('input[name="paying_amount"]').val(total);
         }

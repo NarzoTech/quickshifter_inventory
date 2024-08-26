@@ -2,6 +2,7 @@
 
 namespace Modules\Supplier\app\Services;
 
+use App\Models\Ledger;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
@@ -51,6 +52,7 @@ class SupplierService
 
     public function duePay(Request $request, $id)
     {
+
         $supplier = $this->supplier->find($id);
 
         $supplier->balance = $supplier->balance - $request->paying_amount;
@@ -67,7 +69,28 @@ class SupplierService
         }
 
 
+        // create Ledger
+        $ledger = new Ledger();
+        $ledger->supplier_id = $id;
+        $ledger->amount = $request->paying_amount;
+        $ledger->invoice_type = 'Due Payment';
+        $ledger->is_paid = 1;
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->note = $request->note;
+        $ledger->due_amount -= $request->paying_amount;
+        $ledger->date = now()->parse($request->payment_date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
+
+        $ledger->invoice_url = route('admin.suppliers.ledger-details', $id);
+        $ledger->save();
+
+        // create payment
         foreach ($request->invoice_no as $index => $invo) {
+
+            if (isset($request->amount[$index]) && $request->amount[$index] == 0) {
+                continue;
+            }
             $purchase = Purchase::where('invoice_number', $invo)->first();
 
             $purchase->paid_amount = $purchase->paid_amount + $request->amount[$index];
@@ -76,7 +99,7 @@ class SupplierService
             $purchase->save();
 
             // create payment data
-            Payment::create([
+            SupplierPayment::create([
                 'purchase_id' => $purchase->id,
                 'supplier_id' => $id,
                 'account_id' => $account->id,
@@ -86,6 +109,12 @@ class SupplierService
                 'payment_date' => now()->parse($request->payment_date),
                 'note' => $request->note,
                 'created_by' => auth('admin')->user()->id,
+            ]);
+
+            // create ledger details
+            $ledger->details()->create([
+                'invoice' => $invo,
+                'amount' => $request->amount[$index],
             ]);
         }
     }
@@ -140,5 +169,25 @@ class SupplierService
             'payment_date' => now()->parse($request->date),
             'invoice' => $this->genInvoiceNumber()
         ]);
+    }
+
+
+    public function genLedgerInvoiceNumber()
+    {
+        $number = 001;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $purchase = Ledger::where('invoice_type', 'Due Payment')->latest()->first();
+        if ($purchase) {
+            $purchaseInvoice = $purchase->invoice_no;
+
+            // split the invoice number
+            $split_invoice = explode('-', $purchaseInvoice);
+            $invoice_number = (int) $split_invoice[1] + 1;
+            $invoice_number = $prefix . $invoice_number;
+        }
+
+        return $invoice_number;
     }
 }

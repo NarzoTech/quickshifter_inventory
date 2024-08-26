@@ -104,7 +104,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @php
+                                                $due = 0;
+                                            @endphp
                                             @foreach ($ledgers as $ledger)
+                                                @php
+                                                    $due += $ledger->due_amount;
+                                                @endphp
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $ledger->date }}</td>
@@ -115,12 +121,12 @@
                                                     </td>
                                                     <td>{{ $ledger->note }}</td>
                                                     <td>
-                                                        @if ($ledger->invoice_type == 'purchase')
+                                                        @if ($ledger->invoice_type == 'purchase' || $ledger->invoice_type == 'Due Payment')
                                                             -
                                                         @endif
                                                         {{ currency($ledger->amount) }}
                                                     </td>
-                                                    <td>{{ currency($ledger->due_amount) }}</td>
+                                                    <td>{{ currency($due) }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
