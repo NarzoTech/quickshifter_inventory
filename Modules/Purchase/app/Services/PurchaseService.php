@@ -75,7 +75,7 @@ class PurchaseService
         $purchase->created_by = Auth::id();
         $purchase->save();
 
-        $this->updateLedger($request, $purchase->id, 0, $request->total_amount, 'purchase');
+        $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
 
         foreach ($request->product_id as $index => $id) {
             $purchaseDetails = new PurchaseDetails();
@@ -132,10 +132,6 @@ class PurchaseService
             SupplierPayment::create($data);
         }
 
-        if ($paidAmount > 0) {
-            $this->updateLedger($request, $purchase->id, $paidAmount, 0, 'purchase payment');
-        }
-
         return $purchase;
     }
 
@@ -170,7 +166,7 @@ class PurchaseService
         $purchase->save();
 
 
-        $this->updateLedger($request, $purchase->id, 0, $request->total_amount, 'purchase');
+        $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
 
         // restore product stock
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
@@ -396,7 +392,7 @@ class PurchaseService
     }
 
 
-    public function updateLedger($request, $id, $creditAmount, $debitAmount, $type = 'purchase')
+    public function updateLedger($request, $id, $paidAmount, $type = 'purchase')
     {
         $purchase = $this->purchase->find($id);
 
@@ -411,21 +407,15 @@ class PurchaseService
         //     $ledger->delete();
         // }
 
-        $lastLedger = Ledger::latest()->first();
-        $openingBalance = $lastLedger ? $lastLedger->closing_balance : 0;
-
         $ledger = new Ledger();
         $ledger->supplier_id = $request->supplier_id;
-        $ledger->opening_balance = $openingBalance;
-        $ledger->closing_balance = $openingBalance + $debitAmount;
-        $ledger->debit_amount = $debitAmount;
-        $ledger->credit_amount = $creditAmount;
-        $ledger->amount = $request->total_amount;
+        $ledger->amount = $paidAmount;
         $ledger->invoice_type = $type;
+        $ledger->is_paid = 1;
         $ledger->invoice_url = route('admin.purchase.invoice', $purchase->id);
         $ledger->invoice_no = $request->invoice_number;
         $ledger->note = $request->note;
-        $ledger->incremental_due = $openingBalance + $debitAmount - $creditAmount;
+        $ledger->due_amount = $request->due_amount;
         $ledger->date = now()->parse($request->purchase_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();

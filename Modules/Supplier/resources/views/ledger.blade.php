@@ -115,12 +115,12 @@
                                                     </td>
                                                     <td>{{ $ledger->note }}</td>
                                                     <td>
-                                                        @if ($ledger->invoice_type == 'purchase payment')
+                                                        @if ($ledger->invoice_type == 'purchase')
                                                             -
                                                         @endif
                                                         {{ currency($ledger->amount) }}
                                                     </td>
-                                                    <td>{{ currency($ledger->incremental_due) }}</td>
+                                                    <td>{{ currency($ledger->due_amount) }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
