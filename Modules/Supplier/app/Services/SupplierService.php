@@ -82,7 +82,7 @@ class SupplierService
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
 
-        $ledger->invoice_url = route('admin.suppliers.ledger-details', $id);
+        $ledger->invoice_url = route('admin.suppliers.ledger-details', $ledger->id);
         $ledger->save();
 
         // create payment

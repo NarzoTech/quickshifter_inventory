@@ -30,16 +30,21 @@ class Ledger extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+        return $this->belongsTo(Customer::class, 'customer_id', 'id')->withDefault();
     }
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault();
     }
 
     public function details()
     {
         return $this->hasMany(LedgerDetails::class, 'ledger_id', 'id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(Admin::class, 'created_by', 'id')->withDefault();
     }
 }
