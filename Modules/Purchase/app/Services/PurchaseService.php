@@ -49,7 +49,6 @@ class PurchaseService
     }
     public function store($request)
     {
-        // dd($request->all());
         $attachment_name = null;
         if ($request->hasFile('attachment')) {
             $attachment = $request->file('attachment');
@@ -170,6 +169,9 @@ class PurchaseService
         $purchase->updated_by = Auth::id();
         $purchase->save();
 
+
+        $this->updateLedger($request, $purchase->id, 0, $request->total_amount, 'purchase');
+
         // restore product stock
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
             $product = Product::find($purchaseDetail->product_id);
@@ -239,7 +241,7 @@ class PurchaseService
         }
 
         // update ledger
-        $this->updateLedger($request, $purchase->id, $paidAmount);
+        // $this->updateLedger($request, $purchase->id, $paidAmount);
 
         return $purchase;
     }

@@ -15,12 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('supplier_id')->nullable();
-            $table->float('opening_balance')->default(0);
-            $table->float('closing_balance')->default(0);
-            $table->float('debit_amount')->default(0);
-            $table->float('credit_amount')->default(0);
             $table->float('amount')->default(0);
-            $table->float('incremental_due')->default(0);
+            $table->boolean('is_paid')->default(0);
+            $table->boolean('is_received')->default(0);
+            $table->float('due_amount')->default(0);
             $table->string('invoice_type')->nullable();
             $table->text('invoice_url')->nullable();
             $table->text('invoice_no')->nullable();
