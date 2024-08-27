@@ -44,7 +44,7 @@ class User extends Model
     }
     public function area()
     {
-        return $this->belongsTo(Area::class, 'area_id');
+        return $this->belongsTo(Area::class, 'area_id')->withDefault();
     }
     public function vehicle()
     {

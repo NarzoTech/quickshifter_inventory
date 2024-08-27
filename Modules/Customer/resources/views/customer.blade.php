@@ -94,8 +94,9 @@
                                                 <th rowspan="2">{{ __('SN') }}</th>
                                                 <th rowspan="2">{{ __('Name') }}</th>
                                                 <th rowspan="2">{{ __('Phone') }}</th>
-                                                <th colspan="4">{{ __('Total Sale') }}</th>
-                                                <th colspan="3">{{ __('Total Sale Return') }}</th>
+                                                <th rowspan="2">{{ __('Area') }}</th>
+                                                <th colspan="5">{{ __('Sale') }}</th>
+                                                <th colspan="3">{{ __('Sale Return') }}</th>
                                                 <th rowspan="2">{{ __('Total Due') }}</th>
                                                 <th rowspan="2">{{ __('Action') }}</th>
                                             </tr>
@@ -103,6 +104,7 @@
                                                 <th>{{ __('Total') }}</th>
                                                 <th>{{ __('Pay') }}</th>
                                                 <th>{{ __('Due') }}</th>
+                                                <th>{{ __('Dismiss') }}</th>
                                                 <th>{{ __('Advance') }}</th>
                                                 <th>{{ __('Total') }}</th>
                                                 <th>{{ __('Pay') }}</th>
@@ -115,6 +117,7 @@
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $user->name }}</td>
                                                     <td>{{ $user->phone }}</td>
+                                                    <td>{{ $user->area->name }}</td>
                                                     <td>{{ currency($user->sales->sum('grand_total')) }}</td>
                                                     <td>{{ currency($user->total_paid) }}</td>
                                                     <td>{{ currency($user->total_due) }}</td>
