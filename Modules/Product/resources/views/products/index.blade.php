@@ -28,11 +28,13 @@
                                                 <th>{{ __('SN') }}</th>
                                                 <th>{{ __('Photo') }}</th>
                                                 <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Sku') }}</th>
+                                                <th>{{ __('Barcode') }}</th>
+                                                <th>{{ __('Stock Qty') }}</th>
+                                                <th>{{ __('Price') }}</th>
+                                                <th>{{ __('After Disc. P.') }}</th>
                                                 <th>{{ __('Brand') }}</th>
                                                 <th>{{ __('Category') }}</th>
-                                                <th>{{ __('Unit') }}</th>
-                                                <th>{{ __('Stock Quantity') }}</th>
+                                                {{-- <th>{{ __('Sub Category') }}</th> --}}
                                                 <th>{{ __('Status') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>
@@ -45,11 +47,12 @@
                                                     <td> <img class="rounded-circle" src="{{ $product->singleImage }}"
                                                             alt="" width="100px" height="100px"></td>
                                                     <td>{{ $product->name }} </td>
-                                                    <td>{{ $product->sku }}</td>
+                                                    <td>{{ $product->barcode }}</td>
+                                                    <td>{{ $product->stock }}{{ $product->unit->ShortName }}</td>
+                                                    <td>{{ $product->current_price }}</td>
+                                                    <td>{{ $product->current_price }}</td>
                                                     <td>{{ $product->brand->name }}</td>
                                                     <td>{{ $product->category->name }}</td>
-                                                    <td>{{ $product->unit->name }}</td>
-                                                    <td>{{ $product->stock }}{{ $product->unit->ShortName }}</td>
                                                     <td>
                                                         @if ($product->status == 1)
                                                             <a href="javascript:;"
@@ -70,9 +73,7 @@
                                                         @endif
                                                     </td>
                                                     <td class="d-flex justify-content-center align-items-center">
-                                                        <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
-                                                            class="btn btn-primary btn-sm mr-2"><i class="fa fa-edit"
-                                                                aria-hidden="true"></i></a>
+
 
                                                         <button type="button" data-toggle="modal"
                                                             @if ($product->orders->count() > 0) data-target="#canNotDeleteModal"
@@ -91,9 +92,24 @@
 
                                                             <div class="dropdown-menu" x-placement="top-start"
                                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -131px, 0px);">
-                                                                <a class="dropdown-item has-icon"
-                                                                    href="{{ route('admin.product-variant', $product->id) }}"><i
-                                                                        class="fas fa-cog"></i>{{ __('Product Variant') }}</a>
+                                                                <a href="javascript:;" class="dropdown-item">
+                                                                    {{ __('View') }}</a>
+
+                                                                <a href="javascript:;" class="dropdown-item"></i>
+                                                                    {{ __('Details') }}</a>
+
+                                                                <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
+                                                                    class="dropdown-item">
+
+                                                                    {{ __('Edit') }}</a>
+
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                    onclick="status('{{ $product->id }}')"
+                                                                    data-status="{{ $product->id }}">
+                                                                    {{ $product->status == 1 ? 'Disable' : 'Enable' }}
+                                                                </a>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.product-variant', $product->id) }}">{{ __('Product Variant') }}</a>
                                                             </div>
                                                         </div>
 
@@ -144,6 +160,16 @@
             var url = '{{ route('admin.product.destroy', ':id') }}';
             url = url.replace(':id', id);
             $("#deleteForm").attr('action', url);
+        }
+
+        function status(id) {
+            handleStatus("{{ route('admin.product.status', '') }}/" + id)
+
+            let status = $('[data-status=' + id + ']').text()
+            // remove whitespaces using regex
+            status = status.replaceAll(/\s/g, '');
+            $('[data-status=' + id + ']').text(status != 'Disable' ? 'Disable' :
+                'Enable')
         }
     </script>
 @endpush

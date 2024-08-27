@@ -404,4 +404,18 @@ class ProductController extends Controller
         $action = $request->action;
         return view('product::products.barcode-print', compact('products', 'codes', 'setting', 'action'));
     }
+
+
+    public function status($id)
+    {
+        $product = $this->productService->getProduct($id);
+        $status = $product->status == 1 ? 0 : 1;
+
+        $product->status = $status;
+        $product->save();
+
+        $notification = $status == 1 ? 'Product Enabled' : 'Product Disabled';
+
+        return response()->json(['status' => 'success', 'message' => $notification]);
+    }
 }
