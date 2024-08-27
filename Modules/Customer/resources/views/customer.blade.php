@@ -137,17 +137,38 @@
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $user->id }}">
+
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#showCustomer{{ $user->id }}">Show</a>
+
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editCustomer{{ $user->id }}">Edit</a>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
+
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
                                                                     Receive</a>
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Dismiss</a>
+
+
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                    onclick="status('{{ $user->id }}')"
+                                                                    data-status="{{ $user->id }}">
+                                                                    {{ $user->status == 1 ? 'Deactivated' : 'Activate' }}
+                                                                </a>
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
+
                                                                 <a href="javascript:;" data-toggle="modal"
                                                                     data-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $user->id }})">
@@ -367,6 +388,16 @@
         <script>
             function deleteData(id) {
                 $("#deleteForm").attr("action", '{{ route('admin.customers.destroy', '') }}' + "/" + id)
+            }
+
+            function status(id) {
+                handleStatus("{{ route('admin.customers.status', '') }}/" + id)
+
+                let status = $('[data-status=' + id + ']').text()
+                // remove whitespaces using regex
+                status = status.replaceAll(/\s/g, '');
+                $('[data-status=' + id + ']').text(status != 'Deactivated' ? 'Deactivated' :
+                    'Activate')
             }
         </script>
     @endpush

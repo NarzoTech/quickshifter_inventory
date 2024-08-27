@@ -231,4 +231,18 @@ class CustomerController extends Controller
         $accounts = $this->account->all()->get();
         return view('customer::due-receive-edit', compact('payment', 'accounts'));
     }
+
+    public function changeStatus($id)
+    {
+        $user = User::find($id);
+
+        $status = $user->status == 1 ? 0 : 1;
+
+        $user->status = $status;
+        $user->save();
+
+        $notification = $status == 1 ? 'Customer activated' : 'Customer deactivated';
+
+        return response()->json(['status' => 'success', 'message' => $notification]);
+    }
 }
