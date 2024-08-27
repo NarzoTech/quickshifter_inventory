@@ -398,16 +398,16 @@ class PurchaseService
 
         // check if ledger already exist
 
-        // $ledger = Ledger::where('supplier_id', $request->supplier_id)
-        //     ->where('invoice_type', 'purchase')
-        //     ->where('invoice_no', $purchase->invoice_number)
-        //     ->first();
-        // if ($ledger) {
-        //     // delete ledger
-        //     $ledger->delete();
-        // }
+        $ledger = Ledger::where('supplier_id', $request->supplier_id)
+            ->where('invoice_type', 'purchase')
+            ->where('invoice_no', $purchase->invoice_number)
+            ->first();
 
-        $ledger = new Ledger();
+        if (!$ledger) {
+            $ledger = new Ledger();
+        }
+
+
         $ledger->supplier_id = $request->supplier_id;
         $ledger->amount = $paidAmount;
         $ledger->invoice_type = $type;
