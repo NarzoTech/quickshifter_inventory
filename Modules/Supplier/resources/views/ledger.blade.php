@@ -121,7 +121,10 @@
                                                     </td>
                                                     <td>{{ $ledger->note }}</td>
                                                     <td>
-                                                        @if ($ledger->invoice_type == 'purchase' || $ledger->invoice_type == 'Due Payment')
+                                                        @if (
+                                                            $ledger->invoice_type == 'purchase' ||
+                                                                $ledger->invoice_type == 'Due Payment' ||
+                                                                $ledger->invoice_type == 'Advance Payment')
                                                             -
                                                         @endif
                                                         {{ currency($ledger->amount) }}

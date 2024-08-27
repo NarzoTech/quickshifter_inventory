@@ -132,13 +132,16 @@ class SupplierService
         $invoice_number = $prefix . $number;
 
         $purchase = SupplierPayment::latest()->first();
+
         if ($purchase) {
             $purchaseInvoice = $purchase->invoice;
 
-            // split the invoice number
-            $split_invoice = explode('-', $purchaseInvoice);
-            $invoice_number = (int) $split_invoice[1] + 1;
-            $invoice_number = $prefix . $invoice_number;
+            if ($purchaseInvoice) {
+                // split the invoice number
+                $split_invoice = explode('-', $purchaseInvoice);
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
         }
 
         return $invoice_number;
@@ -147,6 +150,7 @@ class SupplierService
 
     public function advancePay(Request $request, $id)
     {
+
         $account = $request->account_id;
 
         if ($account == 'cash' || $account == 'advance') {
@@ -154,7 +158,6 @@ class SupplierService
         } else {
             $account = Account::find($account);
         }
-
         // create payment data
         SupplierPayment::create([
             'supplier_id' => $id,
@@ -169,6 +172,25 @@ class SupplierService
             'payment_date' => now()->parse($request->date),
             'invoice' => $this->genInvoiceNumber()
         ]);
+
+        // create ledger
+
+        $ledger = new Ledger();
+        $ledger->supplier_id = $id;
+        $ledger->amount = $request->paying_amount ?? $request->refund_amount;
+        $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
+        $ledger->is_paid = $request->refund_amount != null ? 0 : 1;
+        $ledger->is_received = $request->refund_amount != null ? 1 : 0;
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->note = $request->note;
+        if ($request->refund_amount != null) {
+            $ledger->due_amount += $request->refund_amount;
+        } else {
+            $ledger->due_amount -= $request->paying_amount;
+        }
+        $ledger->date = now()->parse($request->date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
     }
 
 
@@ -182,10 +204,12 @@ class SupplierService
         if ($purchase) {
             $purchaseInvoice = $purchase->invoice_no;
 
-            // split the invoice number
-            $split_invoice = explode('-', $purchaseInvoice);
-            $invoice_number = (int) $split_invoice[1] + 1;
-            $invoice_number = $prefix . $invoice_number;
+            if ($purchaseInvoice) {
+                // split the invoice number
+                $split_invoice = explode('-', $purchaseInvoice);
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
         }
 
         return $invoice_number;

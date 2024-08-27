@@ -81,7 +81,7 @@
                                                     <input class="form-control input_number valid"
                                                         placeholder="Refund Advance" type="number" id="refund_amount"
                                                         aria-required="true" aria-invalid="false" autocomplete="off"
-                                                        name="refund_amount" max="0" step="0.01">
+                                                        name="refund_amount" min="0" step="0.01">
                                                 </div>
                                             </div>
                                             <div class="form-group">
