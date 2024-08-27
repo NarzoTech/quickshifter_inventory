@@ -4,15 +4,20 @@ namespace Modules\Customer\app\Http\Controllers;
 
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\User;
 use App\Services\MailSenderService;
 use App\Traits\GetGlobalInformationTrait;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
@@ -20,6 +25,7 @@ use Modules\Customer\app\Jobs\SendBulkEmailToUser;
 use Modules\Customer\app\Jobs\SendUserBannedMailJob;
 use Modules\Customer\app\Models\BannedHistory;
 use Modules\Customer\app\Models\CustomerDue;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Customer\app\Models\Vehicle;
 use Modules\Sales\app\Models\Sale;
 
@@ -244,5 +250,142 @@ class CustomerController extends Controller
         $notification = $status == 1 ? 'Customer activated' : 'Customer deactivated';
 
         return response()->json(['status' => 'success', 'message' => $notification]);
+    }
+
+    public function advance($id)
+    {
+        $customer = User::find($id);
+        $accounts = $this->account->all()->with('bank')->get();
+        return view('customer::advance', compact('customer', 'accounts'));
+    }
+
+    public function advanceStore(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'advance' => 'nullable',
+            'paying_amount' => 'nullable',
+            'refund_amount' => 'nullable',
+            'date' => 'required',
+            'total_amount' => 'required',
+            'payment_type' => 'required',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if (is_null($request->paying_amount) && is_null($request->refund_amount)) {
+                $validator->errors()->add('paying_amount', 'Either Receiving Amount or Refund Amount must be provided.');
+                $validator->errors()->add('refund_amount', 'Either Receiving Amount or Refund Amount must be provided.');
+            } elseif (!is_null($request->paying_amount) && !is_null($request->refund_amount)) {
+                $validator->errors()->add('paying_amount', 'Only one of Receiving Amount or Refund Amount can be provided.');
+                $validator->errors()->add('refund_amount', 'Only one of Receiving Amount or Refund Amount can be provided.');
+            }
+        });
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        DB::beginTransaction();
+        try {
+            $this->advancePay($request, $id);
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customers.index', [], ['messege' => 'Advance payment successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customers.index', [], ['messege' => 'Advance payment failed.', 'alert-type' => 'error']);
+        }
+    }
+
+
+    public function advancePay(Request $request, $id)
+    {
+        $account = $request->account_id;
+
+        if ($account == 'cash' || $account == 'advance') {
+            $account = Account::where('account_type', $account)?->first();
+        } else {
+            $account = Account::find($account);
+        }
+
+
+        // create payment data
+        CustomerPayment::create([
+            'customer_id' => $id,
+            'account_id' => $account->id,
+            'payment_type' => $request->refund_amount != null ? 'advance_refund' : 'advance_receive',
+            'is_paid' => $request->refund_amount != null ? 0 : 1,
+            'is_received' => $request->refund_amount != null ? 1 : 0,
+            'amount' => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
+            'account_type' => accountList()[$account->account_type],
+            'note' => $request->note,
+            'created_by' => auth('admin')->user()->id,
+            'payment_date' => now()->parse($request->date),
+            'invoice' => $this->genInvoiceNumber()
+        ]);
+
+
+
+        // create ledger
+
+        $ledger = new Ledger();
+        $ledger->customer_id = $id;
+        $ledger->amount = $request->paying_amount ?? $request->refund_amount;
+        $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
+        $ledger->is_paid = $request->refund_amount != null ? 1 : 0;
+        $ledger->is_received = $request->refund_amount != null ? 0 : 1;
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->note = $request->note;
+        if ($request->refund_amount != null) {
+            $ledger->due_amount += $request->refund_amount;
+        } else {
+            $ledger->due_amount -= $request->paying_amount;
+        }
+        $ledger->date = now()->parse($request->date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
+    }
+
+    public function genInvoiceNumber()
+    {
+        $number = 001;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $purchase = CustomerPayment::latest()->first();
+
+        if ($purchase) {
+            $purchaseInvoice = $purchase->invoice;
+
+            if ($purchaseInvoice) {
+                // split the invoice number
+                $split_invoice = explode('-', $purchaseInvoice);
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
+        }
+
+        return $invoice_number;
+    }
+
+
+    public function genLedgerInvoiceNumber()
+    {
+        $number = 001;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $purchase = Ledger::where('invoice_type', 'Sale Payment')->latest()->first();
+        if ($purchase) {
+            $purchaseInvoice = $purchase->invoice_no;
+
+            if ($purchaseInvoice) {
+                // split the invoice number
+                $split_invoice = explode('-', $purchaseInvoice);
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
+        }
+
+        return $invoice_number;
     }
 }

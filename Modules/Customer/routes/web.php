@@ -19,8 +19,9 @@ use Modules\Customer\app\Http\Controllers\VehicleController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::get('customers/due-receive-list', [CustomerController::class, 'dueReceiveList'])->name('customers.due-receive.list');
-    Route::get('customers/ledger', [CustomerController::class, 'ledger'])->name('customers.ledger');
-    Route::get('customers/advance', [CustomerController::class, 'advance'])->name('customers.advance');
+    Route::get('customers/ledger/{id}', [CustomerController::class, 'ledger'])->name('customers.ledger');
+    Route::get('customers/advance/{id}', [CustomerController::class, 'advance'])->name('customers.advance');
+    Route::post('customers/advance-store/{id}', [CustomerController::class, 'advanceStore'])->name('customers.advance.pay');
     Route::post('customers/status/{id}', [CustomerController::class, 'changeStatus'])->name('customers.status');
     Route::resource('customers', CustomerController::class);
     Route::get('customers/single/{id}', [CustomerController::class, 'singleCustomer'])->name('customer.single');
