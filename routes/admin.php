@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 /*  Start Admin panel Controller  */
 use App\Http\Controllers\Admin\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\QuotationController;
@@ -56,6 +57,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('settings', [SettingController::class, 'settings'])->name('settings');
     Route::get('print-setting', [SettingController::class, 'printSetting'])->name('print.settings');
 
+    Route::resource('business', BusinessController::class)->only(['index', 'store', 'update']);
 
     // Warehouse
     Route::resource('warehouse', WarehouseController::class)->only(['index', 'store', 'update', 'destroy']);
