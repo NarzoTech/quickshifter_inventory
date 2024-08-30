@@ -28,7 +28,7 @@ class TaxController extends Controller
      */
     public function index()
     {
-        checkAdminHasPermissionAndThrowException('tax.view');
+        // checkAdminHasPermissionAndThrowException('tax.view');
         $taxes = $this->taxService->all();
         return view('tax::index', compact('taxes'));
     }
@@ -38,7 +38,7 @@ class TaxController extends Controller
      */
     public function create()
     {
-        checkAdminHasPermissionAndThrowException('tax.create');
+        // checkAdminHasPermissionAndThrowException('tax.create');
         return view('tax::create');
     }
 
@@ -47,7 +47,7 @@ class TaxController extends Controller
      */
     public function store(TaxRequest $request): RedirectResponse
     {
-        checkAdminHasPermissionAndThrowException('tax.store');
+        // checkAdminHasPermissionAndThrowException('tax.store');
         try {
             $tax = $this->taxService->store($request->except('_token'));
 
@@ -67,7 +67,7 @@ class TaxController extends Controller
      */
     public function show($id)
     {
-        checkAdminHasPermissionAndThrowException('tax.view');
+        // checkAdminHasPermissionAndThrowException('tax.view');
         return view('tax::show');
     }
 
@@ -76,7 +76,7 @@ class TaxController extends Controller
      */
     public function edit($id)
     {
-        checkAdminHasPermissionAndThrowException('tax.edit');
+        // checkAdminHasPermissionAndThrowException('tax.edit');
         $tax = $this->taxService->find($id);
         return view('tax::edit', compact('tax'));
     }
@@ -86,7 +86,7 @@ class TaxController extends Controller
      */
     public function update(TaxRequest $request, $id): RedirectResponse
     {
-        checkAdminHasPermissionAndThrowException('tax.update');
+        // checkAdminHasPermissionAndThrowException('tax.update');
         try {
             $tax = $this->taxService->find($id);
             $tax = $this->taxService->update($tax, $request->except('_token'));
@@ -106,7 +106,7 @@ class TaxController extends Controller
      */
     public function destroy($id)
     {
-        checkAdminHasPermissionAndThrowException('tax.delete');
+        // checkAdminHasPermissionAndThrowException('tax.delete');
         try {
             $tax = $this->taxService->find($id);
             $tax->delete();
@@ -121,7 +121,7 @@ class TaxController extends Controller
     // status update
     public function taxStatus($id)
     {
-        checkAdminHasPermissionAndThrowException('tax.update');
+        // checkAdminHasPermissionAndThrowException('tax.update');
         $tax = $this->taxService->find($id);
         $status = $tax->status == 1 ? 0 : 1;
         $tax->status = $status;

@@ -17,11 +17,11 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
                                 <x-admin.form-title :text="__('Tax List')" />
-                                @adminCan('tax.create')
-                                    <div>
-                                        <x-admin.add-button :href="route('admin.tax.create')" text="Add Tax" />
-                                    </div>
-                                @endadminCan
+                                {{-- @adminCan('tax.create') --}}
+                                <div>
+                                    <x-admin.add-button :href="route('admin.tax.create')" text="Add Tax" />
+                                </div>
+                                {{-- @endadminCan --}}
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
@@ -82,9 +82,8 @@
                                                     </td>
                                                 </tr>
                                             @empty
-                                                <x-empty-table :name="__('Tax')"
-                                                    route="{{ checkAdminHasPermission('product.category.create') ? 'admin.tax.create' : '' }}"
-                                                    create="yes" :message="__('No data found!')" colspan="7"></x-empty-table>
+                                                <x-empty-table :name="__('Tax')" route="admin.tax.create" create="yes"
+                                                    :message="__('No data found!')" colspan="7"></x-empty-table>
                                             @endforelse
                                         </tbody>
                                     </table>

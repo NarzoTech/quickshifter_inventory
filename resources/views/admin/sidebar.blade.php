@@ -162,8 +162,13 @@
                                 {{ __('Courier Settings') }}
                             </a>
                         </li>
+                        @if (Module::isEnabled('Tax'))
+                            @include('tax::sidebar')
+                        @endif
                     </ul>
                 </li>
+
+                <li class="mb-5"></li>
             @endif
         </ul>
     </aside>
