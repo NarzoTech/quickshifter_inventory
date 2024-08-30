@@ -15,5 +15,6 @@
     "Accounts": true,
     "Expense": true,
     "Employee": true,
-    "Tax": true
+    "Tax": true,
+    "Message": true
 }
