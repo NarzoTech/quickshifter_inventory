@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\QuotationController;
 use App\Http\Controllers\Admin\RolesController;
@@ -56,8 +57,13 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     // Settings routes
     Route::get('settings', [SettingController::class, 'settings'])->name('settings');
     Route::get('print-setting', [SettingController::class, 'printSetting'])->name('print.settings');
+    Route::get('courier-settings', [SettingController::class, 'courierSetting'])->name('courier.settings');
+    Route::post('courier-settings', [SettingController::class, 'courierSettingStore'])->name('courier.settings.store');
+    Route::get('tax-settings', [SettingController::class, 'taxSetting'])->name('tax.settings');
 
-    Route::resource('business', BusinessController::class)->only(['index', 'store', 'update']);
+    Route::resource('business', BusinessController::class);
+    Route::get('notice/create', [NoticeController::class, 'create'])->name('notice.create');
+    Route::post('notice/store', [NoticeController::class, 'store'])->name('notice.store');
 
     // Warehouse
     Route::resource('warehouse', WarehouseController::class)->only(['index', 'store', 'update', 'destroy']);

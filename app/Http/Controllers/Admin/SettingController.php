@@ -20,4 +20,9 @@ class SettingController extends Controller
     {
         return view('globalsetting::settings.print-settings');
     }
+
+    public function courierSetting()
+    {
+        return view('globalsetting::settings.courier-settings');
+    }
 }

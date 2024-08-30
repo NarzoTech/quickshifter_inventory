@@ -152,6 +152,16 @@
                                 {{ __('Business Branches') }}
                             </a>
                         </li>
+                        <li class="{{ isRoute('admin.notice.create', 'active') }}">
+                            <a class="nav-link" href="{{ route('admin.notice.create') }}">
+                                {{ __('Notice Send') }}
+                            </a>
+                        </li>
+                        <li class="{{ isRoute('admin.courier.settings', 'active') }}">
+                            <a class="nav-link" href="{{ route('admin.courier.settings') }}">
+                                {{ __('Courier Settings') }}
+                            </a>
+                        </li>
                     </ul>
                 </li>
             @endif

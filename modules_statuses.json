@@ -14,5 +14,6 @@
     "Model": true,
     "Accounts": true,
     "Expense": true,
-    "Employee": true
+    "Employee": true,
+    "Tax": true
 }
