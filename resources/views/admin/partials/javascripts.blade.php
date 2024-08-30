@@ -138,4 +138,16 @@
             }
         })
     }
+
+    function prevImage(inputId, previewId, labelId) {
+        $.uploadPreview({
+            input_field: "#" + inputId,
+            preview_box: "#" + previewId,
+            label_field: "#" + labelId,
+            label_default: "{{ __('Choose Image') }}",
+            label_selected: "{{ __('Change Image') }}",
+            no_label: false,
+            success_callback: null
+        });
+    }
 </script>
