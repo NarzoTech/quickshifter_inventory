@@ -131,10 +131,22 @@
             </li> --}}
 
             @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('setting.view'))
-                <li class="{{ isRoute('admin.settings', 'active') }}">
-                    <a class="nav-link" href="{{ route('admin.settings') }}"><i class="fas fa-cog"></i>
-                        <span>{{ __('Settings') }}</span>
-                    </a>
+                <li class="nav-item dropdown {{ isRoute(['admin.settings', 'admin.print.settings'], 'active') }}">
+                    <a href="javascript:void()" class="nav-link has-dropdown"><i
+                            class="fas fa-box"></i><span>{{ __('Settings') }}</span></a>
+
+                    <ul class="dropdown-menu">
+                        <li class="{{ isRoute('admin.settings', 'active') }}">
+                            <a class="nav-link" href="{{ route('admin.settings') }}">
+                                {{ __('Business Settings') }}
+                            </a>
+                        </li>
+                        <li class="{{ isRoute('admin.print.settings', 'active') }}">
+                            <a class="nav-link" href="{{ route('admin.print.settings') }}">
+                                {{ __('Print Settings') }}
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             @endif
         </ul>

@@ -14,4 +14,10 @@ class SettingController extends Controller
         $allCountries = CountryEnum::getAll();
         return view('admin.settings.settings', compact('all_timezones', 'allCountries'));
     }
+
+
+    public function printSetting()
+    {
+        return view('globalsetting::settings.print-settings');
+    }
 }

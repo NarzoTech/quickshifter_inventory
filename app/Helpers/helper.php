@@ -274,7 +274,7 @@ if (!function_exists('getSettingStatus')) {
     }
 }
 if (!function_exists('isRoute')) {
-    function isRoute(string|array $route, string $returnValue = null)
+    function isRoute(string | array $route, string $returnValue = null)
     {
         if (is_array($route)) {
             foreach ($route as $value) {

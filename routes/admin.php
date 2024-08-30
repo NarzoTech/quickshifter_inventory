@@ -54,6 +54,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::put('admin-status/{id}', [AdminController::class, 'changeStatus'])->name('admin.status');
     // Settings routes
     Route::get('settings', [SettingController::class, 'settings'])->name('settings');
+    Route::get('print-setting', [SettingController::class, 'printSetting'])->name('print.settings');
 
 
     // Warehouse

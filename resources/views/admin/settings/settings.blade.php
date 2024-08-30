@@ -22,7 +22,7 @@
                             @csrf
                             <div class="card">
                                 <div class="card-header">
-                                    <div class="card-title">{{ __('Create Purchase') }}</div>
+                                    <div class="card-title">{{ __('Business Settings') }}</div>
                                 </div>
 
                                 <div class="card-body">
