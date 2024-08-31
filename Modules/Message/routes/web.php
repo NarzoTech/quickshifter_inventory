@@ -14,6 +14,6 @@ use Modules\Message\app\Http\Controllers\MessageController;
 |
 */
 
-Route::group([], function () {
+Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::resource('message', MessageController::class)->names('message');
 });
