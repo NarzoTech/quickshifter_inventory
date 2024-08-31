@@ -9,6 +9,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Modules\Accounts\app\Models\Account;
+use Modules\Accounts\app\Models\BalanceTransfer;
 use Modules\Accounts\app\Services\AccountsService;
 
 class BalanceController extends Controller
@@ -128,5 +130,50 @@ class BalanceController extends Controller
         $balance = Balance::find($id);
         $balance->delete();
         return back()->with(['messege' => 'Balance deleted successfully.', 'alert-type' => 'success']);
+    }
+
+    public function transfer()
+    {
+        $accounts = $this->account->all()->get();
+
+        $transfers = BalanceTransfer::paginate(20);
+        return view('accounts::balance-transfer', compact('accounts', 'transfers'));
+    }
+
+
+    public function transferStore(Request $request)
+    {
+
+        $data = $request->except('_token');
+        $data['created_by'] = auth('admin')->id();
+        $data['date'] = now()->parse($request->date);
+
+
+        // from account
+
+        $fromAccount = Account::where('account_type', $request->from_account_type);
+        if ($request->from_account_type == 'cash') {
+            $fromAccount = $fromAccount->first();
+        } else {
+            $fromAccount = $fromAccount->where('id', $request->from_account)->first();
+        }
+
+        $data['from_account_id'] = $fromAccount->id;
+
+        // to account
+
+        $toAccount = Account::where('account_type', $request->to_account_type);
+        if ($request->to_account_type == 'cash') {
+            $toAccount = $toAccount->first();
+        } else {
+            $toAccount = $toAccount->where('id', $request->to_account)->first();
+        }
+
+        $data['to_account_id'] = $toAccount->id;
+
+
+
+        BalanceTransfer::create($data);
+        return back()->with(['messege' => 'Balance transfer created successfully.', 'alert-type' => 'success']);
     }
 }
