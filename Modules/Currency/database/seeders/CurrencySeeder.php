@@ -12,6 +12,7 @@ class CurrencySeeder extends Seeder
      */
     public function run(): void
     {
+        MultiCurrency::truncate();
         if (! MultiCurrency::first()) {
 
             // Bangladeshi Currency
@@ -20,7 +21,7 @@ class CurrencySeeder extends Seeder
             $currency->country_code = 'BD';
             $currency->currency_code = 'BDT';
             $currency->currency_icon = '৳';
-            $currency->is_default = 'no';
+            $currency->is_default = 'yes';
             $currency->currency_rate = 1;
             $currency->currency_position = 'before_price';
             $currency->status = 'active';

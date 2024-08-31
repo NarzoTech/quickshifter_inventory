@@ -131,6 +131,9 @@
                     </div>
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{{ __('Bank Accounts') }}</h4>
+                            </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
                                     <table class="table table-striped">
@@ -195,6 +198,9 @@
 
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{{ __('Mobile Accounts') }}</h4>
+                            </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
                                     <table class="table table-striped">
@@ -252,6 +258,9 @@
                     </div>
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">{{ __('Card Accounts') }}</h4>
+                            </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
                                     <table class="table table-striped">

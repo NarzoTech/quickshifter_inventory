@@ -10,19 +10,26 @@
                 {{ __('Cash Flow') }}
             </a>
         </li>
+
+        <li class="{{ isRoute('admin.accounts.create', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.accounts.create') }}">
+                {{ __('Create Account') }}
+            </a>
+        </li>
         <li class="{{ isRoute('admin.accounts.index', 'active') }}">
             <a class="nav-link" href="{{ route('admin.accounts.index') }}">
                 {{ __('Account List') }}
             </a>
         </li>
+
+        <li class="{{ isRoute('admin.balance.transfer', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.balance.transfer') }}">
+                {{ __('Balance Transfer') }}
+            </a>
+        </li>
         <li class="{{ isRoute('admin.opening-balance', 'active') }}">
             <a class="nav-link" href="{{ route('admin.opening-balance') }}">
                 {{ __('Deposit') }}/{{ __('Withdraw') }}
-            </a>
-        </li>
-        <li class="{{ isRoute('admin.accounts.create', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.accounts.create') }}">
-                {{ __('Create Account') }}
             </a>
         </li>
         <li class="{{ isRoute('admin.bank.index', 'active') }}">
