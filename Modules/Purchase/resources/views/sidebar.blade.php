@@ -9,7 +9,7 @@
                 {{ __('Add Purchase') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.purchase.index', 'active') }}">
+        <li class="{{ isRoute(['admin.purchase.index', 'admin.purchase.return'], 'active') }}">
             <a class="nav-link" href="{{ route('admin.purchase.index') }}">
                 {{ __('Manage Purchase') }}
             </a>

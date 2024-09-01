@@ -394,13 +394,13 @@ class PurchaseService
 
         // create ledger
 
-        $this->updateLedger($request, $request->purchase_id, $request->received_amount, 'purchase_return');
+        $this->updateLedger($request, $request->purchase_id, $request->received_amount, 'purchase_return', 0);
 
         return $purchase;
     }
 
 
-    public function updateLedger($request, $id, $paidAmount, $type = 'purchase')
+    public function updateLedger($request, $id, $paidAmount, $type = 'purchase', $isPaid = 1)
     {
         $purchase = $this->purchase->find($id);
 
@@ -409,6 +409,7 @@ class PurchaseService
         $ledger = Ledger::where('supplier_id', $request->supplier_id)
             ->where('invoice_type', 'purchase')
             ->where('invoice_no', $purchase->invoice_number)
+            ->where('is_paid', $isPaid)
             ->first();
 
         if (!$ledger) {
@@ -423,7 +424,7 @@ class PurchaseService
         $ledger->invoice_url = route('admin.purchase.invoice', $purchase->id);
         $ledger->invoice_no = $request->invoice_number;
         $ledger->note = $request->note;
-        $ledger->due_amount = $request->due_amount;
+        $ledger->due_amount = $request->due_amount ?? 0;
         $ledger->date = now()->parse($request->purchase_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();

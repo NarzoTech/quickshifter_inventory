@@ -117,8 +117,15 @@
                                                         @if (
                                                             $ledger->invoice_type == 'purchase' ||
                                                                 $ledger->invoice_type == 'Due Payment' ||
-                                                                $ledger->invoice_type == 'Advance Payment')
+                                                                $ledger->invoice_type == 'Advance Payment' ||
+                                                                $ledger->invoice_type == 'purchase_return')
                                                             -
+                                                        @endif
+
+                                                        @if ($ledger->invoice_type == 'purchase_return')
+                                                            @php
+                                                                $due -= $ledger->amount;
+                                                            @endphp
                                                         @endif
                                                         {{ currency($ledger->amount) }}
                                                     </td>

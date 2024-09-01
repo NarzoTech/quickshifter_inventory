@@ -22,13 +22,6 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addType"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add') }}</a>
-                                </h4>
-                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -51,17 +44,17 @@
                                             </thead>
                                             <tbody>
                                                 @foreach ($returns as $list)
-                                                {{-- @dd($list) --}}
+                                                    {{-- @dd($list) --}}
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $list->invoice_number }}</td>
                                                         <td>{{ now()->parse($list->return_date)->format('d M, Y') }}</td>
                                                         <td>{{ $list->returnType?->name }}</td>
                                                         <td>{{ $list->purchase?->supplier?->name }}</td>
-                                                        <td>{{currency($list->return_amount)}}</td>
-                                                        <td>{{currency($list->received_amount)}}</td>
-                                                        <td>{{ $list->createdBy->name }}</td> 
-                                                        <td>{{ $list->updatedBy->name }}</td> 
+                                                        <td>{{ currency($list->return_amount) }}</td>
+                                                        <td>{{ currency($list->received_amount) }}</td>
+                                                        <td>{{ $list->createdBy->name }}</td>
+                                                        <td>{{ $list->updatedBy->name }}</td>
                                                         <td>
                                                             <div class="btn-group" role="group">
                                                                 <button id="btnGroupDrop{{ $list->id }}" type="button"
@@ -98,9 +91,9 @@
     </div>
 @endsection
 @push('js')
-        <script>
-            function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.purchase.return.type.destroy', '') }}' + "/" + id)
-            }
-        </script>
-    @endpush
+    <script>
+        function deleteData(id) {
+            $("#deleteForm").attr("action", '{{ route('admin.purchase.return.type.destroy', '') }}' + "/" + id)
+        }
+    </script>
+@endpush

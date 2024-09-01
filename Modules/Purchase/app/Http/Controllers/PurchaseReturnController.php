@@ -16,7 +16,7 @@ use Modules\Purchase\app\Services\PurchaseService;
 class PurchaseReturnController extends Controller
 {
     use RedirectHelperTrait;
-    public function __construct( private PurchaseService $purchaseService)
+    public function __construct(private PurchaseService $purchaseService)
     {
         $this->middleware('auth:admin');
     }
@@ -26,7 +26,7 @@ class PurchaseReturnController extends Controller
     public function index()
     {
         $returns = $this->purchaseService->allReturn()->paginate(20);
-        return view('purchase::return.index',compact('returns'));
+        return view('purchase::return.index', compact('returns'));
     }
 
     /**
@@ -36,13 +36,13 @@ class PurchaseReturnController extends Controller
     {
         $purchase = $this->purchaseService->getPurchase($id);
         $returnTypes = $this->purchaseService->getReturnTypes();
-        return view('purchase::return.create',compact('purchase','returnTypes'));
+        return view('purchase::return.create', compact('purchase', 'returnTypes'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request,$id): RedirectResponse
+    public function store(Request $request, $id): RedirectResponse
     {
         $request->validate([
             'supplier_id' => 'required',
@@ -50,16 +50,16 @@ class PurchaseReturnController extends Controller
         ]);
 
         DB::beginTransaction();
-        try{
-            $this->purchaseService->storeReturn($request,$id);
+        try {
+            $this->purchaseService->storeReturn($request, $id);
 
             DB::commit();
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.index',[],['messege'=> 'Purchase Return Created Successfully', 'alert-type' => 'success']);
-        }catch(Exception $ex){
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Created Successfully', 'alert-type' => 'success']);
+        } catch (Exception $ex) {
 
             DB::rollBack();
             Log::error($ex->getMessage());
-            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.purchase.return.index',[],['messege' => 'Something Went Wrong', 'alert-type' => 'error']);
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.purchase.return.index', [], ['messege' => 'Something Went Wrong', 'alert-type' => 'error']);
         }
     }
 
@@ -90,8 +90,5 @@ class PurchaseReturnController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
-    {
-        //
-    }
+    public function destroy($id) {}
 }
