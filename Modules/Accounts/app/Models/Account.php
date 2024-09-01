@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Accounts\Database\factories\AccountFactory;
 use Modules\Expense\app\Models\Expense;
+use Modules\Supplier\app\Models\SupplierPayment;
 
 class Account extends Model
 {
@@ -49,17 +50,23 @@ class Account extends Model
     {
         $receive =  $this->payments()->where('is_received', 1)->sum('amount');
         $paid = $this->payments()->where('is_paid', 1)->sum('amount');
+        $supplierPayments = $this->supplierPayments()->where('is_paid', 1)->sum('amount');
         $deposit = $this->deposits()->sum('amount');
         $withdraw = $this->withdraws()->sum('amount');
         $asset = $this->assets()->sum('amount');
         $expenses = $this->expenses->sum('amount');
-        $balance = ($receive + $deposit) - ($paid  + $withdraw + $asset + $expenses);
+        $balance = ($receive + $deposit) - ($paid  + $withdraw + $asset + $expenses + $supplierPayments);
         return $balance;
     }
 
     public function expenses()
     {
         return $this->hasMany(Expense::class, 'account_id');
+    }
+
+    public function supplierPayments()
+    {
+        return $this->hasMany(SupplierPayment::class, 'account_id', 'id');
     }
 
     public function deposits()

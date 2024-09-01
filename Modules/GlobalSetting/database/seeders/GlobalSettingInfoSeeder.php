@@ -14,6 +14,7 @@ class GlobalSettingInfoSeeder extends Seeder
     {
         Setting::truncate();
         $setting_data = [
+            'app_name' => 'QuickShifter',
             'version' => '1.00',
             'logo' => 'uploads/website-images/logo.png',
             'timezone' => 'Asia/Dhaka',

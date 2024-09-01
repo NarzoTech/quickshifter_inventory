@@ -367,10 +367,13 @@ class PurchaseService
         }
 
         if ($request->received_amount) {
-            Payment::create([
+            SupplierPayment::create([
                 'payment_type' => 'purchase_receive',
                 'purchase_id' => $request->purchase_id,
+                'supplier_id' => $purchase->supplier_id,
                 'account_id' => $account->id,
+                'is_received' => 1,
+                'account_type' => accountList()[$request->payment_type],
                 'amount' => $request->received_amount,
                 'payment_date' => now(),
                 'created_by' => auth()->user()->id,
@@ -387,6 +390,11 @@ class PurchaseService
                 'created_by' => auth()->user()->id,
             ]);
         }
+
+
+        // create ledger
+
+        $this->updateLedger($request, $request->purchase_id, $request->received_amount, 'purchase_return');
 
         return $purchase;
     }

@@ -94,6 +94,7 @@
                                                 <th rowspan="2">{{ __('SN') }}</th>
                                                 <th rowspan="2">{{ __('Name') }}</th>
                                                 <th rowspan="2">{{ __('Phone') }}</th>
+                                                <th rowspan="2">{{ __('Area') }}</th>
                                                 <th colspan="2">{{ __('Purchase') }}</th>
                                                 <th colspan="2">{{ __('Purchase Return') }}</th>
                                                 <th rowspan="2">{{ __('Total Due') }}</th>
@@ -120,6 +121,7 @@
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $supplier->name }}</td>
                                                     <td>{{ $supplier->phone }}</td>
+                                                    <td>{{ $supplier->area->name }}</td>
                                                     <td>{{ currency($supplier->total_purchase) }}</td>
                                                     <td>{{ currency($supplier->total_paid) }}</td>
                                                     <td>{{ currency($totalReturn) }}</td>

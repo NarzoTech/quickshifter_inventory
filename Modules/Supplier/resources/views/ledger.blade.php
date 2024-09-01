@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('All suppliers') }}</title>
+    <title>{{ __('Supplier Ledger') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('All suppliers') }}</h1>
+                <h1>{{ __('Supplier Ledger') }}</h1>
             </div>
 
             <div class="section-body">
@@ -79,13 +79,6 @@
 
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addSupplier"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Supplier') }}</a>
-                                </h4>
-                            </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
                                     <table class="table table-striped">
