@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Supplier\app\Models\Supplier;
-use Mollie\Api\Resources\Customer;
 
 class Ledger extends Model
 {
@@ -30,7 +29,7 @@ class Ledger extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id', 'id')->withDefault();
+        return $this->belongsTo(User::class, 'customer_id', 'id')->withDefault();
     }
 
     public function supplier()

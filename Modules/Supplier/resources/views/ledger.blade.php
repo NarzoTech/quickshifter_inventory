@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Supplier Ledger') }}</title>
+    <title>{{ $title }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Supplier Ledger') }}</h1>
+                <h1>{{ $title }}</h1>
             </div>
 
             <div class="section-body">
@@ -34,8 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.suppliers.index') }}" method="GET" onchange="this.submit()"
-                                    class="card-body">
+                                <form action="" method="GET" onchange="this.submit()" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
@@ -107,8 +106,11 @@
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $ledger->date }}</td>
-                                                    <td>{{ $ledger->supplier->name }}</td>
-                                                    <td>{{ $ledger->supplier->phone }}</td>
+                                                    <td>
+                                                        {{ $ledger->supplier->name ?? $ledger->customer->name }}
+
+                                                    </td>
+                                                    <td>{{ $ledger->supplier->phone ?? $ledger->customer->phone }}</td>
                                                     <td>{{ ucwords(str_replace('_', ' ', $ledger->invoice_type)) }}</td>
                                                     <td><a href="{{ $ledger->invoice_url }}">{{ $ledger->invoice_no }}</a>
                                                     </td>

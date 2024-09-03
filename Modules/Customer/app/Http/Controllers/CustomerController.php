@@ -336,9 +336,9 @@ class CustomerController extends Controller
         $ledger->invoice_no = $this->genLedgerInvoiceNumber();
         $ledger->note = $request->note;
         if ($request->refund_amount != null) {
-            $ledger->due_amount += $request->refund_amount;
+            $ledger->due_amount -= $request->refund_amount;
         } else {
-            $ledger->due_amount -= $request->paying_amount;
+            $ledger->due_amount += $request->paying_amount;
         }
         $ledger->date = now()->parse($request->date);
         $ledger->created_by = auth('admin')->user()->id;
@@ -387,5 +387,14 @@ class CustomerController extends Controller
         }
 
         return $invoice_number;
+    }
+
+
+    public function ledger($id)
+    {
+        $user = User::findOrFail($id);
+        $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'desc')->paginate(20);
+        $title = __('Customer Ledger');
+        return view('supplier::ledger', compact('ledgers', 'title'));
     }
 }

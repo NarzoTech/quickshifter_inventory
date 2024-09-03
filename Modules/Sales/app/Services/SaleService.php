@@ -127,7 +127,7 @@ class SaleService
         // if user is exists
 
         if ($user) {
-            $this->updateLedger($request, $sale->id, $request->total_amount, 'sale');
+            $this->updateLedger($request, $sale->id, $user, 'sale');
         }
         return $sale;
     }
@@ -329,7 +329,7 @@ class SaleService
         return [$cart_contents, $sale];
     }
 
-    public function updateLedger($request, $id, $paidAmount, $type = 'sale', $isReceive = 1)
+    public function updateLedger($request, $id, $user, $type = 'sale', $isReceive = 1)
     {
         $sale = $this->sale->find($id);
 
@@ -346,7 +346,7 @@ class SaleService
         }
 
 
-        $ledger->customer_id = $request->customer_id;
+        $ledger->customer_id = $user->id;
         $ledger->amount = $sale->paid_amount;
         $ledger->invoice_type = $type;
         $ledger->is_received = 1;
