@@ -92,10 +92,12 @@
 
                                                             <div class="dropdown-menu" x-placement="top-start"
                                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -131px, 0px);">
-                                                                <a href="javascript:;" class="dropdown-item">
+                                                                <a href="javascript:;" class="dropdown-item productView"
+                                                                    data-id="{{ $product->id }}">
                                                                     {{ __('View') }}</a>
 
-                                                                <a href="javascript:;" class="dropdown-item"></i>
+                                                                <a href="{{ route('admin.product.show', ['product' => $product->id]) }}"
+                                                                    class="dropdown-item"></i>
                                                                     {{ __('Details') }}</a>
 
                                                                 <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
@@ -146,6 +148,15 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="productView" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -153,6 +164,19 @@
     <script>
         $(document).ready(function() {
             'use strict';
+            $('.productView').on('click', function() {
+                var id = $(this).data('id');
+                let url = '{{ route('admin.product.view', ':id') }}';
+                url = url.replace(':id', id);
+                $.ajax({
+                    type: "GET",
+                    url,
+                    success: function(response) {
+                        $('#productView .modal-content').html(response);
+                        $('#productView').modal('show');
+                    }
+                });
+            })
         });
 
         function deleteData(id) {

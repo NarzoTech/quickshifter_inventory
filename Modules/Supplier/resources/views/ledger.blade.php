@@ -109,7 +109,7 @@
                                                     <td>{{ $ledger->date }}</td>
                                                     <td>{{ $ledger->supplier->name }}</td>
                                                     <td>{{ $ledger->supplier->phone }}</td>
-                                                    <td>{{ $ledger->invoice_type }}</td>
+                                                    <td>{{ ucwords(str_replace('_', ' ', $ledger->invoice_type)) }}</td>
                                                     <td><a href="{{ $ledger->invoice_url }}">{{ $ledger->invoice_no }}</a>
                                                     </td>
                                                     <td>{{ $ledger->note }}</td>

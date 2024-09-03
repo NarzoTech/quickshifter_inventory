@@ -25,6 +25,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::post('product/barcode/print', [ProductController::class, 'barcodePrint'])->name('product.barcode.print');
     Route::get('product/search', [ProductController::class, 'search'])->name('product.search');
     Route::post('product/status/{id}', [ProductController::class, 'status'])->name('product.status');
+    Route::get('product/view/{id}', [ProductController::class, 'singleProduct'])->name('product.view');
     Route::resource('product', ProductController::class);
 
     // bulk product import

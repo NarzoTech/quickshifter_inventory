@@ -145,7 +145,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="price">{{ __('Price') }}
+                                                    <label for="price">{{ __('Selling Price') }}
                                                         ({{ currency_icon() }})</label>
                                                     <input type="number" name="price" class="form-control" id="price"
                                                         value="{{ old('price') }}">
@@ -157,7 +157,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="cost">{{ __('Cost') }}
+                                                    <label for="cost">{{ __('Purchase Price') }}
                                                         ({{ currency_icon() }})</label>
                                                     <input type="number" name="cost" class="form-control"
                                                         id="cost" value="{{ old('cost') }}">
@@ -169,7 +169,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>{{ __('Stock Quantity') }}</label>
+                                                    <label>{{ __('Opening Stock') }}</label>
                                                     <input type="number" class="form-control" name="stock"
                                                         value="{{ old('stock', 0) }}">
                                                     @error('stock')

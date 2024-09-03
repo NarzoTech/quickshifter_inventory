@@ -103,6 +103,12 @@ class ProductController extends Controller
         }
     }
 
+    public function singleProduct($id)
+    {
+        $product = $this->productService->getProduct($id);
+        return view('product::products.single-product-modal', compact('product'));
+    }
+
     /**
      * Show the form for editing the specified resource.
      */

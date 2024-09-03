@@ -113,7 +113,7 @@ class Product extends Model
     {
         return $this->price;
     }
-    public function category()
+    public function     gory()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id')->withDefault();
     }

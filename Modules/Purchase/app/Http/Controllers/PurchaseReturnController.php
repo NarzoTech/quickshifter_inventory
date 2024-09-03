@@ -90,5 +90,12 @@ class PurchaseReturnController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) {}
+    public function destroy($id)
+    {
+        // delete ledger
+
+
+
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Deleted Successfully', 'alert-type' => 'success']);
+    }
 }
