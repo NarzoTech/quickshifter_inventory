@@ -24,7 +24,10 @@ return new class extends Migration
             $table->tinyInteger('source')->default(1)->comment(
                 '1: From Stock, 2: From Out side'
             );
+
             $table->double('price');
+            $table->double('purchase_price')->nullable();
+            $table->double('selling_price')->nullable();
             $table->double('tax')->default(0);
             $table->double('discount')->default(0);
             $table->double('sub_total');

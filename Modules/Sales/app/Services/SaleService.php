@@ -61,6 +61,8 @@ class SaleService
             $orderDetails->variant_id = $variant != null ? $variant->id : null;
             $orderDetails->price = $item['price'];
             $orderDetails->source = $item['source'];
+            $orderDetails->purchase_price = $item['purchase_price'];
+            $orderDetails->selling_price = $item['selling_price'];
             $orderDetails->quantity = $item['qty'];
             $orderDetails->sub_total = $item['sub_total'];
             $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
@@ -178,6 +180,8 @@ class SaleService
             $orderDetails->variant_id = $variant != null ? $variant->id : null;
             $orderDetails->price = $item['price'];
             $orderDetails->source = $item['source'];
+            $orderDetails->purchase_price = $item['purchase_price'];
+            $orderDetails->selling_price = $item['selling_price'];
             $orderDetails->quantity = $item['qty'];
             $orderDetails->sub_total = $item['sub_total'];
             $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;

@@ -30,6 +30,8 @@ class ProductSale extends Model
         'discount',
         'sub_total',
         'source',
+        'selling_price',
+        'purchase_price'
     ];
 
     public function sale()
