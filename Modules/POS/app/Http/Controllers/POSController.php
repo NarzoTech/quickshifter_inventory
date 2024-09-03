@@ -230,6 +230,8 @@ class POSController extends Controller
         $data['sub_total'] = $data['price'] * $data['qty'];
         $data['sku'] = $sku;
         $data['source'] = 1;
+        $data['purchase_price'] = 0;
+        $data['selling_price'] = 0;
 
         if ($request->type == null) {
             $data['variant']['attribute'] =  $attributes;
@@ -548,6 +550,21 @@ class POSController extends Controller
 
         session()->put($cartName, $cart_contents);
 
+        return response()->json(['status' => true, 'cart' => session()->get($cartName)]);
+    }
+
+    public function cartPriceUpdate(Request $request)
+    {
+        $cartName = 'POSCART';
+        if ($request->edit) {
+            $cartName = 'UPDATE_CART';
+        }
+        $cart_contents = session()->get($cartName);
+        $cart_contents = $cart_contents ? $cart_contents : [];
+        $cart_contents[$request->rowid]['purchase_price'] = $request->purchase_price;
+        $cart_contents[$request->rowid]['selling_price'] = $request->selling_price;
+        $cart_contents[$request->rowid]['price'] = $request->val;
+        session()->put($cartName, $cart_contents);
         return response()->json(['status' => true, 'cart' => session()->get($cartName)]);
     }
 }

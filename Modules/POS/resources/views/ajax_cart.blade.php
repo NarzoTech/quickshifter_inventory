@@ -52,9 +52,13 @@
                 @endphp
 
                 <td class="row_total">{{ currency($sub_total) }}</td>
-                <td>
+                <td class="d-flex justify-content-center align-items-center">
                     <a href="javascript:;" onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
                         class="d-block p-2 "><i class="fa fa-trash text-danger" aria-hidden="true"></i></a>
+                    <a href="javascript:;" class="edit-btn {{ $cart_content['source'] == '2' ? '' : 'd-none' }}"
+                        data-purchase="{{ $cart_content['purchase_price'] }}"data-selling="{{ $cart_content['selling_price'] }}">
+                        <i class="fas fa-edit"></i>
+                    </a>
                 </td>
             </tr>
         @endforeach

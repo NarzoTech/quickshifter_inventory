@@ -35,6 +35,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
         Route::get('/modal-cart-clear', [POSController::class, 'modalClearCart'])->name('modal-cart-clear');
     });
     Route::get('cart/source/update', [POSController::class, 'cartSourceUpdate'])->name('cart.source.update');
+    Route::get('cart/price/update', [POSController::class, 'cartPriceUpdate'])->name('cart.price.update');
     Route::post('/cart-hold', [POSController::class, 'cartHold'])->name('cart.hold');
     Route::get('/cart-hold/delete/{id}', [POSController::class, 'cartHoldDelete'])->name('cart.hold.delete');
     Route::get('/cart-hold/edit/{id}', [POSController::class, 'cartHoldEdit'])->name('cart.hold.edit');
