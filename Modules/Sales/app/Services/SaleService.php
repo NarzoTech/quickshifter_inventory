@@ -2,6 +2,7 @@
 
 namespace Modules\Sales\app\Services;
 
+use App\Models\Ledger;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
@@ -21,8 +22,10 @@ class SaleService
     }
     public function createSale(Request $request, $user, $cart): Sale
     {
+
         $sale = new Sale();
         $sale->user_id = $user != null ?  $user->id : null;
+
         $sale->customer_id = $request->order_customer_id;
         $sale->warehouse_id = 1;
         $sale->quantity = 1;
@@ -98,7 +101,7 @@ class SaleService
                 'account_id' => $account->id,
                 'amount' => $request->paying_amount[$key],
                 'payment_date' => now(),
-                'created_by' => auth()->user()->id,
+                'created_by' => auth('admin')->user()->id,
             ];
             if ($customerId == 'walk-in-customer') {
                 $data['customer_id'] = null;
@@ -106,6 +109,7 @@ class SaleService
             }
             Payment::create($data);
         }
+
 
 
         // create due
@@ -119,6 +123,12 @@ class SaleService
             ]);
         }
 
+
+        // if user is exists
+
+        if ($user) {
+            $this->updateLedger($request, $sale->id, $request->total_amount, 'sale');
+        }
         return $sale;
     }
 
@@ -217,7 +227,7 @@ class SaleService
                 'account_id' => $account->id,
                 'amount' => $request->paying_amount[$key],
                 'payment_date' => now(),
-                'created_by' => auth()->user()->id,
+                'created_by' => auth('admin')->user()->id,
             ];
             if ($customerId == 'walk-in-customer') {
                 $data['customer_id'] = null;
@@ -317,5 +327,35 @@ class SaleService
         }
         $cart_contents = session()->get('UPDATE_CART');
         return [$cart_contents, $sale];
+    }
+
+    public function updateLedger($request, $id, $paidAmount, $type = 'sale', $isReceive = 1)
+    {
+        $sale = $this->sale->find($id);
+
+        // check if ledger already exist
+
+        $ledger = Ledger::where('customer_id', $request->supplier_id)
+            ->where('invoice_type', 'sale')
+            ->where('invoice_no', $sale->invoice)
+            ->where('is_received', $isReceive)
+            ->first();
+
+        if (!$ledger) {
+            $ledger = new Ledger();
+        }
+
+
+        $ledger->customer_id = $request->customer_id;
+        $ledger->amount = $sale->paid_amount;
+        $ledger->invoice_type = $type;
+        $ledger->is_received = 1;
+        $ledger->invoice_url = route('admin.sales.invoice', $sale->id);
+        $ledger->invoice_no = $sale->invoice;
+        $ledger->note = $request->note;
+        $ledger->due_amount = $sale->due_amount;
+        $ledger->date = now()->parse($request->sale_date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
     }
 }
