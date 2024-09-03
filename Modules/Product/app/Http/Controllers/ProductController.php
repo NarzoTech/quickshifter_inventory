@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Milon\Barcode\DNS1D;
 use Modules\Product\app\Http\Requests\ProductRequest;
+use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\AttributeService;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductCategoryService;
@@ -352,13 +353,23 @@ class ProductController extends Controller
     // store bulk product
     public function bulkImportStore(Request $request)
     {
+        // disable foreign key check
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // Product::truncate();
+
+        // // enable foreign key check
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        DB::beginTransaction();
         try {
             $this->productService->bulkImport($request);
+            DB::commit();
             return back()->with([
                 'messege' => 'Products imported successfully',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $ex) {
+            DB::rollBack();
             Log::error($ex->getMessage());
             return back()->with([
                 'messege' => 'Something Went Wrong',

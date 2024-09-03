@@ -10,11 +10,15 @@ use Modules\Product\app\Models\Variant;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Product\app\Models\VariantOption;
 use Modules\Product\app\Models\AttributeValue;
 use Modules\Language\app\Enums\TranslationModels;
 use Modules\Language\app\Traits\GenerateTranslationTrait;
+use Modules\Product\app\Models\Category;
+use Modules\Product\app\Models\ProductBrand;
+use Modules\Product\app\Models\UnitType;
 
 class ProductService
 {
@@ -327,7 +331,6 @@ class ProductService
 
     public function bulkImport($request)
     {
-
         $file = $request->file('file');
 
         // read xlxs / xls / csv file
@@ -341,10 +344,8 @@ class ProductService
         //  loop through the data and store the products
         $unsavedData = [];
         foreach ($data as $row) {
-
             $findProduct = $this->product->where(function ($q) use ($row) {
-                $q->where('slug', trim($row[10]))
-                    ->orWhere('sku', trim($row[12]));
+                $q->where('barcode', trim($row[2]));
             })->first();
 
             if ($findProduct) {
@@ -352,105 +353,73 @@ class ProductService
                 continue;
             }
 
-            // make tags
-            $lists = explode(',', trim($row[11]));
-            $lists = array_map('trim', $lists);
-            $tags = [];
-            foreach ($lists as $tag) {
-                $tags[] = ['value' => $tag];
+            // if category not found, create a new one
+
+            $categoryName = trim($row[2]);
+
+            $category = Category::where('name', $categoryName)->first();
+            if ($categoryName && !$category) {
+                $category = Category::create([
+                    'name' => $categoryName,
+                    'status' => 1,
+                ]);
             }
 
+            // if brand not found, create a new one
+
+            $brand_id = null;
+            if (isset($row[5])) {
+                $brandName = trim($row[5]);
+                $brand = ProductBrand::where('name', $brandName)->first();
+                if ($brandName && !$brand) {
+                    $brand = ProductBrand::create([
+                        'name' => $brandName,
+                        'status' => '1',
+                    ]);
+                }
+
+                $brand_id = $brand->id;
+            }
+
+            // if unit not found, create a new one
+
+            $unitName = trim($row[4]);
+            $unit = UnitType::where('name', $unitName)->first();
+            if ($unitName && !$unit) {
+                $unit = UnitType::create([
+                    'name' => $unitName,
+                    'ShortName' => $unitName,
+                    'status' => 1,
+                ]);
+            }
+
+            // if product not found, create a new one
+
+
+            // generate product sku
+            $sku = mt_rand(10000000, 99999999);
             $product = $this->product->create([
-                'slug' => trim($row[10])  != null ? trim($row[10]) :  Str::slug(trim($row[1])),
-                'unit_id' => trim($row[2]),
-                'brand_id' => trim($row[3]),
-                'discount' => trim($row[5]),
-                'discount_type' => trim($row[6]),
-                'sku' => trim($row[12]),
-                'status' => 1, // 'active'
-                'price' => trim($row[13]),
-                'created_by' => auth('admin')->user()->id,
+                'name' => trim($row[0]),
+                'sku' => trim($row[1]) != null ? trim($row[1]) : $sku,
+                'category_id' => $category->id,
+                'unit_id' => $unit->id,
+                'unit_sale_id' => $unit->id,
+                'unit_purchase_id' => $unit->id,
+                'brand_id' => $brand_id,
+                'stock_alert' => trim($row[6]),
+                'barcode' => trim($row[10]),
+                'cost' => trim($row[11]),
+                'price' => trim($row[12]),
+                'stock' => trim($row[18]),
+                'status' => 1,
+                'images' => ['null'],
+
             ]);
             // store product categories
-            $cats = explode(',', trim($row[4]));
-            $cats = array_map('trim', $cats);
 
-            $product->categories()->sync($cats);
-
-
-            // make a request object using the row data
-            $request = new Request();
-            $request->replace([
-                'name' => trim($row[1]),
-                'slug' => trim($row[10])  != null ? trim($row[10]) :  Str::slug(trim($row[1])),
-                'unit_id' => trim($row[2]),
-                'brand_id' => trim($row[3]),
-                'discount' => trim($row[5]),
-                'discount_type' => trim($row[6]),
-                'short_description' => trim($row[7]),
-                'description' => trim($row[8]),
-                'additional_information' => trim($row[9]),
-                'tags' => json_encode($tags),
-                'sku' => trim($row[12]),
-                'price' => trim($row[13]),
-                'meta_title' => trim($row[14]),
-                'meta_description' => trim($row[15]),
-            ]);
-
-
-
-
-            $this->generateTranslations(
-                TranslationModels::Product,
-                $product,
-                'product_id',
-                $request,
-            );
         }
     }
 
-
-
-    // make an excel file and download it
-
-    public function downloadUnsavedData($unsavedData)
-    {
-        $fileName = 'unsaved_products_' . time() . '.xlsx';
-        $filePath = public_path('excel_files/' . $fileName);
-
-        $data = collect($unsavedData);
-
-        $data->prepend([
-            'id',
-            'Name',
-            'Unit',
-            'Brand',
-            'Category',
-            'Discount',
-            'Discount Type',
-            'Short Description',
-            'Description',
-            'Additional Information',
-            'Slug',
-            'Tags',
-            'SKU',
-            'Price',
-            'Meta Title',
-            'Meta Description',
-        ]);
-
-        $file = Excel::store(function ($excel) use ($data) {
-            $excel->sheet('Sheet1', function ($sheet) use ($data) {
-                $sheet->fromArray($data);
-            });
-        }, $filePath);
-
-        // store the file to $filePath
-
-
-
-        return response()->download($filePath);
-    }
 
     public function storeProductGallery($request, $product)
     {

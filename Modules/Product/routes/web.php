@@ -20,6 +20,12 @@ use Modules\Product\app\Http\Controllers\UnitTypeController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
 
+    // bulk product import
+
+
+    Route::get('product/import', [ProductController::class, 'bulkImport'])->name('product.import');
+    Route::post('product/import', [ProductController::class, 'bulkImportStore'])->name('product.import.store');
+
     // Products
     Route::get('product/barcode', [ProductController::class, 'barcode'])->name('product.barcode');
     Route::post('product/barcode/print', [ProductController::class, 'barcodePrint'])->name('product.barcode.print');
@@ -28,10 +34,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('product/view/{id}', [ProductController::class, 'singleProduct'])->name('product.view');
     Route::resource('product', ProductController::class);
 
-    // bulk product import
 
-
-    Route::post('product/import', [ProductController::class, 'bulkImportStore'])->name('product.import.store');
 
 
     Route::get('product/product-gallery/{id}', [ProductController::class, 'product_gallery'])->name('product-gallery');

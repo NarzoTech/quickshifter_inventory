@@ -15,6 +15,10 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
+                                    <a href="{{ route('admin.product.import') }}" class="btn btn-primary"><i
+                                            class="fa fa-upload"></i>
+                                        {{ __('Import Producs') }}</a>
+
                                     <a href="{{ route('admin.product.create') }}" class="btn btn-primary"><i
                                             class="fa fa-plus"></i>
                                         {{ __('Add Product') }}</a>
