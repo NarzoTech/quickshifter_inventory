@@ -17,6 +17,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.8",
+        "maatwebsite/excel": "^3.1",
         "mews/purifier": "^3.4",
         "milon/barcode": "^11.0",
         "mollie/laravel-mollie": "^2.25",

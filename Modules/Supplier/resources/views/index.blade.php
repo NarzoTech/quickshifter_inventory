@@ -39,7 +39,7 @@
                                     <div class="row">
                                         <div class="col-md-4 form-group">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="{{ __('Search') }}">
+                                                class="form-control" placeholder="Search name, email and phone number...">
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="order_by" id="order_by" class="form-control">
@@ -79,6 +79,16 @@
                                         <div class="col-md-2 form-group">
                                             <input type="text" placeholder="To Date" name="to_date"
                                                 value="{{ request()->get('to_date') }}" class="form-control datepicker">
+                                        </div>
+                                    </div>
+                                    {{-- excel  buttons --}}
+                                    <div class="row">
+                                        <div class="col-md-4 form-group mx-auto">
+                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button type="button" class="btn btn-secondary export"><i
+                                                        class="far fa-file-excel"></i>
+                                                    Excel</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -478,6 +488,14 @@
 
     @push('js')
         <script>
+            $('.export').on('click', function() {
+                // get full url including query string
+                var fullUrl = window.location.href;
+                fullUrl += '&export=true';
+
+                window.location.href = fullUrl;
+            })
+
             function deleteData(id) {
                 $("#deleteForm").attr("action", '{{ route('admin.suppliers.destroy', '') }}' + "/" + id)
             }

@@ -3,6 +3,7 @@
 namespace Modules\Supplier\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\SupplierExport;
 use App\Http\Controllers\Controller;
 use App\Models\Ledger;
 use App\Traits\RedirectHelperTrait;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
@@ -28,6 +30,11 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = $this->supplierService->allSupplier();
+        if (request('export')) {
+            $fileName = 'suppliers-' . date('Y-m-d') . '.xlsx';
+            return Excel::download(new SupplierExport($this->supplierService), $fileName);
+        }
+
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
@@ -234,4 +241,5 @@ class SupplierController extends Controller
         $ledger = Ledger::with('details', 'supplier')->find($id);
         return view('supplier::ledger-details', compact('ledger'));
     }
+    public function export() {}
 }
