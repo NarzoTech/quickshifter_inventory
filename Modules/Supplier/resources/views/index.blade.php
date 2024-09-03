@@ -44,10 +44,11 @@
                                         <div class="col-md-2 form-group">
                                             <select name="order_by" id="order_by" class="form-control">
                                                 <option value="">{{ __('Order By') }}</option>
-                                                <option value="1" {{ request('order_by') == '1' ? 'selected' : '' }}>
+                                                <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
                                                     {{ __('ASC') }}
                                                 </option>
-                                                <option value="0" {{ request('order_by') == '0' ? 'selected' : '' }}>
+                                                <option value="desc"
+                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
                                                     {{ __('DESC') }}
                                                 </option>
                                             </select>
@@ -70,6 +71,14 @@
                                                     {{ __('All') }}
                                                 </option>
                                             </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" placeholder="From Date" name="from_date"
+                                                value="{{ request()->get('from_date') }}" class="form-control datepicker">
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" placeholder="To Date" name="to_date"
+                                                value="{{ request()->get('to_date') }}" class="form-control datepicker">
                                         </div>
                                     </div>
                                 </form>

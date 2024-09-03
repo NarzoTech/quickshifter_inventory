@@ -21,7 +21,30 @@ class SupplierService
 
     public function allSupplier()
     {
-        return $this->supplier->with('purchaseReturn');
+        $suppliers = $this->supplier->query();
+        $suppliers = $suppliers->with('purchaseReturn');
+
+
+        if (request()->keyword) {
+            $suppliers = $suppliers->where(function ($q) {
+                $q->where('name', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('phone', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('address', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('email', 'like', '%' . request()->keyword . '%');
+            });
+        }
+
+        if (request()->order_by) {
+            $suppliers = $suppliers->orderBy('id', request()->order_by);
+        }
+
+        if (request()->from_date && request()->to_date) {
+
+            $suppliers = $suppliers->whereBetween('date', [now()->parse(request()->from_date), now()->parse(request()->to_date)]);
+        }
+
+
+        return $suppliers;
     }
 
     public function find($id)

@@ -27,7 +27,17 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = $this->supplierService->allSupplier()->paginate(20);
+        $suppliers = $this->supplierService->allSupplier();
+
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $suppliers = $suppliers->paginate();
+            } else {
+                $suppliers = $suppliers->paginate(request('par-page'));
+            }
+        } else {
+            $suppliers = $suppliers->paginate(20);
+        }
         $groups = $this->userGroup->getUserGroup()->where('type', 'supplier')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
         return view('supplier::index', compact('suppliers', 'groups', 'areaList'));
