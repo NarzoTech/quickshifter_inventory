@@ -3,6 +3,7 @@
 namespace Modules\Customer\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\CustomerExport;
 use App\Http\Controllers\Controller;
 use App\Models\Ledger;
 use App\Models\Payment;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
@@ -51,12 +53,24 @@ class CustomerController extends Controller
                 ->orWhere('address', 'like', '%' . $request->keyword . '%');
         });
 
-        $orderBy = $request->filled('order_by') && $request->order_by == 1 ? 'asc' : 'desc';
+        if (request('export')) {
+            $fileName = 'customers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new CustomerExport($query->get()), $fileName);
+        }
+        $orderBy = $request->filled('order_by') ? $request->order_by : '';
+
+        if ($orderBy) {
+            $users = $query->orderBy('id', $orderBy);
+        }
 
         if ($request->filled('par-page')) {
-            $users = $request->get('par-page') == 'all' ? $query->orderBy('id', $orderBy)->get() : $query->orderBy('id', $orderBy)->paginate($request->get('par-page'))->withQueryString();
+            if ($request->get('par-page') == 'all') {
+                $users = $query->get();
+            } else {
+                $users = $query->paginate($request->get('par-page'));
+            }
         } else {
-            $users = $query->orderBy('id', $orderBy)->paginate()->withQueryString();
+            $users = $query->paginate();
         }
 
         $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();

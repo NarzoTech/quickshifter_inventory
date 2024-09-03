@@ -31,7 +31,7 @@ class SupplierController extends Controller
     {
         $suppliers = $this->supplierService->allSupplier();
         if (request('export')) {
-            $fileName = 'suppliers-' . date('Y-m-d') . '.xlsx';
+            $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
             return Excel::download(new SupplierExport($this->supplierService), $fileName);
         }
 

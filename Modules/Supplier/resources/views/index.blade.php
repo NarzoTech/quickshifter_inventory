@@ -491,7 +491,11 @@
             $('.export').on('click', function() {
                 // get full url including query string
                 var fullUrl = window.location.href;
-                fullUrl += '&export=true';
+                if (fullUrl.includes('?')) {
+                    fullUrl += '&export=true';
+                } else {
+                    fullUrl += '?export=true';
+                }
 
                 window.location.href = fullUrl;
             })
