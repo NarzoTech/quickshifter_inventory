@@ -53,10 +53,8 @@
 @else
     @php
         if ($value == 'cash' || $value == 'advance') {
-            $cash =
-                '<input type="text" name="{{ isset($name) ? $name : 'account_id[]' }}" class="form-control" value="' .
-                $value .
-                '" readonly>';
+            $val = isset($name) ? $name : 'account_id[]';
+            $cash = '<input type="text" name="' . $val . '" class="form-control" value="' . $value . '" readonly>';
             echo $cash;
         }
     @endphp

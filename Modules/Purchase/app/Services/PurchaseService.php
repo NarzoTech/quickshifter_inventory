@@ -297,11 +297,12 @@ class PurchaseService
         $invoice_number = $prefix . $number;
 
         $purchase = $this->purchase->latest()->first();
+
         if ($purchase) {
             $purchaseInvoice = $purchase->invoice_number;
 
             // split the invoice number
-            $split_invoice = explode($prefix, $purchaseInvoice);
+            $split_invoice = explode('-', $purchaseInvoice);
             $invoice_number = (int) $split_invoice[1] + 1;
             $invoice_number = $prefix . $invoice_number;
         }
@@ -490,7 +491,6 @@ class PurchaseService
 
 
         $ledger->supplier_id = $request->supplier_id;
-        $ledger->purchase_return_id = $request->purchase_return_id;
         $ledger->amount = $paidAmount;
         $ledger->invoice_type = $type;
         $ledger->is_paid = 1;

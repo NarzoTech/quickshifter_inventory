@@ -4,6 +4,7 @@ namespace Modules\Accounts\app\Http\Controllers;
 
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Models\Balance;
 use App\Traits\RedirectHelperTrait;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -13,8 +14,10 @@ use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Http\Requests\AccountRequest;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Accounts\app\Services\BankService;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
+use Modules\Sales\app\Models\SalesReturn;
 
 class AccountsController extends Controller
 {
@@ -115,6 +118,13 @@ class AccountsController extends Controller
         $data['productSale'] = ProductSale::whereNotNull('product_id')->where('source', 1)->sum('sub_total');
         $data['serviceSale'] = ProductSale::whereNotNull('service_id')->sum('sub_total');
         $data['customer_due'] = Sale::whereNotNull('customer_id')->sum('due_amount');
+        $data['sale_return'] = SalesReturn::sum('return_amount');
+        $data['balance_deposit'] = Balance::where('balance_type', 'deposit')->sum('amount');
+        $data['balance_withdraw'] = Balance::where('balance_type', 'withdraw')->sum('amount');
+        $data['customer_advance'] = CustomerPayment::where('payment_type', 'advance_receive')->sum('amount');
+        $data['customer_advance_refund'] = CustomerPayment::where('payment_type', 'advance_refund')->sum('amount');
+
+
         return view('accounts::cash-flow', compact('data'));
     }
 }

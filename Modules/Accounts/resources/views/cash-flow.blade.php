@@ -104,7 +104,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['sale_return']) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -140,7 +140,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['balance_deposit']) }}
                                                         </span>
                                                     </td>
                                                     <td>
@@ -150,7 +150,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['balance_withdraw']) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -186,7 +186,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['customer_advance']) }}
                                                         </span>
                                                     </td>
                                                     <td>
@@ -196,8 +196,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK
-                                                            0.00
+                                                            {{ currency($data['customer_advance_refund']) }}
                                                         </span>
                                                     </td>
                                                 </tr>
