@@ -37,6 +37,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
         Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
+        Route::get('/stock/ledger/{id}', [StockController::class, 'ledger'])->name('stock.ledger');
         Route::resource('quotation', QuotationController::class);
         Route::resource('asset-category', AssetTypeController::class);
         Route::resource('assets', AssetController::class);

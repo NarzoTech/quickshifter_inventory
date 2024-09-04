@@ -62,26 +62,27 @@ class ProductService
 
     public function getProduct($id): ?Product
     {
-        return $this->product->where('id', $id)->first();
+        return $this->product->with('stockDetails')->where('id', $id)->first();
     }
     public function storeProduct($request)
     {
         $product = $this->product->create(
             $request->validated()
         );
-        if ($request->stock) {
-            Stock::create([
-                'purchase_id' => null,
-                'product_id' => $product->id,
-                'quantity' => $request->stock,
-                'sku' => $request->sku,
-                'purchase_price' => $request->cost,
-                'sale_price' => $request->price,
-                'profit' => $request->profit,
-                'tax' => $request->tax,
-                'created_by' => auth('admin')->user()->id,
-            ]);
-        }
+        Stock::create([
+            'purchase_id' => null,
+            'product_id' => $product->id,
+            'date' => now(),
+            'type' => '	Opening Stock',
+            'in_quantity' => $request->stock,
+            'available_qty' => $request->stock,
+            'sku' => $request->sku,
+            'purchase_price' => $request->cost,
+            'rate' => $request->cost,
+            'sale_price' => $request->price,
+            'tax' => $request->tax,
+            'created_by' => auth('admin')->user()->id,
+        ]);
 
         return $product;
     }

@@ -45,4 +45,11 @@ class StockController extends Controller
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         return view('admin.pages.stock.stock', compact('products', 'brands', 'categories'));
     }
+
+    public function ledger($id)
+    {
+        $product = $this->product->getProduct($id);
+        $stocks = Stock::where('product_id', $id)->paginate(20);
+        return view('admin.pages.stock.ledger', compact('product', 'stocks'));
+    }
 }

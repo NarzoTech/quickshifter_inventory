@@ -28,6 +28,8 @@ class Stock extends Model
         'tax',
         'created_by',
         'updated_by',
+        'sku',
+        'rate',
     ];
 
     public function product()

@@ -59,29 +59,6 @@
                                             </select>
                                         </div>
                                         <div class="col-md-2 form-group">
-                                            <select name="brand_id" id="brand_id" class="form-control select2">
-                                                <option value="" selected disabled>{{ __('Brand') }}</option>
-                                                @foreach ($brands as $brand)
-                                                    <option value="{{ $brand->id }}"
-                                                        {{ request('brand_id') == $brand->id ? 'selected' : '' }}>
-                                                        {{ $brand->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="category_id" id="categories" class="form-control select2">
-                                                <option value="" selected disabled>{{ __('Categories') }}
-                                                </option>
-                                                @foreach ($categories as $cat)
-                                                    <option value="{{ $cat->id }}"
-                                                        {{ request('category_id') == $cat->id ? 'selected' : '' }}>
-                                                        {{ $cat->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
                                             <select name="stock_status" id="stock_status" class="form-control select2">
                                                 <option value="">{{ __('All') }}</option>
                                                 <option value="in_stock"
@@ -119,55 +96,38 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('Sl') }}</th>
-                                                <th>{{ __('Picture') }}</th>
-                                                <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Avg P.P') }}</th>
-                                                <th>{{ __('L. P.P') }}</th>
-                                                <th>{{ __('Selling Price') }}</th>
-                                                {{-- <th style="display: none;">Business Branch</th> --}}
-                                                <th>{{ __('In Quantity') }}</th>
-                                                <th>{{ __('Out Quantity') }}</th>
-                                                <th>{{ __('Stock') }}</th>
-                                                <th>{{ __('Stock P.P') }}</th>
-                                                <th>{{ __('Stock S.P') }}</th>
-                                                <th>{{ __('Action') }}</th>
+                                                <th title="Sl">Sl</th>
+                                                <th title="Date">Date</th>
+                                                <th title="Details">Details</th>
+                                                <th title="Invoice No">Invoice No</th>
+                                                <th title="Type">Type</th>
+                                                <th title="In Qty">In Qty</th>
+                                                <th title="Out Qty">Out Qty</th>
+                                                {{-- <th title="Used Qty">Used Qty</th> --}}
+                                                <th title="Available Qty">Available Qty</th>
+                                                <th title="Rate">Rate</th>
+                                                <th title="Total">Total</th>
+                                                <th title="Profit/loss">Profit/loss</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($products as $index => $product)
+                                            @foreach ($stocks as $stock)
                                                 @php
-                                                    $stock = $product->stock < 0 ? 0 : $product->stock;
-                                                    $selling_price = $product->selling_price ?? 0;
+                                                    $qty = $stock->in_quantity ?? $stock->out_quantity;
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>
-                                                        <img src="{{ asset($product->single_image) }}"
-                                                            alt="Product Picture" width="100">
-                                                    </td>
-                                                    <td>{{ $product->name }}</td>
-                                                    <td>{{ $product->avg_purchase_price }}</td>
-                                                    <td>{{ $product->last_purchase_price }}</td>
-                                                    <td>{{ $product->selling_price }}</td>
-                                                    {{-- <td style="display: none;">{{ $product->business_branch->name }}</td> --}}
-                                                    <td>{{ $product->stockDetails->sum('quantity') }}</td>
-                                                    <td>{{ $product->stockDetails->sum('quantity') - $product->stock }}
-                                                    </td>
-                                                    <td>{{ $product->stock }}</td>
-                                                    <td>{{ remove_comma($stock) * remove_comma($product->avg_purchase_price) }}
-                                                    </td>
-                                                    <td>
-                                                        {{ remove_comma($stock) * remove_comma($selling_price) }}
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('admin.product.show', $product->id) }}"
-                                                            class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
-                                                        <a href="{{ route('admin.stock.ledger', $product->id) }}"
-                                                            class="btn btn-info btn-sm">
-                                                            <i class="fas fa-clipboard-list"></i>
-                                                        </a>
-                                                    </td>
+                                                    <td>{{ $stock->created_at->format('d-m-Y') }}</td>
+                                                    <td>{{ $product->barcode }}</td>
+                                                    <td>{{ $stock->invoice }}</td>
+                                                    <td>{{ ucwords($stock->type) }}</td>
+                                                    <td>{{ $stock->in_quantity }}</td>
+                                                    <td>{{ $stock->out_quantity }}</td>
+                                                    {{-- <td>{{ $stock->used_qty }}</td> --}}
+                                                    <td>{{ $stock->available_qty }}</td>
+                                                    <td>{{ $stock->rate }}</td>
+                                                    <td>{{ $stock->rate * $qty }}</td>
+                                                    <td>{{ $stock->profit }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -175,7 +135,7 @@
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{ $products->onEachSide(0)->links() }}
+                                        {{ $stocks->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>

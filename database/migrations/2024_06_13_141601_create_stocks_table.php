@@ -20,10 +20,12 @@ return new class extends Migration
             $table->integer('out_quantity')->default(0);
             $table->string('invoice')->nullable();
             $table->string('type')->nullable();
+            $table->string('sku')->nullable();
             $table->integer('available_qty')->nullable();
             $table->decimal('purchase_price', 10, 2)->nullable();
             $table->decimal('sale_price', 10, 2)->nullable();
-            $table->decimal('profit', 10, 2)->nullable();
+            $table->decimal('profit', 10, 2)->default(0);
+            $table->decimal('rate', 10, 2)->nullable();
             $table->decimal('discount', 10, 2)->nullable();
             $table->decimal('tax', 10, 2)->nullable();
             $table->foreignId('created_by')->constrained('admins');
