@@ -52,4 +52,27 @@ class StockController extends Controller
         $stocks = Stock::where('product_id', $id)->paginate(20);
         return view('admin.pages.stock.ledger', compact('product', 'stocks'));
     }
+
+    public function reset($id)
+    {
+        $product = $this->product->getProduct($id);
+        Stock::where('product_id', $id)->delete();
+        $product->update(['stock' => 0, 'stock_status' => 'out_of_stock']);
+
+        Stock::create([
+            'product_id' => $product->id,
+            'date' => now(),
+            'type' => '	Opening Stock',
+            'in_quantity' => 0,
+            'available_qty' => 0,
+            'sku' => $product->sku,
+            'purchase_price' => 0,
+            'rate' => 0,
+            'sale_price' => $product->price,
+            'tax' => 0,
+            'created_by' => auth('admin')->user()->id,
+        ]);
+
+        return redirect()->back()->with(['messege' => 'Stock Reset Successfully', 'alert-type' => 'success']);
+    }
 }

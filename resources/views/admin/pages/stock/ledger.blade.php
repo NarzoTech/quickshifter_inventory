@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Current Stock') }}</title>
+    <title>{{ __('Stock Ledger') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Stock') }}</h1>
+                <h1>{{ __('Stock Ledger') }}</h1>
             </div>
 
             <div class="section-body">

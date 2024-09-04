@@ -151,8 +151,8 @@
                                                     <td>{{ $product->last_purchase_price }}</td>
                                                     <td>{{ $product->selling_price }}</td>
                                                     {{-- <td style="display: none;">{{ $product->business_branch->name }}</td> --}}
-                                                    <td>{{ $product->stockDetails->sum('quantity') }}</td>
-                                                    <td>{{ $product->stockDetails->sum('quantity') - $product->stock }}
+                                                    <td>{{ $product->stockDetails->sum('in_quantity') }}</td>
+                                                    <td>{{ $product->stockDetails->sum('out_quantity') }}
                                                     </td>
                                                     <td>{{ $product->stock }}</td>
                                                     <td>{{ remove_comma($stock) * remove_comma($product->avg_purchase_price) }}
@@ -162,10 +162,19 @@
                                                     </td>
                                                     <td>
                                                         <a href="{{ route('admin.product.show', $product->id) }}"
-                                                            class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
+                                                            class="btn btn-primary btn-sm" title="Product Details"><i
+                                                                class="fa fa-eye"></i></a>
                                                         <a href="{{ route('admin.stock.ledger', $product->id) }}"
-                                                            class="btn btn-info btn-sm">
+                                                            class="btn btn-info btn-sm" title="Stock Ledger">
                                                             <i class="fas fa-clipboard-list"></i>
+                                                        </a>
+
+                                                        {{-- reset stock --}}
+                                                        {{-- {{ route('admin.stock.reset', $product->id) }} --}}
+                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                            title="Reset Stock" onclick="resetStock({{ $product->id }})"
+                                                            data-target="#stockModal" data-toggle="modal">
+                                                            <i class="fas fa-undo"></i>
                                                         </a>
                                                     </td>
                                                 </tr>
@@ -186,6 +195,31 @@
             </div>
         </section>
     </div>
+
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="stockModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Stock Reset Confirmation') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ __('Are You sure want to Reset Stock') }}?</p>
+                </div>
+                <div class="modal-footer bg-whitesmoke br">
+                    <form id="resetForm" action="" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('Yes, Reset') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -205,5 +239,9 @@
                 window.location.href = fullUrl;
             })
         });
+
+        function resetStock(id) {
+            $('#resetForm').attr('action', "{{ route('admin.stock.reset', ':id') }}".replace(':id', id));
+        }
     </script>
 @endpush
