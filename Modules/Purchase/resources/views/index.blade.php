@@ -34,24 +34,15 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.customers.index') }}" method="GET" onchange="this.submit()"
+                                <form action="{{ route('admin.purchase.index') }}" method="GET" onchange="this.submit()"
                                     class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-3 form-group">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="{{ __('Search') }}">
+                                                class="form-control"
+                                                placeholder="{{ __('Supplier Name, Invoice Or Model No') }}">
                                         </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="">{{ __('Order By') }}</option>
-                                                <option value="1" {{ request('order_by') == '1' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-                                                <option value="0" {{ request('order_by') == '0' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
-                                            </select>
-                                        </div>
+
                                         <div class="col-md-2 form-group">
                                             <select name="par-page" id="par-page" class="form-control">
                                                 <option value="">{{ __('Per Page') }}</option>
@@ -70,6 +61,31 @@
                                                     {{ __('All') }}
                                                 </option>
                                             </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select class="form-control select2" name="product_id">
+                                                <option value="" selected disabled>{{ __('Product') }}
+                                                </option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->id }}"
+                                                        {{ request('product_id') == $product->id ? 'selected' : '' }}>
+                                                        {{ $product->name }}
+                                                        ({{ $product->sku }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" placeholder="From Date" name="from_date"
+                                                value="{{ request()->get('from_date') }}" class="form-control datepicker">
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" placeholder="To Date" name="to_date"
+                                                value="{{ request()->get('to_date') }}" class="form-control datepicker">
+                                        </div>
+                                        <div class="col-md-1 form-group">
+                                            <a href="{{ route('admin.purchase.index') }}"
+                                                class="btn btn-danger">{{ __('Reset') }}</a>
                                         </div>
                                     </div>
                                 </form>

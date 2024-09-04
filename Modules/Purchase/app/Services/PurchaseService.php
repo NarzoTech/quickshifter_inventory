@@ -40,7 +40,28 @@ class PurchaseService
 
     public function all()
     {
-        return $this->purchase->with('supplier', 'warehouse')->latest();
+        $purchase = $this->purchase->with('supplier', 'warehouse')->latest();
+
+        if (request()->has('keyword')) {
+            $purchase = $purchase->where(function ($query) {
+                $query->where('invoice_number', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('memo_no', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('reference_no', 'like', '%' . request()->keyword . '%')
+                    ->orWhereHas('supplier', function ($q) {
+                        $q->where('name', 'like', '%' . request()->keyword . '%');
+                    })
+                ;
+            });
+        }
+        if (request('from_date') && request('to_date')) {
+            $purchase = $purchase->whereBetween('purchase_date', [now()->parse(request('from_date')), now()->parse(request('to_date'))]);
+        }
+        if (request()->product_id) {
+            $purchase = $purchase->whereHas('purchaseDetails', function ($q) {
+                $q->where('product_id', request('product_id'));
+            });
+        }
+        return $purchase;
     }
 
     public function allReturn()
