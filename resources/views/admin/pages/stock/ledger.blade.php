@@ -111,20 +111,29 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @php
+                                                $available = 0;
+                                            @endphp
+
                                             @foreach ($stocks as $stock)
                                                 @php
+                                                    $available = $stock->in_quantity - $stock->out_quantity;
                                                     $qty = $stock->in_quantity ?? $stock->out_quantity;
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $stock->created_at->format('d-m-Y') }}</td>
                                                     <td>{{ $product->barcode }}</td>
-                                                    <td>{{ $stock->invoice }}</td>
+                                                    <td>
+                                                        <a href="{{ $stock->invoice }}">
+                                                            {{ $stock->purchase->invoice_number }}
+                                                        </a>
+                                                    </td>
                                                     <td>{{ ucwords($stock->type) }}</td>
                                                     <td>{{ $stock->in_quantity }}</td>
                                                     <td>{{ $stock->out_quantity }}</td>
                                                     {{-- <td>{{ $stock->used_qty }}</td> --}}
-                                                    <td>{{ $stock->available_qty }}</td>
+                                                    <td>{{ $available }}</td>
                                                     <td>{{ $stock->rate }}</td>
                                                     <td>{{ $stock->rate * $qty }}</td>
                                                     <td>{{ $stock->profit }}</td>

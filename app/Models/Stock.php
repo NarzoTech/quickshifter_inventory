@@ -30,6 +30,7 @@ class Stock extends Model
         'updated_by',
         'sku',
         'rate',
+        'date',
     ];
 
     public function product()

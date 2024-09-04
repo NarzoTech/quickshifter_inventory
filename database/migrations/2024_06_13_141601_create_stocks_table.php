@@ -16,9 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id')->nullable();
             $table->unsignedBigInteger('purchase_id')->nullable();
             $table->unsignedBigInteger('warehouse_id')->nullable();
+            $table->date('date')->nullable();
             $table->integer('in_quantity')->default(0);
             $table->integer('out_quantity')->default(0);
             $table->string('invoice')->nullable();
+            $table->string('invoice_number')->nullable();
             $table->string('type')->nullable();
             $table->string('sku')->nullable();
             $table->integer('available_qty')->nullable();

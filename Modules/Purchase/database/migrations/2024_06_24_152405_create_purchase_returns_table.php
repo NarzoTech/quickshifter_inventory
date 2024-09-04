@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->string('payment_method')->default('cash');
             $table->string('attachment')->nullable();
+            $table->string('invoice')->nullable();
             $table->integer('received_amount')->default(0);
             $table->integer('return_amount')->default(0);
             $table->boolean('payment_status')->default(1);

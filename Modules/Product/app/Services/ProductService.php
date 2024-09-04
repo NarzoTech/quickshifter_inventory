@@ -394,13 +394,26 @@ class ProductService
                 'barcode' => trim($row[10]),
                 'cost' => trim($row[11]),
                 'price' => trim($row[12]),
-                'stock' => trim($row[18]),
+                'stock' => (trim($row[18]) == null || trim($row[18]) < 0) ? 0 : trim($row[18]),
                 'status' => 1,
                 'images' => ['null'],
 
             ]);
-            // store product categories
 
+
+            // store product stock
+
+            Stock::create([
+                'product_id' => $product->id,
+                'date' => now(),
+                'type' => '	Opening Stock',
+                'in_quantity' => (trim($row[18]) == null || trim($row[18]) < 0) ? 0 : trim($row[18]),
+                'sku' => $product->sku,
+                'purchase_price' => 0,
+                'rate' => 0,
+                'sale_price' => 0,
+                'created_by' => auth('admin')->user()->id,
+            ]);
         }
     }
 

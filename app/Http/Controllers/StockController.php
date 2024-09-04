@@ -49,7 +49,7 @@ class StockController extends Controller
     public function ledger($id)
     {
         $product = $this->product->getProduct($id);
-        $stocks = Stock::where('product_id', $id)->paginate(20);
+        $stocks = Stock::where('product_id', $id)->orderBy('date', 'asc')->paginate(20);
         return view('admin.pages.stock.ledger', compact('product', 'stocks'));
     }
 

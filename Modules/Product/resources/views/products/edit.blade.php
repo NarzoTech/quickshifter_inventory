@@ -150,7 +150,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            {{-- <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>{{ __('Opening Stock') }} </label>
                                                     <input type="number" class="form-control" name="stock"
@@ -159,7 +159,7 @@
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>{{ __('Stock alert') }}</label>

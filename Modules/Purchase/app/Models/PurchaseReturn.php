@@ -31,7 +31,8 @@ class PurchaseReturn extends Model
         'shipping_cost',
         'created_by',
         'updated_by',
-        'supplier_id'
+        'supplier_id',
+        'invoice',
     ];
 
     // relationships
@@ -41,7 +42,7 @@ class PurchaseReturn extends Model
     }
     public function returnType()
     {
-        return $this->belongsTo(PurchaseReturnType::class, 'return_type_id','id');
+        return $this->belongsTo(PurchaseReturnType::class, 'return_type_id', 'id');
     }
     public function warehouse()
     {
@@ -52,15 +53,18 @@ class PurchaseReturn extends Model
         return $this->hasMany(PurchaseReturnDetails::class);
     }
 
-    public function createdBy(){
+    public function createdBy()
+    {
         return $this->belongsTo(Admin::class, 'created_by', 'id')->withDefault();
     }
 
-    public function updatedBy(){
+    public function updatedBy()
+    {
         return $this->belongsTo(Admin::class, 'updated_by', 'id')->withDefault();
     }
 
-    public function supplier(){
+    public function supplier()
+    {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault();
     }
 }

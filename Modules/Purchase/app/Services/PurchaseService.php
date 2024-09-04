@@ -118,12 +118,16 @@ class PurchaseService
             // create stock
             Stock::create([
                 'purchase_id' => $purchase->id,
-                'product_id' => $product->id,
-                'quantity' => $request->stock[$index],
+                'product_id' => $id,
+                'date' => now()->parse($request->purchase_date),
+                'type' => 'Purchase',
+                'invoice' => route('admin.purchase.invoice', $purchase->id),
+                'in_quantity' => $request->quantity[$index],
                 'sku' => $product->sku,
                 'purchase_price' => $request->unit_price[$index],
                 'sale_price' => $request->selling_price[$index],
-                'profit' => $request->profit[$index],
+                'rate' => $request->unit_price[$index],
+                'profit' => 0,
                 'created_by' => auth('admin')->user()->id,
             ]);
         }
@@ -223,12 +227,16 @@ class PurchaseService
             // create stock
             Stock::create([
                 'purchase_id' => $purchase->id,
-                'product_id' => $product->id,
-                'quantity' => $request->stock[$index],
+                'product_id' => $id,
+                'date' => now()->parse($request->purchase_date),
+                'type' => 'Purchase',
+                'invoice' => route('admin.purchase.invoice', $purchase->id),
+                'in_quantity' => $request->quantity[$index],
                 'sku' => $product->sku,
                 'purchase_price' => $request->unit_price[$index],
                 'sale_price' => $request->selling_price[$index],
-                'profit' => $request->profit[$index],
+                'rate' => $request->unit_price[$index],
+                'profit' => 0,
                 'created_by' => auth('admin')->user()->id,
             ]);
         }
@@ -283,8 +291,9 @@ class PurchaseService
 
     public function genInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'INV-';
+        $setting = cache('setting');
+        $number = $setting->invoice_suffix ?? 1;
+        $prefix = $setting->invoice_prefix ?? 'INV-';
         $invoice_number = $prefix . $number;
 
         $purchase = $this->purchase->latest()->first();
@@ -292,7 +301,7 @@ class PurchaseService
             $purchaseInvoice = $purchase->invoice_number;
 
             // split the invoice number
-            $split_invoice = explode('-', $purchaseInvoice);
+            $split_invoice = explode($prefix, $purchaseInvoice);
             $invoice_number = (int) $split_invoice[1] + 1;
             $invoice_number = $prefix . $invoice_number;
         }
@@ -360,6 +369,7 @@ class PurchaseService
             'received_amount' => $request->received_amount,
             'return_amount' => $request->invoice_amount,
             'shipping_cost' => $request->shipping_cost,
+            'invoice' => $this->returnInvoice()
         ]);
 
 
@@ -378,6 +388,19 @@ class PurchaseService
             $prod = Product::find($val);
             $prod->stock = $prod->stock - $request->return_quantity[$index];
             $prod->save();
+
+
+
+            // update stock
+            Stock::create([
+                'invoice_number' => $purchase->invoice,
+                'type' => 'purchase return',
+                'product_id' => $val,
+                'date' => now(),
+                'out_quantity' => $request->return_quantity[$index],
+                'sku' => $prod->sku,
+                'created_by' => auth('admin')->user()->id,
+            ]);
         }
 
         $account = Account::where('account_type', $request->payment_type);
@@ -449,5 +472,25 @@ class PurchaseService
         $ledger->date = now()->parse($request->purchase_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
+    }
+
+
+    public function returnInvoice($id = 0)
+    {
+        $number = 1;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $return = $this->purchaseReturn->find($id);
+        if ($return) {
+            $purchaseInvoice = $return->invoice;
+
+            // split the invoice number
+            $split_invoice = explode($prefix, $purchaseInvoice);
+            $invoice_number = (int) $split_invoice[1] + 1;
+            $invoice_number = $prefix . $invoice_number;
+        }
+
+        return $invoice_number;
     }
 }
