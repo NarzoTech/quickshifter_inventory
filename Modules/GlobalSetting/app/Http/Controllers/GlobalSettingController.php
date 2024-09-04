@@ -33,22 +33,34 @@ class GlobalSettingController extends Controller
 
     public function update_general_setting(Request $request)
     {
+
         checkAdminHasPermissionAndThrowException('setting.update');
 
         $request->validate([
             'app_name' => 'required',
-            'timezone' => 'required',
-            'is_queable' => 'required|in:active,inactive',
+            // 'timezone' => 'required',
         ], [
             'app_name' => __('App name is required'),
-            'timezone' => __('Timezone is required'),
-            'is_queable' => __('Queue is required'),
-            'is_queable.in' => __('Queue is invalid'),
+            // 'timezone' => __('Timezone is required'),
         ]);
 
-        Setting::where('key', 'app_name')->update(['value' => $request->app_name]);
-        Setting::where('key', 'timezone')->update(['value' => $request->timezone]);
-        Setting::where('key', 'is_queable')->update(['value' => $request->is_queable]);
+        foreach ($request->except('_token', '_method') as $key => $value) {
+
+            $setting = Setting::where('key', $key)->first();
+
+            if ($key == 'logo') {
+                $file_name = file_upload($request->logo, 'uploads/custom-images/', $this->cachedSetting?->logo);
+                $value = $file_name;
+            }
+
+            if ($setting) {
+                $setting->value = $value;
+                $setting->save();
+            } else {
+                continue;
+            }
+        }
+
 
         $this->put_setting_cache();
 
