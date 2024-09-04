@@ -55,33 +55,7 @@ class ProductService
     public function allActiveProducts($request)
     {
         $products = $this->product->where('status', 1)->with('category');
-        if ($request->category) {
-            $products = $products->whereHas('category', function ($query) use ($request) {
-                $query->where('slug', $request->category);
-            });
-        }
-        if ($request->brand) {
-            $products = $products->whereHas('brand', function ($query) use ($request) {
-                $query->where('slug', $request->brand);
-            });
-        }
-        if ($request->min_price) {
-            $products = $products->where('price', '>=', $request->min_price);
-        }
 
-        if ($request->max_price) {
-            $products = $products->where('price', '<=', $request->max_price);
-        }
-
-        if ($request->search) {
-            $products = $products->whereHas('translation', function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        if ($request->sort) {
-            $products = $products->orderBy('price', $request->sort);
-        }
 
         return $products;
     }
