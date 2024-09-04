@@ -54,7 +54,7 @@
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="brand_id" id="brand_id" class="form-control select2">
-                                                <option value="">{{ __('Brand') }}</option>
+                                                <option value="" selected disabled>{{ __('Brand') }}</option>
                                                 @foreach ($brands as $brand)
                                                     <option value="{{ $brand->id }}">
                                                         {{ $brand->name }}
@@ -64,7 +64,7 @@
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="category_id" id="categories" class="form-control select2">
-                                                <option value="">{{ __('Categories') }}
+                                                <option value="" selected disabled>{{ __('Categories') }}
                                                 </option>
                                                 @foreach ($categories as $cat)
                                                     <option value="{{ $cat->id }}">
@@ -73,7 +73,6 @@
                                                 @endforeach
                                             </select>
                                         </div>
-
                                         <div class="col-md-1 form-group">
                                             <a href="{{ route('admin.product.index') }}"
                                                 class="btn btn-danger">{{ __('Reset') }}</a>
@@ -263,6 +262,18 @@
                         $('#productView').modal('show');
                     }
                 });
+            })
+
+            $('.export').on('click', function() {
+                // get full url including query string
+                var fullUrl = window.location.href;
+                if (fullUrl.includes('?')) {
+                    fullUrl += '&export=true';
+                } else {
+                    fullUrl += '?export=true';
+                }
+
+                window.location.href = fullUrl;
             })
         });
 

@@ -3,11 +3,13 @@
 namespace Modules\Product\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\ProductsExport;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Milon\Barcode\DNS1D;
 use Modules\Product\app\Http\Requests\ProductRequest;
 use Modules\Product\app\Models\Product;
@@ -42,6 +44,10 @@ class ProductController extends Controller
         try {
             $products = $this->productService->getProducts();
 
+            if (request('export')) {
+                $fileName = 'products-' . date('Y-m-d') . '-' . time() . '.xlsx';
+                return Excel::download(new ProductsExport($products), $fileName,);
+            }
             if (request('par-page')) {
                 if (request('par-page') == 'all') {
                     $products = $products->get();
