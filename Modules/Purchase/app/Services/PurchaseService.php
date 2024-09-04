@@ -394,6 +394,7 @@ class PurchaseService
             // update stock
             Stock::create([
                 'invoice_number' => $purchase->invoice,
+                'purchase_return_id' => $purchase->id,
                 'type' => 'purchase return',
                 'product_id' => $val,
                 'date' => now(),
@@ -413,7 +414,7 @@ class PurchaseService
         if ($request->received_amount) {
             SupplierPayment::create([
                 'payment_type' => 'purchase_receive',
-                'purchase_id' => $request->purchase_id,
+                'purchase_return_id' => $request->purchase_id,
                 'supplier_id' => $purchase->supplier_id,
                 'account_id' => $account->id,
                 'is_received' => 1,
@@ -424,23 +425,50 @@ class PurchaseService
             ]);
         }
 
-        if ($request->shipping_cost) {
-            Payment::create([
-                'payment_type' => 'purchase_cost',
-                'purchase_id' => $request->purchase_id,
-                'account_id' => $account->id,
-                'amount' => $request->shipping_cost,
-                'payment_date' => now(),
-                'created_by' => auth()->user()->id,
-            ]);
-        }
-
-
         // create ledger
 
         $this->updateLedger($request, $request->purchase_id, $request->received_amount, 'purchase_return', 0);
 
         return $purchase;
+    }
+
+    public function updateReturn($request, $id)
+    {
+        $return = $this->purchaseReturn->find($id);
+
+
+        $return->update([
+            'supplier_id' => $request->supplier_id,
+            'warehouse_id' => $request->warehouse_id,
+            'return_type_id' => $request->return_type_id,
+            'return_date' => now()->parse($request->return_date),
+            'note' => $request->note,
+            'payment_method' => $request->payment_type,
+            'received_amount' => $request->received_amount,
+            'return_amount' => $request->invoice_amount,
+            'shipping_cost' => $request->shipping_cost,
+            'invoice' => $this->returnInvoice()
+        ]);
+
+        // restore product stock
+
+        foreach ($return->purchaseDetails as $purchaseDetail) {
+            $product = Product::find($purchaseDetail->product_id);
+            $product->stock += $purchaseDetail->quantity;
+            $product->save();
+        }
+
+
+        // delete old purchase details
+        $return->purchaseDetails()->delete();
+        $return->payments()?->delete();
+        $return->stock()->delete();
+    }
+
+
+    public function getPurchaseReturn($id)
+    {
+        return $this->purchaseReturn->with('supplier', 'purchaseDetails')->find($id);
     }
 
 
@@ -462,6 +490,7 @@ class PurchaseService
 
 
         $ledger->supplier_id = $request->supplier_id;
+        $ledger->purchase_return_id = $request->purchase_return_id;
         $ledger->amount = $paidAmount;
         $ledger->invoice_type = $type;
         $ledger->is_paid = 1;
@@ -472,6 +501,12 @@ class PurchaseService
         $ledger->date = now()->parse($request->purchase_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
+    }
+
+    public function purchaseReturnCreateLedger($request, $id, $paidAmount, $type = 'purchase', $isPaid = 1)
+    {
+
+        $this->updateLedger($request, $id, $paidAmount, $type, $isPaid);
     }
 
 

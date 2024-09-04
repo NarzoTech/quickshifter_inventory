@@ -31,6 +31,8 @@ class Stock extends Model
         'sku',
         'rate',
         'date',
+        'purchase_return_id',
+        'sale_id',
     ];
 
     public function product()

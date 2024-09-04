@@ -4,6 +4,7 @@ namespace Modules\Sales\app\Models;
 
 use App\Models\Admin;
 use App\Models\Payment;
+use App\Models\Stock;
 use App\Models\User;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
@@ -75,6 +76,10 @@ class Sale extends Model
     public function user()
     {
         return $this->belongsTo(Admin::class, 'user_id')->withDefault();
+    }
+    public function stock()
+    {
+        return $this->hasMany(Stock::class, 'sale_id', 'id');
     }
 
     public function currency()

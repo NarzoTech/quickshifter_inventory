@@ -65,9 +65,8 @@
                                                                 </button>
                                                                 <div class="dropdown-menu"
                                                                     aria-labelledby="btnGroupDrop{{ $list->id }}">
-                                                                    <a class="dropdown-item" href="javascript:;"
-                                                                        data-toggle="modal"
-                                                                        data-target="#editType{{ $list->id }}">Edit</a>
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('admin.purchase.return.edit', $list->id) }}">Edit</a>
                                                                     <a href="javascript:;" data-toggle="modal"
                                                                         data-target="#deleteModal" class="dropdown-item"
                                                                         onclick="deleteData({{ $list->id }})">
@@ -93,7 +92,7 @@
 @push('js')
     <script>
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ route('admin.purchase.return.type.destroy', '') }}' + "/" + id)
+            $("#deleteForm").attr("action", '{{ route('admin.purchase.return.destroy', '') }}' + "/" + id)
         }
     </script>
 @endpush

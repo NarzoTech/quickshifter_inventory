@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id')->nullable();
             $table->unsignedBigInteger('purchase_id')->nullable();
+            $table->unsignedBigInteger('sale_id')->nullable();
+            $table->unsignedBigInteger('purchase_return_id')->nullable();
             $table->unsignedBigInteger('warehouse_id')->nullable();
             $table->date('date')->nullable();
             $table->integer('in_quantity')->default(0);

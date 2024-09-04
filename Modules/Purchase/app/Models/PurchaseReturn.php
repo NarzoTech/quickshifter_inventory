@@ -3,12 +3,14 @@
 namespace Modules\Purchase\app\Models;
 
 use App\Models\Admin;
+use App\Models\Stock;
 use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Purchase\Database\factories\PurchaseReturnFactory;
 use Modules\Supplier\app\Models\Supplier;
+use Modules\Supplier\app\Models\SupplierPayment;
 
 class PurchaseReturn extends Model
 {
@@ -53,6 +55,11 @@ class PurchaseReturn extends Model
         return $this->hasMany(PurchaseReturnDetails::class);
     }
 
+    public function payment()
+    {
+        return $this->hasOne(SupplierPayment::class, 'purchase_return_id', 'id');
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(Admin::class, 'created_by', 'id')->withDefault();
@@ -66,5 +73,10 @@ class PurchaseReturn extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault();
+    }
+
+    public function stock()
+    {
+        return $this->hasMany(Stock::class, 'purchase_return_id');
     }
 }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('purchase_id')->nullable()->constrained('purchases');
             $table->foreignId('supplier_id')->nullable()->constrained('supplier');
             $table->foreignId('account_id')->nullable()->constrained('accounts');
+            $table->unsignedBigInteger('purchase_return_id')->nullable();
             $table->string('invoice')->nullable();
             $table->boolean('is_guest')->nullable()->default(false);
             $table->boolean('is_received')->default(false);

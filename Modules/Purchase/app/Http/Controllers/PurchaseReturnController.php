@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Modules\Accounts\app\Models\Account;
 use Modules\Purchase\app\Services\PurchaseService;
 
 class PurchaseReturnController extends Controller
@@ -76,7 +77,12 @@ class PurchaseReturnController extends Controller
      */
     public function edit($id)
     {
-        return view('purchase::edit');
+        $return = $this->purchaseService->getPurchaseReturn($id);
+        $purchase = $return->purchase;
+        $returnTypes = $this->purchaseService->getReturnTypes();
+        $accounts = $this->purchaseService->getAccounts();
+        $payment = $return->payment;
+        return view('purchase::return.edit', compact('return', 'purchase', 'returnTypes', 'accounts', 'payment'));
     }
 
     /**
@@ -84,7 +90,24 @@ class PurchaseReturnController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        dd($request->all());
+        $request->validate([
+            'supplier_id' => 'required',
+            'return_date' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $this->purchaseService->updateReturn($request, $id);
+
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Created Successfully', 'alert-type' => 'success']);
+        } catch (Exception $ex) {
+
+            DB::rollBack();
+            Log::error($ex->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.purchase.return.index', [], ['messege' => 'Something Went Wrong', 'alert-type' => 'error']);
+        }
     }
 
     /**

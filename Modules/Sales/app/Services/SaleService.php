@@ -4,6 +4,7 @@ namespace Modules\Sales\app\Services;
 
 use App\Models\Ledger;
 use App\Models\Payment;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
 use Modules\Customer\app\Models\CustomerDue;
@@ -77,6 +78,21 @@ class SaleService
                 $product->stock = $product->stock - $item['qty'];
                 $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
                 $product->save();
+
+                // create stock
+                Stock::create([
+                    'sale_id' => $sale->id,
+                    'product_id' => $product->id,
+                    'date' => now()->parse($request->sale_date),
+                    'type' => 'Sale',
+                    'invoice' => route('admin.sales.invoice', $sale->id),
+                    'out_quantity' => $item['qty'],
+                    'sku' => $product->sku,
+                    'sale_price' => $item['price'],
+                    'rate' => $item['price'],
+                    'profit' => $item['price'] - $product->last_purchase_price,
+                    'created_by' => auth('admin')->user()->id,
+                ]);
             }
         }
 
@@ -175,7 +191,7 @@ class SaleService
         $sale->details()->delete();
         $sale->payment()->delete();
         $sale->customer_due()->delete();
-
+        $sale->stock()->delete();
 
         $totalQty = 0;
         foreach ($cart as $item) {
@@ -203,6 +219,21 @@ class SaleService
                 $product->stock = $product->stock - $item['qty'];
                 $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
                 $product->save();
+
+                // create stock
+                Stock::create([
+                    'sale_id' => $sale->id,
+                    'product_id' => $product->id,
+                    'date' => now()->parse($request->sale_date),
+                    'type' => 'Sale',
+                    'invoice' => route('admin.sales.invoice', $sale->id),
+                    'out_quantity' => $item['qty'],
+                    'sku' => $product->sku,
+                    'sale_price' => $item['price'],
+                    'rate' => $item['price'],
+                    'profit' => $item['price'] - $product->last_purchase_price,
+                    'created_by' => auth('admin')->user()->id,
+                ]);
             }
         }
 

@@ -17,6 +17,7 @@ class SupplierPayment extends Model
     protected $fillable = [
         'purchase_id',
         'invoice',
+        'purchase_return_id',
         'supplier_id',
         'account_id',
         'is_guest',

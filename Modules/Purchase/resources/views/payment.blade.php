@@ -1,5 +1,5 @@
 @if ($value != 'cash')
-    <select name="account_id[]" class="form-control" required>
+    <select name="{{ isset($name) ? $name : 'account_id[]' }}" class="form-control" required>
         @foreach ($account as $key => $account)
             @php
                 switch ($value) {
@@ -53,7 +53,10 @@
 @else
     @php
         if ($value == 'cash' || $value == 'advance') {
-            $cash = '<input type="text" name="account_id[]" class="form-control" value="' . $value . '" readonly>';
+            $cash =
+                '<input type="text" name="{{ isset($name) ? $name : 'account_id[]' }}" class="form-control" value="' .
+                $value .
+                '" readonly>';
             echo $cash;
         }
     @endphp
