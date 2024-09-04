@@ -95,9 +95,9 @@
                                                     {{ $setting->date_format == 'd/m/Y' ? 'selected' : '' }}>
                                                     d/m/Y ({{ date('d/m/Y') }})
                                                 </option>
-                                                <option value="Y-m-d"
-                                                    {{ $setting->date_format == 'Y-m-d' ? 'selected' : '' }}>
-                                                    Y-m-d ({{ date('Y-m-d') }})
+                                                <option value="d-m-Y"
+                                                    {{ $setting->date_format == 'd-m-Y' ? 'selected' : '' }}>
+                                                    d-m-Y ({{ date('d-m-Y') }})
                                                 </option>
                                                 <option value="Facebook"
                                                     {{ $setting->date_format == 'Facebook' ? 'selected' : '' }}>
