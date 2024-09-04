@@ -11,6 +11,88 @@
 
             <div class="section-body">
                 <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <form action="{{ route('admin.product.index') }}" method="GET" onchange="this.submit()"
+                                    class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 form-group">
+                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                                class="form-control" placeholder="Product Name, SKU, Barcode...">
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="order_by" id="order_by" class="form-control">
+                                                <option value="">{{ __('Order By') }}</option>
+                                                <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                                    {{ __('ASC') }}
+                                                </option>
+                                                <option value="desc"
+                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                                    {{ __('DESC') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="par-page" id="par-page" class="form-control">
+                                                <option value="">{{ __('Per Page') }}</option>
+                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('10') }}
+                                                </option>
+                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('50') }}
+                                                </option>
+                                                <option value="100"
+                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('100') }}
+                                                </option>
+                                                <option value="all"
+                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ __('All') }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="brand_id" id="brand_id" class="form-control select2">
+                                                <option value="">{{ __('Brand') }}</option>
+                                                @foreach ($brands as $brand)
+                                                    <option value="{{ $brand->id }}">
+                                                        {{ $brand->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="category_id" id="categories" class="form-control select2">
+                                                <option value="">{{ __('Categories') }}
+                                                </option>
+                                                @foreach ($categories as $cat)
+                                                    <option value="{{ $cat->id }}">
+                                                        {{ $cat->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-1 form-group">
+                                            <a href="{{ route('admin.product.index') }}"
+                                                class="btn btn-danger">{{ __('Reset') }}</a>
+                                        </div>
+                                    </div>
+                                    {{-- excel  buttons --}}
+                                    <div class="row">
+                                        <div class="col-md-4 form-group mx-auto">
+                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button type="button" class="btn btn-secondary export"><i
+                                                        class="far fa-file-excel"></i>
+                                                    Excel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
                             <div class="card-header">
@@ -122,13 +204,14 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
-
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="float-right">
-                                    {{ $products->links() }}
-                                </div>
+                                @if (request()->get('par-page') !== 'all')
+                                    <div class="float-right">
+                                        {{ $products->onEachSide(0)->links() }}
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

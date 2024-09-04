@@ -32,12 +32,21 @@ class ProductService
     {
         $query = $this->product;
 
-        if (request('search')) {
+        if (request('keyword')) {
             $query = $query->where(function ($q) {
-                $q->where('name', 'like', '%' . request()->search . '%')
-                    ->orWhere('sku', 'like', '%' . request()->search . '%')
-                    ->orWhere('barcode', 'like', '%' . request()->search . '%');
+                $q->where('name', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('sku', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('barcode', 'like', '%' . request()->keyword . '%');
             });
+        }
+        if (request('order_by')) {
+            $query = $query->orderBy('id', request('order_by'));
+        }
+        if (request('brand_id')) {
+            $query = $query->where('brand_id', request('brand_id'));
+        }
+        if (request('category_id')) {
+            $query = $query->where('category_id', request('category_id'));
         }
         return $query;
     }

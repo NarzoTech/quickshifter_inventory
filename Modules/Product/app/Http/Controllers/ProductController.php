@@ -40,8 +40,21 @@ class ProductController extends Controller
     public function index()
     {
         try {
-            $products = $this->productService->getProducts()->paginate(20);
-            return view('product::products.index', compact('products'));
+            $products = $this->productService->getProducts();
+
+            if (request('par-page')) {
+                if (request('par-page') == 'all') {
+                    $products = $products->get();
+                } else {
+                    $products = $products->paginate(request('par-page'));
+                }
+            } else {
+                $products = $products->paginate(20);
+            }
+
+            $brands = $this->brandService->getActiveBrands();
+            $categories = $this->categoryService->getAllProductCategoriesForSelect();
+            return view('product::products.index', compact('products', 'brands', 'categories'));
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             abort(500);
