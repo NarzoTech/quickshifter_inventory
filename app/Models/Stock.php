@@ -33,6 +33,7 @@ class Stock extends Model
         'date',
         'purchase_return_id',
         'sale_id',
+        'sale_return_id',
     ];
 
     public function product()

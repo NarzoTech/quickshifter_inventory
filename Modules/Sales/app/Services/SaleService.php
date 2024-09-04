@@ -86,6 +86,7 @@ class SaleService
                     'date' => now()->parse($request->sale_date),
                     'type' => 'Sale',
                     'invoice' => route('admin.sales.invoice', $sale->id),
+                    'invoice_number' => $sale->invoice,
                     'out_quantity' => $item['qty'],
                     'sku' => $product->sku,
                     'sale_price' => $item['price'],
@@ -227,6 +228,7 @@ class SaleService
                     'date' => now()->parse($request->sale_date),
                     'type' => 'Sale',
                     'invoice' => route('admin.sales.invoice', $sale->id),
+                    'invoice_number' => $sale->invoice,
                     'out_quantity' => $item['qty'],
                     'sku' => $product->sku,
                     'sale_price' => $item['price'],
@@ -287,6 +289,15 @@ class SaleService
 
         // delete sales related all info
 
+        foreach ($sale->products as $item) {
+            $product = Product::where('id', $item->product_id)->first();
+            if ($product != null && $item->source == 1) {
+                $product->stock = $product->stock + $item->quantity;
+                $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
+                $product->save();
+            }
+        }
+
         // delete payments
         $sale->payments()->delete();
 
@@ -295,6 +306,9 @@ class SaleService
 
         // delete sale details
         $sale->details()->delete();
+
+        // delete product stock
+        $sale->stock()->delete();
 
         // delete sale
         $sale->delete();

@@ -5,6 +5,7 @@ namespace Modules\Sales\app\Http\Controllers;
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Models\Stock;
 use App\Traits\RedirectHelperTrait;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -99,6 +100,19 @@ class SalesReturnController extends Controller
                 $stock = $stock + $request->return_quantity[$key];
                 $details->product->update([
                     'stock' => $stock
+                ]);
+
+                // create stock
+                Stock::create([
+                    'sale_return_id' => $return->id,
+                    'product_id' => $prod_id,
+                    'date' => now()->parse($request->order_date),
+                    'type' => 'Sale Return',
+                    // 'invoice' => route('admin.sales.invoice', $sale->id),
+                    // 'invoice_number' => $sale->invoice,
+                    'in_quantity' => $request->return_quantity[$key],
+                    'rate' => $request->price[$key],
+                    'created_by' => auth('admin')->user()->id,
                 ]);
             }
 
