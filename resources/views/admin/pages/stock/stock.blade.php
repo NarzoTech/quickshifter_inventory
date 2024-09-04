@@ -87,6 +87,7 @@
                                                 <th>{{ __('Picture') }}</th>
                                                 <th>{{ __('Name') }}</th>
                                                 <th>{{ __('Avg P.P') }}</th>
+                                                <th>{{ __('L. P.P') }}</th>
                                                 <th>{{ __('Selling Price') }}</th>
                                                 {{-- <th style="display: none;">Business Branch</th> --}}
                                                 <th>{{ __('In Quantity') }}</th>
@@ -98,7 +99,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($products as $product)
+                                            @foreach ($products as $index => $product)
+                                                @php
+                                                    $stock = $product->stock < 0 ? 0 : $product->stock;
+                                                    $selling_price = $product->selling_price ?? 0;
+                                                @endphp
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>
@@ -107,14 +112,18 @@
                                                     </td>
                                                     <td>{{ $product->name }}</td>
                                                     <td>{{ $product->avg_purchase_price }}</td>
+                                                    <td>{{ $product->last_purchase_price }}</td>
                                                     <td>{{ $product->selling_price }}</td>
                                                     {{-- <td style="display: none;">{{ $product->business_branch->name }}</td> --}}
                                                     <td>{{ $product->stockDetails->sum('quantity') }}</td>
                                                     <td>{{ $product->stockDetails->sum('quantity') - $product->stock }}
                                                     </td>
                                                     <td>{{ $product->stock }}</td>
-                                                    <td>{{ $product->stock * $product->avg_purchase_price }}</td>
-                                                    <td>{{ $product->stock * $product->selling_price }}</td>
+                                                    <td>{{ remove_comma($stock) * remove_comma($product->avg_purchase_price) }}
+                                                    </td>
+                                                    <td>
+                                                        {{ remove_comma($stock) * remove_comma($selling_price) }}
+                                                    </td>
                                                     <td>
                                                         <a href="{{ route('admin.product.show', $product->id) }}"
                                                             class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
@@ -126,7 +135,7 @@
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{ $products->links() }}
+                                        {{ $products->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>

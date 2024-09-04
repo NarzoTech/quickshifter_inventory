@@ -87,6 +87,13 @@ class Product extends Model
         return $totalQuantity > 0 ? $totalPrice / $totalQuantity : 0;
     }
 
+    public function getLastPurchasePriceAttribute()
+    {
+        $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->get();
+
+        return $purchase->count() > 0 ? $purchase->first()->purchase_price : 0;
+    }
+
     public function getSellingPriceAttribute()
     {
         $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->first();

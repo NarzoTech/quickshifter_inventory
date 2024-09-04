@@ -46,6 +46,13 @@ if (!function_exists('delete_file')) {
         }
     }
 }
+if (!function_exists('remove_comma')) {
+    // remove , from number
+    function remove_comma($number)
+    {
+        return str_replace(',', '', $number);
+    }
+}
 
 
 // file upload method
