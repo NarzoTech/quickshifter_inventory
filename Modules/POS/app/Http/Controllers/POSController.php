@@ -154,6 +154,29 @@ class POSController extends Controller
         return response()->json(['productView' => $productView, 'serviceView' => $serviceView]);
     }
 
+    public function load_products_list(Request $request)
+    {
+        $products = Product::where('status', 1)->whereHas('category', function ($query) {
+            $query->where('status', 1);
+        })->orderBy('id', 'desc');
+
+        if ($request->name) {
+            $products = $products->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->name . '%')
+                    ->orWhere('barcode', 'LIKE', '%' . $request->name . '%')
+                    ->orWhere('sku', 'LIKE', '%' . $request->name . '%');
+            });
+        }
+
+        $products = $products->get();
+
+        $view = view('pos::product-list')->with([
+            'products' => $products
+        ])->render();
+
+        return response()->json(['view' => $view, 'total' => $products->count()]);
+    }
+
     public function load_product_modal($product_id)
     {
         $product = $this->productService->getActiveProductById($product_id);

@@ -19,6 +19,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::prefix('pos')->group(function () {
         Route::get('/', [POSController::class, 'index'])->name('pos');
         Route::get('/load-products', [POSController::class, 'load_products'])->name('load-products');
+        Route::get('load-products-list', [POSController::class, 'load_products_list'])->name('load-products-list');
         Route::get('/load-product-modal/{id}', [POSController::class, 'load_product_modal'])->name('load-product-modal');
         Route::get('/pos/load-customer-address/{id}', [POSController::class, 'load_customer_address'])->name('load-customer-address');
         Route::get('/add-to-cart', [POSController::class, 'add_to_cart'])->name('add-to-cart');

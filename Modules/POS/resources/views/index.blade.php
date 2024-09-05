@@ -163,6 +163,9 @@
                                                     <input type="text" class="form-control" name="name" id="name"
                                                         placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
                                                         autocomplete="off" value="{{ request()->get('name') }}">
+                                                    <ul class="dropdown-menu" id="itemList">
+                                                        @include('pos::product-list')
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </form>
@@ -904,30 +907,6 @@
                     });
                 })
 
-                // palce order modal
-                // $('#placeOrderBtn').on('click', function() {
-
-                //     const paymentMethod = $('[name="payment_method"]').val();
-
-                //     if (!paymentMethod) {
-                //         toastr.error("{{ __('Please select a Payment Method') }}")
-                //         return;
-                //     }
-                //     const paymentDetails = $('[name="payment_details"]').val();
-                //     if (!paymentMethod) {
-                //         toastr.error("{{ __('Please select a Fill Payment Details') }}")
-                //         return;
-                //     }
-                //     $('[name="order_delivery_date"]').val($('[name="delivery_date"]').val())
-                //     $('[name="order_payment_method"]').val($('[name="payment_method"]').val());
-                //     $('[name="order_payment_details"]').val($('[name="payment_details"]').val());
-                //     $('[name="order_payment_notes"]').val($('[name="_payment_notes"]').val())
-                //     $('[name="order_order_note"]').val($('[name="order_note"]').val())
-
-                //     $("#placeOrderForm").submit();
-                // })
-
-
                 $('.modal-reset-button').on('click', function() {
                     const productId = $(this).data('product-id');
                     resetCart();
@@ -940,9 +919,47 @@
                     $('.discount_icon').html(symbol)
                 })
 
+                $(document).on('click', function() {
+                    // without #name or #itemList remove show class
+
+                    var searchInput = $("#name");
+                    var itemList = $("#itemList");
+
+                    // If click is outside the search input and dropdown, hide the dropdown
+                    if (!searchInput.is(event.target) && !itemList.is(event.target) && itemList.has(
+                            event.target).length === 0) {
+                        itemList.removeClass("show");
+                    }
+                })
 
 
-                $("#category_id,#brand_id,#name").on('input', function() {
+                $('#name').on('input', function() {
+                    const name = $(this).val();
+                    $.ajax({
+                        type: 'get',
+                        url: "{{ route('admin.load-products-list') }}",
+                        data: {
+                            name
+                        },
+                        success: function(response) {
+                            if (response.total > 1) {
+                                $('#itemList').html(response.view).addClass('show');
+                            } else {
+                                $('#itemList').html('');
+                                $('#itemList').removeClass('show');
+
+                                $('#name').val('');
+                            }
+                        },
+                        error: function(response) {
+                            toastr.error("{{ __('Server error occurred') }}")
+                            //location.reload();
+                        }
+                    });
+                })
+                // search products
+
+                $("#category_id,#brand_id").on('input', function() {
                     const category_id = $('#category_id').val();
                     const brand = $('#brand_id').val();
                     const name = $('#name').val();
