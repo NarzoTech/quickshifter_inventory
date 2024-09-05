@@ -55,6 +55,26 @@ class StockController extends Controller
 
     public function reset($id)
     {
+        $this->resetStock($id);
+
+        return redirect()->back()->with(['messege' => 'Stock Reset Successfully', 'alert-type' => 'success']);
+    }
+
+    public function resetAll()
+    {
+        Stock::truncate();
+
+        $products = $this->product->getProducts()->get();
+
+        foreach ($products as $product) {
+            $this->resetStock($product->id);
+        }
+
+        return redirect()->back()->with(['messege' => 'All Stock Reset Successfully', 'alert-type' => 'success']);
+    }
+
+    private function resetStock($id)
+    {
         $product = $this->product->getProduct($id);
         Stock::where('product_id', $id)->delete();
         $product->update(['stock' => 0, 'stock_status' => 'out_of_stock']);
@@ -72,7 +92,5 @@ class StockController extends Controller
             'tax' => 0,
             'created_by' => auth('admin')->user()->id,
         ]);
-
-        return redirect()->back()->with(['messege' => 'Stock Reset Successfully', 'alert-type' => 'success']);
     }
 }

@@ -92,9 +92,12 @@
                                                     {{ __('Stock Out') }}</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-1 form-group">
+                                        <div class="col-md-2 form-group">
                                             <a href="{{ route('admin.stock.index') }}"
-                                                class="btn btn-danger">{{ __('Reset') }}</a>
+                                                class="btn btn-info">{{ __('Reset Form') }}</a>
+                                        </div>
+                                        <div class="col-md-2 form-group reset-button">
+                                            <a href="javascript:;" class="btn btn-danger">{{ __('Reset Stock') }}</a>
                                         </div>
                                     </div>
                                     {{-- excel  buttons --}}
@@ -237,6 +240,12 @@
                 }
 
                 window.location.href = fullUrl;
+            })
+
+            $('.reset-button').on('click', function() {
+                $('#resetForm').attr('action', "{{ route('admin.stock.reset.all') }}");
+
+                $('#stockModal').modal('show');
             })
         });
 

@@ -942,7 +942,6 @@
                             name
                         },
                         success: function(response) {
-                            console.log(response);
                             if (response.total > 1) {
                                 $('#itemList').html(response.view).addClass('show');
                             } else {
