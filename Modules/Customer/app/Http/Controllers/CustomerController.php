@@ -193,63 +193,133 @@ class CustomerController extends Controller
 
     public function dueReceive(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'receiving_amount' => 'required',
         ]);
 
-        $account = $request->account_id;
+        DB::beginTransaction();
+        try {
 
-        if ($account == 'cash' || $account == 'advance') {
-            $account = $this->account->all()->where('account_type', $account)->first();
-        } else {
-            $account = $this->account->all()->find($account);
-        }
-        foreach ($request->invoice_no as $index => $invo) {
-            $sale = Sale::where('invoice', $invo)->first();
+            // create ledger
 
-            $sale->payment_status = $sale->due_amount == $request->amount[$index] ? 'paid' : 'due';
+            $ledger = new Ledger();
+            $ledger->customer_id = $request->customer_id;
+            $ledger->amount = $request->receiving_amount;
+            $ledger->invoice_type = 'Due Receive';
+            $ledger->is_paid = 0;
+            $ledger->is_received = 1;
+            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Due Receive');
+            $ledger->due_amount -= $request->receiving_amount;
 
-            $sale->paid_amount = $sale->paid_amount + $request->amount[$index];
-            $sale->due_amount = $sale->due_amount - $request->amount[$index];
-            $sale->save();
+            $ledger->note = $request->note;
+            $ledger->date = now()->parse($request->payment_date);
 
-            // create payment data
-            Payment::create([
-                'sale_id' => $sale->id,
-                'customer_id' => $sale->customer_id,
-                'account_id' => $account->id,
-                'payment_type' => 'due_receive',
-                'is_received' => 1,
-                'amount' => $request->amount[$index],
-                'payment_date' => now()->parse($request->payment_date),
-                'note' => $request->note,
-                'created_by' => auth('admin')->user()->id,
+            $ledger->created_by = auth('admin')->user()->id;
+            $ledger->save();
+
+            $ledger->invoice_url = route('admin.customers.ledger-details', $ledger->id);
+            $ledger->save();
+
+            $account = $request->account_id;
+
+            if ($account == 'cash' || $account == 'advance') {
+                $account = $this->account->all()->where('account_type', $account)->first();
+            } else {
+                $account = $this->account->all()->find($account);
+            }
+
+
+            foreach ($request->invoice_no as $index => $invo) {
+                $sale = Sale::where('invoice', $invo)->first();
+
+                $sale->payment_status = $sale->due_amount == $request->amount[$index] ? 'paid' : 'due';
+
+                $sale->paid_amount = $sale->paid_amount + $request->amount[$index];
+                $sale->due_amount = $sale->due_amount - $request->amount[$index];
+                $sale->save();
+
+                // create payment data
+                CustomerPayment::create([
+                    'sale_id' => $sale->id,
+                    'customer_id' => $sale->customer_id,
+                    'account_id' => $account->id,
+                    'payment_type' => 'due_receive',
+                    'is_received' => 1,
+                    'amount' => $request->amount[$index],
+                    'payment_date' => now()->parse($request->payment_date),
+                    'note' => $request->note,
+                    'created_by' => auth('admin')->user()->id,
+                ]);
+
+                // update customer due amount
+                $due = CustomerDue::where('invoice', $invo)->first();
+                $due->due_amount = $due->due_amount - $request->amount[$index];
+                $due->paid_amount = $due->paid_amount + $request->amount[$index];
+                $due->save();
+
+                // create ledger details
+                $ledger->details()->create([
+                    'invoice' => $invo,
+                    'amount' => $request->amount[$index],
+                ]);
+            }
+
+
+
+            DB::commit();
+            return to_route('admin.customer.due-receive.list')->with([
+                'messege' => 'Customer due receive successfully.',
+                'alert-type' => 'success'
             ]);
-
-            // update customer due amount
-            $due = CustomerDue::where('invoice', $invo)->first();
-            $due->due_amount = $due->due_amount - $request->amount[$index];
-            $due->paid_amount = $due->paid_amount + $request->amount[$index];
-            $due->save();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => $exception->getMessage(), 'alert-type' => 'error']);
         }
+    }
 
+    public function dueReceiveList()
+    {
+        $payments  = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->paginate(20);
+        return view('customer::due-list', compact('payments'));
+    }
+
+    public function dueReceiveEdit($id)
+    {
+        $payment = CustomerPayment::findOrFail($id);
+        $accounts = $this->account->all()->get();
+        return view('customer::due-receive-edit', compact('payment', 'accounts'));
+    }
+
+    public function dueReceiveUpdate(Request $request, $id)
+    {
+        $payment = CustomerPayment::findOrFail($id);
+        $payment->update($request->except('_token'));
         return to_route('admin.customer.due-receive.list')->with([
             'messege' => 'Customer due receive successfully.',
             'alert-type' => 'success'
         ]);
     }
 
-    public function dueReceiveList()
+    public function dueReceiveDelete($id)
     {
-        $payments  = Payment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->paginate(20);
-        return view('customer::due-list', compact('payments'));
-    }
+        $payment = CustomerPayment::findOrFail($id);
 
-    public function dueReceiveEdit($id)
-    {
-        $payment = Payment::findOrFail($id);
-        $accounts = $this->account->all()->get();
-        return view('customer::due-receive-edit', compact('payment', 'accounts'));
+        // update customer due amount
+        $due = CustomerDue::where('invoice', $payment->sale->invoice)->first();
+        $due->due_amount = $due->due_amount + $payment->amount;
+        $due->paid_amount = $due->paid_amount - $payment->amount;
+        $due->save();
+
+
+        // customer ledger delete
+
+        $payment->delete();
+        return to_route('admin.customer.due-receive.list')->with([
+            'messege' => 'Customer due receive successfully.',
+            'alert-type' => 'success'
+        ]);
     }
 
     public function changeStatus($id)
@@ -347,12 +417,12 @@ class CustomerController extends Controller
         $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
         $ledger->is_paid = $request->refund_amount != null ? 1 : 0;
         $ledger->is_received = $request->refund_amount != null ? 0 : 1;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber($ledger->invoice_type);
         $ledger->note = $request->note;
         if ($request->refund_amount != null) {
-            $ledger->due_amount -= $request->refund_amount;
+            $ledger->due_amount += $request->refund_amount;
         } else {
-            $ledger->due_amount += $request->paying_amount;
+            $ledger->due_amount -= $request->paying_amount;
         }
         $ledger->date = now()->parse($request->date);
         $ledger->created_by = auth('admin')->user()->id;
@@ -382,13 +452,13 @@ class CustomerController extends Controller
     }
 
 
-    public function genLedgerInvoiceNumber()
+    public function genLedgerInvoiceNumber($type = 'Sale Payment')
     {
         $number = 001;
         $prefix = 'INV-';
         $invoice_number = $prefix . $number;
 
-        $purchase = Ledger::where('invoice_type', 'Sale Payment')->latest()->first();
+        $purchase = Ledger::where('invoice_type', $type)->latest()->first();
         if ($purchase) {
             $purchaseInvoice = $purchase->invoice_no;
 
@@ -407,8 +477,15 @@ class CustomerController extends Controller
     public function ledger($id)
     {
         $user = User::findOrFail($id);
-        $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'desc')->paginate(20);
+        $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'asc')->paginate(20);
         $title = __('Customer Ledger');
         return view('supplier::ledger', compact('ledgers', 'title'));
+    }
+
+    public function ledgerDetails($id)
+    {
+        $ledger = Ledger::with('details', 'customer')->find($id);
+        $title = __('Customer Ledger Details');
+        return view('supplier::ledger-details', compact('ledger', 'title'));
     }
 }

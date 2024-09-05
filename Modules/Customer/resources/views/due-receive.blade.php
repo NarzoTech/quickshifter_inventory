@@ -25,6 +25,8 @@
                         <form method="POST" action="{{ route('admin.customer.due-receive.store') }}"
                             enctype="multipart/form-data">
                             @csrf
+
+                            <input type="hidden" name="customer_id" value="{{ $customer->id }}">
                             <div class="card">
                                 <div class="card-header">
                                     <div class="">{{ __('Customer Due Receive') }}</div>
@@ -128,7 +130,7 @@
                                                                 </div>
                                                             </div>
                                                             <input type="number" class="form-control" name="total_payable"
-                                                                value="{{ $totalDue }}" readonly>
+                                                                value="{{ $customer->total_due }}" readonly>
                                                         </div>
                                                     </div>
                                                 </div>

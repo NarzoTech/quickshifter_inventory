@@ -20,6 +20,7 @@ use Modules\Customer\app\Http\Controllers\VehicleController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::get('customers/due-receive-list', [CustomerController::class, 'dueReceiveList'])->name('customers.due-receive.list');
     Route::get('customers/ledger/{id}', [CustomerController::class, 'ledger'])->name('customers.ledger');
+    Route::get('customers/ledger-details/{id}', [CustomerController::class, 'ledgerDetails'])->name('customers.ledger-details');
     Route::get('customers/advance/{id}', [CustomerController::class, 'advance'])->name('customers.advance');
     Route::post('customers/advance-store/{id}', [CustomerController::class, 'advanceStore'])->name('customers.advance.pay');
     Route::post('customers/status/{id}', [CustomerController::class, 'changeStatus'])->name('customers.status');
@@ -27,8 +28,11 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('customers/single/{id}', [CustomerController::class, 'singleCustomer'])->name('customer.single');
     Route::get('customers-due-receive/create', [CustomerController::class, 'dueReceiveForm'])->name('customer.due-receive');
     Route::post('customers-due-receive', [CustomerController::class, 'dueReceive'])->name('customer.due-receive.store');
-    // Route::get('customer/due-receive', [CustomerController::class, 'dueReceiveList'])->name('customer.due-receive.list');
+    Route::get('customer/due-receive', [CustomerController::class, 'dueReceiveList'])->name('customer.due-receive.list');
     Route::get('customer-due-receive/edit/{id}', [CustomerController::class, 'dueReceiveEdit'])->name('customer.due-receive.edit');
+
+
+
     Route::post('customer-due-receive/update/{id}', [CustomerController::class, 'dueReceiveUpdate'])->name('customer.due-receive.update');
     Route::delete('customer-due-receive/delete/{id}', [CustomerController::class, 'dueReceiveDelete'])->name('customer.due-receive.delete');
     Route::resource('customerGroup', CustomerGroupController::class);

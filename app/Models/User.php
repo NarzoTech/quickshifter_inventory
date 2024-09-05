@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Customer\app\Models\Area;
 use Modules\Customer\app\Models\CustomerDue;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Customer\app\Models\UserGroup;
 use Modules\Customer\app\Models\Vehicle;
 use Modules\LiveChat\app\Models\Message;
@@ -58,6 +59,7 @@ class User extends Model
     public function getTotalDueAttribute()
     {
         $due = $this->due()->where('status', 1)->sum('due_amount');
+        $due = $due - $this->advances();
         return $due;
     }
 
@@ -67,10 +69,18 @@ class User extends Model
     }
     public function payment()
     {
-        return $this->hasMany(Payment::class, 'customer_id');
+        return $this->hasMany(CustomerPayment::class, 'customer_id');
     }
+
     public function getTotalPaidAttribute()
     {
         return $this->payment->sum('amount');
+    }
+
+    public function advances()
+    {
+        $advance = $this->payment()->where('payment_type', 'advance_receive')->sum('amount');
+        $advanceRefund = $this->payment()->where('payment_type', 'advance_refund')->sum('amount');
+        return $advance - $advanceRefund;
     }
 }

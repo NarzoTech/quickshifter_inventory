@@ -16,11 +16,12 @@
                     <div class="col-md-12">
                         <div class="d-flex justify-content-between">
                             <div class="flex-1 d-flex flex-column">
-                                <span><strong>Name:</strong>&nbsp;{{ $ledger->supplier->name }}</span>
-                                <span><strong>Mobile:</strong>&nbsp;{{ $ledger->supplier->phone }}</span>
-                                <span><strong>Email:</strong>&nbsp;{{ $ledger->supplier->email }}</span>
-                                <span><strong>Address:</strong>&nbsp;{{ $ledger->supplier->address }}</span>
-                                <span><strong>Paid By:</strong>&nbsp;{{ $ledger->createdBy->name }}</span>
+                                <span><strong>Name:</strong>&nbsp;{{ $ledger->supplier->name ?? $ledger->customer->name }}</span>
+                                <span><strong>Mobile:</strong>&nbsp;{{ $ledger->supplier->phone ?? $ledger->customer->phone }}</span>
+                                <span><strong>Email:</strong>&nbsp;{{ $ledger->supplier->email ?? $ledger->customer->email }}</span>
+                                <span><strong>Address:</strong>&nbsp;{{ $ledger->supplier->address ?? $ledger->customer->address }}</span>
+                                <span><strong>{{ $ledger->supplier->name ? 'Paid By' : 'Received By' }}
+                                        :</strong>&nbsp;{{ $ledger->createdBy->name }}</span>
                             </div>
                             <div class="flex-1 d-flex flex-column">
                                 <span><strong>Date:</strong>&nbsp;{{ now()->parse($ledger->date)->format('d - M - Y') }}</span>
@@ -37,7 +38,7 @@
                             <thead class="theme-primary text-white">
                                 <tr>
                                     <th>SL</th>
-                                    <th>Purchase Invoice No.</th>
+                                    <th>{{ $ledger->supplier->name ? 'Purchase' : 'Sale' }} Invoice No.</th>
                                     <th class="text-right">Amount</th>
                                 </tr>
                             </thead>
@@ -72,11 +73,10 @@
                 </div>
 
                 <div class="print-btn d-print-none float-right">
-                    <a onclick="Print()" class="btn btn-primary waves-effect waves-light">
+                    <a onclick="window.print()" class="btn btn-primary waves-effect waves-light">
                         <i class="fa fa-print"></i> Print
                     </a>
-                    <a href="https://amarsolution.com/contact/supplier-due-pay/24108?type=posPrint"
-                        class="btn btn-info waves-effect waves-light" target="_blank">
+                    <a href="javascript:;" class="btn btn-info waves-effect waves-light" target="_blank">
                         <i class="fa fa-print"></i> Print POS
                     </a>
                 </div>

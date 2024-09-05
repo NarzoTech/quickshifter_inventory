@@ -117,12 +117,19 @@
                                                     <td>{{ $ledger->note }}</td>
                                                     <td>
                                                         @if (
-                                                            $ledger->invoice_type == 'purchase' ||
-                                                                $ledger->invoice_type == 'Due Payment' ||
-                                                                $ledger->invoice_type == 'Advance Payment' ||
-                                                                $ledger->invoice_type == 'purchase_return')
+                                                            $ledger->supplier_id &&
+                                                                ($ledger->invoice_type == 'purchase' ||
+                                                                    $ledger->invoice_type == 'Due Payment' ||
+                                                                    $ledger->invoice_type == 'Advance Payment' ||
+                                                                    $ledger->invoice_type == 'purchase_return'))
                                                             -
                                                         @endif
+
+                                                        @if ($ledger->customer_id && $ledger->invoice_type == 'sale_return')
+                                                            -
+                                                        @endif
+
+
 
                                                         @if ($ledger->invoice_type == 'purchase_return')
                                                             @php
