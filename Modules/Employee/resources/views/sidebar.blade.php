@@ -1,4 +1,4 @@
-<li class="nav-item dropdown {{ isRoute(['admin.employee.*'], 'active') }}">
+<li class="nav-item dropdown {{ isRoute(['admin.employee.*', 'admin.salary.*'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
         <i class="fas fa-cart-arrow-down"></i><span>{{ __('Employees') }}</span>
     </a>
@@ -14,8 +14,8 @@
                 {{ __('Add New Employee') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.employee.index', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.employee.index') }}">
+        <li class="{{ isRoute('admin.salary.list', 'active') }}">
+            <a class="nav-link" href="{{ route('admin.salary.list') }}">
                 {{ __('All Paid Salary') }}
             </a>
         </li>

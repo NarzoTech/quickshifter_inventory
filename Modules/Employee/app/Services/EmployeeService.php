@@ -44,9 +44,9 @@ class EmployeeService
 
         $data = $request->except('_token');
         $data['employee_id'] = $employee->id;
-        $data['date'] = date('Y-m-d');
-        $data['month'] = date('F');
-        $data['year'] = date('Y');
+        $data['date'] = now()->parse($request->date);
+        $data['month'] = now()->parse($request->date)->format('F');
+        $data['year'] = now()->parse($request->date)->format('Y');
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
         $data['salary'] = $request->salary;
         $data['payment_type'] = $request->payment_type;
@@ -63,5 +63,33 @@ class EmployeeService
         }
         $data['account_id'] = $account->id;
         $employee->employeeSalary()->create($data);
+    }
+
+
+    public function updateSalary($request, $payment)
+    {
+
+        $data = $request->except('_token');
+        $data['date'] = now()->parse($request->date);
+        $data['month'] = now()->parse($request->date)->format('F');
+        $data['year'] = now()->parse($request->date)->format('Y');
+        $data['payment_type'] = $request->payment_type;
+        $data['amount'] = $request->amount;
+        $data['note'] = $request->note;
+        $data['account_id'] = $payment->account_id;
+
+        $account = Account::where('account_type', $request->payment_type);
+        if (
+            $request->payment_type == 'cash'
+        ) {
+            $account = $account->first();
+        } else {
+            $account = $account->where('id', $request->account_id)->first();
+        }
+        $data['account_id'] = $account->id;
+
+        $payment->update($data);
+
+        return back()->with(['messege' => 'Salary updated successfully', 'alert-type' => 'success']);
     }
 }

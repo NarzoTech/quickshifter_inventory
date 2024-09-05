@@ -4,6 +4,7 @@ namespace Modules\Employee\app\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Accounts\app\Models\Account;
 
 class EmployeeSalary extends Model
 {
@@ -25,5 +26,10 @@ class EmployeeSalary extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
     }
 }

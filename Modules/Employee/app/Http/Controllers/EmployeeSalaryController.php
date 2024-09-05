@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Modules\Employee\app\Http\Requests\EmployeeSalaryRequest;
+use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Employee\app\Services\EmployeeService;
 use Modules\Purchase\app\Services\PurchaseService;
 
@@ -23,9 +24,18 @@ class EmployeeSalaryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, $id)
     {
-        return view('employee::index');
+
+        $employee = $this->employee->find($id);
+        $month = $request->month ?? now()->format('m');
+        $year = $request->year ?? now()->format('Y');
+
+        $payments = EmployeeSalary::where('employee_id', $id)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get();
+        return view('employee::salary.index', compact('payments', 'employee'));
     }
 
     /**
@@ -67,7 +77,10 @@ class EmployeeSalaryController extends Controller
      */
     public function edit($id)
     {
-        return view('employee::edit');
+        $payment = EmployeeSalary::with('account')->find($id);
+        $employee = $this->employee->find($payment->employee_id);
+        $accounts = $this->purchaseService->getAccounts();
+        return view('employee::salary.edit', compact('payment', 'employee', 'accounts'));
     }
 
     /**
@@ -75,7 +88,14 @@ class EmployeeSalaryController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        //
+        try {
+            $payment = EmployeeSalary::with('account')->find($id);
+            $this->employee->updateSalary($request, $payment);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee salary updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $ex) {
+            Log::error($ex->getMessage());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => $ex->getMessage(), 'alert-type' => 'error']);
+        }
     }
 
     /**
@@ -90,5 +110,11 @@ class EmployeeSalaryController extends Controller
     {
         $employee = $this->employee->find($id);
         return ['advanceAmount' => $employee->getAdvanceAmountAttribute($request->month, $request->year), 'dueAmount' => $employee->getDueAmountAttribute($request->month, $request->year)];
+    }
+
+    public function salaryList()
+    {
+        $employees = $this->employee->all()->where('status', 1)->paginate(20);
+        return view('employee::salary.salary-list', compact('employees'));
     }
 }

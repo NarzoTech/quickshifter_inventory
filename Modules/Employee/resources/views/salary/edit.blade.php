@@ -1,0 +1,205 @@
+@extends('admin.master_layout')
+@section('title')
+    <title>{{ __('Create Employee') }}</title>
+@endsection
+
+@push('css')
+    <style>
+        .tagify.form-control.tags {
+            height: auto;
+        }
+
+        tag {
+            padding-top: 5px;
+        }
+    </style>
+@endpush
+@section('admin-content')
+    <div class="main-content">
+        <section class="section">
+            <div class="section-body">
+                <div class="mt-4 row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <h4>{{ __('Edit Salary') }}</h4>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('admin.employee.salary.update', $payment->id) }}" method="post"
+                                    enctype="multipart/form-data">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="type" value="{{ request('pay') }}">
+                                    <div class="form-group row">
+                                        <div class="col-md-4 mt-3">
+                                            <label for="">{{ __('Employee Name') }}<span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="name"
+                                                value="{{ $employee->name }}" readonly required>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <label for="salary" class="">{{ __('Employee Monthly Salary') }}</label>
+                                            <input type="text" id="salary" name="salary"
+                                                value="{{ $employee->salary }}" class="form-control" readonly>
+                                        </div>
+
+                                        <div class="col-md-4 mt-3">
+                                            <label for="date" class="col-form-label">{{ __('Salary Date') }}</label>
+                                            <input type="text" name="date" id="date"
+                                                value="{{ old('date', Carbon\Carbon::now()->format('d-m-Y')) }}"
+                                                class="form-control datepicker">
+                                        </div>
+                                        @php
+                                            $months = [
+                                                'January',
+                                                'February',
+                                                'March',
+                                                'April',
+                                                'May',
+                                                'June',
+                                                'July',
+                                                'August',
+                                                'September',
+                                                'October',
+                                                'November',
+                                                'December',
+                                            ];
+                                        @endphp
+                                        <div class="col-md-4 mt-2">
+                                            <label for="month" class="col-form-label">{{ __('Month') }}</label>
+                                            <select class="form-control select2" name="month" id="month">
+                                                <option value="">{{ __('Select') }}</option>
+                                                @foreach ($months as $key => $month)
+                                                    <option value="{{ $month }}"
+                                                        {{ $payment->month == $month ? 'selected' : '' }}>
+                                                        {{ $month }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4 mt-3">
+                                            <label for="salary" class="">{{ __('Salary Year') }}</label>
+                                            <input type="number" id="year" name="year"
+                                                value="{{ $payment->year }}" placeholder="Salary Year"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="col-md-4 mt-2">
+                                            <label for="salary" class="col-form-label">{{ __('Paid Amount') }}</label>
+                                            <input type="text" name="amount" id="amount"
+                                                value="{{ old('amount', $payment->amount) }}" placeholder="Pay Amount"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <label for="">{{ __('Payment Type') }}</label>
+                                            <select name="payment_type" id="payment_type" class="form-control payment_type"
+                                                required>
+                                                <option value="" disabled selected>
+                                                    {{ __('Select Payment Type') }}
+                                                </option>
+                                                @foreach (accountList() as $key => $list)
+                                                    <option value="{{ $key }}" data-name="{{ $list }}"
+                                                        {{ $key == $payment->payment_type ? 'selected' : '' }}>
+                                                        {{ $list }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <div id="account" class="mt-4">
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12 mt-3">
+                                            <label for="">{{ __('Note') }}</label>
+                                            <textarea name="note" id="" rows="3" class="form-control" placeholder="Note">{{ old('note') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="text-center offset-md-2 col-md-8">
+                                            <x-admin.update-button :text="__('Update')">
+                                            </x-admin.update-button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection
+
+
+@push('js')
+    <script>
+        $(document).ready(function() {
+
+            manageAccount($('#payment_type'));
+            $('[name="payment_type"]').on('change', function() {
+                manageAccount(this)
+            })
+
+            $('#month, #year').on('change', function() {
+                const month = $('#month').val();
+                const year = $('#year').val();
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('admin.employee.salary.info', $employee->id) }}",
+                    data: {
+                        month: month,
+                        year: year
+                    },
+                    success: function(data) {
+                        $('#already_salary').val(data.advanceAmount);
+                        $('#amount').val(data.dueAmount);
+                    }
+                })
+            })
+        });
+
+        function manageAccount(node) {
+            const accountsList = @json($accounts);
+            const accounts = accountsList.filter(account => account.account_type == $(node).val());
+            const accountInput = $('#account');
+            if (accounts) {
+                let html = '<select name="account_id" id="" class="form-control">';
+                accounts.forEach(account => {
+                    const select = '{{ $payment->account_id }}';
+                    switch ($(node).val()) {
+                        case 'bank':
+                            html +=
+                                `<option value="${account.id}" ${select == account.id ? 'selected' : ''}>${account.bank_account_number} (${account.bank?.name})</option>`;
+                            break;
+                        case "mobile_banking":
+                            html +=
+                                `<option value="${account.id}" ${select == account.id ? 'selected' : ''}>${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                            break;
+                        case 'card':
+                            html +=
+                                `<option value="${account.id}" ${select == account.id ? 'selected' : ''}>${account.card_number} (${account.bank?.name})</option>`;
+                            break;
+                        default:
+                            break;
+                    }
+
+                });
+                html += '</select>';
+
+
+                accountInput.html(html);
+            }
+
+            if ($(node).val() == 'cash') {
+                accountInput.html('');
+                const cash =
+                    `<input type="text" name="account_id" class="form-control" value="${$(node).val()}" readonly>`;
+
+                accountInput.html(cash);
+            }
+        }
+    </script>
+@endpush

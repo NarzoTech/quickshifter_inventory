@@ -86,100 +86,170 @@
                                         {{ __('Add New Employee') }}</a>
                                 </h4>
                             </div>
-                            <div class="card-body"></div>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ __('Sl') }}</th>
-                                            <th>{{ __('Employee Name') }}</th>
-                                            <th>{{ __('Employee Picture') }}</th>
-                                            <th>{{ __('Designation') }}</th>
-                                            {{-- <th style="display: none;">Business Branch</th> --}}
-                                            <th>{{ __('Phone') }}</th>
-                                            <th>{{ __('Email') }}</th>
-                                            <th>{{ __('Salary') }}</th>
-                                            <th>{{ __('Status') }}</th>
-                                            <th>{{ __('Joining Date') }}</th>
-                                            <th>{{ __('Action') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($employees as $index => $employee)
+                            <div class="card-body">
+                                <div class="table-responsive table-invoice">
+                                    <table class="table table-striped">
+                                        <thead>
                                             <tr>
-                                                <td>{{ ++$index }}</td>
-                                                <td>{{ $employee->name }}</td>
-                                                <td>
-                                                    <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
-                                                        alt="" width="50px" height="50px">
-                                                </td>
-                                                <td>{{ $employee->designation }}</td>
-                                                {{-- <td style="display: none;">{{ $employee->business_branch->name }}</td> --}}
-                                                <td>{{ $employee->mobile }}</td>
-                                                <td>{{ $employee->email }}</td>
-                                                <td>{{ $employee->salary }}</td>
-                                                <td>
-                                                    @if ($employee->status == 1)
-                                                        <span class="badge badge-success">
-                                                            {{ __('Active') }}
-                                                        </span>
-                                                    @else
-                                                        <span class="badge badge-danger">
-                                                            {{ __('Inactive') }}
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $employee->join_date }}</td>
-                                                <td>
-                                                    <div class="btn-group" role="group">
-                                                        <button id="btnGroupDrop{{ $employee->id }}" type="button"
-                                                            class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false">{{ __('Action') }}</button>
-                                                        <div class="dropdown-menu"
-                                                            aria-labelledby="btnGroupDrop{{ $employee->id }}">
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
-
-
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
-
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
-
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
-
-                                                            <a href="javascript:;" data-toggle="modal"
-                                                                data-target="#deleteModal" class="dropdown-item"
-                                                                onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                                <th>{{ __('Sl') }}</th>
+                                                <th>{{ __('Employee Name') }}</th>
+                                                <th>{{ __('Employee Picture') }}</th>
+                                                <th>{{ __('Designation') }}</th>
+                                                {{-- <th style="display: none;">Business Branch</th> --}}
+                                                <th>{{ __('Phone') }}</th>
+                                                <th>{{ __('Email') }}</th>
+                                                <th>{{ __('Salary') }}</th>
+                                                <th>{{ __('Status') }}</th>
+                                                <th>{{ __('Joining Date') }}</th>
+                                                <th>{{ __('Action') }}</th>
                                             </tr>
-                                        @empty
-                                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
-                                                colspan="10"></x-empty-table>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if (request()->get('par-page') !== 'all')
-                                <div class="float-right">
-                                    {{ $employees->onEachSide(0)->links() }}
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($employees as $index => $employee)
+                                                <tr>
+                                                    <td>{{ ++$index }}</td>
+                                                    <td>{{ $employee->name }}</td>
+                                                    <td>
+                                                        <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
+                                                            alt="" width="50px" height="50px">
+                                                    </td>
+                                                    <td>{{ $employee->designation }}</td>
+                                                    {{-- <td style="display: none;">{{ $employee->business_branch->name }}</td> --}}
+                                                    <td>{{ $employee->mobile }}</td>
+                                                    <td>{{ $employee->email }}</td>
+                                                    <td>{{ $employee->salary }}</td>
+                                                    <td>
+                                                        @if ($employee->status == 1)
+                                                            <span class="badge badge-success">
+                                                                {{ __('Active') }}
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-danger">
+                                                                {{ __('Inactive') }}
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $employee->join_date }}</td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <button id="btnGroupDrop{{ $employee->id }}" type="button"
+                                                                class="btn btn-primary dropdown-toggle"
+                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">{{ __('Action') }}</button>
+                                                            <div class="dropdown-menu"
+                                                                aria-labelledby="btnGroupDrop{{ $employee->id }}">
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
+
+
+                                                                <a class="dropdown-item view-payment" href="javascript:;"
+                                                                    data-id="{{ $employee->id }}">{{ __('View Payments') }}</a>
+
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
+
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
+
+                                                                <a href="javascript:;" data-toggle="modal"
+                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                    onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <x-empty-table :name="__('Bank')" route="" create="no"
+                                                    :message="__('No data found!')" colspan="10"></x-empty-table>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div>
-                            @endif
+                                @if (request()->get('par-page') !== 'all')
+                                    <div class="float-right">
+                                        {{ $employees->onEachSide(0)->links() }}
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-    </div>
-    </section>
+        </section>
     </div>
 
     <x-admin.delete-modal />
+
+
+
+    <div tabindex="-1" role="dialog" id="viewDate" class ='modal'>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Pick Date') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="calendar">
+                        <form id="viewDateForm" action="" method="get">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ __('Months') }}</label>
+                                        @php
+                                            $months = [];
+                                            for ($i = 1; $i <= 12; $i++) {
+                                                $m = date('m', mktime(0, 0, 0, $i, 1));
+                                                $months[$m] = date('F', mktime(0, 0, 0, $i, 1));
+                                            }
+                                        @endphp
+                                        <select name="month" id="month" class="form-control">
+                                            <option value="">{{ __('Select Month') }}</option>
+                                            @foreach ($months as $key =>$month)
+                                                <option value="{{ $key }}"
+                                                    {{ $month == date('F') ? 'selected' : '' }}>{{ $month }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>{{ __('Year') }}</label>
+                                        @php
+                                            $years = [];
+                                            for ($i = 0; $i < 5; $i++) {
+                                                $years[] = date('Y') - $i;
+                                            }
+
+                                        @endphp
+                                        <select name="year" id="year" class="form-control">
+                                            <option value="">{{ __('Select Year') }}</option>
+                                            @foreach ($years as $year)
+                                                <option value="{{ $year }}"
+                                                    {{ $year == date('Y') ? 'selected' : '' }}>{{ $year }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer bg-whitesmoke br">
+                    <button type="submit" class="btn btn-primary" form="viewDateForm">{{ __('Show') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     @push('js')
@@ -187,6 +257,15 @@
             function deleteData(id) {
                 $("#deleteForm").attr("action", '{{ route('admin.employee.destroy', '') }}' + "/" + id)
             }
+
+
+            $('.view-payment').on('click', function() {
+                var id = $(this).data('id');
+                $('#viewDate').modal('show');
+                let url = "{{ route('admin.employee.salary.view', ':id') }}";
+                url = url.replace(':id', id);
+                $('#viewDateForm').attr('action', url);
+            })
         </script>
     @endpush
 @endsection
