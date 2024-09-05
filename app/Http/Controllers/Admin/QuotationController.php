@@ -134,7 +134,12 @@ class QuotationController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $quotation = Quotation::find($id);
+        $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
+        $products = Product::where('status', 1)->whereHas('category', function ($query) {
+            $query->where('status', 1);
+        })->orderBy('id', 'desc')->get();
+        return view('admin.pages.quotation.edit', compact('quotation', 'customers', 'products'));
     }
 
     /**
