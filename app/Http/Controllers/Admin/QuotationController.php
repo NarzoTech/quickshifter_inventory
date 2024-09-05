@@ -207,6 +207,12 @@ class QuotationController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $quotation = Quotation::find($id);
+        $quotation->details()->delete();
+        $quotation->delete();
+        return redirect()->back()->with([
+            'alert-type' => 'success',
+            'messege' => 'Quotation Deleted Successfully'
+        ]);
     }
 }

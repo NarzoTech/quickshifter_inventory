@@ -107,8 +107,10 @@
                                                             <a href="{{ route('admin.quotation.edit', $quotation->id) }}"
                                                                 class="btn btn-sm btn-primary">{{ __('Sale') }}</a>
 
-                                                            <a href="{{ route('admin.quotation.destroy', $quotation->id) }}"
-                                                                class="btn btn-sm btn-danger">{{ __('Delete') }}</a>
+                                                            <a href="javascript:;" class="btn btn-sm btn-danger"
+                                                                onclick="deleteData({{ $quotation->id }})"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteModal">{{ __('Delete') }}</a>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -129,4 +131,15 @@
             </div>
         </section>
     </div>
+
+    <x-admin.delete-modal />
 @endsection
+
+
+@push('js')
+    <script>
+        function deleteData(id) {
+            $("#deleteForm").attr("action", '{{ route('admin.quotation.destroy', '') }}' + "/" + id)
+        }
+    </script>
+@endpush
