@@ -19,19 +19,19 @@
                                 <div class="property">
 
                                     <span class="value">
-                                        <p>Shop No - 01, Plot - 02, Road - 09, Sector -15/D, Uttara, Dhaka-1230</p>
+                                        <p>{{ $setting->address }}</p>
                                     </span>
                                 </div>
 
                                 <div class="property">
                                     <span class="key">Mobile:</span>
                                     <span class="value">
-                                        +880 1787871041
+                                        {{ $setting->mobile }}
                                     </span>
                                 </div>
                                 <div class="property">
                                     <span class="key">Email:</span>
-                                    <span class="value">quickshifter21@gmail.com</span>
+                                    <span class="value">{{ $setting->email }}</span>
                                 </div>
                             </div>
                         </div>
@@ -245,6 +245,11 @@
                             <p class="signature">Authorised By</p>
                         </div>
                     </div>
+                </div>
+                <div class="print-btn pos-share-btns d-print-none">
+                    <a href="javascript:window.print()" class="btn btn-primary waves-effect waves-light">
+                        <i class="fa fa-print"></i> Print
+                    </a>
                 </div>
             </section>
         </div>

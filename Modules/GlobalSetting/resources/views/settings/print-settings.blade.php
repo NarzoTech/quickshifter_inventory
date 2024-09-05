@@ -171,7 +171,7 @@
                                             </div>
                                             <div class="col-sm-4">
                                                 <label for="">Address</label>
-                                                <textarea class="form-control" name="invoice_address" id="elm1" cols="30" rows="10"><p>Shop No - 01, Plot - 02, Road - 09, Sector -15/D, Uttara, Dhaka-1230</p></textarea>
+                                                <textarea class="form-control" name="invoice_address" id="elm1" cols="30" rows="10"><p>{{ $setting->address }}</p></textarea>
                                             </div>
                                             <div class="col-sm-4">
                                                 <div class="form-group">

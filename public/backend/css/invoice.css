@@ -69,6 +69,10 @@ opacity: .4;
     .page * {
         color: black;
     }
+
+    .main-footer {
+        display: none;
+    }
 }
 
 .page .title {

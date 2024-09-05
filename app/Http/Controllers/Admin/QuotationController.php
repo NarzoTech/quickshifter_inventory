@@ -24,7 +24,6 @@ class QuotationController extends Controller
     {
         $quotations = Quotation::query();
 
-
         if (request()->keyword) {
             $quotations->where(function ($query) {
                 $query->whereHas('customer', function ($q) {
@@ -126,7 +125,8 @@ class QuotationController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $quotation = Quotation::find($id);
+        return view('admin.pages.quotation.show', compact('quotation'));
     }
 
     /**
