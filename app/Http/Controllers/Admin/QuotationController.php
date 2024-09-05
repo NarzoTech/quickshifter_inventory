@@ -22,7 +22,22 @@ class QuotationController extends Controller
      */
     public function index()
     {
-        //
+        $quotations = Quotation::query();
+
+
+        if (request()->keyword) {
+            $quotations->where(function ($query) {
+                $query->whereHas('customer', function ($q) {
+                    $q->where('name', 'like', '%' . request()->keyword . '%');
+                })
+                    ->orWhere('quotation_no', 'like', '%' . request()->keyword . '%')
+                ;
+            });
+        }
+
+        $quotations = $quotations->orderBy('id', 'desc')->paginate(20);
+
+        return view('admin.pages.quotation.index', compact('quotations'));
     }
 
     /**
@@ -42,21 +57,38 @@ class QuotationController extends Controller
      */
     public function store(QuotationRequest $request)
     {
+        $request->validate([
+            'customer_id' => 'required',
+            'date' => 'required',
+            'product_id' => 'required|array',
+            'product_id.*' => 'required',
+            'unit_price' => 'required|array',
+            'unit_price.*' => 'required',
+            'quantity' => 'required|array',
+            'quantity.*' => 'required',
+        ]);
         DB::beginTransaction();
 
         try {
+
+            // check quotation no
+            // last quotation no
+            $quotation_no = Quotation::orderBy('id', 'desc')->first();
+            $quotation_no = $quotation_no ? $quotation_no->quotation_no + 1 : 1;
+
             // create quotation
 
             $quotation = Quotation::create([
                 'customer_id' => $request->customer_id,
                 'date' => now()->parse($request->date),
                 'note' => $request->note,
-                'subtotal' => $request->subtotal,
-                'discount' => $request->discount,
-                'after_discount' => $request->after_discount,
-                'vat' => $request->vat,
-                'total' => $request->total_amount,
+                'subtotal' => $request->subtotal ?? 0,
+                'discount' => $request->discount ?? 0,
+                'after_discount' => $request->after_discount ?? 0,
+                'vat' => $request->vat ?? 0,
+                'total' => $request->total_amount ?? 0,
                 'created_by' => auth('admin')->user()->id,
+                'quotation_no' => $quotation_no,
                 // 'warehouse_id' => $request->warehouse_id,
             ]);
 

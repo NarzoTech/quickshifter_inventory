@@ -22,6 +22,7 @@ class Quotation extends Model
         'created_by',
         'updated_by',
         'warehouse_id',
+        'quotation_no'
     ];
 
     public function customer()

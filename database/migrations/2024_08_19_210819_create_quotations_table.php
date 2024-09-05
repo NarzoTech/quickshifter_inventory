@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('quotations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
+            $table->unsignedBigInteger('quotation_no')->default(1);
             $table->date('date');
             $table->text('note')->nullable();
             $table->text('reference_note')->nullable();
