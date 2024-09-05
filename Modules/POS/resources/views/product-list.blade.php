@@ -26,16 +26,7 @@
     }
 </style>
 
-
-@if ($products->count() == 1)
-    <script>
-        @if ($products->first()->has_variant)
-            load_product_model({{ $products->first()->id }})
-        @else
-            singleAddToCart({{ $products->first()->id }})
-        @endif
-    </script>
-@elseif ($products->count() > 1)
+@if ($products->count() > 1)
     @foreach ($products as $product)
         <li>
             <a class="dropdown-item {{ $product->stock <= 0 ? 'qty-zero' : ($product->stock < ($product->stock_alert ?? 5) ? 'qty-low' : 'qty-available') }}"

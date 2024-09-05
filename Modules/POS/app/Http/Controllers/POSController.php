@@ -174,7 +174,7 @@ class POSController extends Controller
             'products' => $products
         ])->render();
 
-        return response()->json(['view' => $view, 'total' => $products->count()]);
+        return response()->json(['view' => $view, 'total' => $products->count(), 'product' => $products->first()]);
     }
 
     public function load_product_modal($product_id)
@@ -237,10 +237,10 @@ class POSController extends Controller
             }
         }
 
-        if ($item_exist) {
-            $notification = trans('Item already added');
-            return response()->json(['message' => $notification, 'cart' => session()->get('POSCART')], 403);
-        }
+        // if ($item_exist) {
+        //     $notification = trans('Item already added');
+        //     return response()->json(['message' => $notification, 'cart' => session()->get('POSCART')], 403);
+        // }
 
         $data = array();
         $data["rowid"] = uniqid();
@@ -394,7 +394,7 @@ class POSController extends Controller
             DB::commit();
             return response()->json([
                 'order' => $order_result,
-                'message' => 'Order created successfully',
+                'message' => 'Sale created successfully',
                 'alert-type' => 'success',
             ], 200);
         } catch (Exception $ex) {
