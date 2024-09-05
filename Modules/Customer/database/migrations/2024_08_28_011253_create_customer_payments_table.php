@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('customer_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sale_id')->nullable()->constrained('sales');
+            $table->foreignId('sale_return_id')->nullable();
             $table->foreignId('customer_id')->nullable()->constrained('users');
             $table->foreignId('account_id')->nullable()->constrained('accounts');
             $table->string('invoice')->nullable();

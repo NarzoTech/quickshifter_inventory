@@ -4,6 +4,7 @@ namespace Modules\Sales\app\Http\Controllers;
 
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
+use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
 use App\Traits\RedirectHelperTrait;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
 use Modules\Sales\app\Models\SalesReturnDetails;
@@ -134,8 +136,23 @@ class SalesReturnController extends Controller
                     'payment_date' => now(),
                     'created_by' => auth('admin')->user()->id,
                 ];
-                Payment::create($data);
+                CustomerPayment::create($data);
             }
+
+
+            // create ledger
+            $ledger = new Ledger();
+            $ledger->customer_id = $request->customer_id;
+            $ledger->sale_return_id = $return->id;
+            $ledger->amount = $request->paying_amount;
+            $ledger->invoice_type = 'Sale Return';
+            $ledger->is_paid = 1;
+            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
+            $ledger->note = $request->note;
+            $ledger->due_amount += $due;
+            $ledger->date = now()->parse($request->payment_date);
+            $ledger->created_by = auth('admin')->user()->id;
+            $ledger->save();
 
 
             DB::commit();
@@ -177,5 +194,26 @@ class SalesReturnController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function genLedgerInvoiceNumber($type = 'Sale Payment')
+    {
+        $number = 001;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $purchase = Ledger::where('invoice_type', $type)->latest()->first();
+        if ($purchase) {
+            $purchaseInvoice = $purchase->invoice_no;
+
+            if ($purchaseInvoice) {
+                // split the invoice number
+                $split_invoice = explode('-', $purchaseInvoice);
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
+        }
+
+        return $invoice_number;
     }
 }

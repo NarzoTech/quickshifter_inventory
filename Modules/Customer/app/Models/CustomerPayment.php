@@ -32,6 +32,7 @@ class CustomerPayment extends Model
         'note',
         'created_by',
         'updated_by',
+        'sale_return_id'
     ];
 
     public function sale()

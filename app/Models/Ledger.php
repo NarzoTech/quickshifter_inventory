@@ -12,6 +12,7 @@ class Ledger extends Model
 
     protected $fillable = [
         'customer_id',
+        'sale_return_id',
         'supplier_id',
         'amount',
         'is_paid',

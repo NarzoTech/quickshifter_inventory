@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('supplier_id')->nullable();
+            $table->unsignedBigInteger('sale_return_id')->nullable();
             $table->float('amount')->default(0);
             $table->boolean('is_paid')->default(0);
             $table->boolean('is_received')->default(0);

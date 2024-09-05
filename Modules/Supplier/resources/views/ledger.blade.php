@@ -125,7 +125,7 @@
                                                             -
                                                         @endif
 
-                                                        @if ($ledger->customer_id && $ledger->invoice_type == 'sale_return')
+                                                        @if ($ledger->customer_id && $ledger->invoice_type == 'Sale Return')
                                                             -
                                                         @endif
 
