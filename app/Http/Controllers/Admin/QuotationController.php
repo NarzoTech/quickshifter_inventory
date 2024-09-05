@@ -147,7 +147,59 @@ class QuotationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'customer_id' => 'required',
+            'date' => 'required',
+            'product_id' => 'required|array',
+            'product_id.*' => 'required',
+            'unit_price' => 'required|array',
+            'unit_price.*' => 'required',
+            'quantity' => 'required|array',
+            'quantity.*' => 'required',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $quotation = Quotation::find($id);
+            $quotation->update([
+                'customer_id' => $request->customer_id,
+                'date' => now()->parse($request->date),
+                'note' => $request->note,
+                'subtotal' => $request->subtotal ?? 0,
+                'discount' => $request->discount ?? 0,
+                'after_discount' => $request->after_discount ?? 0,
+                'vat' => $request->vat ?? 0,
+                'total' => $request->total_amount ?? 0,
+                'updated_by' => auth('admin')->user()->id,
+            ]); // update quotation
+
+            $quotation->details()->delete();
+            foreach ($request->product_id as $key => $product_id) {
+                $quotation->details()->create([
+                    'product_id' => $product_id,
+                    'quantity' => $request->quantity[$key],
+                    'price' => $request->unit_price[$key],
+                    'sub_total' => $request->total[$key],
+                ]);
+            }
+
+
+
+            DB::commit();
+            return redirect()->route('admin.quotation.index')->with([
+                'alert-type' => 'success',
+                'messege' => 'Quotation Updated Successfully'
+            ]);
+        } catch (\Exception $ex) {
+
+            DB::rollBack();
+            Log::error($ex->getMessage());
+            return redirect()->back()->with([
+                'alert-type' => 'error',
+                'messege' => $ex->getMessage()
+            ]);
+        }
     }
 
     /**

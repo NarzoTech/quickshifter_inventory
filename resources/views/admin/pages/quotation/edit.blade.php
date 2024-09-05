@@ -105,6 +105,8 @@
                                                         <tr>
                                                             <td>
                                                                 {{ $details->product->name }}
+                                                                <input type="hidden" name="product_id[]"
+                                                                    value="{{ $details->product_id }}">
                                                             </td>
                                                             <td>
                                                                 <input type="number" class="form-control" name="quantity[]"
