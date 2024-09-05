@@ -5,6 +5,7 @@ namespace Modules\POS\app\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Jobs\OrderSuccessfulMailJob;
 use App\Models\Address;
+use App\Models\Quotation;
 use App\Models\User;
 use App\Models\Variant;
 use Exception;
@@ -49,6 +50,22 @@ class POSController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->quotation_id) {
+            $quotation = Quotation::find($request->quotation_id);
+
+            foreach ($quotation->details as $detail) {
+                $product = Product::find($detail->product_id);
+                $newReq = Request();
+                $newReq->product_id = $detail->product_id;
+                $newReq->qty = $detail->quantity;
+                $newReq->type = $product->has_variant ? 'variant' : 'single';
+                $newReq->serviceType = 'product';
+                $newReq->variant_price = $detail->price;
+
+                $this->add_to_cart($newReq);
+            }
+        }
+
         Paginator::useBootstrap();
 
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
@@ -76,7 +93,6 @@ class POSController extends Controller
         $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
 
         $cart_contents = session('POSCART') ?? [];
-
         $accounts = Account::with('bank')->get();
         $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
@@ -86,6 +102,8 @@ class POSController extends Controller
         $serviceCategories = $this->services->getCategories();
 
         $cart_holds = CartHold::where('status', 'hold')->orderBy('id', 'desc')->get();
+
+
         return view('pos::index')->with([
             'products' => $products,
             'categories' => $categories,
@@ -98,7 +116,7 @@ class POSController extends Controller
             'vehicles' => $vehicles,
             'services' => $services,
             'cart_holds' => $cart_holds,
-            'serviceCategories' => $serviceCategories
+            'serviceCategories' => $serviceCategories,
         ]);
     }
 
@@ -200,6 +218,7 @@ class POSController extends Controller
 
     public function add_to_cart(Request $request)
     {
+
         $cartName = 'POSCART';
         if ($request->edit) {
             $cartName = 'UPDATE_CART';

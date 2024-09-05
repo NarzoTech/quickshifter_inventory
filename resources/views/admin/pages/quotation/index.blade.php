@@ -104,7 +104,7 @@
                                                             <a href="{{ route('admin.quotation.edit', $quotation->id) }}"
                                                                 class="btn btn-sm btn-primary">{{ __('Edit') }}</a>
 
-                                                            <a href="{{ route('admin.quotation.edit', $quotation->id) }}"
+                                                            <a href="{{ route('admin.pos') }}?quotation_id={{ $quotation->id }}"
                                                                 class="btn btn-sm btn-primary">{{ __('Sale') }}</a>
 
                                                             <a href="javascript:;" class="btn btn-sm btn-danger"
