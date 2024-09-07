@@ -169,7 +169,7 @@
                             <div class="form-group col-12">
                                 <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control datepicker" id="date" name="date"
-                                    value="{{ date('Y-m-d') }}">
+                                    value="{{ date('d-m-Y') }}">
                             </div>
                             <div class="form-group col-12">
                                 <label for="name">{{ __('Expense Type') }}<span class="text-danger">*</span></label>
@@ -236,7 +236,7 @@
                                 <div class="form-group col-12">
                                     <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ $expense->date }}">
+                                        value="{{ now()->parse($expense->date)->format('d-m-Y') }}">
                                 </div>
                                 <div class="form-group col-12">
                                     <label for="name">{{ __('Expense Type') }}<span

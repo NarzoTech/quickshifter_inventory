@@ -9,9 +9,7 @@ use Modules\Expense\app\Models\Expense;
 
 class ExpenseService
 {
-    public function __construct(private Expense $expense, private Account $account)
-    {
-    }
+    public function __construct(private Expense $expense, private Account $account) {}
 
     public function all()
     {
@@ -34,7 +32,7 @@ class ExpenseService
         // store the expense
 
         $expense = $this->expense->create([
-            'date' => date($request->date),
+            'date' => now()->parse($request->date),
             'amount' => $request->amount,
             'account_id' => $account->id,
             'payment_type' => $request->payment_type,
@@ -67,7 +65,7 @@ class ExpenseService
         }
         $expense = $this->expense->find($id);
         $expense->update([
-            'date' => date($request->date),
+            'date' => now()->parse($request->date),
             'amount' => $request->amount,
             'note' => $request->note,
             'updated_by' => auth('admin')->user()->id,

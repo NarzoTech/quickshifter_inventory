@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Employee\app\Models\EmployeeSalary;
+use Modules\Expense\app\Models\Expense;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductCategoryService;
 use Modules\Sales\app\Models\ProductSale;
@@ -49,9 +51,18 @@ class ReportController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function dts()
     {
-        return view('report::create');
+        $date = date('Y-m-d');
+        $expenses = Expense::where('date', $date)->get();
+        $salaries = EmployeeSalary::where('date', $date)->get();
+        $otherIncome = ProductSale::where('source', 2)
+            ->where(function ($query)  use ($date) {
+                $query->whereHas('sale', function ($q) use ($date) {
+                    $q->where('order_date', $date);
+                });
+            })->sum('sub_total');
+        return view('report::dts', compact('expenses', 'salaries', 'otherIncome'));
     }
 
     /**
