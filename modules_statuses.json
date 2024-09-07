@@ -16,5 +16,6 @@
     "Expense": true,
     "Employee": true,
     "Tax": true,
-    "Message": true
+    "Message": true,
+    "Report": true
 }

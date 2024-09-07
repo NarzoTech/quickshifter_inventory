@@ -84,6 +84,11 @@ class UnitTypeController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'name' => 'required|unique:unit_types,name,' . $id,
+            'ShortName' => 'required',
+            'status' => 'required',
+        ]);
         try {
             $this->unitTypeService->update($request, $id);
 
