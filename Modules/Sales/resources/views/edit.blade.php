@@ -1339,8 +1339,9 @@
 
             let currentDue = $('#normalPayment [name="total_due"]').val();
 
+            let orderDue = "{{ $sale->due_amount }}";
             currentDue = parseFloat(currentDue ? currentDue : 0);
-            const totalDue = currentDue + previous_due;
+            const totalDue = currentDue + previous_due - parseFloat(orderDue);
             $('#due_amountModal').text(`{{ currency_icon() }}${totalDue}`)
         }
     </script>

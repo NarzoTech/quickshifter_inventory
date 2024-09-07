@@ -361,6 +361,8 @@ class SaleService
             $data['sub_total'] = $detail->sub_total;
             $data['sku'] = $detail->product_sku;
             $data['source'] = $detail->source;
+            $data['purchase_price'] = $detail->purchase_price;
+            $data['selling_price'] = $detail->selling_price;
 
             if ($detail->variant_id) {
                 $data['variant']['attribute'] =  $attributes;
