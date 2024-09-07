@@ -14,6 +14,6 @@ use Modules\Report\app\Http\Controllers\ReportController;
 |
 */
 
-Route::group([], function () {
-    Route::resource('report', ReportController::class)->names('report');
+Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+    Route::get('report/other-income', [ReportController::class, 'otherIncome'])->name('report.other-income');
 });

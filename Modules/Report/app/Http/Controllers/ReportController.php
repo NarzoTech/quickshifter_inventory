@@ -6,15 +6,44 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Product\app\Services\BrandService;
+use Modules\Product\app\Services\ProductCategoryService;
+use Modules\Sales\app\Models\ProductSale;
+use Modules\Sales\app\Models\Sale;
 
 class ReportController extends Controller
 {
+
+    public function __construct(private BrandService $brandService, private ProductCategoryService $categoryService)
+    {
+        $this->middleware('auth:admin');
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function otherIncome()
     {
-        return view('report::index');
+        $categories = $this->categoryService->getAllProductCategoriesForSelect();
+        $brands = $this->brandService->getActiveBrands();
+
+        $reports = ProductSale::where('source', 2)
+            ->where(function ($query) {
+                $query->whereHas('product', function ($q) {
+                    $q->where('name', 'like', '%' . request()->keyword . '%')
+
+                        ->orWhere('sku', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('barcode', 'like', '%' . request()->keyword . '%');
+                    if (request('brand_id')) {
+                        $q->orWhere('brand_id', request('brand_id'));
+                    }
+                    if (request('category_id')) {
+                        $q->orWhere('category_id', request('category_id'));
+                    }
+                });
+            })
+            ->paginate(20);
+
+        return view('report::other-income', compact('reports'));
     }
 
     /**

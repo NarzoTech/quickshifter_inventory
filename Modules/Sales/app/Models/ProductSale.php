@@ -48,4 +48,11 @@ class ProductSale extends Model
     {
         return $this->belongsTo(Service::class, 'service_id');
     }
+
+    public function getSaleReturnAttribute()
+    {
+        // return $this->sale->saleReturns;
+        // return $this->sale->saleReturns()->where('product_id', $this->product_id)->first();
+        return 0;
+    }
 }

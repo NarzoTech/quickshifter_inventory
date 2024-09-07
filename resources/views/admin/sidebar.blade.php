@@ -81,6 +81,10 @@
                     </li>
                 </ul>
             </li>
+            @if (Module::isEnabled('Report'))
+                @include('report::sidebar')
+            @endif
+
             @if (Module::isEnabled('Expense'))
                 @include('expense::sidebar')
             @endif
@@ -107,6 +111,7 @@
             @if (Module::isEnabled('Employee'))
                 @include('employee::sidebar')
             @endif
+
 
             {{-- <li class="menu-header">{{ __('Manage Contents') }}</li> --}}
 

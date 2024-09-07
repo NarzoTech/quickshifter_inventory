@@ -397,7 +397,6 @@ class ProductService
                 'stock' => (trim($row[18]) == null || trim($row[18]) < 0) ? 0 : trim($row[18]),
                 'status' => 1,
                 'images' => ['null'],
-
             ]);
 
 
