@@ -5,6 +5,7 @@ namespace Modules\Customer\app\Http\Controllers;
 use App\Enums\RedirectType;
 use App\Exports\CustomerExport;
 use App\Http\Controllers\Controller;
+use App\Imports\CustomersImport;
 use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\User;
@@ -487,5 +488,22 @@ class CustomerController extends Controller
         $ledger = Ledger::with('details', 'customer')->find($id);
         $title = __('Customer Ledger Details');
         return view('supplier::ledger-details', compact('ledger', 'title'));
+    }
+
+    public function bulkImport()
+    {
+        return view('customer::import');
+    }
+    public function bulkImportStore(Request $request)
+    {
+        $request->validate(['file' => 'required']);
+        try {
+            $file = $request->file('file');
+            Excel::import(new CustomersImport, $file);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.customers.index', [], ['messege' => 'Supplier imported successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.customers.index', [], ['messege' => 'Supplier imported failed.', 'alert-type' => 'error']);
+        }
     }
 }

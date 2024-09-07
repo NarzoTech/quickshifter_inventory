@@ -100,6 +100,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
+                                    <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i
+                                            class="fa fa-upload"></i>
+                                        {{ __('Import Customers') }}</a>
                                     <a href="javascript:;" data-toggle="modal" data-target="#addCustomer"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Customer') }}</a>
@@ -131,7 +134,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($users as $index => $user)
+                                            @foreach ($users as $index => $user)
                                                 <tr>
                                                     <td>{{ ++$index }}</td>
                                                     <td>{{ $user->name }}</td>
@@ -196,10 +199,7 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            @empty
-                                                <x-empty-table :name="__('Customer')" route="" create="no"
-                                                    :message="__('No data found!')" colspan="6"></x-empty-table>
-                                            @endforelse
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
