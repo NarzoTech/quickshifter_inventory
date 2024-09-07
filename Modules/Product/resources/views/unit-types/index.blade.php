@@ -46,7 +46,8 @@
                                         </div>
                                         <div class="form-group col-12 operator_value d-none">
                                             <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="operator_value" class="form-control" name="operator_value" value="1">
+                                            <input type="text" id="operator_value" class="form-control"
+                                                name="operator_value" value="1">
                                         </div>
                                         <div class="form-group col-12">
                                             <label>{{ __('Status') }} </label>
@@ -136,7 +137,6 @@
                 $('.preloader_area').removeClass('d-none');
                 e.preventDefault();
                 const url = $(this).attr('href');
-                console.log(url);
                 $.ajax({
                     url: url,
                     type: 'GET',
@@ -173,7 +173,7 @@
                 });
             })
 
-            $('#base_unit').on("change",function() {
+            $('#base_unit').on("change", function() {
                 const baseUnit = $(this).val();
                 if (baseUnit) {
                     $('.operator').removeClass('d-none');

@@ -43,16 +43,23 @@ class UnitTypeController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|unique:unit_types,name',
+            'ShortName' => 'required',
+            'status' => 'required',
+        ]);
         try {
-            $this->unitTypeService->save($request);
+            $unit = $this->unitTypeService->save($request);
 
+
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Unit created successfully', 'unit' => $unit, 'status' => 200], 200);
+            }
             return $this->redirectWithMessage(RedirectType::CREATE->value, "admin.unit.index");
-
         } catch (Exception $ex) {
             Log::error($ex->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
         }
-
     }
 
     /**
@@ -85,7 +92,6 @@ class UnitTypeController extends Controller
             Log::error($ex->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
         }
-
     }
 
     /**
@@ -104,14 +110,12 @@ class UnitTypeController extends Controller
             Log::error($e->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
         }
-
     }
 
     public function unitByParent($id)
     {
         $unit = $this->unitTypeService->findById($id);
 
-        return response()->json($unit,200);
+        return response()->json($unit, 200);
     }
-
 }

@@ -240,6 +240,11 @@
                                                                     </option>
                                                                 @endforeach
                                                             </select>
+                                                            <div class="input-group-append">
+                                                                <a href="javascript:;" data-toggle="modal"
+                                                                    data-target="#unitModal" class="btn btn-primary"><i
+                                                                        class="fa fa-plus"></i></a>
+                                                            </div>
                                                             @error('unit_id')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -295,6 +300,7 @@
     {{-- category create modal --}}
     @include('product::products.category.create-modal')
     @include('product::products.brand.create-modal')
+    @include('product::unit-types.unit-modal')
 
     {{-- Media Modal Show --}}
     @if (Module::isEnabled('Media'))
@@ -392,6 +398,41 @@
                         }
                     })
                 })
+                $('#unitForm').on('submit', function(e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: "{{ route('admin.unit.store') }}",
+                        type: 'POST',
+                        data: $('#unitForm').serialize(),
+                        success: function(response) {
+                            if (response.status == 200) {
+                                toastr.success(response.message);
+                                $('#unitModal').modal('hide');
+                                $('#unitForm').trigger('reset');
+
+                                let html =
+                                    `<option value="${response.unit.id}">${response.unit.name}</option>`
+                                $('#unit_id').append(html)
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function(error) {
+                            handleError(error)
+                        }
+                    })
+                })
+                $('#base_unit').on("change", function() {
+                    const baseUnit = $(this).val();
+                    if (baseUnit) {
+                        $('.operator').removeClass('d-none');
+                        $('.operator_value').removeClass('d-none');
+                    } else {
+                        $('.operator').addClass('d-none');
+                        $('.operator_value').addClass('d-none');
+                    }
+                });
             });
 
             function changeAttr(val, selectorName) {

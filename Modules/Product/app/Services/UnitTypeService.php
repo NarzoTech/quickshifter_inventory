@@ -32,7 +32,7 @@ class UnitTypeService
         $unit_type->operator_value = $request->operator_value;
         $unit_type->status = $request->status;
         $unit_type->save();
-        return true;
+        return $unit_type;
     }
 
     public function update($request, $id)

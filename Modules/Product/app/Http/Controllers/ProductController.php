@@ -75,7 +75,8 @@ class ProductController extends Controller
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         $brands = $this->brandService->getActiveBrands();
         $units = $this->unitService->getParentUnits();
-        return view('product::products.create', compact('categories', 'brands', 'units'));
+        $parentUnits = $this->unitService->getParentUnits();
+        return view('product::products.create', compact('categories', 'brands', 'units', 'parentUnits'));
     }
 
     /**
