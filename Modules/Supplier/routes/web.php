@@ -16,7 +16,13 @@ use Modules\Supplier\app\Http\Controllers\SupplierGroupController;
 */
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
+
+    Route::get('suppliers/import', [SupplierController::class, 'bulkImport'])->name('suppliers.import');
+    Route::post('suppliers/import', [SupplierController::class, 'bulkImportStore'])->name('suppliers.import.store');
+
+
     Route::resource('suppliers', SupplierController::class)->except(['show']);
+
     Route::post('suppliers/status/{id}', [SupplierController::class, 'changeStatus'])->name('suppliers.status');
     Route::get('suppliers/due-pay/{id}', [SupplierController::class, 'duePay'])->name('suppliers.due-pay');
     Route::post('suppliers/due-pay-store/{id}', [SupplierController::class, 'duePayStore'])->name('suppliers.due-pay-store');

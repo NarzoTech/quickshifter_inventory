@@ -242,4 +242,21 @@ class SupplierController extends Controller
         return view('supplier::ledger-details', compact('ledger'));
     }
     public function export() {}
+
+    public function bulkImport()
+    {
+        return view('supplier::bulk-import');
+    }
+
+    public function bulkImportStore(Request $request)
+    {
+        $request->validate(['file' => 'required']);
+        try {
+            $this->supplierService->bulkImport($request);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier imported successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier imported failed.', 'alert-type' => 'error']);
+        }
+    }
 }

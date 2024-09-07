@@ -98,7 +98,7 @@
                                 <h4>
                                     <a href="{{ route('admin.product.import') }}" class="btn btn-primary"><i
                                             class="fa fa-upload"></i>
-                                        {{ __('Import Producs') }}</a>
+                                        {{ __('Import Products') }}</a>
 
                                     <a href="{{ route('admin.product.create') }}" class="btn btn-primary"><i
                                             class="fa fa-plus"></i>

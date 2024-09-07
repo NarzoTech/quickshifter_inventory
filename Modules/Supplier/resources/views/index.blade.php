@@ -100,6 +100,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
+                                    <a href="{{ route('admin.suppliers.import') }}" class="btn btn-primary"><i
+                                            class="fa fa-upload"></i>
+                                        {{ __('Import Suppliers') }}</a>
                                     <a href="javascript:;" data-toggle="modal" data-target="#addSupplier"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Supplier') }}</a>

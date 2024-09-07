@@ -2,9 +2,12 @@
 
 namespace Modules\Supplier\app\Services;
 
+use App\Imports\SuppliersImport;
 use App\Models\Ledger;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
 use Modules\Purchase\app\Models\Purchase;
 use Modules\Supplier\app\Models\Supplier;
@@ -236,5 +239,12 @@ class SupplierService
         }
 
         return $invoice_number;
+    }
+
+
+    public function bulkImport(Request $request)
+    {
+        $file = $request->file('file');
+        Excel::import(new SuppliersImport, $file);
     }
 }
