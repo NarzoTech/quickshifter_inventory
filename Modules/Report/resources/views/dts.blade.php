@@ -233,8 +233,6 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
-
                                             </tr>
                                             <tr>
                                                 <td colspan="6" class="text-right"><b>{{ __('Total') }}</b></td>

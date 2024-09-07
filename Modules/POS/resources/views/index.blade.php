@@ -486,7 +486,7 @@
                                             <td class="text-right w-40">
 
                                                 <input type="text" class="form-control datepicker" name="sale_date"
-                                                    value="{{ date('Y-m-d') }}" autocomplete="off">
+                                                    value="{{ date('d-m-Y') }}" autocomplete="off">
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -933,7 +933,7 @@
                 })
 
 
-                $('#name').on('change', function() {
+                $('#name').on('input', function() {
                     const name = $(this).val();
                     $.ajax({
                         type: 'get',
@@ -942,24 +942,8 @@
                             name
                         },
                         success: function(response) {
-                            if (response.total > 1) {
+                            if (response.total > 0) {
                                 $('#itemList').html(response.view).addClass('show');
-                            } else {
-                                $('#itemList').html('');
-                                $('#itemList').removeClass('show');
-
-                                $('#name').val('');
-
-                                if (response.total == 1) {
-                                    if (response.product.has_variant) {
-                                        load_product_model(response.product.id)
-                                    } else {
-                                        singleAddToCart(response.product.id)
-                                    }
-                                }
-                                if (response.total == 0) {
-                                    toastr.error('{{ __('Product not found') }}')
-                                }
                             }
                         },
                         error: function(response) {

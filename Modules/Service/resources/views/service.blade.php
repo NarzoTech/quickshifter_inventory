@@ -180,7 +180,9 @@
                             </div>
                             <div class="form-group col-12">
                                 <label for="price">{{ __('Price') }} <span class="text-danger">*</span> </label>
-                                <input type="number" class="form-control" id="price" name="price">
+                                <input type="number" class="form-control" id="price" name="price"
+                                    value="0">
+                                <small class="form-text text-danger">Leave 0 for blank</small>
                             </div>
                             <div class="form-group col-12">
                                 <label for="image">{{ __('Image') }}</label>

@@ -72,10 +72,10 @@ class Product extends Model
         // get the selling price
 
         if ($purchase) {
-            return $purchase->sale_price;
+            return remove_comma($purchase->sale_price);
         }
 
-        return $this->price;
+        return remove_comma($this->price);
     }
 
     public function getAvgPurchasePriceAttribute()
