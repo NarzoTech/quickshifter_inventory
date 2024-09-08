@@ -17,7 +17,7 @@
 <script src="{{ asset('backend/tinymce/js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('backend/js/custom.js') }}"></script>
 <script src="{{ asset('backend/js/sweetalert2.all.min.js') }}"></script>
-<script src="{{ asset('backend/js/jquery-ui.min.js') }}"></script>
+
 
 <script>
     @session('messege')
@@ -151,62 +151,4 @@
             success_callback: null
         });
     }
-</script>
-
-
-
-
-<script>
-    let timer = null;
-    // const name = $('#name').val();
-    // let ProductAutoComplete = $('#name').autocomplete({
-    //     html: true,
-    //     source: function(request, response) {
-    //         $.ajax({
-    //             url: "{{ route('admin.load-products-list') }}",
-    //             dataType: 'json',
-    //             data: {
-    //                 name
-    //             },
-    //             success: function(data) {
-    //                 if (data.total == 0) {
-    //                     swalMiniAlert('Invalid Product Code!', '210px', () =>
-    //                         $('#search_product').val('')
-    //                     )
-    //                 }
-
-    //                 response(
-    //                     // $.map(data.data, function(item) {
-    //                     //     clearInterval(timer)
-    //                     //     if (data.data.length == 1) {
-    //                     //         timer = setTimeout(() => {
-    //                     //             product_add(item);
-    //                     //             $('#search_product').val('');
-    //                     //         }, 10)
-    //                     //     } else {
-    //                     //         return {
-    //                     //             label: autoCompleatLabel(item),
-    //                     //             data: item
-    //                     //         }
-    //                     //     }
-    //                     // })
-    //                     $('#itemList').html(data.view).addClass('show');
-    //                 )
-    //             }
-    //         })
-    //     },
-    //     minLength: 2,
-    //     // select: function(event, ui) {
-    //     //     if (ui.item.data) {
-    //     //         product_add(ui.item.data)
-    //     //     }
-    //     //     return false
-    //     // },
-    //     open: function() {
-    //         $(this).removeClass('ui-corner-all').addClass('ui-corner-top')
-    //     },
-    //     close: function() {
-    //         $(this).removeClass('ui-corner-top').addClass('ui-corner-all')
-    //     }
-    // })
 </script>

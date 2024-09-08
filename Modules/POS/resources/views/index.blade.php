@@ -5,6 +5,7 @@
 @endsection
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/pos.css') }}">
+    <script src="{{ asset('backend/js/jquery-ui.min.js') }}"></script>
     <style>
         .ui-autocomplete {
             z-index: 215000000 !important;

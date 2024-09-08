@@ -292,8 +292,9 @@ class PurchaseService
     public function genInvoiceNumber()
     {
         $setting = cache('setting');
-        $number = $setting->invoice_suffix ?? 1;
-        $prefix = $setting->invoice_prefix ?? 'INV-';
+        $number = $setting->invoice_suffix ? $setting->invoice_suffix : 1;
+        $prefix = $setting->invoice_prefix ? $setting->invoice_prefix : 'INV-';
+
         $invoice_number = $prefix . $number;
 
         $purchase = $this->purchase->latest()->first();
