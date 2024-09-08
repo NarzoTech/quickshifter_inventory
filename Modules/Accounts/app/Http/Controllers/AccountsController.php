@@ -15,6 +15,8 @@ use Modules\Accounts\app\Http\Requests\AccountRequest;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Accounts\app\Services\BankService;
 use Modules\Customer\app\Models\CustomerPayment;
+use Modules\Employee\app\Models\EmployeeSalary;
+use Modules\Expense\app\Models\Expense;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
@@ -114,17 +116,45 @@ class AccountsController extends Controller
 
     public function cashflow()
     {
+        $fromDate = request('from_date') ?? now()->format('Y-m-d');
+        $toDate = request('to_date') ?? now()->format('Y-m-d');
         $data = [];
-        $data['productSale'] = ProductSale::whereNotNull('product_id')->where('source', 1)->sum('sub_total');
-        $data['serviceSale'] = ProductSale::whereNotNull('service_id')->sum('sub_total');
-        $data['customer_due'] = Sale::whereNotNull('customer_id')->sum('due_amount');
-        $data['sale_return'] = SalesReturn::sum('return_amount');
-        $data['balance_deposit'] = Balance::where('balance_type', 'deposit')->sum('amount');
-        $data['balance_withdraw'] = Balance::where('balance_type', 'withdraw')->sum('amount');
-        $data['customer_advance'] = CustomerPayment::where('payment_type', 'advance_receive')->sum('amount');
-        $data['customer_advance_refund'] = CustomerPayment::where('payment_type', 'advance_refund')->sum('amount');
+        $data['productSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
+            $q->whereBetween('order_date', [$fromDate, $toDate]);
+        })->whereNotNull('product_id')->where('source', 1)->sum('sub_total');
+        $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
+            $q->whereBetween('order_date', [$fromDate, $toDate]);
+        })->whereNotNull('service_id')->sum('sub_total');
+        $data['customer_due'] = Sale::whereBetween('order_date', [$fromDate, $toDate])->whereNotNull('customer_id')->sum('due_amount');
+        $data['sale_return'] = SalesReturn::whereBetween('return_date', [$fromDate, $toDate])->sum('return_amount');
+        $data['balance_deposit'] = Balance::where('balance_type', 'deposit')->whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        $data['balance_withdraw'] = Balance::where('balance_type', 'withdraw')->whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        $data['customer_advance'] = CustomerPayment::where('payment_type', 'advance_receive')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        $data['customer_advance_refund'] = CustomerPayment::where('payment_type', 'advance_refund')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        $data['salary'] = EmployeeSalary::whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        $data['expenses'] = Expense::whereBetween('date', [$fromDate, $toDate])->sum('amount');
 
-
+        $openingBalance = $this->accountBalance($fromDate, $toDate);
+        dd($openingBalance);
         return view('accounts::cash-flow', compact('data'));
+    }
+
+
+    private function accountBalance($fromDate, $toDate)
+    {
+
+        $accounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->paginate(20);
+        $bankAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'bank')->with('payments')->get();
+        $cashAccount = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'cash')->with('payments')->first();
+        $mobileAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'mobile_banking')->with('payments')->get();
+        $cardAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'card')->with('payments')->get();
+        $advanceAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'advance')->with('payments')->get();
+
+        $totalAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->get();
+
+        $accountBalance = 0;
+        $totalAccounts->map(function ($account) use (&$accountBalance) {
+            $accountBalance += $account->balance();
+        });
     }
 }

@@ -53,6 +53,15 @@
                                                 </option>
                                             </select>
                                         </div>
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" class="form-control datepicker" name="from_date"
+                                                value="{{ request()->get('from_date') ?? date('d-m-Y') }}"
+                                                placeholder="From Date">
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" class="form-control datepicker" name="to_date"
+                                                value="{{ request()->get('to_date') ?? date('d-m-Y') }}">
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -63,7 +72,6 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="row mt-4">
-
                                     <div class="col-12 text-center summary-head" id="summary-head">
                                     </div>
                                     <div class="col-12">
@@ -118,16 +126,6 @@
                                                     <td>
                                                         <span>
                                                             {{ currency($data['serviceSale']) }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/2.png"
-                                                            class="icon-img" />
-                                                        Service Transfers
-                                                    </td>
-                                                    <td>
-                                                        <span>
-                                                            TK 0.00
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -290,7 +288,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['expenses']) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -313,7 +311,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['salary']) }}
                                                         </span>
                                                     </td>
                                                 </tr>

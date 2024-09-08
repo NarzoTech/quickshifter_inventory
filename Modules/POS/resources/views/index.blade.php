@@ -931,26 +931,33 @@
                         itemList.removeClass("show");
                     }
                 })
+                let ProductAutoComplete = $('#name').autocomplete({
+                    html: true,
+                    source: function(request, response) {
+                        $.ajax({
+                            url: "{{ route('admin.load-products-list') }}",
+                            dataType: 'json',
+                            data: {
+                                name: request.term
+                            },
+                            success: function(response) {
+
+                                if (response.total > 0) {
+                                    // 
+                                    $('#itemList').html(response.view).addClass('show');
+                                }
 
 
-                $('#name').on('input', function() {
-                    const name = $(this).val();
-                    $.ajax({
-                        type: 'get',
-                        url: "{{ route('admin.load-products-list') }}",
-                        data: {
-                            name
-                        },
-                        success: function(response) {
-                            if (response.total > 0) {
-                                $('#itemList').html(response.view).addClass('show');
                             }
-                        },
-                        error: function(response) {
-                            toastr.error("{{ __('Server error occurred') }}")
-                            //location.reload();
-                        }
-                    });
+                        })
+                    },
+                    minLength: 2,
+                    open: function() {
+                        $(this).removeClass('ui-corner-all').addClass('ui-corner-top')
+                    },
+                    close: function() {
+                        $(this).removeClass('ui-corner-top').addClass('ui-corner-all')
+                    }
                 })
                 // search products
 
