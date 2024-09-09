@@ -108,6 +108,12 @@
                                             aria-selected="true">{{ __('Products') }}</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="favoriteProducts-tab" data-toggle="tab"
+                                            data-target="#favoriteProducts" type="button" role="tab"
+                                            aria-controls="profile"
+                                            aria-selected="false">{{ __('Favorite Products') }}</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="service-tab" data-toggle="tab" data-target="#service"
                                             type="button" role="tab" aria-controls="profile"
                                             aria-selected="false">{{ __('Service') }}</button>
@@ -165,7 +171,67 @@
                                                         placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
                                                         autocomplete="off" value="{{ request()->get('name') }}">
                                                     <ul class="dropdown-menu" id="itemList">
-                                                        @include('pos::product-list')
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-body product_body" style="overflow: auto">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="favoriteProducts" role="tabpanel"
+                                aria-labelledby="favoriteProducts-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <form id="favorite_product_search_form" class="pos_pro_search_form w-100">
+                                            <div class="row">
+                                                <div class="col-md-5 d-flex align-items-center">
+                                                    <select name="category_id" id="category_id"
+                                                        class="form-control select2">
+                                                        <option value="">{{ __('Select Category') }}</option>
+                                                        @if (request()->has('category_id'))
+                                                            @foreach ($categories as $category)
+                                                                <option
+                                                                    {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
+                                                                    value="{{ $category->id }}">{{ $category->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($categories as $category)
+                                                                <option value="{{ $category->id }}">{{ $category->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-5 d-flex align-items-center">
+                                                    <select name="brand_id" id="brand_id" class="form-control select2">
+                                                        <option value="">{{ __('Select brand') }}</option>
+                                                        @if (request()->has('brand_id'))
+                                                            @foreach ($brands as $brand)
+                                                                <option
+                                                                    {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
+                                                                    value="{{ $brand->id }}">{{ $brand->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($categories as $brand)
+                                                                <option value="{{ $brand->id }}">{{ $brand->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-12 d-flex align-items-center mt-2">
+                                                    <input type="text" class="form-control" name="name"
+                                                        id="favoriteName"
+                                                        placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
+                                                        autocomplete="off" value="{{ request()->get('name') }}">
+                                                    <ul class="dropdown-menu" id="favoriteItemList">
+
                                                     </ul>
                                                 </div>
                                             </div>
@@ -877,20 +943,29 @@
                 })
 
                 // product search modal
-                $("#product_search_form").on("submit", function(e) {
+                $("#product_search_form,#favorite_product_search_form").on("submit", function(e) {
                     e.preventDefault();
 
                     $("#search_btn_text").html(`<div class="spinner-border" role="status">
                                             <span class="sr-only">Loading...</span></div>`)
 
+                    const favorite = 0;
+                    if ($(this).attr('id') == 'favorite_product_search_form') {
+                        favorite = 1;
+                    }
+
                     $.ajax({
                         type: 'get',
                         data: $('#product_search_form').serialize(),
-                        url: "{{ route('admin.load-products') }}",
+                        url: "{{ route('admin.load-products') }}?favorite=" + favorite,
                         success: function(response) {
                             $("#search_btn_text").html(
                                 `<i class="fas fa-search fa-2x fs-25"></i>`)
-                            $(".product_body").html(response)
+                            if (favorite == 1) {
+                                $("#favoriteProducts .product_body").html(response)
+                            } else {
+                                $("#products .product_body").html(response)
+                            }
                         },
                         error: function(response) {
                             $("#search_btn_text").html(
@@ -1248,7 +1323,8 @@
                 url: "{{ route('admin.load-products') }}",
                 data: data,
                 success: function(response) {
-                    $(".product_body").html(response.productView)
+                    $("#products .product_body").html(response.productView)
+                    $("#favoriteProducts .product_body").html(response.favProductView)
                     $(".service_body").html(response.serviceView)
                     $('.preloader_area').addClass('d-none');
                 },
@@ -1593,6 +1669,7 @@
                 total += numberOnly($(this).text())
             })
 
+
             $('#total').text(`{{ currency_icon() }}${total}`)
 
 
@@ -1628,6 +1705,9 @@
             $('#totalAmountWithVat').text(`{{ currency_icon() }}${grandTotal}`)
             $('#finalTotal').text(`{{ currency_icon() }}${grandTotal}`)
             calculateExtra()
+
+            // products.length
+            $('#titems').text(products.length)
         }
 
         // load customer
@@ -1664,6 +1744,10 @@
             let url = "{{ route('admin.product.wishlist', ':id') }}";
 
             url = url.replace(':id', id);
+
+            // remove d-none from preloader
+            $('.preloader_area').removeClass('d-none');
+
             $.ajax({
                 type: 'POST',
                 data: {

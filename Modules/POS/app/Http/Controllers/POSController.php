@@ -145,8 +145,15 @@ class POSController extends Controller
             });
         }
 
-        $products = $products->paginate(20);
-        $products = $products->appends($request->all());
+
+        // Paginate favorite products
+        $favoriteProducts = $products->where('is_favorite', 1)->paginate(20);
+        $favoriteProducts = $favoriteProducts->appends($request->all()); // Append request parameters
+
+        // Paginate non-favorite products
+        $nonFavoriteProducts = $products->orWhere('is_favorite', 0)->paginate(20);
+        $nonFavoriteProducts = $nonFavoriteProducts->appends($request->all()); // Append request parameters
+
 
 
         $services = $this->services->all()->where('status', 1);
@@ -166,10 +173,22 @@ class POSController extends Controller
         $serviceView = view('pos::ajax_service')->with([
             'services' => $services,
         ])->render();
+
         $productView =  view('pos::ajax_products')->with([
-            'products' => $products,
+            'products' => $nonFavoriteProducts,
         ])->render();
-        return response()->json(['productView' => $productView, 'serviceView' => $serviceView]);
+
+        $favProductView =  view('pos::ajax_products')->with([
+            'products' => $favoriteProducts,
+        ])->render();
+
+        return response()->json(['productView' => $productView, 'serviceView' => $serviceView, 'favProductView' => $favProductView]);
+    }
+
+    public function favoriteProducts($products)
+    {
+        $products = $products->where('is_favorite', 1)->paginate(20);
+        return $products;
     }
 
     public function load_products_list(Request $request)
