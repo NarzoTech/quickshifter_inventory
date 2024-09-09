@@ -6,6 +6,18 @@
                     @if ($product->has_variant) onclick="load_product_model({{ $product->id }})" @else onclick="singleAddToCart({{ $product->id }})" @endif>
                     <div class="w-100 produt_card_img">
                         <img src="{{ $product->singleImage }}" class="card-img-top" alt="Product">
+
+                        {{-- wishlist button --}}
+
+                        @if ($product->isWishlisted())
+                            <button class="wishlist_btn remove" onclick="wishlist({{ $product->id }}, 'remove')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        @else
+                            <button class="wishlist_btn" onclick="wishlist({{ $product->id }}, 'add')">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        @endif
                     </div>
                     <div class="card-body">
                         <p class="card-title">

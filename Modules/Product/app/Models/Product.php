@@ -78,6 +78,11 @@ class Product extends Model
         return remove_comma($this->price);
     }
 
+    public function isWishlisted()
+    {
+        return true;
+    }
+
     public function getAvgPurchasePriceAttribute()
     {
         $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->get();
