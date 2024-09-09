@@ -34,12 +34,15 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.suppliers.index') }}" method="GET" onchange="this.submit()"
+                                <form action="{{ route('admin.suppliers.index') }}" method="GET" 
                                     class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4 form-group">
+                                        <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="Search name, email and phone number...">
+                                                <button type="submit">
+                                                <i class="far fa-arrow-alt-circle-right"></i>
+                                            </button>
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="order_by" id="order_by" class="form-control">

@@ -17,9 +17,12 @@
                                 <form action="{{ route('admin.product.index') }}" method="GET" onchange="this.submit()"
                                     class="card-body">
                                     <div class="row">
-                                        <div class="col-md-3 form-group">
+                                        <div class="col-md-3 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="Product Name, SKU, Barcode...">
+                                            <button type="submit">
+                                                <i class="far fa-arrow-alt-circle-right"></i>
+                                            </button>
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="order_by" id="order_by" class="form-control">

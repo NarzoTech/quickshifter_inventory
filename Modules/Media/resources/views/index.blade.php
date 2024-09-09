@@ -61,9 +61,12 @@
                             <form action="{{ route('admin.media.index') }}" method="GET" onchange="this.submit()"
                                 class="card-body">
                                 <div class="row">
-                                    <div class="col-md-8 form-group mb-0">
+                                    <div class="col-md-8 form-group mb-0 search-wrapper">
                                         <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                             class="form-control" placeholder="{{ __('Search') }}">
+                                        <button type="submit">
+                                            <i class="far fa-arrow-alt-circle-right"></i>
+                                        </button>
                                     </div>
                                     <div class="col-md-4 form-group mb-0">
                                         <select name="par-page" id="par-page" class="form-control">
@@ -95,7 +98,8 @@
                                         <div class="media_item position-relative" data-id="{{ $media->id }}">
                                             <img class="rounded img-thumbnail select-media-for-delete"
                                                 src="{{ asset($media->path) }}" alt="{{ $media->atl_text }}">
-                                            <a href="javascript:;" data-id="{{ $media->id }}" data-toggle="modal" data-target="#deleteModal"
+                                            <a href="javascript:;" data-id="{{ $media->id }}" data-toggle="modal"
+                                                data-target="#deleteModal"
                                                 class="destroy rounded-circle p-2 position-absolute"><i
                                                     class="fas fa-trash text-danger"></i>
                                             </a>
