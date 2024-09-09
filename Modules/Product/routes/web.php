@@ -22,10 +22,10 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
 
     // bulk product import
 
-
     Route::get('product/import', [ProductController::class, 'bulkImport'])->name('product.import');
     Route::post('product/import', [ProductController::class, 'bulkImportStore'])->name('product.import.store');
 
+    Route::post('product/wishlist/{id}', [ProductController::class, 'wishlist'])->name('product.wishlist');
     // Products
     Route::get('product/barcode', [ProductController::class, 'barcode'])->name('product.barcode');
     Route::post('product/barcode/print', [ProductController::class, 'barcodePrint'])->name('product.barcode.print');

@@ -9,12 +9,12 @@
 
                         {{-- wishlist button --}}
 
-                        @if ($product->isWishlisted())
-                            <button class="wishlist_btn remove" onclick="wishlist({{ $product->id }}, 'remove')">
+                        @if ($product->is_favorite)
+                            <button class="wishlist_btn remove" onclick="wishlist(event,{{ $product->id }}, 'remove')">
                                 <i class="fas fa-times"></i>
                             </button>
                         @else
-                            <button class="wishlist_btn" onclick="wishlist({{ $product->id }}, 'add')">
+                            <button class="wishlist_btn" onclick="wishlist(event,{{ $product->id }}, 'add')">
                                 <i class="far fa-heart"></i>
                             </button>
                         @endif

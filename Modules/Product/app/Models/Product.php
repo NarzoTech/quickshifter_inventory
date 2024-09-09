@@ -39,6 +39,7 @@ class Product extends Model
         'status',
         "tax_type",
         "tax",
+        'is_favorite',
     ];
 
     public function getSingleImageAttribute()
@@ -78,10 +79,6 @@ class Product extends Model
         return remove_comma($this->price);
     }
 
-    public function isWishlisted()
-    {
-        return true;
-    }
 
     public function getAvgPurchasePriceAttribute()
     {

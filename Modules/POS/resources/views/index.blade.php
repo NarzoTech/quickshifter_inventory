@@ -1658,5 +1658,32 @@
             const totalDue = currentDue + previous_due;
             $('#due_amountModal').text(`{{ currency_icon() }}${totalDue}`)
         }
+
+        function wishlist(event, id, type) {
+            event.stopPropagation();
+            let url = "{{ route('admin.product.wishlist', ':id') }}";
+
+            url = url.replace(':id', id);
+            $.ajax({
+                type: 'POST',
+                data: {
+                    type: type
+                },
+                url: url,
+                success: function(response) {
+                    if (response['alert-type'] == 'success') {
+                        toastr.success(response.message)
+                        loadProudcts();
+                    } else {
+                        toastr.error(response.message)
+                    }
+                },
+                error: function(response) {
+                    if (response.status == 500) {
+                        toastr.error("{{ __('Server error occurred') }}")
+                    }
+                }
+            });
+        }
     </script>
 @endpush

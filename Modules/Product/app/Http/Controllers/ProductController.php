@@ -364,6 +364,33 @@ class ProductController extends Controller
         }
     }
 
+    public function wishlist(Request $request, $id)
+    {
+        $product = $this->productService->getProduct($id);
+
+        if (!$product) {
+            return back()->with([
+                'messege' => 'Product not found',
+                'alert-type' => 'error',
+            ]);
+        }
+
+        if ($request->type) {
+            if ($request->type == 'add') {
+                $product->is_favorite = 1;
+                $product->save();
+                return response()->json(['message' => 'Product Added To Wishlist', 'alert-type' => 'success'], 200);
+            } else {
+                $product->is_favorite = 0;
+                $product->save();
+
+                return response()->json(['message' => 'Product Removed From Wishlist', 'alert-type' => 'success'], 200);
+            }
+        } else {
+            return response()->json(['message' => 'Product Not Found', 'alert-type' => 'error'], 404);
+        }
+    }
+
     // bulk product import
     public function bulkImport()
     {

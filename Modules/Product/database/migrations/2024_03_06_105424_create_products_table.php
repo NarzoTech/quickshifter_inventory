@@ -34,7 +34,7 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->string("tax_type", 50)->nullable();
             $table->double("tax", 16, 2)->default(0)->nullable();
-
+            $table->boolean('is_favorite')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });
