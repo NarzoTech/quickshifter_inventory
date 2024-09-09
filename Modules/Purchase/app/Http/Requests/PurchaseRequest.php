@@ -21,7 +21,6 @@ class PurchaseRequest extends FormRequest
             'paid_amount.*' => 'required|numeric',
             'due_amount' => 'required',
             'payment_type' => 'required',
-            'status' => 'required',
             'product_id' => 'required|array',
             'product_id.*' => 'required|distinct',
             'quantity' => 'required|array',

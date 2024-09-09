@@ -31,7 +31,7 @@
 
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ __('Supplier') }}</label>
                                                 <select class="form-control select2" name="supplier_id">
@@ -45,7 +45,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ __('Invoice Number') }}</label>
                                                 <input type="text" class="form-control" name="invoice_number"
@@ -55,7 +55,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ __('Memo No') }}</label>
                                                 <input type="text" class="form-control" name="memo_no"
@@ -91,20 +91,6 @@
                                                 <input type="file" class="form-control" name="attachment"
                                                     value="{{ old('attachment') }}">
                                                 @error('attachment')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>{{ __('Purchase Status') }}</label>
-                                                <select class="form-control" name="status">
-                                                    <option value="">{{ __('Select Status') }}</option>
-                                                    <option value="1" selected>{{ __('Pending') }}</option>
-                                                    <option value="2">{{ __('Received') }}</option>
-                                                </select>
-                                                @error('status')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>

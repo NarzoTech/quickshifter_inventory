@@ -92,7 +92,6 @@ class PurchaseService
         $purchase->payment_status = $paidAmount == $request->total_amount ? 'paid' : 'due';
         $purchase->payment_type = $request->payment_type;
         $purchase->note = $request->note;
-        $purchase->status = $request->status;
         $purchase->created_by = Auth::id();
         $purchase->save();
 
@@ -186,7 +185,6 @@ class PurchaseService
         $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due';
         $purchase->payment_type = $request->payment_type;
         $purchase->note = $request->note;
-        $purchase->status = $request->status;
         $purchase->updated_by = Auth::id();
         $purchase->save();
 
