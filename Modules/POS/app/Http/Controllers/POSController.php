@@ -193,6 +193,7 @@ class POSController extends Controller
 
     public function load_products_list(Request $request)
     {
+
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
         })->orderBy('id', 'desc');
@@ -203,6 +204,9 @@ class POSController extends Controller
                     ->orWhere('barcode', 'LIKE', '%' . $request->name . '%')
                     ->orWhere('sku', 'LIKE', '%' . $request->name . '%');
             });
+        }
+        if ($request->favorite == 1) {
+            $products = $products->where('is_favorite', 1);
         }
 
         $products = $products->get();

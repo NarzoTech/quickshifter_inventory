@@ -998,8 +998,8 @@
                 $(document).on('click', function() {
                     // without #name or #itemList remove show class
 
-                    var searchInput = $("#name");
-                    var itemList = $("#itemList");
+                    var searchInput = $("#name, #favoriteName");
+                    var itemList = $("#itemList,#favoriteItemList");
 
                     // If click is outside the search input and dropdown, hide the dropdown
                     if (!searchInput.is(event.target) && !itemList.is(event.target) && itemList.has(
@@ -1007,11 +1007,18 @@
                         itemList.removeClass("show");
                     }
                 })
-                let ProductAutoComplete = $('#name').autocomplete({
+                let ProductAutoComplete = $('#name, #favoriteName').autocomplete({
                     html: true,
                     source: function(request, response) {
+
+                        let favorite = 0;
+                        if (this.element[0]?.id == 'favoriteName') {
+                            favorite = 1;
+                        }
+
                         $.ajax({
-                            url: "{{ route('admin.load-products-list') }}",
+                            url: "{{ route('admin.load-products-list') }}?favorite=" +
+                                favorite,
                             dataType: 'json',
                             data: {
                                 name: request.term
@@ -1019,11 +1026,15 @@
                             success: function(response) {
 
                                 if (response.total > 0) {
-                                    //
-                                    $('#itemList').html(response.view).addClass('show');
+
+                                    if (favorite == 0) {
+                                        $('#itemList').html(response.view).addClass(
+                                            'show');
+                                    } else {
+                                        $('#favoriteItemList').html(response.view)
+                                            .addClass('show');
+                                    }
                                 }
-
-
                             }
                         })
                     },

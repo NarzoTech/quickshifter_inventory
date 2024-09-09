@@ -21,12 +21,13 @@
         float: right;
     }
 
-    #itemList {
+    #itemList,
+    #favoriteItemList {
         width: 100%;
     }
 </style>
 
-@if ($products->count() > 1)
+@if ($products->count() > 0)
     @foreach ($products as $product)
         <li>
             <a class="dropdown-item {{ $product->stock <= 0 ? 'qty-zero' : ($product->stock < ($product->stock_alert ?? 5) ? 'qty-low' : 'qty-available') }}"
