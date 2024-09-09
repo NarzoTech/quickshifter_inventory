@@ -944,7 +944,7 @@
                             success: function(response) {
 
                                 if (response.total > 0) {
-                                    // 
+                                    //
                                     $('#itemList').html(response.view).addClass('show');
                                 }
 
@@ -1291,6 +1291,7 @@
             $('#total_amount_modal_input').val(grandTotal);
             $('#total_amountModal2').text(grandTotal);
 
+
             // load customer info
             let customer_id = $('#customer_id').val();
             $("#order_customer_id").val(customer_id ? customer_id : 'walk-in-customer');
@@ -1303,6 +1304,8 @@
 
 
             $('.paying_amount').val(grandTotal);
+            $('#paid_amountModal').text(grandTotal);
+
 
             // hide rows
             if (!discountAmount) {
@@ -1523,6 +1526,31 @@
 
         function paymentSubmit(e) {
             e.preventDefault();
+
+            // check cart is empty or not
+
+            if ($('.product-table tbody > tr').length == 0) {
+                toastr.error("{{ __('Cart is empty') }}")
+                return
+            }
+
+            // if customer is walk-in customer
+
+            if ($('#customer_id').val() == 'walk-in-customer') {
+
+                let totalAmount = $('#total_amountModal').text();
+                totalAmount = parseFloat(totalAmount);
+                let paidAmount = $('#paid_amountModal').text();
+                paidAmount = parseFloat(paidAmount);
+
+                if (totalAmount != paidAmount) {
+                    toastr.error("{{ __('Can\'t Make Due Sale for Guest Customer') }}")
+                    return
+                }
+            }
+
+
+
             const formData = $('#checkoutForm').serialize();
             $.ajax({
                 type: 'POST',

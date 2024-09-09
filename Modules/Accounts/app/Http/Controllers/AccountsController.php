@@ -135,7 +135,7 @@ class AccountsController extends Controller
         $data['expenses'] = Expense::whereBetween('date', [$fromDate, $toDate])->sum('amount');
 
         $openingBalance = $this->accountBalance($fromDate, $toDate);
-        dd($openingBalance);
+
         return view('accounts::cash-flow', compact('data'));
     }
 

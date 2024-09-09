@@ -18,7 +18,6 @@ class DashboardController extends Controller
         $data['totalProducts'] = Product::count();
 
 
-
         $data['suppliersDues'] = 0;
         return view('admin.dashboard', compact('data'));
     }
