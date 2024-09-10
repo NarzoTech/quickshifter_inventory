@@ -58,8 +58,7 @@
 
                     <div class="col-12 mt-3">
                         <div class="card">
-                            <form action="{{ route('admin.media.index') }}" method="GET" onchange="this.submit()"
-                                class="card-body">
+                            <form action="{{ route('admin.media.index') }}" method="GET" class="card-body">
                                 <div class="row">
                                     <div class="col-md-8 form-group mb-0 search-wrapper">
                                         <input type="text" name="keyword" value="{{ request()->get('keyword') }}"

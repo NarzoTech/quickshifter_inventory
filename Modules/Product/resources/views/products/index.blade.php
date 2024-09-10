@@ -14,8 +14,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.product.index') }}" method="GET" onchange="this.submit()"
-                                    class="card-body">
+                                <form action="{{ route('admin.product.index') }}" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-3 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"

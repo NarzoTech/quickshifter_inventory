@@ -58,7 +58,7 @@
                                 <h2>{{ __('Edit') }} {{ ucwords(str_replace(['_', '-'], ' ', request('file'))) }}
                                     {{ __('Language') }}</h2>
                                 <div>
-                                    <form onchange="this.submit()"
+                                    <form
                                         action="{{ route('admin.languages.edit-static-languages', ['code' => request('code'), 'file' => request('file')]) }}"
                                         method="get">
                                         <input type="text" name="search" class="form-control"

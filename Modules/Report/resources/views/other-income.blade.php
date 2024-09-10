@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="" method="GET" onchange="this.submit()" class="card-body">
+                                <form action="" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
