@@ -139,6 +139,7 @@ class CustomerController extends Controller
         $user->area_id = $request->area_id;
         $user->vehicle_id = $request->vehicle_id;
         $user->membership = $request->membership;
+        $user->plate_number = $request->plate_number;
         $user->date = now()->parse($request->date);
         $user->status = $request->status;
         $user->guest = $request->guest ? 1 : 0;
@@ -165,6 +166,7 @@ class CustomerController extends Controller
         $user->area_id = $request->area_id;
         $user->vehicle_id = $request->vehicle_id;
         $user->membership = $request->membership;
+        $user->plate_number = $request->plate_number;
         $user->date = now()->parse($request->date);
         $user->status = $request->status;
         $user->guest = $request->guest ? 1 : 0;

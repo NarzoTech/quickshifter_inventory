@@ -35,6 +35,8 @@ class User extends Model
         'address',
         'status',
         'wallet_balance',
+        'plate_number',
+        'guest',
     ];
 
     protected $appends = ['total_due'];

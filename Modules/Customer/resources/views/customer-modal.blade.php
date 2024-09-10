@@ -45,12 +45,18 @@
                         </div>
                         <div class="form-group col-md-4 ">
                             <label for="vehicle_id">{{ __('Vehicle') }}</label>
-                            <select name="vehicle_id" id="vehicle_id" class="form-control">
+                            <select name="vehicle_id" id="vehicle_id" class="form-control select2"
+                                data-dropdown-parent="#addCustomer" data-control="select2">
                                 <option value="">{{ __('Select Vehicle') }}</option>
                                 @foreach ($vehicles as $vehicle)
-                                    <option value="{{ $vehicle->id }}">{{ $vehicle->name }}</option>
+                                    <option value="{{ $vehicle->id }}">{{ $vehicle->name }} - {{ $vehicle->model }}
+                                    </option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="plate_number">{{ __('Plate Number') }}</label>
+                            <input type="text" class="form-control" id="plate_number" name="plate_number">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="membership">{{ __('Membership') }}</label>

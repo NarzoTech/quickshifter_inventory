@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('group_id')->nullable();
             $table->integer('area_id')->nullable();
             $table->integer('vehicle_id')->nullable();
+            $table->string('plate_number')->nullable();
             $table->string('membership')->nullable();
             $table->date('date')->nullable();
             $table->string('address')->nullable();
