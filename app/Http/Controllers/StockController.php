@@ -33,7 +33,12 @@ class StockController extends Controller
             $query = $query->where('category_id', request('category_id'));
         }
         if (request('stock_status')) {
-            $query = $query->where('stock_status', request('stock_status'));
+            if (request('stock_status') == 'in_stock') {
+                $query = $query->where('stock', '>', 0);
+            }
+            if (request('stock_status') == 'out_of_stock') {
+                $query = $query->where('stock', '=<', 0);
+            }
         }
         if ($request->get('par-page')) {
             $products = $query->paginate($request->get('par-page'));
