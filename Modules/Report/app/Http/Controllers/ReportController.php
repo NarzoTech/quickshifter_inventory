@@ -25,11 +25,13 @@ class ReportController extends Controller
      */
     public function otherIncome()
     {
+        $from_date = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : date('Y-m-d');
+        $to_date = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         $brands = $this->brandService->getActiveBrands();
 
         $reports = ProductSale::where('source', 2)
-            ->where(function ($query) {
+            ->where(function ($query)  use ($from_date, $to_date) {
                 $query->whereHas('product', function ($q) {
                     $q->where('name', 'like', '%' . request()->keyword . '%')
 
@@ -41,7 +43,11 @@ class ReportController extends Controller
                     if (request('category_id')) {
                         $q->orWhere('category_id', request('category_id'));
                     }
-                });
+                })
+                    ->whereHas('sale', function ($q)  use ($from_date, $to_date) {
+                        $q->where('order_date', '>=', $from_date)
+                            ->where('order_date', '<=', $to_date);
+                    });
             })
             ->paginate(20);
 

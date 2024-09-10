@@ -24,8 +24,8 @@
         $(".sub_cat_one").select2();
         $(".tags").tagify();
         $(".datetimepicker_mask").datetimepicker({
-            format: "Y-m-d H:i",
-        });
+            format: "Y-m-d H:i"
+        })
 
         $(".custom-icon-picker").iconpicker({
             templates: {
@@ -46,6 +46,8 @@
         $(".datepicker").datepicker({
             format: "dd-mm-yyyy",
             startDate: -Infinity,
+        }).on('changeDate', function (e) {
+            $(this).datepicker('hide');
         });
         $(".clockpicker").clockpicker();
     });
