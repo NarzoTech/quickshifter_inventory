@@ -81,4 +81,34 @@ class ReportController extends Controller
         $products = $products->paginate(20);
         return view('report::barcode-wise-product', compact('products'));
     }
+
+    public function barcodeSale()
+    {
+        $products = $this->productService->getProducts();
+        $products = $products->where('status', 1);
+        $totalProducts = $products->get();
+
+        $totalStock = 0;
+        $sellCount = 0;
+        $sellPrice = 0;
+        $totalPurchasePrice = 0;
+
+        $totalProducts->map(function ($product) use (&$totalStock, &$sellCount, &$sellPrice, &$totalPurchasePrice) {
+            $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
+            $sellCount += $sellQty;
+
+            $sellPrice += $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
+
+            $totalPurchasePrice += $sellCount * $product->purchase_price;
+
+            $totalStock += $product->stock_count;
+
+            return;
+        });
+
+        $products = $products->paginate(20);
+
+
+        return view('report::barcode-sale', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
+    }
 }

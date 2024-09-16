@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Modules\Media\app\Models\Media;
 use Modules\Order\app\Models\OrderDetails;
 use Modules\Purchase\app\Models\PurchaseDetails;
+use Modules\Purchase\app\Models\PurchaseReturnDetails;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\SalesReturnDetails;
 
@@ -83,44 +84,135 @@ class Product extends Model
 
     public function getTotalPurchaseAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now();
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-        $purchase = $this->purchaseDetails()->where(function ($q) use ($fromDate, $toDate) {
-            $q->whereHas('purchase', function ($q) use ($fromDate, $toDate) {
-                $q->whereBetween('purchase_date', [$fromDate, $toDate]);
-            });
-        });
 
-        return ['qty' => $purchase->sum('quantity'), 'price' => $purchase->sum('sub_total')];
+        // Fetch totals in a single query
+        $purchase = $this->purchaseDetails()
+            ->selectRaw('SUM(quantity) as total_quantity, SUM(sub_total) as total_price')
+            ->whereHas('purchase', function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('purchase_date', [$fromDate, $toDate]);
+            })
+            ->first();
+
+        return [
+            'qty' => $purchase->total_quantity ?? 0, // Use null coalescing to avoid null values
+            'price' => $purchase->total_price ?? 0
+        ];
     }
+
+
+    public function getPurchasePriceAttribute()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        // Fetch totals in a single query
+        $purchase = $this->purchaseDetails()
+            ->whereHas('purchase', function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('purchase_date', [$fromDate, $toDate]);
+            })
+            ->selectRaw('SUM(purchase_price) as total_price, COUNT(*) as total_quantity')
+            ->first();
+
+        $totalPrice = $purchase->total_price ?? 0; // Use null coalescing to avoid null values
+        $totalQuantity = $purchase->total_quantity ?? 0;
+
+        return $totalQuantity > 0 ? $totalPrice / $totalQuantity : 0;
+    }
+
+
 
     public function getSalesAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now();
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
 
-        $sales = $this->salesDetails()->where(function ($q) use ($fromDate, $toDate) {
-            $q->whereHas('sale', function ($q) use ($fromDate, $toDate) {
-                $q->whereBetween('order_date', [$fromDate, $toDate]);
-            });
-        })->where('source', 1);
+        // Fetch totals in a single query
+        $sales = $this->salesDetails()
+            ->selectRaw('SUM(quantity) as total_quantity, SUM(sub_total) as total_price')
+            ->whereHas('sale', function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('order_date', [$fromDate, $toDate]);
+            })
+            ->where('source', 1)
+            ->first();
 
-        return ['qty' => $sales->sum('quantity'), 'price' => $sales->sum('sub_total')];
+        return [
+            'qty' => $sales->total_quantity ?? 0, // Use null coalescing to avoid null values
+            'price' => $sales->total_price ?? 0
+        ];
     }
+
 
     public function getSalesReturnAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now();
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
 
-        $sales = $this->salesReturnDetails()->where(function ($q) use ($fromDate, $toDate) {
-            $q->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
-                $q->whereBetween('return_date', [$fromDate, $toDate]);
-            });
-        })->where('source', 1);
+        // Fetch totals in a single query
+        $sales = $this->salesReturnDetails()
+            ->selectRaw('SUM(quantity) as total_quantity, SUM(sub_total) as total_price')
+            ->whereHas('saleReturn', function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('return_date', [$fromDate, $toDate]);
+            })
+            ->where('source', 1)
+            ->first();
 
-        return ['qty' => $sales->sum('quantity'), 'price' => $sales->sum('sub_total')];
+        return [
+            'qty' => $sales->total_quantity ?? 0, // Use null coalescing to avoid null values
+            'price' => $sales->total_price ?? 0
+        ];
     }
+
+
+
+    public function getPurchaseReturnAttribute()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        // Fetch totals in a single query
+        $purchase = $this->purchaseReturnDetails()
+            ->selectRaw('SUM(quantity) as total_quantity, SUM(total) as total_price')
+            ->whereHas('purchaseReturn', function ($query) use ($fromDate, $toDate) {
+                $query->whereBetween('return_date', [$fromDate, $toDate]);
+            })
+            ->first();
+
+        return [
+            'qty' => $purchase->total_quantity ?? 0, // Use null coalescing to avoid null values
+            'price' => $purchase->total_price ?? 0
+        ];
+    }
+
+
+    public function getStockCountAttribute()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        // Get all stock data within the date range in a single query
+        $stock = $this->stockDetails()
+            ->selectRaw('SUM(in_quantity) as total_in, SUM(out_quantity) as total_out')
+            ->whereBetween('date', [$fromDate, $toDate])
+            ->first();
+
+        // Get previous stock quantities in a single query
+        $previousStock = $this->stockDetails()
+            ->where('date', '<', $fromDate)
+            ->selectRaw('SUM(in_quantity) as previous_in, SUM(out_quantity) as previous_out')
+            ->first();
+
+        // Calculate today stock
+        $toDayStock = ($stock->total_in ?? 0) - ($stock->total_out ?? 0);
+
+        // Calculate total stock
+        $previousStockTotal = ($previousStock->previous_in ?? 0) - ($previousStock->previous_out ?? 0);
+
+        return $toDayStock + $previousStockTotal;
+    }
+
+
 
     public function getAvgPurchasePriceAttribute()
     {
@@ -155,6 +247,8 @@ class Product extends Model
         return $this->hasMany(PurchaseDetails::class, 'product_id', 'id');
     }
 
+
+
     public function salesDetails(): HasMany
     {
         return $this->hasMany(ProductSale::class, 'product_id', 'id');
@@ -162,8 +256,12 @@ class Product extends Model
 
     public function salesReturnDetails(): HasMany
     {
-
         return $this->hasMany(SalesReturnDetails::class, 'product_id', 'id');
+    }
+
+    public function purchaseReturnDetails(): HasMany
+    {
+        return $this->hasMany(PurchaseReturnDetails::class, 'product_id', 'id');
     }
     public function getHasVariantAttribute(): bool
     {
