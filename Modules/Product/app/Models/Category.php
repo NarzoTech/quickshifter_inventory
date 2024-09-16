@@ -17,12 +17,20 @@ class Category extends Model
         'name'
     ];
 
-
-
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'category_id');
     }
+
+    // calculate query time and total query
+
+    public function calcQuery()
+    {
+        $this->products->get();
+        $this->products->count();
+    }
+
+
     protected function ensureProductsLoaded()
     {
         if (!$this->relationLoaded('products')) {

@@ -117,7 +117,9 @@ class ReportController extends Controller
     {
         $categories = $this->categoryService->getCategories();
 
+
         $categories = $categories->paginate(20);
+
         return view('report::categories', compact('categories'));
     }
 }
