@@ -16,7 +16,9 @@ use Modules\Report\app\Http\Controllers\ReportController;
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::get('report/other-income', [ReportController::class, 'otherIncome'])->name('report.other-income');
-
     // daily transaction summary
     Route::get('report/dts', [ReportController::class, 'dts'])->name('report.dts');
+
+
+    Route::get('report/barcode-wise-product', [ReportController::class, 'barcodeWiseProduct'])->name('report.barcode-wise-product');
 });

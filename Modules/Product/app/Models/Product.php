@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Modules\Media\app\Models\Media;
 use Modules\Order\app\Models\OrderDetails;
 use Modules\Purchase\app\Models\PurchaseDetails;
+use Modules\Sales\app\Models\ProductSale;
+use Modules\Sales\app\Models\SalesReturnDetails;
 
 class Product extends Model
 {
@@ -79,6 +81,46 @@ class Product extends Model
         return remove_comma($this->price);
     }
 
+    public function getTotalPurchaseAttribute()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $purchase = $this->purchaseDetails()->where(function ($q) use ($fromDate, $toDate) {
+            $q->whereHas('purchase', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('purchase_date', [$fromDate, $toDate]);
+            });
+        });
+
+        return ['qty' => $purchase->sum('quantity'), 'price' => $purchase->sum('sub_total')];
+    }
+
+    public function getSalesAttribute()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        $sales = $this->salesDetails()->where(function ($q) use ($fromDate, $toDate) {
+            $q->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('order_date', [$fromDate, $toDate]);
+            });
+        })->where('source', 1);
+
+        return ['qty' => $sales->sum('quantity'), 'price' => $sales->sum('sub_total')];
+    }
+
+    public function getSalesReturnAttribute()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        $sales = $this->salesReturnDetails()->where(function ($q) use ($fromDate, $toDate) {
+            $q->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('return_date', [$fromDate, $toDate]);
+            });
+        })->where('source', 1);
+
+        return ['qty' => $sales->sum('quantity'), 'price' => $sales->sum('sub_total')];
+    }
 
     public function getAvgPurchasePriceAttribute()
     {
@@ -113,6 +155,16 @@ class Product extends Model
         return $this->hasMany(PurchaseDetails::class, 'product_id', 'id');
     }
 
+    public function salesDetails(): HasMany
+    {
+        return $this->hasMany(ProductSale::class, 'product_id', 'id');
+    }
+
+    public function salesReturnDetails(): HasMany
+    {
+
+        return $this->hasMany(SalesReturnDetails::class, 'product_id', 'id');
+    }
     public function getHasVariantAttribute(): bool
     {
         return $this->variants->count() > 0;

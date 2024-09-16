@@ -10,13 +10,14 @@ use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductCategoryService;
+use Modules\Product\app\Services\ProductService;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 
 class ReportController extends Controller
 {
 
-    public function __construct(private BrandService $brandService, private ProductCategoryService $categoryService)
+    public function __construct(private BrandService $brandService, private ProductCategoryService $categoryService, private ProductService $productService)
     {
         $this->middleware('auth:admin');
     }
@@ -71,43 +72,13 @@ class ReportController extends Controller
         return view('report::dts', compact('expenses', 'salaries', 'otherIncome'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        //
-    }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
+    public function barcodeWiseProduct()
     {
-        return view('report::show');
-    }
+        $products = $this->productService->getProducts();
+        $products = $products->where('status', 1);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('report::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id): RedirectResponse
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
+        $products = $products->paginate(20);
+        return view('report::barcode-wise-product', compact('products'));
     }
 }
