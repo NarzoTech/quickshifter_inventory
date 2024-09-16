@@ -111,4 +111,13 @@ class ReportController extends Controller
 
         return view('report::barcode-sale', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
     }
+
+
+    public function categories()
+    {
+        $categories = $this->categoryService->getCategories();
+
+        $categories = $categories->paginate(20);
+        return view('report::categories', compact('categories'));
+    }
 }

@@ -12,7 +12,9 @@ class Category extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'parent_id',  'status', 'name'
+        'parent_id',
+        'status',
+        'name'
     ];
 
 
@@ -21,6 +23,55 @@ class Category extends Model
     {
         return $this->hasMany(Product::class, 'category_id');
     }
+    protected function ensureProductsLoaded()
+    {
+        if (!$this->relationLoaded('products')) {
+            $this->load('products');
+        }
+    }
+
+    public function getPurchaseSummaryAttribute()
+    {
+        $this->ensureProductsLoaded();
+        // Initialize count and amount
+        $count = $this->products->sum(function ($product) {
+            return $product->total_purchase['qty'] ?? 0; // Handle null values
+        });
+
+        $amount = $this->products->sum(function ($product) {
+            return $product->total_purchase['price'] ?? 0; // Handle null values
+        });
+
+        // Return as an array
+        return [
+            'count' => $count,
+            'amount' => $amount,
+        ];
+    }
+
+    public function getSalesCountAttribute()
+    {
+        $this->ensureProductsLoaded();
+        $count = 0;
+        foreach ($this->products as $product) {
+            $count += $product->sales['qty'];
+        }
+
+        return $count;
+    }
+
+
+    public function getSalesAmountAttribute()
+    {
+        $this->ensureProductsLoaded();
+        $amount = 0;
+        foreach ($this->products as $product) {
+            $amount += $product->sales['price'];
+        }
+
+        return $amount;
+    }
+
 
     public function parent()
     {
@@ -31,5 +82,4 @@ class Category extends Model
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
-
 }

@@ -35,6 +35,16 @@ class ProductCategoryService
         return $this->category->where('status', '1')->get();
     }
 
+    public function getCategories()
+    {
+        $category = $this->category;
+        if (request()->search) {
+            $category = $category->where('name', 'like', '%' . request()->search . '%');
+        }
+
+        return $category;
+    }
+
     public function getTopProductCategories()
     {
         return $this->category->where('status', '1')->where('top_category', '1');
