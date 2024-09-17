@@ -179,4 +179,14 @@ class ReportController extends Controller
         $sales = $sales->paginate(20);
         return view('report::details-sale', compact('sales'));
     }
+
+    public function dueDateSale()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        // ->whereBetween('order_date', [$fromDate, $toDate])
+        $sales = Sale::with('customer')->where('due_amount', '>', 0);
+        $sales = $sales->paginate(20);
+        return view('report::due-date-sale', compact('sales'));
+    }
 }
