@@ -8,6 +8,7 @@ use App\Models\Stock;
 use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
 use Modules\Customer\app\Models\CustomerDue;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Models\Variant;
 use Modules\Sales\app\Models\ProductSale;
@@ -124,7 +125,7 @@ class SaleService
                 $data['customer_id'] = null;
                 $data['is_guest'] = 1;
             }
-            Payment::create($data);
+            CustomerPayment::create($data);
         }
 
 
@@ -266,7 +267,7 @@ class SaleService
                 $data['customer_id'] = null;
                 $data['is_guest'] = 1;
             }
-            Payment::create($data);
+            CustomerPayment::create($data);
         }
 
 

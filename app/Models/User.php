@@ -60,23 +60,51 @@ class User extends Model
     }
     public function getTotalDueAttribute()
     {
-        $due = $this->due()->where('status', 1)->sum('due_amount');
-        $due = $due - $this->advances();
+        $totalSales = $this->sales->sum('grand_total');
+
+        $due = $totalSales - $this->payment->sum('amount');
         return $due;
     }
 
     public function sales()
     {
-        return $this->hasMany(Sale::class, 'customer_id');
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        // current route
+        $route = request()->route()->getName();
+
+
+        $sales = $this->hasMany(Sale::class, 'customer_id');
+
+        if ($route == 'admin.report.customers') {
+
+            return $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
+
+        return $sales;
     }
     public function payment()
     {
-        return $this->hasMany(CustomerPayment::class, 'customer_id');
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        // current route
+        $route = request()->route()->getName();
+        $payment = $this->hasMany(CustomerPayment::class, 'customer_id');
+
+
+        if ($route == 'admin.report.customers') {
+            return $payment->whereBetween('payment_date', [$fromDate, $toDate]);
+        }
+
+        return $payment;
     }
 
     public function getTotalPaidAttribute()
     {
-        return $this->payment->sum('amount');
+        $payment = $this->payment;
+        return $payment->sum('amount');
     }
 
     public function advances()

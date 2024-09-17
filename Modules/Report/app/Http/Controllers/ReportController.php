@@ -3,6 +3,7 @@
 namespace Modules\Report\app\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -121,5 +122,35 @@ class ReportController extends Controller
         $categories = $categories->paginate(20);
 
         return view('report::categories', compact('categories'));
+    }
+    public function customers(Request $request)
+    {
+        $query = User::query();
+
+        $query = $query->with('sales');
+
+        $query->when($request->filled('keyword'), function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->keyword . '%')
+                ->orWhere('email', 'like', '%' . $request->keyword . '%')
+                ->orWhere('phone', 'like', '%' . $request->keyword . '%')
+                ->orWhere('address', 'like', '%' . $request->keyword . '%');
+        });
+
+        $allCustomers = $query->get();
+
+        $totalSales = 0;
+        $totalAmount = 0;
+        $totalPaid = 0;
+        $totalDue = 0;
+        foreach ($allCustomers as $customer) {
+            $totalSales += $customer->sales->count();
+            $totalAmount += $customer->sales->sum('grand_total');
+            $totalPaid += $customer->total_paid;
+            $totalDue += $customer->total_due;
+        }
+
+        $customers = $query->paginate(20);
+
+        return view('report::customer', compact('customers', 'totalSales', 'totalAmount', 'totalPaid', 'totalDue'));
     }
 }
