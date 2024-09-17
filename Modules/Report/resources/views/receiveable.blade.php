@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Customer Report') }}</title>
+    <title>{{ __('Due Report') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Customer Report') }}</h1>
+                <h1>{{ __('Due Report') }}</h1>
             </div>
 
             <div class="section-body">
@@ -111,53 +111,40 @@
                                         <thead>
                                             <tr>
                                                 <th>{{ __('Sl') }}</th>
-                                                <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Company') }}</th>
-                                                <th>{{ __('Phone') }}</th>
-                                                <th>{{ __('Total Sales') }}</th>
-                                                <th>{{ __('Total') }}</th>
-                                                <th>{{ __('Paid') }}</th>
-                                                <th>{{ __('Due') }}</th>
+                                                <th>{{ __('Date') }}</th>
+                                                <th>{{ __('Invoice No') }}</th>
+                                                <th>{{ __('Customer') }}</th>
+                                                <th>{{ __('Total Amount') }}</th>
+                                                <th>{{ __('Invoice') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($customers as $key => $customer)
+                                            @foreach ($sales as $key => $sale)
+                                                @if ($sale->due_amount == 0)
+                                                    @continue
+                                                @endif
                                                 <tr>
-                                                    <td>{{ $customers->firstItem() + $key }}</td>
-                                                    <td>{{ $customer->name }}</td>
-                                                    <td>{{ $customer->company }}</td>
-                                                    <td>{{ $customer->phone }}</td>
-                                                    <td>{{ $customer->sales->count() }}</td>
-                                                    <td>{{ currency($customer->sales->sum('grand_total')) }}</td>
-
-                                                    <td>{{ currency($customer->total_paid) }}</td>
-                                                    <td>{{ currency($customer->total_due) }}</td>
+                                                    <td>{{ $sales->firstItem() + $key }}</td>
+                                                    <td>{{ $sale->order_date->format('d-m-Y') }}</td>
+                                                    <td>{{ $sale->invoice }}</td>
+                                                    <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
+                                                    <td>{{ currency($sale->due_amount) }}</td>
+                                                    <td>
+                                                        <a class="btn btn-primary"
+                                                            href="{{ route('admin.sales.invoice', $sale->id) }}">{{ __('Invoice') }}</a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
-
                                             <tr>
-                                                <td colspan="4" class="text-right">
-                                                    Total
-                                                </td>
-                                                <td>
-                                                    {{ $totalSales }}
-                                                </td>
-                                                <td>
-                                                    {{ currency($totalAmount) }}
-                                                </td>
-                                                <td>
-                                                    {{ currency($totalPaid) }}
-                                                </td>
-                                                <td>
-                                                    {{ currency($totalDue) }}
-                                                </td>
+                                                <td colspan="4" class="text-right">{{ __('Total') }}</td>
+                                                <td colspan="2" class="text-left">{{ currency($totalDues) }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{ $customers->onEachSide(0)->links() }}
+                                        {{ $sales->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>

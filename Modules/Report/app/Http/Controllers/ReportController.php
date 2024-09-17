@@ -153,4 +153,19 @@ class ReportController extends Controller
 
         return view('report::customer', compact('customers', 'totalSales', 'totalAmount', 'totalPaid', 'totalDue'));
     }
+
+    public function receivable()
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        $sales = Sale::with('customer')->where('payment_status', 1)->where('due_amount', '>', 0);
+
+        $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+
+        $totalDues = $sales->sum('due_amount');
+        $sales = $sales->paginate(20);
+
+        return view('report::receiveable', compact('sales', 'totalDues'));
+    }
 }
