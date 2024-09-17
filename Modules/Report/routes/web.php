@@ -25,4 +25,5 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('report/categories', [ReportController::class, 'categories'])->name('report.categories');
     Route::get('report/customers', [ReportController::class, 'customers'])->name('report.customers');
     Route::get('report/receivable', [ReportController::class, 'receivable'])->name('report.receivable');
+    Route::get('report/details-sale', [ReportController::class, 'detailsSale'])->name('report.details-sale');
 });

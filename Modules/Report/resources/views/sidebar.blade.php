@@ -53,13 +53,8 @@
                 {{ __('Due Report') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
-                {{ __('Discounts Report') }}
-            </a>
-        </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
+        <li class="{{ Route::is('admin.report.details-sale') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.report.details-sale') }}">
                 {{ __('Detail Sales Report') }}
             </a>
         </li>

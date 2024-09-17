@@ -116,4 +116,9 @@ class Sale extends Model
     {
         return $this->hasMany(SalesReturn::class, 'sale_id');
     }
+
+    public function saleReturnDetails()
+    {
+        return $this->hasManyThrough(SalesReturnDetails::class, SalesReturn::class, 'sale_id', 'sale_return_id', 'id', 'id');
+    }
 }

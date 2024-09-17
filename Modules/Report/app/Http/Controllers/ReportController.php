@@ -168,4 +168,15 @@ class ReportController extends Controller
 
         return view('report::receiveable', compact('sales', 'totalDues'));
     }
+
+    public function detailsSale()
+    {
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        // ->whereBetween('order_date', [$fromDate, $toDate])
+        $sales = Sale::with('customer');
+        $sales = $sales->paginate(20);
+        return view('report::details-sale', compact('sales'));
+    }
 }
