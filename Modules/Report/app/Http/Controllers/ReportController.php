@@ -189,4 +189,19 @@ class ReportController extends Controller
         $sales = $sales->paginate(20);
         return view('report::due-date-sale', compact('sales'));
     }
+
+    public function expense()
+    {
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        // ->whereBetween('order_date', [$fromDate, $toDate])
+        $expenses = Expense::with('createdBy', 'expenseType');
+        if (request('from_date') || request('to_date')) {
+            $expenses = $expenses->whereBetween('date', [$fromDate, $toDate]);
+        }
+        $totalAmount = $expenses->sum('amount');
+        $expenses = $expenses->paginate(20);
+        return view('report::expense', compact('expenses', 'totalAmount'));
+    }
 }

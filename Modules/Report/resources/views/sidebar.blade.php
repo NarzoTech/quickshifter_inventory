@@ -68,18 +68,8 @@
                 {{ __('Daily Sales Report') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
-                {{ __('Employee Sales Report') }}
-            </a>
-        </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
-                {{ __('Exchange Report') }}
-            </a>
-        </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
+        <li class="{{ Route::is('admin.report.expense') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.report.expense') }}">
                 {{ __('Expense Report') }}
             </a>
         </li>
