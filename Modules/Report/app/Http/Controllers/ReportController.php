@@ -272,4 +272,16 @@ class ReportController extends Controller
         $products = $products->paginate(20);
         return view('report::product-sale-report', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
     }
+
+    public function  receivedReport()
+    {
+        $totalReceive = CustomerPayment::where('is_received', 1);
+
+        if (request('from_date') || request('to_date')) {
+            $totalReceive = $totalReceive->whereBetween('created_at', [request('from_date'), request('to_date')]);
+        }
+        $totalReceive = $totalReceive->paginate(20);
+
+        return view('report::received-report', compact('totalReceive'));
+    }
 }
