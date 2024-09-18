@@ -28,4 +28,5 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('report/details-sale', [ReportController::class, 'detailsSale'])->name('report.details-sale');
     Route::get('report/due-date-sale', [ReportController::class, 'dueDateSale'])->name('report.due-date-sale');
     Route::get('report/expense', [ReportController::class, 'expense'])->name('report.expense');
+    Route::get('report/master-sale', [ReportController::class, 'masterSale'])->name('report.master-sale');
 });

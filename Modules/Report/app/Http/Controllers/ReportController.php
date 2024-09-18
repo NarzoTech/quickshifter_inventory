@@ -204,4 +204,20 @@ class ReportController extends Controller
         $expenses = $expenses->paginate(20);
         return view('report::expense', compact('expenses', 'totalAmount'));
     }
+
+    public function masterSale()
+    {
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        // ->whereBetween('order_date', [$fromDate, $toDate])
+        $sales = Sale::with('customer');
+        if (request('from_date') || request('to_date')) {
+            $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
+
+        $totalAmount = $sales->sum('grand_total');
+        $sales = $sales->paginate(20);
+        return view('report::master-sale', compact('sales', 'totalAmount'));
+    }
 }
