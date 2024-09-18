@@ -78,8 +78,8 @@
                 {{ __('Master Sales Report') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
+        <li class="{{ Route::is('admin.report.monthly-sale') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.report.monthly-sale') }}">
                 {{ __('Monthly Sales Report') }}
             </a>
         </li>

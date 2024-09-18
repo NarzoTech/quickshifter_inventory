@@ -220,4 +220,14 @@ class ReportController extends Controller
         $sales = $sales->paginate(20);
         return view('report::master-sale', compact('sales', 'totalAmount'));
     }
+
+    public function monthlySale()
+    {
+        $month = request('month') ? now()->parse(request('month')) : now()->month;
+
+        $sales = Sale::with('customer')->whereMonth('order_date', $month);
+        $totalAmount = $sales->sum('grand_total');
+        $sales = $sales->paginate(20);
+        return view('report::monthly-sale', compact('sales', 'totalAmount'));
+    }
 }
