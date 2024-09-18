@@ -7,13 +7,16 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductCategoryService;
 use Modules\Product\app\Services\ProductService;
+use Modules\Purchase\app\Models\Purchase;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
+use Modules\Sales\app\Models\SalesReturn;
 
 class ReportController extends Controller
 {
@@ -229,5 +232,44 @@ class ReportController extends Controller
         $totalAmount = $sales->sum('grand_total');
         $sales = $sales->paginate(20);
         return view('report::monthly-sale', compact('sales', 'totalAmount'));
+    }
+
+    public function profitLoss()
+    {
+        $data['totalPurchases'] = Purchase::sum('total_amount');
+        $data['expenses'] = Expense::sum('amount');
+        $data['totalSales'] = Sale::sum('grand_total');
+        $data['salesReturns'] = SalesReturn::sum('return_amount');
+        $data['totalReceive'] = CustomerPayment::where('is_received', 1)->sum('amount');
+
+        return view('report::profit-loss', compact('data'));
+    }
+
+    public function productSaleReport()
+    {
+        $products = $this->productService->getProducts();
+        $products = $products->where('status', 1);
+        $totalProducts = $products->get();
+
+        $totalStock = 0;
+        $sellCount = 0;
+        $sellPrice = 0;
+        $totalPurchasePrice = 0;
+
+        $totalProducts->map(function ($product) use (&$totalStock, &$sellCount, &$sellPrice, &$totalPurchasePrice) {
+            $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
+            $sellCount += $sellQty;
+
+            $sellPrice += $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
+
+            $totalPurchasePrice += $sellCount * $product->purchase_price;
+
+            $totalStock += $product->stock_count;
+
+            return;
+        });
+
+        $products = $products->paginate(20);
+        return view('report::product-sale-report', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
     }
 }

@@ -83,13 +83,13 @@
                 {{ __('Monthly Sales Report') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
+        <li class="{{ Route::is('admin.report.profit-loss') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.report.profit-loss') }}">
                 {{ __('Profit/Loss Report') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
+        <li class="{{ Route::is('admin.report.product-sale-report') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.report.product-sale-report') }}">
                 {{ __('Products Sales Report') }}
             </a>
         </li>
