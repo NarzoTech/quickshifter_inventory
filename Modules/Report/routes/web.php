@@ -33,4 +33,5 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('report/profit-loss', [ReportController::class, 'profitLoss'])->name('report.profit-loss');
     Route::get('report/product-sale-report', [ReportController::class, 'productSaleReport'])->name('report.product-sale-report');
     Route::get('report/received-report', [ReportController::class, 'receivedReport'])->name('report.received-report');
+    Route::get('report/purchase', [ReportController::class, 'purchase'])->name('report.purchase');
 });

@@ -284,4 +284,18 @@ class ReportController extends Controller
 
         return view('report::received-report', compact('totalReceive'));
     }
+    public function purchase()
+    {
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        // ->whereBetween('order_date', [$fromDate, $toDate])
+        $purchases = Purchase::with('supplier');
+        if (request('from_date') || request('to_date')) {
+            $purchases = $purchases->whereBetween('date', [$fromDate, $toDate]);
+        }
+        $totalAmount = $purchases->sum('total_amount');
+        $purchases = $purchases->paginate(20);
+        return view('report::purchase', compact('purchases', 'totalAmount'));
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Modules\Purchase\app\Models;
 
+use App\Models\Admin;
 use App\Models\Payment;
 use App\Models\Stock;
 use App\Models\Warehouse;
@@ -76,5 +77,10 @@ class Purchase extends Model
     public function stock()
     {
         return $this->hasMany(Stock::class, 'purchase_id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(Admin::class, 'created_by', 'id')->withDefault();
     }
 }
