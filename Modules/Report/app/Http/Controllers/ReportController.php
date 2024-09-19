@@ -17,11 +17,12 @@ use Modules\Purchase\app\Models\Purchase;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
+use Modules\Supplier\app\Services\SupplierService;
 
 class ReportController extends Controller
 {
 
-    public function __construct(private BrandService $brandService, private ProductCategoryService $categoryService, private ProductService $productService)
+    public function __construct(private BrandService $brandService, private ProductCategoryService $categoryService, private ProductService $productService, private SupplierService $supplierService)
     {
         $this->middleware('auth:admin');
     }
@@ -297,5 +298,13 @@ class ReportController extends Controller
         $totalAmount = $purchases->sum('total_amount');
         $purchases = $purchases->paginate(20);
         return view('report::purchase', compact('purchases', 'totalAmount'));
+    }
+
+    public function supplier()
+    {
+
+        $suppliers = $this->supplierService->allSupplier();
+        $suppliers = $suppliers->paginate(20);
+        return view('report::supplier', compact('suppliers'));
     }
 }

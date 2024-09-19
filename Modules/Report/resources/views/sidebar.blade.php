@@ -103,8 +103,8 @@
                 {{ __('Purchases Report') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
+        <li class="{{ Route::is('admin.report.supplier') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.report.supplier') }}">
                 {{ __('Suppliers Report') }}
             </a>
         </li>

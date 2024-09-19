@@ -110,27 +110,37 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
+                                            <tr>
                                                 <th>{{ __('Sl') }}</th>
-                                                <th>{{ __('Date') }}</th>
-                                                <th>{{ __('Invoice') }}</th>
-                                                <th>{{ __('Supplier') }}</th>
-                                                <th>{{ __('Purchased By') }}</th>
-                                                <th>{{ __('Product (Qty)') }}</th>
-                                                <th>{{ __('Invoice Qty') }}</th>
+                                                <th>{{ __('Name') }}</th>
+                                                <th>{{ __('Company') }}</th>
+                                                <th>{{ __('Phone') }}</th>
+                                                <th>{{ __('Total Purchase') }}</th>
                                                 <th>{{ __('Total') }}</th>
                                                 <th>{{ __('Paid') }}</th>
                                                 <th>{{ __('Due') }}</th>
-                                                <th>{{ __('Payment Status') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @foreach ($suppliers as $key => $supplier)
+                                                <tr>
+                                                    <td>{{ $suppliers->firstItem() + $key }}</td>
+                                                    <td>{{ $supplier->name }}</td>
+                                                    <td>{{ $supplier->company }}</td>
+                                                    <td>{{ $supplier->phone }}</td>
+                                                    <td>{{ $supplier->purchases->count() }}</td>
+                                                    <td>{{ currency($supplier->purchases->sum('total_amount')) }}</td>
 
+                                                    <td>{{ currency($supplier->total_paid) }}</td>
+                                                    <td>{{ currency($supplier->total_due) }}</td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{-- {{ $customers->onEachSide(0)->links() }} --}}
+                                        {{ $suppliers->onEachSide(0)->links() }}
                                     </div>
                                 @endif
                             </div>
