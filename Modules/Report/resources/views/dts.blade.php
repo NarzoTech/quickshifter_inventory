@@ -160,3 +160,20 @@
         </section>
     </div>
 @endsection
+
+
+@push('js')
+    <script>
+        $('.export').on('click', function() {
+            // get full url including query string
+            var fullUrl = window.location.href;
+            if (fullUrl.includes('?')) {
+                fullUrl += '&export=true';
+            } else {
+                fullUrl += '?export=true';
+            }
+
+            window.location.href = fullUrl;
+        })
+    </script>
+@endpush

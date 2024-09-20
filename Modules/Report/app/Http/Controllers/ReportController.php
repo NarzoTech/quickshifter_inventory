@@ -2,6 +2,7 @@
 
 namespace Modules\Report\app\Http\Controllers;
 
+use App\Exports\DTSExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -23,6 +24,7 @@ use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
 use Modules\Service\app\Models\ServiceCategory;
 use Modules\Supplier\app\Services\SupplierService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -78,61 +80,6 @@ class ReportController extends Controller
         $data = collect([]);
         $date = date('Y-m-d');
 
-        // expense calculation
-        $expenses = Expense::where('date', $date)->get();
-
-        foreach ($expenses as $expense) {
-            $newData = [];
-            $newData['date'] = $expense->date;
-            $newData['mode'] = 'Cash';
-            $newData['category'] = 'Expense';
-            $newData['particular'] = $expense->expenseType->name;
-            $newData['debit'] = $expense->amount;
-            $newData['credit'] = 0;
-            $newData['iv'] = 0;
-
-            $newData = (object)$newData;
-            $data->push($newData);
-        }
-
-        // salary calculation
-        $salaries = EmployeeSalary::where('date', $date)->get();
-        foreach ($salaries as $salary) {
-            $newData = collect([]);
-            $newData['date'] = $salary->date;
-            $newData['mode'] = 'Cash';
-            $newData['category'] = 'Salary';
-            $newData['particular'] = $salary->employee->name;
-            $newData['debit'] = $salary->amount;
-            $newData['credit'] = 0;
-            $newData['iv'] = 0;
-            $data->push($newData);
-        }
-
-
-        $otherIncome = ProductSale::where('source', 2)
-            ->where(function ($query)  use ($date) {
-                $query->whereHas('sale', function ($q) use ($date) {
-                    $q->where('order_date', $date);
-                });
-            })->get();
-
-
-        if ($otherIncome->first()) {
-            $newData = [];
-            $newData['date'] = $otherIncome->first()->sale->order_date;
-            $newData['mode'] = 'Cash';
-            $newData['category'] = "Other Income (Parts-Local Market)";
-            $newData['particular'] = '';
-            $newData['debit'] = $otherIncome->sum('purchase_price');
-            $newData['credit'] = $otherIncome->sum('selling_price');
-            $newData['iv'] = 0;
-            $newData = (object)$newData;
-            $data->push($newData);
-        }
-
-
-
         // services calculation
         $services = ProductSale::whereNotNull('service_id')->where(function ($query)  use ($date) {
             $query->whereHas('sale', function ($q) use ($date) {
@@ -148,12 +95,13 @@ class ReportController extends Controller
             $washData['category'] = "Wash";
             $washData['particular'] = '';
             $washData['debit'] = 0;
-            $washData['credit'] = $otherIncome->sum('price');
+            $washData['credit'] = $services->where('service_id', $washId)->sum('price');
             $washData['iv'] = 0;
 
             $washData = (object)$washData;
             $data->push($washData);
         }
+
 
         if ($services->where('service_id', '!=', $washId)->first()) {
             $serviceData = [];
@@ -168,10 +116,6 @@ class ReportController extends Controller
             $serviceData = (object)$serviceData;
             $data->push($serviceData);
         }
-
-
-
-
 
         $sales = ProductSale::where('source', 1)
             ->where(function ($query)  use ($date) {
@@ -201,6 +145,28 @@ class ReportController extends Controller
         }
 
 
+        $otherIncome = ProductSale::where('source', 2)
+            ->where(function ($query)  use ($date) {
+                $query->whereHas('sale', function ($q) use ($date) {
+                    $q->where('order_date', $date);
+                });
+            })->get();
+
+
+        if ($otherIncome->first()) {
+            $newData = [];
+            $newData['date'] = $otherIncome->first()->sale->order_date;
+            $newData['mode'] = 'Cash';
+            $newData['category'] = "Other Income (Parts-Local Market)";
+            $newData['particular'] = '';
+            $newData['debit'] = $otherIncome->sum('purchase_price');
+            $newData['credit'] = $otherIncome->sum('selling_price');
+            $newData['iv'] = 0;
+            $newData = (object)$newData;
+            $data->push($newData);
+        }
+
+
         $purchase = Purchase::where('purchase_date', '=', $date)->get();
 
         // purchase
@@ -218,31 +184,44 @@ class ReportController extends Controller
         }
 
 
+        // expense calculation
+        $expenses = Expense::where('date', $date)->get();
 
-
-
-        // purchase return
-        $purchaseReturn = PurchaseReturn::where('return_date', '=', $date)->get();
-
-        if ($purchaseReturn->first()) {
+        foreach ($expenses as $expense) {
             $newData = [];
-            $newData['date'] = $purchaseReturn->first()->return_date;
-            $newData['mode'] = 'Credit';
-            $newData['category'] = "Purchase Return";
-            $newData['particular'] = '';
-            $newData['debit'] = 0;
-            $newData['credit'] = $purchaseReturn->sum('total_amount');
+            $newData['date'] = $expense->date;
+            $newData['mode'] = 'Cash';
+            $newData['category'] = $expense->expenseType->name;
+            $newData['particular'] = $expense->note;
+            $newData['debit'] = $expense->amount;
+            $newData['credit'] = 0;
             $newData['iv'] = 0;
+
             $newData = (object)$newData;
             $data->push($newData);
         }
 
 
+        // salary calculation
+        $salaries = EmployeeSalary::where('date', $date)->get();
+        foreach ($salaries as $salary) {
+            $newData = collect([]);
+            $newData['date'] = $salary->date;
+            $newData['mode'] = 'Cash';
+            $newData['category'] = 'Salary';
+            $newData['particular'] = $salary->employee->name;
+            $newData['debit'] = $salary->amount;
+            $newData['credit'] = 0;
+            $newData['iv'] = 0;
+            $data->push($newData);
+        }
 
-        // customer due pay
 
-        $newData = collect([]);
 
+        if (request('export')) {
+            $fileName = 'dts-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new DTSExport($data, $openingBalance), $fileName);
+        }
 
         return view('report::dts', compact('data', 'currentBalance', 'openingBalance'));
     }
