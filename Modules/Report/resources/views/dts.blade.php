@@ -102,7 +102,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    {{ __('Expenses') }}
+                                    {{ __('DTS') }}
                                 </h4>
                             </div>
                             <div class="card-body">
@@ -110,7 +110,6 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>{{ __('Sl') }}</th>
                                                 <th>{{ __('Date') }}</th>
                                                 <th>{{ __('Mode') }}</th>
                                                 <th>{{ __('Category') }}</th>
@@ -122,126 +121,34 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @php
-                                                $totalExpense = 0;
-                                            @endphp
-                                            @foreach ($expenses as $expense)
-                                                @php
-                                                    $totalExpense += $expense->amount;
-                                                @endphp
+                                            @foreach ($data as $dts)
                                                 <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $expense->date }}</td>
-                                                    <td>{{ accountList()[$expense->payment_type] }}</td>
-                                                    <td>{{ __('Expense') }}</td>
-                                                    <td>{{ $expense->expenseType->name }}</td>
-                                                    <td>{{ 0 }}</td>
-                                                    <td>{{ currency($expense->amount) }}</td>
-                                                    <td>{{ $expense->balance }}</td>
-                                                    <td>{{ 0 }}</td>
+                                                    <td>
+                                                        {{ $dts->date }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $dts->mode }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $dts->category }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $dts->particular }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $dts->credit }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $dts->debit }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $openingBalance + $dts->credit - $dts->debit - $dts->iv }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $dts->iv }}
+                                                    </td>
                                                 </tr>
                                             @endforeach
-                                            <tr>
-                                                <td colspan="6" class="text-right"><b>{{ __('Total') }}</b></td>
-                                                <td colspan="4" class="text-left"><b>{{ currency($totalExpense) }}</b>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {{-- @if (request()->get('par-page') !== 'all')
-                                    <div class="float-right">
-                                        {{ $reports->onEachSide(0)->links() }}
-                                    </div>
-                                @endif --}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    {{ __('Salary') . '/' . __('Advance') }}
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive table-invoice">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>{{ __('Sl') }}</th>
-                                                <th>{{ __('Date') }}</th>
-                                                <th>{{ __('Mode') }}</th>
-                                                <th>{{ __('Category') }}</th>
-                                                <th>{{ __('Particular') }}</th>
-                                                <th>{{ __('Revenue') . '/' . __('Received') . '/' . __('Credit') }}</th>
-                                                <th>{{ __('Expense') . '/' . __('Paid') . '/' . __('Debit') }}</th>
-                                                <th>{{ __('Balance') }}</th>
-                                                <th>{{ __('IV Cost') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php
-                                                $totalSalary = 0;
-                                            @endphp
-                                            @foreach ($salaries as $salary)
-                                                @php
-                                                    $totalSalary += $salary->amount;
-                                                @endphp
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $salary->date }}</td>
-                                                    <td>{{ accountList()[$salary->payment_type] }}</td>
-                                                    <td>{{ ucfirst($salary->type) }}</td>
-                                                    <td>{{ $salary->employee->name }}</td>
-                                                    <td>{{ 0 }}</td>
-                                                    <td>{{ currency($salary->amount) }}</td>
-                                                    <td>{{ $salary->balance }}</td>
-                                                    <td>{{ 0 }}</td>
-                                                </tr>
-                                            @endforeach
-                                            <tr>
-                                                <td colspan="6" class="text-right"><b>{{ __('Total') }}</b></td>
-                                                <td colspan="4" class="text-left"><b>{{ currency($totalSalary) }}</b>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    {{ __('Others') }}
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive table-invoice">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>{{ __('Sl') }}</th>
-                                                <th>{{ __('Date') }}</th>
-                                                <th>{{ __('Mode') }}</th>
-                                                <th>{{ __('Category') }}</th>
-                                                <th>{{ __('Particular') }}</th>
-                                                <th>{{ __('Revenue') . '/' . __('Received') . '/' . __('Credit') }}</th>
-                                                <th>{{ __('Expense') . '/' . __('Paid') . '/' . __('Debit') }}</th>
-                                                <th>{{ __('Balance') }}</th>
-                                                <th>{{ __('IV Cost') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6" class="text-right"><b>{{ __('Total') }}</b></td>
-                                                <td colspan="4" class="text-left"><b>{{ currency($totalSalary) }}</b>
-                                                </td>
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

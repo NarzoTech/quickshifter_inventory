@@ -155,28 +155,7 @@ class AccountsController extends Controller
         $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'];
 
         $openingBalance = $this->accountsService->getOpeningBalance($fromDate);
-        $currentBalance = $this->accountBalance($fromDate, $toDate) + $openingBalance;
+        $currentBalance = $this->accountsService->accountBalance($fromDate, $toDate) + $openingBalance;
         return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance'));
-    }
-
-
-    private function accountBalance($fromDate, $toDate)
-    {
-
-        $accounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->paginate(20);
-        $bankAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'bank')->with('payments')->get();
-        $cashAccount = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'cash')->with('payments')->first();
-        $mobileAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'mobile_banking')->with('payments')->get();
-        $cardAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'card')->with('payments')->get();
-        $advanceAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->where('account_type', 'advance')->with('payments')->get();
-
-        $totalAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->get();
-
-        $accountBalance = 0;
-        $totalAccounts->map(function ($account) use (&$accountBalance, $fromDate, $toDate) {
-            $accountBalance += $account->getBalanceBetween($fromDate, $toDate);
-        });
-
-        return $accountBalance;
     }
 }

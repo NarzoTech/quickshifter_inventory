@@ -43,4 +43,16 @@ class AccountsService
 
         return $accountBalance;
     }
+
+    public function accountBalance($fromDate, $toDate)
+    {
+
+        $totalAccounts = $this->account->all();
+        $accountBalance = 0;
+        $totalAccounts->map(function ($account) use (&$accountBalance, $fromDate, $toDate) {
+            $accountBalance += $account->getBalanceBetween($fromDate, $toDate);
+        });
+
+        return $accountBalance;
+    }
 }
