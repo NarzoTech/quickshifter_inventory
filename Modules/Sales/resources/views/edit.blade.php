@@ -515,9 +515,11 @@
                                             </td>
                                         </tr>
                                     </thead>
-
                                     <tbody id="paymentRow">
                                         @include('pos::edit-payment-row')
+                                        @if (!$sale->payment->count())
+                                            @include('pos::payment-row')
+                                        @endif
                                     </tbody>
                                     <tfoot id="normalPayment">
                                         <tr class="due d-none {{ !$sale->due_amount ? 'd-none' : '' }}">
@@ -593,6 +595,49 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="stockUpdateModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form action="javascript:;" id="stockUpdateModalForm">
+                        <input type="hidden" name="row_number">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="purchase_price">{{ __('Purchase Price') }}
+                                        ({{ currency_icon() }})</label>
+                                    <input type="number" name="purchase_price" class="form-control" id="purchase_price"
+                                        value="{{ old('purchase_price') }}">
+                                    @error('purchase_price')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="selling_price">{{ __('Selling Price') }}
+                                        ({{ currency_icon() }})</label>
+                                    <input type="number" name="selling_price" class="form-control" id="selling_price"
+                                        value="{{ old('selling_price') }}">
+                                    @error('selling_price')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="submit" class="btn btn-success stockModalSave"
+                        form="stockUpdateModalForm">{{ __('Save') }}</button>
+                </div>
             </div>
         </div>
     </div>
@@ -805,6 +850,59 @@
                         success: function(response) {}
                     });
                     calculateExtra()
+                    $(this).parents('tr').find('.edit-btn').toggleClass('d-none')
+                })
+
+                $(document).on('click', '.edit-btn', function() {
+                    let source = $(this).parents('tr').data('rowid');
+                    const purchasePrice = $(this).data('purchase')
+                    const sellingPrice = $(this).data('selling')
+                    $('#purchase_price').val(purchasePrice)
+                    $('#selling_price').val(sellingPrice)
+                    $('[name="row_number"]').val(source)
+                    $('#stockUpdateModal').modal('show')
+                })
+
+                $('#stockUpdateModalForm').on('submit', function() {
+                    const rowId = $('[name="row_number"]').val();
+                    const purchasePrice = $('#purchase_price').val();
+                    const sellingPrice = $('#selling_price').val();
+                    const val = parseInt(sellingPrice || 0) - parseInt(purchasePrice || 0);
+                    $('input[data-rowid="' + rowId + '"]').val(val);
+                    $('#stockUpdateModal').modal('hide')
+                    // reset the form
+                    $('#stockUpdateModalForm').trigger('reset');
+
+                    const row = $('tr[data-rowid="' + rowId + '"]');
+                    var editBtn = row.find('.edit-btn');
+                    const deleteBtn = editBtn.siblings('a');
+
+                    editBtn.remove();
+
+                    const newButton = `<a href="javascript:;" class="edit-btn"
+                        data-purchase="${purchasePrice}" data-selling="${sellingPrice}">
+                        <i class="fas fa-edit"></i>
+                    </a>`;
+                    deleteBtn.after(newButton);
+
+                    $.ajax({
+                        type: 'get',
+                        data: {
+                            rowid: rowId,
+                            purchase_price: purchasePrice,
+                            selling_price: sellingPrice,
+                            price: val,
+                            edit: true
+                        },
+                        url: "{{ route('admin.cart.price.update') }}",
+                        success: function(response) {
+                            $('#stockUpdateModal').modal('hide')
+                            updatePrice(rowId, val)
+                            calculateExtra()
+                            totalSummery();
+                        }
+                    });
+
                 })
 
             });

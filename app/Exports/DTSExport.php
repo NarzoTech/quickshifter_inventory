@@ -10,7 +10,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class DTSExport implements FromCollection, WithHeadings, WithMapping
 {
-    public function __construct(private $data, private $openingBalance) {}
+    private $balance = 0;
+    public function __construct(private $data, private $openingBalance)
+    {
+        $this->balance = $this->openingBalance;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -36,7 +40,7 @@ class DTSExport implements FromCollection, WithHeadings, WithMapping
     }
     public function map($data): array
     {
-        $balance = $this->openingBalance + $data->credit - $data->debit;
+        $this->balance += $data->credit - $data->debit - $data->iv;
         return [
             $data->date,
             $data->mode,
@@ -44,7 +48,7 @@ class DTSExport implements FromCollection, WithHeadings, WithMapping
             $data->particular,
             $data->credit,
             $data->debit,
-            $balance,
+            $this->balance,
             $data->iv
         ];
     }

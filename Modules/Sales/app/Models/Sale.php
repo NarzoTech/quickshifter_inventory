@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Currency\app\Models\MultiCurrency;
 use Modules\Customer\app\Models\CustomerDue;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Sales\Database\factories\SaleFactory;
 
 class Sale extends Model
@@ -99,7 +100,7 @@ class Sale extends Model
 
     public function payment()
     {
-        return $this->hasMany(Payment::class, 'sale_id');
+        return $this->hasMany(CustomerPayment::class, 'sale_id');
     }
 
     public function createdBy()

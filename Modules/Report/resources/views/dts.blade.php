@@ -121,7 +121,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($data as $dts)
+                                            @php
+                                                $balance = $openingBalance;
+                                            @endphp
+                                            @foreach ($data as $index => $dts)
+                                                @php
+                                                    $balance += $dts->credit - $dts->debit - $dts->iv;
+                                                @endphp
                                                 <tr>
                                                     <td>
                                                         {{ $dts->date }}
@@ -142,7 +148,7 @@
                                                         {{ $dts->debit }}
                                                     </td>
                                                     <td>
-                                                        {{ $openingBalance + $dts->credit - $dts->debit - $dts->iv }}
+                                                        {{ $balance }}
                                                     </td>
                                                     <td>
                                                         {{ $dts->iv }}

@@ -5,7 +5,10 @@ namespace Modules\Sales\app\Services;
 use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Models\Account;
 use Modules\Customer\app\Models\CustomerDue;
 use Modules\Customer\app\Models\CustomerPayment;
@@ -152,136 +155,145 @@ class SaleService
 
     public function updateSale(Request $request, $user, $cart, $id): Sale
     {
-        $sale = $this->sale->find($id);
+        DB::beginTransaction();
+        try {
+            $sale = $this->sale->find($id);
 
 
-        // update sales
-        $sale->user_id = $user != null ?  $user->id : null;
-        $sale->customer_id = $request->order_customer_id;
-        $sale->warehouse_id = 1;
-        $sale->total_price = $request->sub_total;
-        $sale->order_date = now()->parse($request->sale_date);
-        $sale->status = 1;
-        $sale->payment_status = 1;
+            // update sales
+            $sale->user_id = $user != null ?  $user->id : null;
+            $sale->customer_id = $request->order_customer_id;
+            $sale->warehouse_id = 1;
+            $sale->total_price = $request->sub_total;
+            $sale->order_date = now()->parse($request->sale_date);
+            $sale->status = 1;
+            $sale->payment_status = 1;
 
-        $sale->payment_method = json_encode($request->payment_type);
-        $sale->order_discount = $request->discount_amount;
-        $sale->total_tax = $request->total_tax ?? 0;
-        $sale->grand_total = $request->total_amount;
-        $sale->paid_amount = array_sum($request->paying_amount);
+            $sale->payment_method = json_encode($request->payment_type);
+            $sale->order_discount = $request->discount_amount;
+            $sale->total_tax = $request->total_tax ?? 0;
+            $sale->grand_total = $request->total_amount;
+            $sale->paid_amount = array_sum($request->paying_amount);
 
-        $due = $request->total_amount - array_sum($request->paying_amount);
-        $sale->due_amount = $due < 0 ? 0 : $due;
-        $sale->sale_note = $request->remark;
-        $sale->receive_amount = $request->receive_amount;
-        $sale->return_amount = $request->return_amount;
-        $sale->updated_by = auth('admin')->user()->id;
 
-        // restore product stock
-        foreach ($sale->products as $item) {
-            $product = Product::where('id', $item->product_id)->first();
-            if ($product != null && $item->source == 1) {
-                $product->stock = $product->stock + $item->quantity;
-                $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
-                $product->save();
+            $due = $request->total_amount - array_sum($request->paying_amount);
+            $sale->due_amount = $due < 0 ? 0 : $due;
+            $sale->sale_note = $request->remark;
+            $sale->receive_amount = $request->receive_amount;
+            $sale->return_amount = $request->return_amount;
+            $sale->updated_by = auth('admin')->user()->id;
+
+            // restore product stock
+            foreach ($sale->products as $item) {
+                $product = Product::where('id', $item->product_id)->first();
+                if ($product != null && $item->source == 1) {
+                    $product->stock = $product->stock + $item->quantity;
+                    $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
+                    $product->save();
+                }
             }
-        }
 
 
 
-        // delete old details
-        $sale->details()->delete();
-        $sale->payment()->delete();
-        $sale->customer_due()->delete();
-        $sale->stock()->delete();
+            // delete old details
+            $sale->details()->delete();
+            $sale->payment()->delete();
+            $sale->customer_due()->delete();
+            $sale->stock()->delete();
 
-        $totalQty = 0;
-        foreach ($cart as $item) {
-            $totalQty += $item['qty'];
+            $totalQty = 0;
+            foreach ($cart as $item) {
+                $totalQty += $item['qty'];
 
-            $variant = isset($item['variant']) ?  Variant::where('sku', $item['sku'])->first() : null;
-            $orderDetails = new ProductSale();
-            $orderDetails->sale_id = $sale->id;
-            $orderDetails->product_id = $item['type'] == 'product' ? $item['id'] : null;
-            $orderDetails->service_id = $item['type'] == 'service' ? $item['id'] : null;
-            $orderDetails->product_sku = $item['sku'];
-            $orderDetails->variant_id = $variant != null ? $variant->id : null;
-            $orderDetails->price = $item['price'];
-            $orderDetails->source = $item['source'];
-            $orderDetails->purchase_price = $item['purchase_price'];
-            $orderDetails->selling_price = $item['selling_price'];
-            $orderDetails->quantity = $item['qty'];
-            $orderDetails->sub_total = $item['sub_total'];
-            $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
-            $orderDetails->save();
+                $variant = isset($item['variant']) ?  Variant::where('sku', $item['sku'])->first() : null;
+                $orderDetails = new ProductSale();
+                $orderDetails->sale_id = $sale->id;
+                $orderDetails->product_id = $item['type'] == 'product' ? $item['id'] : null;
+                $orderDetails->service_id = $item['type'] == 'service' ? $item['id'] : null;
+                $orderDetails->product_sku = $item['sku'];
+                $orderDetails->variant_id = $variant != null ? $variant->id : null;
+                $orderDetails->price = $item['price'];
+                $orderDetails->source = $item['source'];
+                $orderDetails->purchase_price = $item['purchase_price'];
+                $orderDetails->selling_price = $item['selling_price'];
+                $orderDetails->quantity = $item['qty'];
+                $orderDetails->sub_total = $item['sub_total'];
+                $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
+                $orderDetails->save();
 
-            // update stock
-            $product = Product::where('id', $item['id'])->first();
-            if ($product != null && $item['type'] == 'product' && $item['source'] == 1) {
-                $product->stock = $product->stock - $item['qty'];
-                $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
-                $product->save();
+                // update stock
+                $product = Product::where('id', $item['id'])->first();
+                if ($product != null && $item['type'] == 'product' && $item['source'] == 1) {
+                    $product->stock = $product->stock - $item['qty'];
+                    $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
+                    $product->save();
 
-                // create stock
-                Stock::create([
+                    // create stock
+                    Stock::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => $product->id,
+                        'date' => now()->parse($request->sale_date),
+                        'type' => 'Sale',
+                        'invoice' => route('admin.sales.invoice', $sale->id),
+                        'invoice_number' => $sale->invoice,
+                        'out_quantity' => $item['qty'],
+                        'sku' => $product->sku,
+                        'sale_price' => $item['price'],
+                        'rate' => $item['price'],
+                        'profit' => $item['price'] - $product->last_purchase_price,
+                        'created_by' => auth('admin')->user()->id,
+                    ]);
+                }
+            }
+
+            $sale->quantity = $totalQty;
+            $sale->save();
+
+
+            // create payments
+            foreach ($request->payment_type as $key => $item) {
+                $account = Account::where('account_type', $item);
+                if ($item == 'cash') {
+                    $account = $account->first();
+                } else {
+                    $account = $account->where('id', $request->account_id[$key])->first();
+                }
+                $customerId = $request->order_customer_id;
+                $data = [
+                    'payment_type' => 'sale',
                     'sale_id' => $sale->id,
-                    'product_id' => $product->id,
-                    'date' => now()->parse($request->sale_date),
-                    'type' => 'Sale',
-                    'invoice' => route('admin.sales.invoice', $sale->id),
-                    'invoice_number' => $sale->invoice,
-                    'out_quantity' => $item['qty'],
-                    'sku' => $product->sku,
-                    'sale_price' => $item['price'],
-                    'rate' => $item['price'],
-                    'profit' => $item['price'] - $product->last_purchase_price,
+                    'is_received' => 1,
+                    'customer_id' => $request->order_customer_id,
+                    'account_id' => $account->id,
+                    'amount' => $request->paying_amount[$key],
+                    'payment_date' => now(),
                     'created_by' => auth('admin')->user()->id,
+                ];
+                if ($customerId == 'walk-in-customer') {
+                    $data['customer_id'] = null;
+                    $data['is_guest'] = 1;
+                }
+                CustomerPayment::create($data);
+            }
+
+
+            // create due
+            if ($request->total_due && $user) {
+                CustomerDue::create([
+                    'invoice' => $sale->invoice,
+                    'due_amount' => $request->total_due,
+                    'due_date' => $request->due_date,
+                    'status' => 1,
+                    'customer_id' => $user->id
                 ]);
             }
+
+            DB::commit();
+            return $sale;
+        } catch (Exception $ex) {
+            Log::error($ex->getMessage());
+            DB::rollback();
         }
-
-        $sale->quantity = $totalQty;
-        $sale->save();
-
-
-        // create payments
-        foreach ($request->payment_type as $key => $item) {
-            $account = Account::where('account_type', $item);
-            if ($item == 'cash') {
-                $account = $account->first();
-            } else {
-                $account = $account->where('id', $request->account_id[$key])->first();
-            }
-            $customerId = $request->order_customer_id;
-            $data = [
-                'payment_type' => 'sale',
-                'sale_id' => $sale->id,
-                'is_received' => 1,
-                'customer_id' => $request->order_customer_id,
-                'account_id' => $account->id,
-                'amount' => $request->paying_amount[$key],
-                'payment_date' => now(),
-                'created_by' => auth('admin')->user()->id,
-            ];
-            if ($customerId == 'walk-in-customer') {
-                $data['customer_id'] = null;
-                $data['is_guest'] = 1;
-            }
-            CustomerPayment::create($data);
-        }
-
-
-        // create due
-        if ($request->total_due && $user) {
-            CustomerDue::create([
-                'invoice' => $sale->invoice,
-                'due_amount' => $request->total_due,
-                'due_date' => $request->due_date,
-                'status' => 1,
-                'customer_id' => $user->id
-            ]);
-        }
-        return $sale;
     }
 
     public function deleteSale($id): void

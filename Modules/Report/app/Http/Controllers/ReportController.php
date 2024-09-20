@@ -90,7 +90,7 @@ class ReportController extends Controller
         $washId = ServiceCategory::where('name', 'Wash')->first()?->id;
         if ($services->where('service_id', $washId)->first()) {
             $washData = [];
-            $washData['date'] = $services->where('service_id', $washId)->first()->sale->order_date;
+            $washData['date'] = now()->parse($services->where('service_id', $washId)->first()->sale->order_date)->format('d-M');
             $washData['mode'] = 'Cash';
             $washData['category'] = "Wash";
             $washData['particular'] = '';
@@ -105,7 +105,7 @@ class ReportController extends Controller
 
         if ($services->where('service_id', '!=', $washId)->first()) {
             $serviceData = [];
-            $serviceData['date'] = $services->where('service_id', '!=', $washId)->first()->sale->order_date;
+            $serviceData['date'] = now()->parse($services->where('service_id', '!=', $washId)->first()->sale->order_date)->format('d-M');
             $serviceData['mode'] = 'Cash';
             $serviceData['category'] = "Service";
             $serviceData['particular'] = '';
@@ -132,7 +132,7 @@ class ReportController extends Controller
 
         if ($sales->first()) {
             $newData = [];
-            $newData['date'] = $sales->first()->sale->order_date;
+            $newData['date'] = now()->parse($sales->first()->sale->order_date)->format('d-M');
             $newData['mode'] = 'Cash';
             $newData['category'] = "Sale (Own Inventory)";
             $newData['particular'] = '';
@@ -152,35 +152,58 @@ class ReportController extends Controller
                 });
             })->get();
 
+        $debit = 0;
+        $credit = 0;
+        foreach ($otherIncome as $income) {
+            $debit += $income->purchase_price * $income->quantity;
+            $credit += $income->selling_price * $income->quantity;
+        }
 
         if ($otherIncome->first()) {
             $newData = [];
-            $newData['date'] = $otherIncome->first()->sale->order_date;
+            $newData['date'] = now()->parse($otherIncome->first()->sale->order_date)->format('d-M');
             $newData['mode'] = 'Cash';
             $newData['category'] = "Other Income (Parts-Local Market)";
             $newData['particular'] = '';
-            $newData['debit'] = $otherIncome->sum('purchase_price');
-            $newData['credit'] = $otherIncome->sum('selling_price');
+            $newData['debit'] = $debit;
+            $newData['credit'] = $credit;
             $newData['iv'] = 0;
             $newData = (object)$newData;
             $data->push($newData);
         }
 
 
-        $purchase = Purchase::where('purchase_date', '=', $date)->get();
+        $purchases = Purchase::where('purchase_date', '=', $date)->with('payments')->get();
 
         // purchase
-        if ($purchase->first()) {
-            $newData = [];
-            $newData['date'] = $purchase->first()->purchase_date;
-            $newData['mode'] = 'Credit';
-            $newData['category'] = "Inventory";
-            $newData['particular'] = '';
-            $newData['debit'] = $purchase->sum('total_amount');
-            $newData['credit'] = 0;
-            $newData['iv'] = 0;
-            $newData = (object)$newData;
-            $data->push($newData);
+
+        foreach ($purchases as $purchase) {
+            $payment = $purchase->payments->where('payment_type', 'purchase')->first();
+
+            if ($payment) {
+                $newData = [];
+                $newData['date'] = now()->parse($purchase->first()->purchase_date)->format('d-M');
+                $newData['mode'] = 'Cash';
+                $newData['category'] = "Inventory";
+                $newData['particular'] = $purchase->supplier->name ?? 'Guest';
+                $newData['debit'] = $payment->amount;
+                $newData['credit'] = 0;
+                $newData['iv'] = 0;
+                $newData = (object)$newData;
+                $data->push($newData);
+            }
+            if ($purchase->due_amount) {
+                $newData = [];
+                $newData['date'] = now()->parse($purchase->first()->purchase_date)->format('d-M');
+                $newData['mode'] = 'Credit';
+                $newData['category'] = "Inventory";
+                $newData['particular'] = $purchase->supplier->name ?? 'Guest';
+                $newData['debit'] = $purchase->due_amount;
+                $newData['credit'] = 0;
+                $newData['iv'] = 0;
+                $newData = (object)$newData;
+                $data->push($newData);
+            }
         }
 
 
@@ -189,7 +212,7 @@ class ReportController extends Controller
 
         foreach ($expenses as $expense) {
             $newData = [];
-            $newData['date'] = $expense->date;
+            $newData['date'] = now()->parse($expense->date)->format('d-M');
             $newData['mode'] = 'Cash';
             $newData['category'] = $expense->expenseType->name;
             $newData['particular'] = $expense->note;
@@ -206,7 +229,7 @@ class ReportController extends Controller
         $salaries = EmployeeSalary::where('date', $date)->get();
         foreach ($salaries as $salary) {
             $newData = collect([]);
-            $newData['date'] = $salary->date;
+            $newData['date'] = now()->parse($salary->date)->format('d-M');
             $newData['mode'] = 'Cash';
             $newData['category'] = 'Salary';
             $newData['particular'] = $salary->employee->name;
