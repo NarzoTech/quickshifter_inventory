@@ -191,7 +191,7 @@
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $salary->date }}</td>
-                                                    <td>{{ accountList()[$expense->payment_type] }}</td>
+                                                    <td>{{ accountList()[$salary->payment_type] }}</td>
                                                     <td>{{ ucfirst($salary->type) }}</td>
                                                     <td>{{ $salary->employee->name }}</td>
                                                     <td>{{ 0 }}</td>

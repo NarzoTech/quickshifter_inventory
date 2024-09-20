@@ -9,20 +9,24 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Employee\app\Models\EmployeeSalary;
+use Modules\Employee\app\Services\EmployeeService;
 use Modules\Expense\app\Models\Expense;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductCategoryService;
 use Modules\Product\app\Services\ProductService;
 use Modules\Purchase\app\Models\Purchase;
+use Modules\Purchase\app\Models\PurchaseDetails;
+use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
+use Modules\Service\app\Models\ServiceCategory;
 use Modules\Supplier\app\Services\SupplierService;
 
 class ReportController extends Controller
 {
 
-    public function __construct(private BrandService $brandService, private ProductCategoryService $categoryService, private ProductService $productService, private SupplierService $supplierService)
+    public function __construct(private BrandService $brandService, private ProductCategoryService $categoryService, private ProductService $productService, private SupplierService $supplierService, private EmployeeService $employeeService)
     {
         $this->middleware('auth:admin');
     }
@@ -65,15 +69,147 @@ class ReportController extends Controller
      */
     public function dts()
     {
+        $data = collect([]);
         $date = date('Y-m-d');
+
+        // expense calculation
         $expenses = Expense::where('date', $date)->get();
+
+        foreach ($expenses as $expense) {
+            $newData = collect([]);
+            $newData['date'] = $expense->date;
+            $newData['mode'] = 'Cash';
+            $newData['category'] = 'Expense';
+            $newData['particular'] = $expense->expenseType->name;
+            $newData['debit'] = $expense->amount;
+            $newData['credit'] = 0;
+            $newData['iv'] = 0;
+            $data->push($newData);
+        }
+
+        // salary calculation
         $salaries = EmployeeSalary::where('date', $date)->get();
+        foreach ($salaries as $salary) {
+            $newData = collect([]);
+            $newData['date'] = $salary->date;
+            $newData['mode'] = 'Cash';
+            $newData['category'] = 'Salary';
+            $newData['particular'] = $salary->employee->name;
+            $newData['debit'] = $salary->amount;
+            $newData['credit'] = 0;
+            $newData['iv'] = 0;
+            $data->push($newData);
+        }
+
+
         $otherIncome = ProductSale::where('source', 2)
             ->where(function ($query)  use ($date) {
                 $query->whereHas('sale', function ($q) use ($date) {
                     $q->where('order_date', $date);
                 });
-            })->sum('sub_total');
+            })->get();
+
+
+        $newData = collect([]);
+        $newData['date'] = $otherIncome->first()->sale->order_date;
+        $newData['mode'] = 'Cash';
+        $newData['category'] = "Other Income (Parts-Local Market)";
+        $newData['particular'] = '';
+        $newData['debit'] = $otherIncome->sum('purchase_price');
+        $newData['credit'] = $otherIncome->sum('selling_price');
+        $newData['iv'] = 0;
+        $data->push($newData);
+
+
+        // services calculation
+        $services = ProductSale::whereNotNull('service_id')->where(function ($query)  use ($date) {
+            $query->whereHas('sale', function ($q) use ($date) {
+                $q->where('order_date', $date);
+            });
+        })->get();
+
+        $washId = ServiceCategory::where('name', 'Wash')->first()->id;
+        $washData = collect([]);
+        $washData['date'] = $services->where('service_id', $washId)->first()->sale->order_date;
+        $washData['mode'] = 'Cash';
+        $washData['category'] = "Wash";
+        $washData['particular'] = '';
+        $washData['debit'] = 0;
+        $washData['credit'] = $otherIncome->sum('price');
+        $washData['iv'] = 0;
+        $data->push($washData);
+
+
+        $serviceData = collect([]);
+        $serviceData['date'] = $services->where('service_id', '!=', $washId)->first()->sale->order_date;
+        $serviceData['mode'] = 'Cash';
+        $serviceData['category'] = "Service";
+        $serviceData['particular'] = '';
+        $serviceData['debit'] = 0;
+        $serviceData['credit'] = $services->where('service_id', '!=', $washId)->sum('price');
+        $serviceData['iv'] = 0;
+        $data->push($serviceData);
+
+
+
+        $sales = ProductSale::where('source', 1)
+            ->where(function ($query)  use ($date) {
+                $query->whereHas('sale', function ($q) use ($date) {
+                    $q->where('order_date', $date);
+                });
+            })->whereNotNull('product_id')->get();
+
+        // last purchase price
+        $lastPurchasePrice = 0;
+        foreach ($sales as $sale) {
+            $lastPurchasePrice += remove_comma($sale->product->LastPurchasePrice) * $sale->quantity;
+        }
+
+
+        $newData = collect([]);
+        $newData['date'] = $sales->first()->sale->order_date;
+        $newData['mode'] = 'Cash';
+        $newData['category'] = "Sale (Own Inventory)";
+        $newData['particular'] = '';
+        $newData['debit'] = 0;
+        $newData['credit'] = $sales->sum('price');
+        $newData['iv'] = $lastPurchasePrice;
+        $data->push($newData);
+
+
+
+        // purchase
+        $purchase = Purchase::where('purchase_date', '=', $date)->get();
+
+        $newData = collect([]);
+        $newData['date'] = $purchase->first()->purchase_date;
+        $newData['mode'] = 'Credit';
+        $newData['category'] = "Inventory";
+        $newData['particular'] = '';
+        $newData['debit'] = $purchase->sum('total_amount');
+        $newData['credit'] = 0;
+        $newData['iv'] = 0;
+        $data->push($newData);
+
+
+        // purchase return
+        $purchaseReturn = PurchaseReturn::where('return_date', '=', $date)->get();
+        $newData = collect([]);
+        $newData['date'] = $purchaseReturn->first()->return_date;
+        $newData['mode'] = 'Credit';
+        $newData['category'] = "Purchase Return";
+        $newData['particular'] = '';
+        $newData['debit'] = 0;
+        $newData['credit'] = $purchaseReturn->sum('total_amount');
+        $newData['iv'] = 0;
+        $data->push($newData);
+
+
+        // customer due pay
+
+        $newData = collect([]);
+
+
         return view('report::dts', compact('expenses', 'salaries', 'otherIncome'));
     }
 
@@ -306,5 +442,16 @@ class ReportController extends Controller
         $suppliers = $this->supplierService->allSupplier();
         $suppliers = $suppliers->paginate(20);
         return view('report::supplier', compact('suppliers'));
+    }
+
+    public function salary()
+    {
+        $month = request('month') ? now()->parse(request('month')) : now()->month;
+
+
+        $employees = $this->employeeService->all()->get();
+
+
+        return view('report::salary', compact('employees'));
     }
 }

@@ -110,16 +110,11 @@
         </li>
         <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.report.dts') }}">
-                {{ __('Suppliers Ledger') }}
-            </a>
-        </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
                 {{ __('Suppliers Payment') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
+        <li class="{{ Route::is('admin.report.salary') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.report.salary') }}">
                 {{ __('Salary Report') }}
             </a>
         </li>
