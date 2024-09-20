@@ -116,20 +116,6 @@
                                                         </span>
                                                     </td>
                                                 </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        <img src="https://amarsolution.com/backend/images/cash-flow-icon/2.png"
-                                                            class="icon-img" />
-                                                        Service
-                                                    </td>
-                                                    <td>
-                                                        <span>
-                                                            {{ currency($data['serviceSale']) }}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-
                                                 <tr>
                                                     <td>
                                                         <img src="https://amarsolution.com/backend/images/cash-flow-icon/4.png"
@@ -217,7 +203,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['supplierDuePay']) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -230,8 +216,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK
-                                                            0.00
+                                                            {{ currency($data['supplierAdvanceRefund']) }}
                                                         </span>
                                                     </td>
                                                     <td>
@@ -241,8 +226,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK
-                                                            0.00
+                                                            {{ currency($data['supplierAdvancePay']) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -265,7 +249,7 @@
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['purchase']) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -344,13 +328,13 @@
                                                     <td></td>
                                                     <td colspan="" class="text-left">
                                                         <b>
-                                                            Total : 0.00
+                                                            Total : {{ currency($data['totalReceive']) }}
                                                         </b>
                                                     </td>
                                                     <td></td>
                                                     <td colspan="" class="text-left">
                                                         <b>
-                                                            Total : 0.00
+                                                            Total : {{ currency($data['totalPay']) }}
                                                         </b>
                                                     </td>
                                                 </tr>
@@ -363,7 +347,7 @@
                                                     </td>
                                                     <td colspan="" class="text-left border-none">
                                                         <h4 class="m-0">
-                                                            12,496.00
+                                                            {{ $openingBalance }}
                                                         </h4>
                                                     </td>
                                                     <td></td>
@@ -377,7 +361,7 @@
                                                     </td>
                                                     <td class="text-left border-none">
                                                         <h4 class="m-0">
-                                                            12,496.00
+                                                            {{ $currentBalance }}
                                                         </h4>
                                                         (Opening Balance + Cash In - Cash Out)
                                                     </td>

@@ -8,6 +8,7 @@ use App\Models\Payment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Accounts\Database\factories\AccountFactory;
+use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Expense\app\Models\Expense;
 use Modules\Supplier\app\Models\SupplierPayment;
 
@@ -61,12 +62,18 @@ class Account extends Model
 
     public function expenses()
     {
+
         return $this->hasMany(Expense::class, 'account_id');
     }
 
     public function supplierPayments()
     {
         return $this->hasMany(SupplierPayment::class, 'account_id', 'id');
+    }
+
+    public function customerPayments()
+    {
+        return $this->hasMany(CustomerPayment::class, 'account_id', 'id');
     }
 
     public function deposits()
@@ -82,5 +89,126 @@ class Account extends Model
     public function assets()
     {
         return $this->hasMany(Asset::class, 'account_id');
+    }
+
+    public function getOpeningBalance($startDate)
+    {
+        // Payments Received and Paid before the start date
+        $receivedPayments = $this->payments()
+            ->where('is_received', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
+
+        $paidPayments = $this->payments()
+            ->where('is_paid', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
+
+        // Supplier Payments Received and Paid before the start date
+        $supplierPaymentsReceived = $this->supplierPayments()
+            ->where('is_received', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
+
+        $supplierPaymentsPaid = $this->supplierPayments()
+            ->where('is_paid', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
+
+        // Customer Payments Received and Paid before the start date
+        $customerPaymentsReceived = $this->customerPayments()
+            ->where('is_received', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
+
+        $customerPaymentsPaid = $this->customerPayments()
+            ->where('is_paid', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
+
+        // Deposits, Withdrawals, Assets, and Expenses before the start date
+        $deposit = $this->deposits()
+            ->where('date', '<', $startDate)
+            ->sum('amount');
+
+        $withdraw = $this->withdraws()
+            ->where('date', '<', $startDate)
+            ->sum('amount');
+
+        $asset = $this->assets()
+            ->where('date', '<', $startDate)
+            ->sum('amount');
+
+        $expenses = $this->expenses()
+            ->where('date', '<', $startDate)
+            ->sum('amount');
+
+        // Calculate Opening Balance
+        $openingBalance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid);
+
+        return $openingBalance;
+    }
+
+    public function getBalanceBetween($startDate = null, $endDate = null)
+    {
+        $startDate = $startDate ? $startDate : (request('from_date') ? now()->parse(request('from_date')) : now()->subDay());
+        $endDate = $endDate ? $endDate : (request('to_date') ? now()->parse(request('to_date')) : now());
+
+        // Payments Received and Paid
+        $receivedPayments = $this->payments()
+            ->where('is_received', 1)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $paidPayments = $this->payments()
+            ->where('is_paid', 1)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+
+        // Supplier Payments Received and Paid
+        $supplierPaymentsReceived = $this->supplierPayments()
+            ->where('is_received', 1)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $supplierPaymentsPaid = $this->supplierPayments()
+            ->where('is_paid', 1)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+
+        // Customer Payments Received and Paid
+        $customerPaymentsReceived = $this->customerPayments()
+            ->where('is_received', 1)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $customerPaymentsPaid = $this->customerPayments()
+            ->where('is_paid', 1)
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('amount');
+
+        // Deposits, Withdraws, Assets, and Expenses
+        $deposit = $this->deposits()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $withdraw = $this->withdraws()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $asset = $this->assets()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $expenses = $this->expenses()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        // Calculate Balance
+        $balance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid);
+
+        return $balance;
     }
 }

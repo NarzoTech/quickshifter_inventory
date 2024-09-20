@@ -32,4 +32,15 @@ class AccountsService
     {
         return $account->delete();
     }
+
+    public function getOpeningBalance($fromDate)
+    {
+        $totalAccounts = $this->account->all();
+        $accountBalance = 0;
+        $totalAccounts->map(function ($account) use (&$accountBalance, $fromDate) {
+            $accountBalance += $account->getOpeningBalance($fromDate);
+        });
+
+        return $accountBalance;
+    }
 }

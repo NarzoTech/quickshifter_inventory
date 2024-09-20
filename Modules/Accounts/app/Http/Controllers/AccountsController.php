@@ -20,6 +20,7 @@ use Modules\Expense\app\Models\Expense;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
+use Modules\Supplier\app\Models\SupplierPayment;
 
 class AccountsController extends Controller
 {
@@ -44,8 +45,9 @@ class AccountsController extends Controller
 
         $accountBalance = 0;
         $totalAccounts->map(function ($account) use (&$accountBalance) {
-            $accountBalance += $account->balance();
+            $accountBalance += $account->getBalanceBetween();
         });
+
 
         return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccount', 'mobileAccounts', 'cardAccounts', 'advanceAccounts', 'accountBalance'));
     }
@@ -116,27 +118,45 @@ class AccountsController extends Controller
 
     public function cashflow()
     {
-        $fromDate = request('from_date') ?? now()->format('Y-m-d');
-        $toDate = request('to_date') ?? now()->format('Y-m-d');
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
         $data = [];
-        $data['productSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
-            $q->whereBetween('order_date', [$fromDate, $toDate]);
-        })->whereNotNull('product_id')->where('source', 1)->sum('sub_total');
-        $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
-            $q->whereBetween('order_date', [$fromDate, $toDate]);
-        })->whereNotNull('service_id')->sum('sub_total');
+
+        $data['productSale'] = CustomerPayment::where('payment_type', 'sale')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+
+        // $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
+        //     $q->whereBetween('order_date', [$fromDate, $toDate]);
+        // })->whereNotNull('service_id')->sum('sub_total');
+
         $data['customer_due'] = Sale::whereBetween('order_date', [$fromDate, $toDate])->whereNotNull('customer_id')->sum('due_amount');
+
         $data['sale_return'] = SalesReturn::whereBetween('return_date', [$fromDate, $toDate])->sum('return_amount');
         $data['balance_deposit'] = Balance::where('balance_type', 'deposit')->whereBetween('date', [$fromDate, $toDate])->sum('amount');
+
         $data['balance_withdraw'] = Balance::where('balance_type', 'withdraw')->whereBetween('date', [$fromDate, $toDate])->sum('amount');
+
         $data['customer_advance'] = CustomerPayment::where('payment_type', 'advance_receive')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+
         $data['customer_advance_refund'] = CustomerPayment::where('payment_type', 'advance_refund')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+
         $data['salary'] = EmployeeSalary::whereBetween('date', [$fromDate, $toDate])->sum('amount');
         $data['expenses'] = Expense::whereBetween('date', [$fromDate, $toDate])->sum('amount');
 
-        $openingBalance = $this->accountBalance($fromDate, $toDate);
+        $data['supplierDuePay'] = SupplierPayment::where('payment_type', 'due_pay')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
 
-        return view('accounts::cash-flow', compact('data'));
+        $data['supplierAdvancePay'] = SupplierPayment::where('payment_type', 'advance_pay')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+
+        $data['supplierAdvanceRefund'] = SupplierPayment::where('payment_type', 'advance_refund')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+
+        $data['purchase'] = SupplierPayment::where('payment_type', 'purchase')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+
+        $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'];
+
+        $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'];
+
+        $openingBalance = $this->accountsService->getOpeningBalance($fromDate);
+        $currentBalance = $this->accountBalance($fromDate, $toDate) + $openingBalance;
+        return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance'));
     }
 
 
@@ -153,8 +173,10 @@ class AccountsController extends Controller
         $totalAccounts = $this->accountsService->all()->whereBetween('created_at', [$fromDate, $toDate])->get();
 
         $accountBalance = 0;
-        $totalAccounts->map(function ($account) use (&$accountBalance) {
-            $accountBalance += $account->balance();
+        $totalAccounts->map(function ($account) use (&$accountBalance, $fromDate, $toDate) {
+            $accountBalance += $account->getBalanceBetween($fromDate, $toDate);
         });
+
+        return $accountBalance;
     }
 }

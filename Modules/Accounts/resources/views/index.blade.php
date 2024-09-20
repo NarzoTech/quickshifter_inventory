@@ -87,7 +87,8 @@
                                         </tr>
                                         <tr>
                                             <th class="text-center">
-                                                <h4 class="header-title">{{ currency($cashAccount?->balance()) }}</h4>
+                                                <h4 class="header-title">{{ currency($cashAccount?->getBalanceBetween()) }}
+                                                </h4>
                                             </th>
                                         </tr>
                                         <tr>
@@ -158,7 +159,7 @@
                                                     <td>{{ $account->bank_account_name }}</td>
                                                     <td>{{ $account->bank_account_number }}</td>
                                                     <td>{{ $account->bank_account_branch }}</td>
-                                                    <td>{{ currency($account->balance()) }}</td>
+                                                    <td>{{ currency($account->getBalanceBetween()) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $account->id }}" type="button"
@@ -219,7 +220,7 @@
                                                     <td>{{ $loop->first + $index }}</td>
                                                     <td>{{ $account->mobile_bank_name }}</td>
                                                     <td>{{ $account->mobile_number }}</td>
-                                                    <td>{{ currency($account->balance()) }}</td>
+                                                    <td>{{ currency($account->getBalanceBetween()) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $account->id }}" type="button"
@@ -283,7 +284,7 @@
                                                     <td>{{ $account->bank?->name }}</td>
                                                     <td>{{ $account->card_holder_name }}</td>
                                                     <td>{{ $account->card_number }}</td>
-                                                    <td>{{ currency($account->balance()) }}</td>
+                                                    <td>{{ currency($account->getBalanceBetween()) }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $account->id }}" type="button"
