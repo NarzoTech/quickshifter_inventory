@@ -59,10 +59,10 @@ class Purchase extends Model
         return $this->hasMany(PurchaseDetails::class, 'purchase_id', 'id');
     }
 
-    // public function purchaseReturn()
-    // {
-    //     return $this->hasMany(PurchaseReturn::class,'purchase_id','id');
-    // }
+    public function purchaseReturn()
+    {
+        return $this->hasMany(PurchaseReturn::class, 'purchase_id', 'id');
+    }
 
     public function products()
     {

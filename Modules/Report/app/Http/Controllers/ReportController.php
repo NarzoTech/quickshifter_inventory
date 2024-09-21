@@ -25,6 +25,7 @@ use Modules\Sales\app\Models\SalesReturn;
 use Modules\Service\app\Models\ServiceCategory;
 use Modules\Supplier\app\Services\SupplierService;
 use Maatwebsite\Excel\Facades\Excel;
+use Modules\Supplier\app\Models\SupplierPayment;
 
 class ReportController extends Controller
 {
@@ -489,5 +490,19 @@ class ReportController extends Controller
 
 
         return view('report::salary', compact('employees'));
+    }
+
+    public function supplierPayment()
+    {
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $supplierPayments = Purchase::with('supplier');
+        if (request('from_date') || request('to_date')) {
+            $supplierPayments = $supplierPayments->whereBetween('purchase_date', [$fromDate, $toDate]);
+        }
+        $totalAmount = $supplierPayments->sum('total_amount');
+        $supplierPayments = $supplierPayments->paginate(20);
+        return view('report::supplier-payment', compact('supplierPayments', 'totalAmount'));
     }
 }
