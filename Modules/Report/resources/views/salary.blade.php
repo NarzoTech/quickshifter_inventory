@@ -118,10 +118,18 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @php
+                                                $month = request('month')
+                                                    ? now()->parse(request('month'))->format('F')
+                                                    : now()->format('F');
+                                            @endphp
                                             @foreach ($employees as $employee)
                                                 <tr>
-                                                    <td>{{ $employees->firstItem() + $loop->iteration - 1 }}</td>
-                                                    <td>{{ $employee->salary_month }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $month }}</td>
+                                                    <td>{{ $employee->name }}</td>
+                                                    <td>{{ $employee->salary }}</td>
+                                                    <td>{{ $employee->employeeSalary()->sum('amount') }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -129,7 +137,7 @@
                                 </div>
                                 @if (request()->get('par-page') !== 'all')
                                     <div class="float-right">
-                                        {{-- {{ $sales->onEachSide(0)->links() }} --}}
+
                                     </div>
                                 @endif
                             </div>

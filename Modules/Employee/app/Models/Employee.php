@@ -32,7 +32,8 @@ class Employee extends Model
     }
     public function employeeSalary()
     {
-        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id');
+        $month = request('month') ? now()->parse(request('month'))->format('F') : now()->format('F');
+        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id')->where('month', $month);
     }
     public function getAdvanceAmountAttribute($month = null, $year = null)
     {
