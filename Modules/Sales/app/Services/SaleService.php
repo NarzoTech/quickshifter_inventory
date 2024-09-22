@@ -312,7 +312,7 @@ class SaleService
         }
 
         // delete payments
-        $sale->payments()->delete();
+        $sale->payment()->delete();
 
         // delete due
         $sale->customer_due()->delete();

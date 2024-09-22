@@ -149,6 +149,20 @@ class CustomerController extends Controller
         return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customers.index', [], ['messege' => 'Customer updated successfully.', 'alert-type' => 'success']);
     }
 
+    public function destroy($id)
+    {
+
+        $user = User::findOrFail($id);
+
+        // $user->due()->delete();
+        // $user->payment()->delete();
+        // $user->sales()->details()->delete();
+        // $user->sales()->stock()->delete();
+        // $user->sales()->delete();
+        $user->delete();
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customers.index', [], ['messege' => 'Customer deleted successfully.', 'alert-type' => 'success']);
+    }
+
 
     public function saveUser(Request $request)
     {

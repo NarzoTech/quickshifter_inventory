@@ -68,6 +68,7 @@ class User extends Model
 
     public function sales()
     {
+
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
 
