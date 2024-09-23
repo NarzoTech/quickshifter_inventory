@@ -114,7 +114,7 @@
                                                     <td>{{ $balanceTransfer->note }}</td>
                                                     <td>
                                                         <a href="javascript:;" data-toggle="modal"
-                                                            data-target="#transferModal">
+                                                            data-target="#editTransferModal-{{ $balanceTransfer->id }}">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
                                                     </td>
@@ -217,6 +217,95 @@
             </div>
         </div>
     </div>
+
+
+    {{-- edit balance transfer modal --}}
+    @foreach ($transfers as $transfer)
+        <div class="modal" id="editTransferModal-{{ $transfer->id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ __('Edit Balance Transfer') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="{{ route('admin.balance.transfer.update', $transfer->id) }}" method="POST"
+                            id="edit-transfer-form{{ $transfer->id }}">
+                            @csrf
+                            @method('PATCH')
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="date">{{ __('Date') }}</label>
+                                    <input type="text" class="form-control datepicker" id="date" name="date"
+                                        value="{{ $transfer->date }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="amount">{{ __('Amount') }}</label>
+                                    <input type="text" class="form-control" id="amount" name="amount"
+                                        value="{{ $transfer->amount }}">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="from_account_type">{{ __('From Account Type') }}</label>
+                                    <select name="from_account_type" data-id="{{ $transfer->id }}"
+                                        class="form-control mr-2 from_account_type">
+                                        @foreach (accountList() as $key => $list)
+                                            <option value="{{ $key }}"
+                                                @if ($key == 'cash') selected @endif
+                                                data-name="{{ $list }}">
+                                                {{ $list }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="to_account_type">{{ __('To Account Type') }}</label>
+                                    <select name="to_account_type" data-id="{{ $transfer->id }}"
+                                        class="form-control mr-2 to_account_type">
+                                        @foreach (accountList() as $key => $list)
+                                            <option value="{{ $key }}"
+                                                @if ($key == 'cash') selected @endif
+                                                data-name="{{ $list }}">
+                                                {{ $list }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label for="from_account">{{ __('From Account') }}</label>
+                                    <select name="from_account" id="from_account" class="form-control">
+                                        <option value="{{ $transfer->from_account_id }}" selected></option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label for="to_account">{{ __('To Account') }}</label>
+                                    <select name="to_account" id="to_account" class="form-control">
+                                        <option value="{{ $transfer->to_account_id }}" selected></option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label for="remark">{{ __('Remark') }}</label>
+                                    <textarea name="note" id="remark" class="form-control height-80px" rows="3">{{ $transfer->note }}</textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary"
+                            form="edit-transfer-form{{ $transfer->id }}">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
 
 
@@ -226,7 +315,8 @@
 
         $(document).ready(function() {
             const accountsList = @json($accounts);
-            $(document).on('change', 'select[name="from_account_type"], select[name="to_account_type"]',
+            $(document).on('change',
+                'select[name="from_account_type"], select[name="to_account_type"]',
                 function() {
                     let placeName = $(this).attr('name');
                     if (placeName) {
@@ -263,10 +353,49 @@
                         accountInput.html('');
                         const cash =
                             `<option value="cash">{{ __('Cash') }}</option>`;
-
                         accountInput.html(cash);
                     }
                 });
+
+            $(document).on('change', '.from_account_type, .to_account_type', function() {
+                let placeName = $(this).attr('name');
+                if (placeName) {
+                    placeName = placeName.replaceAll('_type', '');
+                }
+
+                const accounts = accountsList.filter(account => account.account_type == $(this).val());
+                const accountInput = $(this).parent().parent().find(`#${placeName}`);
+                if (accounts) {
+                    let html = ``;
+                    accounts.forEach(account => {
+                        switch ($(this).val()) {
+                            case 'bank':
+                                html +=
+                                    `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
+                                break;
+                            case "mobile_banking":
+                                html +=
+                                    `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                                break;
+                            case 'card':
+                                html +=
+                                    `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
+                                break;
+                            default:
+                                break;
+                        }
+
+                    });
+                    accountInput.html(html);
+                }
+
+                if ($(this).val() == 'cash') {
+                    accountInput.html('');
+                    const cash =
+                        `<option value="cash">{{ __('Cash') }}</option>`;
+                    accountInput.html(cash);
+                }
+            })
         })
     </script>
 @endpush

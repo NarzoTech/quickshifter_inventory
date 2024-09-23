@@ -122,6 +122,8 @@ class BalanceController extends Controller
         return to_route('admin.opening-balance')->with(['messege' => 'Balance updated successfully.', 'alert-type' => 'success']);
     }
 
+
+
     /**
      * Remove the specified resource from storage.
      */
@@ -175,5 +177,38 @@ class BalanceController extends Controller
 
         BalanceTransfer::create($data);
         return back()->with(['messege' => 'Balance transfer created successfully.', 'alert-type' => 'success']);
+    }
+
+    public function transferUpdate(Request $request, $id)
+    {
+        $data = $request->except('_token');
+
+        $data['date'] = now()->parse($request->date);
+        $balance = BalanceTransfer::find($id);
+
+
+        // from account
+
+        $fromAccount = Account::where('account_type', $request->from_account_type);
+        if ($request->from_account_type == 'cash') {
+            $fromAccount = $fromAccount->first();
+        } else {
+            $fromAccount = $fromAccount->where('id', $request->from_account)->first();
+        }
+
+        $data['from_account_id'] = $fromAccount->id;
+
+
+        $toAccount = Account::where('account_type', $request->to_account_type);
+        if ($request->to_account_type == 'cash') {
+            $toAccount = $toAccount->first();
+        } else {
+            $toAccount = $toAccount->where('id', $request->to_account)->first();
+        }
+
+        $data['to_account_id'] = $toAccount->id;
+
+        $balance->update($data);
+        return back()->with(['messege' => 'Balance transfer updated successfully.', 'alert-type' => 'success']);
     }
 }
