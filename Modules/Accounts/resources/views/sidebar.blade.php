@@ -1,5 +1,5 @@
 <li
-    class="nav-item dropdown {{ isRoute(['admin.accounts.*', 'admin.bank.index', 'admin.cashflow', 'admin.opening-balance'], 'active') }}">
+    class="nav-item dropdown {{ isRoute(['admin.accounts.*', 'admin.bank.index', 'admin.cashflow', 'admin.opening-balance', 'admin.balance.transfer'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
         <i class="fas fa-cart-arrow-down"></i><span>{{ __('Manage Accounts') }}</span>
     </a>

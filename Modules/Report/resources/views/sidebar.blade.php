@@ -1,5 +1,4 @@
-<li
-    class="nav-item dropdown {{ Route::is('admin.report.other-income') || Route::is('admin.report.dts') ? 'active' : '' }}">
+<li class="nav-item dropdown {{ isRoute(['admin.report.other-income', 'admin.report.dts'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown"><i
             class="fas fa-newspaper"></i><span>{{ __('DTS') }}</span></a>
 
@@ -17,14 +16,34 @@
     </ul>
 </li>
 
-<li
-    class="nav-item dropdown {{ Route::is('admin.report.other-income') || Route::is('admin.report.dts') ? 'active' : '' }}">
+@php
+    $routeList = [
+        'admin.report.barcode-wise-product',
+        'admin.report.barcode-sale',
+        'admin.report.categories',
+        'admin.report.customers',
+        'admin.report.receivable',
+        'admin.report.details-sale',
+        'admin.report.due-date-sale',
+        'admin.report.expense',
+        'admin.report.master-sale',
+        'admin.report.monthly-sale',
+        'admin.report.profit-loss',
+        'admin.report.product-sale-report',
+        'admin.report.received-report',
+        'admin.report.purchase',
+        'admin.report.supplier',
+        'admin.report.supplier-payment',
+        'admin.report.salary',
+    ];
+@endphp
+<li class="nav-item dropdown {{ isRoute($routeList, 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown"><i
             class="fas fa-newspaper"></i><span>{{ __('Reports') }}</span></a>
 
     <ul class="dropdown-menu">
-        <li class="{{ Route::is('admin.report.other-income') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.other-income') }}">
+        <li class="">
+            <a class="nav-link" href="">
                 {{ __('All Reports') }}
             </a>
         </li>
