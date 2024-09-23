@@ -182,7 +182,7 @@
     @push('js')
         <script>
             function deleteData(id) {
-                let url = "{{ route('admin.customer.employee.destroy', ':id') }}"
+                let url = "{{ route('admin.employee.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
                 $('#deleteModal').modal('show');
