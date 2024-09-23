@@ -74,8 +74,10 @@
 
                                                                 <a class="dropdown-item" href="javascript:void(0)"
                                                                     onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
+                                                                @if ($sale?->customer?->name)
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </td>

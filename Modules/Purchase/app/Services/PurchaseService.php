@@ -510,8 +510,17 @@ class PurchaseService
 
     public function deleteReturn($id)
     {
-
         $return = $this->purchaseReturn->find($id);
+
+        // restore product stock
+
+        foreach ($return->purchaseDetails as $purchaseDetail) {
+            $product = Product::find($purchaseDetail->product_id);
+            $product->stock += $purchaseDetail->quantity;
+            $product->save();
+        }
+
+
         $return->payment()->delete();
         $return->purchaseDetails()->delete();
         $return->delete();

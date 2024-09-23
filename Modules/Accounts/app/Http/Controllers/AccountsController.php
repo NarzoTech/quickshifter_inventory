@@ -113,7 +113,9 @@ class AccountsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $account = $this->accountsService->find($id);
+        $this->accountsService->delete($account);
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.accounts.index', [], ['messege' => 'Account deleted successfully', 'alert-type' => 'success']);
     }
 
     public function cashflow()

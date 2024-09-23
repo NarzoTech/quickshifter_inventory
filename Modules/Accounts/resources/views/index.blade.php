@@ -329,7 +329,7 @@
     @push('js')
         <script>
             function deleteData(id) {
-                let url = "{{ route('admin.account.destroy', ':id') }}"
+                let url = "{{ route('admin.accounts.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
                 $('#deleteModal').modal('show');

@@ -57,7 +57,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Sale Date') }}</label>
                                                 <input type="text" class="form-control" name="order_date"
-                                                    value="{{ $sale->order_date }}" readonly>
+                                                    value="{{ $sale->order_date->format('d-m-Y') }}" readonly>
                                                 @error('order_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
