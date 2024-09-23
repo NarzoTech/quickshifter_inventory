@@ -61,8 +61,6 @@ class BrandService
     {
         $brand = $this->brand->find($id);
 
-        // delete translations
-        $brand->translations()->delete();
         return $brand->delete();
     }
 

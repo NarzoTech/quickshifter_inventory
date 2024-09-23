@@ -75,9 +75,9 @@
                                                     <td class="text-left">{{ $brand->name }}</td>
                                                     <td>
                                                         <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
-                                                            class="btn btn-primary btn-action mr-1 btn-sm"
-                                                            data-toggle="tooltip" title="Edit"><i
-                                                                class="fas fa-pencil-alt"></i></a>
+                                                            class="btn btn-primary mr-1 btn-sm" data-toggle="tooltip"
+                                                            title="Edit"><i class="fas fa-pencil-alt"></i></a>
+
                                                         <a href="javascript:;" data-target="#deleteModal"
                                                             data-toggle="modal" class="btn btn-danger btn-sm"
                                                             onclick="deleteData({{ $brand->id }})"><i

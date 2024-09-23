@@ -25,7 +25,8 @@
                                                 placeholder="{{ __('Search here..') }}" autocomplete="off"
                                                 value="{{ request()->get('search') }}">
                                             <div class="input-group-btn">
-                                                <button class="btn btn-primary" style="padding:9px"><i class="fas fa-search"></i></button>
+                                                <button class="btn btn-primary" style="padding:9px"><i
+                                                        class="fas fa-search"></i></button>
                                             </div>
                                         </div>
                                     </form>
@@ -57,9 +58,8 @@
                                             <td>
                                                 <div class="custom-checkbox custom-control">
                                                     <input type="checkbox" data-checkboxes="checkgroup"
-                                                        class="custom-control-input"
-                                                        id="checkbox-{{ $category->id }}" name="select"
-                                                        >
+                                                        class="custom-control-input" id="checkbox-{{ $category->id }}"
+                                                        name="select">
                                                     <label for="checkbox-{{ $category->id }}"
                                                         class="custom-control-label">&nbsp;</label>
                                                 </div>
@@ -75,10 +75,11 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.category.edit', $category->id) }}"
-                                                    class="btn btn-primary btn-action mr-1" data-toggle="tooltip"
+                                                    class="btn btn-primary btn-sm mr-1" data-toggle="tooltip"
                                                     title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
+
                                                 <a href="javascript:void(0)"
-                                                    class="btn btn-danger btn-action trigger--fire-modal-1 deleteForm"
+                                                    class="btn btn-danger trigger--fire-modal-1 deleteForm btn-sm"
                                                     data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip"
                                                     title="{{ __('Delete') }}"
                                                     data-url="{{ route('admin.category.destroy', $category->id) }}"
