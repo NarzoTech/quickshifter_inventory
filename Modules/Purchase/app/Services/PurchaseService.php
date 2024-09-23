@@ -508,6 +508,14 @@ class PurchaseService
         $this->updateLedger($request, $id, $paidAmount, $type, $isPaid);
     }
 
+    public function deleteReturn($id)
+    {
+
+        $return = $this->purchaseReturn->find($id);
+        $return->payment()->delete();
+        $return->purchaseDetails()->delete();
+        $return->delete();
+    }
 
     public function returnInvoice($id = 0)
     {

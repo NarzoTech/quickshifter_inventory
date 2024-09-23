@@ -80,8 +80,7 @@
 
                                                 <a href="javascript:void(0)"
                                                     class="btn btn-danger trigger--fire-modal-1 deleteForm btn-sm"
-                                                    data-toggle="modal" data-target="#deleteModal" data-toggle="tooltip"
-                                                    title="{{ __('Delete') }}"
+                                                    data-toggle="tooltip" title="{{ __('Delete') }}"
                                                     data-url="{{ route('admin.category.destroy', $category->id) }}"
                                                     data-form="deleteForm"><i class="fas fa-trash"></i></a>
                                             </td>
@@ -109,6 +108,7 @@
             $('.deleteForm').on('click', function() {
                 var url = $(this).data('url');
                 $('#deleteForm').attr('action', url);
+                $('#deleteModal').modal('show');
             });
             $('[name="search"]').on('change', function() {
                 $('#product_search_form').submit();

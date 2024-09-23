@@ -67,7 +67,7 @@
                                                                     aria-labelledby="btnGroupDrop{{ $list->id }}">
                                                                     <a class="dropdown-item"
                                                                         href="{{ route('admin.purchase.return.edit', $list->id) }}">Edit</a>
-                                                                    <a href="javascript:;"   class="dropdown-item"
+                                                                    <a href="javascript:;" class="dropdown-item"
                                                                         onclick="deleteData({{ $list->id }})">
                                                                         Delete</a>
                                                                 </div>
@@ -91,7 +91,9 @@
 @push('js')
     <script>
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ route('admin.purchase.return.destroy', '') }}' + "/" + id)
+            let url = "{{ route('admin.purchase.return.destroy', ':id') }}"
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
             $('#deleteModal').modal('show');
         }
     </script>

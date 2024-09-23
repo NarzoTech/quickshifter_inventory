@@ -117,6 +117,7 @@ class PurchaseReturnController extends Controller
     {
         // delete ledger
 
+        $this->purchaseService->deleteReturn($id);
 
 
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Deleted Successfully', 'alert-type' => 'success']);
