@@ -15,6 +15,7 @@ use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Customer\app\Models\UserGroup;
 use Modules\Customer\app\Models\Vehicle;
 use Modules\LiveChat\app\Models\Message;
+use Modules\Order\app\Models\OrderReview;
 use Modules\Sales\app\Models\Sale;
 
 class User extends Model
@@ -113,5 +114,11 @@ class User extends Model
         $advance = $this->payment()->where('payment_type', 'advance_receive')->sum('amount');
         $advanceRefund = $this->payment()->where('payment_type', 'advance_refund')->sum('amount');
         return $advance - $advanceRefund;
+    }
+
+    public function orderReviews()
+    {
+
+        return $this->hasMany(OrderReview::class, 'user_id');
     }
 }

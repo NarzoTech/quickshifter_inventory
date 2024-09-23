@@ -522,4 +522,45 @@ class CustomerController extends Controller
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.customers.index', [], ['messege' => 'Supplier imported failed.', 'alert-type' => 'error']);
         }
     }
+
+
+    public function deleteAllCustomer(Request $request)
+    {
+
+        $request->validate([
+            'password' => 'required',
+        ]);
+
+        if (!Hash::check($request->password, auth('admin')->user()->password)) {
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Password does not match.', 'alert-type' => 'error']);
+        }
+
+        $users = User::all();
+
+        // delete ledger
+        foreach ($users as $user) {
+            if ($user->due()?->exists()) {
+                $user->due()?->delete();
+            }
+            if ($user->payment()->exists()) {
+                $user->payment()?->delete();
+            }
+            if ($user->sales()->exists()) {
+
+                foreach ($user->sales as $sale) {
+                    $sale->details()?->delete();
+                    $sale->stock()?->delete();
+                    $sale->delete();
+                }
+            }
+            if ($user->orderReviews()->exists()) {
+                $user->orderReviews()?->delete();
+            }
+
+            $user->delete();
+        }
+
+
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customers.index', [], ['messege' => 'Customer deleted successfully.', 'alert-type' => 'success']);
+    }
 }

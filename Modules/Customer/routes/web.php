@@ -27,6 +27,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('customers/advance/{id}', [CustomerController::class, 'advance'])->name('customers.advance');
     Route::post('customers/advance-store/{id}', [CustomerController::class, 'advanceStore'])->name('customers.advance.pay');
     Route::post('customers/status/{id}', [CustomerController::class, 'changeStatus'])->name('customers.status');
+    Route::delete('delete/all-customers/', [CustomerController::class, 'deleteAllCustomer'])->name('delete.all-customers');
     Route::resource('customers', CustomerController::class);
     Route::get('customers/single/{id}', [CustomerController::class, 'singleCustomer'])->name('customer.single');
     Route::get('customers-due-receive/create', [CustomerController::class, 'dueReceiveForm'])->name('customer.due-receive');

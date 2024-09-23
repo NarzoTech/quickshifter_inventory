@@ -106,6 +106,9 @@
                                     <a href="javascript:;" data-toggle="modal" data-target="#addCustomer"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Customer') }}</a>
+                                    <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()"
+                                        data-toggle="modal"
+                                        data-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
                                 </h4>
                             </div>
                             <div class="card-body">
@@ -410,6 +413,40 @@
     @endforeach
 
 
+
+    <div tabindex="-1" role="dialog" id="deleteAllCustomers" class ='modal fade'>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Item Delete Confirmation') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ __('Are You sure want to delete all Customers ?') }}</p>
+                    <form id="allDeleteForm" action="{{ route('admin.delete.all-customers') }}" method="POST">
+
+                        @csrf
+                        @method('DELETE')
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="text" class="form-control" name="password" id="password"
+                                    placeholder="Enter Password *">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer bg-whitesmoke br">
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="submit" class="btn btn-primary"
+                        form="allDeleteForm">{{ __('Yes, Delete') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('js')
         <script>
             $('.export').on('click', function() {
@@ -425,6 +462,10 @@
 
             function deleteData(id) {
                 $("#deleteForm").attr("action", '{{ route('admin.customers.destroy', '') }}' + "/" + id)
+            }
+
+            function deleteAllCustomers() {
+                $("#deleteAllCustomers").attr("action", '{{ route('admin.delete.all-customers') }}')
             }
 
             function status(id) {
