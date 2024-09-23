@@ -123,8 +123,7 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editGroup{{ $group->id }}">Edit</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $group->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -150,8 +149,6 @@
             </div>
         </section>
     </div>
-
-    <x-admin.delete-modal />
 
     {{-- add group --}}
     <div class="modal" id="addgroup">
@@ -264,13 +261,14 @@
             </div>
         </div>
     @endforeach
-
-
-    @push('js')
-        <script>
-            function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.customerGroup.destroy', '') }}' + "/" + id)
-            }
-        </script>
-    @endpush
 @endsection
+@push('js')
+    <script>
+        function deleteData(id) {
+            let url = '{{ route('admin.customerGroup.destroy', ':id') }}';
+            url = url.replace(':id', id);
+            $("#deleteForm").attr('action', url);
+            $('#deleteModal').modal('show');
+        }
+    </script>
+@endpush

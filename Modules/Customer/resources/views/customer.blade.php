@@ -194,8 +194,7 @@
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
 
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $user->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -219,7 +218,7 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
+    {{-- <x-admin.delete-modal /> --}}
 
     {{-- add customer --}}
     @include('customer::customer-modal')
@@ -461,7 +460,10 @@
             })
 
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.customers.destroy', '') }}' + "/" + id)
+                let url = '{{ route('admin.customers.destroy', ':id') }}';
+                url = url.replace(':id', id);
+                $("#deleteForm").attr('action', url);
+                $('#deleteModal').modal('show');
             }
 
             function deleteAllCustomers() {

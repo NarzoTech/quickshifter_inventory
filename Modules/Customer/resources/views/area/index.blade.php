@@ -114,8 +114,7 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editarea{{ $area->id }}">Edit</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $area->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -142,7 +141,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
 
     {{-- add area --}}
     <div class="modal" id="addarea">
@@ -218,12 +216,17 @@
             </div>
         </div>
     @endforeach
-
-    @push('js')
-        <script>
-            function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.area.destroy', '') }}' + "/" + id)
-            }
-        </script>
-    @endpush
 @endsection
+
+
+
+@push('js')
+    <script>
+        function deleteData(id) {
+            let url = '{{ route('admin.area.destroy', ':id') }}';
+            url = url.replace(':id', id);
+            $("#deleteForm").attr('action', url);
+            $('#deleteModal').modal('show');
+        }
+    </script>
+@endpush
