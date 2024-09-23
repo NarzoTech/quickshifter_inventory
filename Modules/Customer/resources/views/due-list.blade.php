@@ -60,8 +60,7 @@
                                                                     <i class="fas fa-edit"></i>
                                                                 </a>
 
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="btn btn-danger btn-sm"
+                                                                <a href="javascript:;" class="btn btn-danger btn-sm"
                                                                     onclick="deleteData({{ $payment->id }})">
                                                                     <i class="fas fa-trash"></i>
                                                                 </a>
@@ -81,14 +80,14 @@
             </div>
         </section>
     </div>
-
 @endsection
 @push('js')
     <script>
         function deleteData(id) {
             let url = "{{ route('admin.customer.due-receive.delete', ':id') }}"
-                url = url.replace(':id', id);
-                $("#deleteForm").attr("action", url);
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
         }
     </script>
 @endpush

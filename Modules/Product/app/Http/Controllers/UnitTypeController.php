@@ -107,7 +107,7 @@ class UnitTypeController extends Controller
         try {
             $result = $this->unitTypeService->delete($id);
             if ($result == "not_possible") {
-                return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index");
+                return $this->redirectWithMessage(RedirectType::ERROR->value, "admin.unit.index", notification: ['messege' => 'Unit Has Products. Unit cannot be deleted', 'alert-type' => 'error']);
             }
 
             return $this->redirectWithMessage(RedirectType::DELETE->value, "admin.unit.index");

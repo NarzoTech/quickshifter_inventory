@@ -132,8 +132,7 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editType{{ $type->id }}">{{ __('Edit') }}</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $type->id }})">{{ __('Delete') }}</a>
                                                             </div>
                                                         </div>
@@ -350,6 +349,7 @@
             let url = "{{ route('admin.assets.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
         }
     </script>
 @endpush

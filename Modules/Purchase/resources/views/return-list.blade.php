@@ -62,8 +62,7 @@
                                                                     <a class="dropdown-item" href="javascript:;"
                                                                         data-toggle="modal"
                                                                         data-target="#editType{{ $list->id }}">Edit</a>
-                                                                    <a href="javascript:;" data-toggle="modal"
-                                                                        data-target="#deleteModal" class="dropdown-item"
+                                                                    <a href="javascript:;"  class="dropdown-item"
                                                                         onclick="deleteData({{ $list->id }})">
                                                                         Delete</a>
                                                                 </div>
@@ -157,6 +156,7 @@
         <script>
             function deleteData(id) {
                 $("#deleteForm").attr("action", '{{ route('admin.purchase.return.type.destroy', '') }}' + "/" + id)
+                $('#deleteModal').modal('show');
             }
         </script>
     @endpush

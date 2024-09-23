@@ -150,8 +150,7 @@
                                                                     href="{{ route('admin.purchase.return', $purchase->id) }}">Purchase
                                                                     Return</a>
                                                                 <a class="dropdown-item" href="#">Sales</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $purchase->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -318,6 +317,7 @@
                 let url = "{{ route('admin.purchase.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
             }
         </script>
     @endpush

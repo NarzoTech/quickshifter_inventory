@@ -53,8 +53,7 @@
                                     <a href="javascript:;" data-toggle="modal" data-target="#bannedModal" class="btn btn-warning mb-3">{{ __('Make a Banned') }}</a>
                                 @endif
 
-                                <a onclick="deleteData({{ $user->id }})" href="javascript:;" data-toggle="modal"
-                                data-target="#deleteModal" class="btn btn-danger">{{ __('Delete Account') }}</a>
+                                <a onclick="deleteData({{ $user->id }})" href="javascript:;" class="btn btn-danger">{{ __('Delete Account') }}</a>
 
                             </div>
                         </div>
@@ -265,6 +264,7 @@
         <script>
             function deleteData(id) {
                 $("#deleteForm").attr("action", '{{ url("/admin/customer-delete/") }}' + "/" + id)
+                $('#deleteModal').modal('show');
             }
         </script>
     @endpush

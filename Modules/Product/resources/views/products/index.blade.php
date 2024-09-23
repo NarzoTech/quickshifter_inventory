@@ -165,7 +165,7 @@
                                                         <button type="button" data-toggle="modal"
                                                             @if ($product->orders->count() > 0) data-target="#canNotDeleteModal"
                                                                 @else
-                                                                data-target="#deleteModal" onclick="deleteData({{ $product->id }})" @endif
+                                                                onclick="deleteData({{ $product->id }})" @endif
                                                             class="btn btn-danger btn-sm mr-2">
                                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </button>
@@ -284,6 +284,7 @@
             var url = '{{ route('admin.product.destroy', ':id') }}';
             url = url.replace(':id', id);
             $("#deleteForm").attr('action', url);
+            $('#deleteModal').modal('show');
         }
 
         function status(id) {

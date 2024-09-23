@@ -68,8 +68,7 @@
                                                         @endadminCan
                                                         @if ($tax->products->count() == 0)
                                                             @adminCan('tax.delete')
-                                                                <a href="javascript:;" data-bs-toggle="modal"
-                                                                    data-bs-target="#deleteModal" class="btn btn-danger btn-sm"
+                                                                <a href="javascript:;"  class="btn btn-danger btn-sm"
                                                                     onclick="deleteData({{ $tax->id }})"><i
                                                                         class="fa fa-trash" aria-hidden="true"></i></a>
                                                             @endadminCan
@@ -117,6 +116,7 @@
 
         function deleteData(id) {
             $("#deleteForm").attr("action", '{{ route('admin.tax.destroy', '') }}' + "/" + id)
+            $('#deleteModal').modal('show');
         }
 
         function changeStatus(id) {

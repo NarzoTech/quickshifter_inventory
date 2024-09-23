@@ -128,6 +128,7 @@
                 let url = "{{ route('admin.suppliers.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
             }
 
             function status(id) {

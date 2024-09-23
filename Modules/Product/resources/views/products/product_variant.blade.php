@@ -53,8 +53,8 @@
                                                         <a href="{{ route('admin.product-variant.edit', $variant['id']) }}"
                                                             class="btn btn-primary btn-sm"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
-                                                        <button type="button" data-toggle="modal"
-                                                                data-target="#deleteModal" onclick="deleteData({{ $variant['id'] }})"
+
+                                                        <button type="button"  onclick="deleteData({{ $variant['id'] }})"
                                                                 class="btn btn-danger btn-sm">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                                             </button>
@@ -85,6 +85,7 @@
             var url = '{{ route('admin.product-variant.delete', ':id') }}';
             url = url.replace(':id', id);
             $("#deleteForm").attr('action', url);
+            $('#deleteModal').modal('show');
         }
     </script>
 @endpush

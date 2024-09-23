@@ -65,8 +65,7 @@
                                                                         aria-hidden="true"></i></a>
                                                             @endadminCan
                                                             @adminCan('role.delete')
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="btn btn-danger btn-sm"
+                                                                <a href="javascript:;"class="btn btn-danger btn-sm"
                                                                     onclick="deleteData({{ $role->id }})"><i
                                                                         class="fa fa-trash" aria-hidden="true"></i></a>
                                                             @endadminCan
@@ -97,8 +96,9 @@
 
         function deleteData(id) {
             let url = "{{ route('admin.role.destroy', ':id') }}"
-                url = url.replace(':id', id);
-                $("#deleteForm").attr("action", url);
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
         }
     </script>
 @endpush

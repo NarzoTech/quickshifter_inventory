@@ -124,8 +124,7 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
                                                             </div>
                                                         </div>
@@ -297,7 +296,6 @@
                 }
 
                 let accounts = @json($accounts);
-                // accounts = JSON.parse(accounts);
                 $('select[name="payment_type"]').on('change', function() {
                     const paymentType = $(this).val();
                     let html = `<label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
@@ -318,6 +316,7 @@
                 let url = "{{ route('admin.expense.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
             }
         </script>
     @endpush

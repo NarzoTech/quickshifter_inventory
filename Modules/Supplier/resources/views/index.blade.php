@@ -188,8 +188,7 @@
                                                                 @endif
                                                                 <a class="dropdown-item"
                                                                     href="#">{{ __('Sales') }}</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;"  class="dropdown-item"
                                                                     onclick="deleteData({{ $supplier->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -507,6 +506,7 @@
                 let url = "{{ route('admin.suppliers.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
             }
 
             function status(id) {

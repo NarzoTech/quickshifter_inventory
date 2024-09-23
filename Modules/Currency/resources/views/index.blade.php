@@ -71,8 +71,7 @@
                                                                 aria-hidden="true"></i></a>
 
                                                         @if ($currency->id != 1)
-                                                            <a href="javascript:;" data-toggle="modal"
-                                                                data-target="#deleteModal" class="btn btn-danger btn-sm"
+                                                            <a href="javascript:;" class="btn btn-danger btn-sm"
                                                                 onclick="deleteData({{ $currency->id }})" disabled><i
                                                                     class="fa fa-trash" aria-hidden="true"></i></a>
                                                         @endif
@@ -99,6 +98,7 @@
             let url = "{{ route('admin.currency.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
         }
     </script>
 @endsection

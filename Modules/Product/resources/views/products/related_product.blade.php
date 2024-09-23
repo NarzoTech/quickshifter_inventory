@@ -68,19 +68,3 @@
         </section>
     </div>
 @endsection
-
-
-@push('js')
-    <script>
-        $(document).ready(function() {
-            'use strict';
-        });
-
-        function deleteData(id) {
-            var id = id;
-            var url = '{{ route('admin.product.destroy', ':id') }}';
-            url = url.replace(':id', id);
-            $("#deleteForm").attr('action', url);
-        }
-    </script>
-@endpush

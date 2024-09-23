@@ -157,8 +157,7 @@
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
 
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
                                                             </div>
                                                         </div>
@@ -257,6 +256,7 @@
                 let url = "{{ route('admin.customer.employee.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
             }
 
 

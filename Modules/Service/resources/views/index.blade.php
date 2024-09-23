@@ -116,8 +116,7 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editcategory{{ $category->id }}">Edit</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;"class="dropdown-item"
                                                                     onclick="deleteData({{ $category->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -244,6 +243,7 @@
                 let url = "{{ route('admin.serviceCategory.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
             }
         </script>
     @endpush

@@ -108,8 +108,7 @@
                                                                     <i class="fa fa-pen"></i>
                                                                 </a>
                                                             @endadminCan
-                                                            <a href="javascript:;" data-toggle="modal"
-                                                                data-target="#deleteModal" class="btn btn-danger btn-sm"
+                                                            <a href="javascript:;" class="btn btn-danger btn-sm"
                                                                 onclick="deleteData({{ $language->id }})"><i
                                                                     class="fa fa-trash" aria-hidden="true"></i></a>
                                                         </div>
@@ -140,6 +139,7 @@
             let url = "{{ route('admin.languages.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
+                $('#deleteModal').modal('show');
         }
 
         function changeStatus(id, type) {

@@ -68,8 +68,7 @@
                                                         <a href="javascript:;" data-toggle="modal" data-target="#editWarehouse{{ $house->id }}"
                                                             class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
-                                                        <a href="javascript:;" data-toggle="modal"
-                                                            data-target="#deleteModal" class="btn btn-danger btn-sm"
+                                                        <a href="javascript:;"  class="btn btn-danger btn-sm"
                                                             onclick="deleteData({{ $house->id }})"><i
                                                                 class="fa fa-trash" aria-hidden="true"></i></a>
                                                     </td>

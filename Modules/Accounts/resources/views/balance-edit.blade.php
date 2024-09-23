@@ -243,7 +243,6 @@
                                                                         class="btn btn-primary btn-sm">Edit</a>
                                                                     <a href="javascript:void(0)"
                                                                         onclick="deleteData({{ $withdraw->id }})"
-                                                                        data-toggle="modal" data-target="#deleteModal"
                                                                         class="btn btn-danger btn-sm">Delete</a>
                                                                 </td>
                                                             </tr>
@@ -290,6 +289,7 @@
             let url = "{{ route('admin.opening-balance.destroy', ':id') }}"
             url = url.replace(':id', id);
             $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
         }
     </script>
 @endpush

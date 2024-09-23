@@ -106,13 +106,14 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('admin.unit.edit', $unit->id) }}"
-                                                            class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
-                                                                aria-hidden="true"></i></a>
-                                                        <a href="javascript:;" data-toggle="modal"
-                                                            data-target="#deleteModal" class="btn btn-danger btn-sm"
-                                                            onclick="deleteData({{ $unit->id }})"><i
-                                                                class="fa fa-trash" aria-hidden="true"></i></a>
+                                                        <div class="btn-group">
+                                                            <a href="{{ route('admin.unit.edit', $unit->id) }}"
+                                                                class="btn btn-primary btn-sm edit-btn mr-2"><i
+                                                                    class="fa fa-edit" aria-hidden="true"></i></a>
+                                                            <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                                onclick="deleteData({{ $unit->id }})"><i
+                                                                    class="fa fa-trash" aria-hidden="true"></i></a>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -189,6 +190,7 @@
             let url = '{{ route('admin.unit.destroy', ':id') }}';
             url = url.replace(':id', id);
             $("#deleteForm").attr('action', url);
+            $('#deleteModal').modal('show');
         }
     </script>
 @endpush
