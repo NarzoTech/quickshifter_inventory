@@ -44,7 +44,7 @@ class User extends Model
 
     public function group()
     {
-        return $this->belongsTo(UserGroup::class, 'group_id');
+        return $this->belongsTo(UserGroup::class, 'group_id')->withDefault();
     }
     public function area()
     {
@@ -52,7 +52,7 @@ class User extends Model
     }
     public function vehicle()
     {
-        return $this->belongsTo(Vehicle::class, 'vehicle_id');
+        return $this->belongsTo(Vehicle::class, 'vehicle_id')->withDefault();
     }
 
     public function due()

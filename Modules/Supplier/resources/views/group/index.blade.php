@@ -34,13 +34,12 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.supplierGroup.index') }}" method="GET"
-                                     class="card-body">
+                                <form action="{{ route('admin.supplierGroup.index') }}" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="{{ __('Search') }}">
-                                                <button type="submit">
+                                            <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>
                                         </div>
@@ -126,8 +125,7 @@
                                                                 <a class="dropdown-item" href="javascript:;"
                                                                     data-toggle="modal"
                                                                     data-target="#editGroup{{ $group->id }}">Edit</a>
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" class="dropdown-item"
+                                                                <a href="javascript:;"class="dropdown-item"
                                                                     onclick="deleteData({{ $group->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -153,8 +151,6 @@
             </div>
         </section>
     </div>
-
-    <x-admin.delete-modal />
 
     {{-- add group --}}
     <div class="modal" id="addgroup">
@@ -272,7 +268,10 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.supplierGroup.destroy', '') }}' + "/" + id)
+                let url = '{{ route('admin.supplierGroup.destroy', ':id') }}';
+                url = url.replace(':id', id);
+                $("#deleteForm").attr('action', url);
+                $('#deleteModal').modal('show');
             }
         </script>
     @endpush

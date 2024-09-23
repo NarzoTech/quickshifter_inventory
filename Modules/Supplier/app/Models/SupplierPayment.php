@@ -2,6 +2,7 @@
 
 namespace Modules\Supplier\app\Models;
 
+use App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Accounts\app\Models\Account;
@@ -40,6 +41,16 @@ class SupplierPayment extends Model
 
     public function account()
     {
-        return $this->belongsTo(Account::class, 'account_id', 'id');
+        return $this->belongsTo(Account::class, 'account_id', 'id')->withDefault();
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(Admin::class, 'created_by', 'id')->withDefault();
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(Admin::class, 'updated_by', 'id')->withDefault();
     }
 }

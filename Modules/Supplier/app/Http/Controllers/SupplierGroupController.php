@@ -25,7 +25,7 @@ class SupplierGroupController extends Controller
     public function index()
     {
         $supplierGroups = $this->userGroup->getUserGroup()->where('type', 'supplier')->paginate(request()->get('par-page') ? request()->get('par-page') : 20);
-        return view('supplier::group.index',compact('supplierGroups'));
+        return view('supplier::group.index', compact('supplierGroups'));
     }
 
     /**
@@ -83,6 +83,11 @@ class SupplierGroupController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $this->userGroup->destroy($id);
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.supplierGroup.index', [], ['messege' => 'Supplier group deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.supplierGroup.index', [], ['messege' => 'Supplier group delete failed', 'alert-type' => 'error']);
+        }
     }
 }
