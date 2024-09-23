@@ -92,12 +92,13 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
     <script>
         "use strict";
 
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ url('admin/currency/') }}' + "/" + id)
+            let url = "{{ route('admin.currency.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
         }
     </script>
 @endsection

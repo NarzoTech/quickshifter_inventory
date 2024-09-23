@@ -59,7 +59,9 @@
                                                                 <a href="{{ route('admin.addons.update.status', $addon->slug) }}"
                                                                     class="btn btn-success">{{ __('Enable') }}</a>
                                                             @endif
-                                                            <a data-toggle="modal" data-target="#deleteModal" href="{{ route('admin.addons.uninstall', $addon->slug) }}" onclick="deleteData('{{ route('admin.addons.uninstall', $addon->slug) }}')"
+                                                            <a data-toggle="modal" data-target="#deleteModal"
+                                                                href="{{ route('admin.addons.uninstall', $addon->slug) }}"
+                                                                onclick="deleteData('{{ route('admin.addons.uninstall', $addon->slug) }}')"
                                                                 class="btn btn-danger">{{ __('Uninstall') }}</a>
                                                     @endif
                                                 </div>
@@ -75,8 +77,6 @@
             </div>
         </section>
     </div>
-
-    <x-admin.delete-modal />
 @endsection
 
 @push('js')

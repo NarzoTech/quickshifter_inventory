@@ -175,8 +175,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
-
 
     {{-- edit customer --}}
     @foreach ($purchases as $index => $purchase)
@@ -317,7 +315,9 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.purchase.destroy', '') }}' + "/" + id)
+                let url = "{{ route('admin.purchase.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
             }
         </script>
     @endpush

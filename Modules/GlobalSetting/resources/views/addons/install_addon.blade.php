@@ -97,7 +97,6 @@
             </div>
         </section>
     </div>
-    <x-admin.delete-modal />
 @endsection
 
 @push('css')

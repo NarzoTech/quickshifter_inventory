@@ -261,7 +261,6 @@
     </div>
     <!-- End Send Mail modal -->
 
-    <x-admin.delete-modal />
     @push('js')
         <script>
             function deleteData(id) {

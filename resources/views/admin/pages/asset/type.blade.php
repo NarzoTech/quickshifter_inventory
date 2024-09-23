@@ -145,9 +145,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
-
-
     {{-- add Asset Type --}}
     <div class="modal" id="addAssetType">
         <div class="modal-dialog">
@@ -221,7 +218,9 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.asset-category.destroy', '') }}' + "/" + id)
+                let url = "{{ route('admin.asset-category.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
             }
         </script>
     @endpush

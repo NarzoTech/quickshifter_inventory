@@ -262,7 +262,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
 @endsection
 @push('js')
     <script>
@@ -288,7 +287,9 @@
         });
 
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ route('admin.opening-balance.destroy', '') }}' + "/" + id)
+            let url = "{{ route('admin.opening-balance.destroy', ':id') }}"
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
         }
     </script>
 @endpush

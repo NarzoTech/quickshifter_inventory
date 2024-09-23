@@ -144,8 +144,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
-
     {{-- add area --}}
     <div class="modal" id="addcategory">
         <div class="modal-dialog">
@@ -243,7 +241,9 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.serviceCategory.destroy', '') }}' + "/" + id)
+                let url = "{{ route('admin.serviceCategory.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
             }
         </script>
     @endpush

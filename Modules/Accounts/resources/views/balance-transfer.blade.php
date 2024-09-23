@@ -136,9 +136,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
-
-
 
     {{-- create balance transfer modal --}}
     <div class="modal" id="transferModal">

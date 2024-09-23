@@ -141,8 +141,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
-
     {{-- add bank --}}
     <div class="modal" id="addbank">
         <div class="modal-dialog">
@@ -220,7 +218,9 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.bank.destroy', '') }}' + "/" + id)
+                let url = "{{ route('admin.bank.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
             }
         </script>
     @endpush

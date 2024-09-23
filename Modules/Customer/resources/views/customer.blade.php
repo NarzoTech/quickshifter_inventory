@@ -218,7 +218,6 @@
         </section>
     </div>
 
-    {{-- <x-admin.delete-modal /> --}}
 
     {{-- add customer --}}
     @include('customer::customer-modal')

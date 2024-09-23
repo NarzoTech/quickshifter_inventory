@@ -82,12 +82,13 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
 @endsection
 @push('js')
     <script>
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ route('admin.customer.due-receive.delete', '') }}' + "/" + id)
+            let url = "{{ route('admin.customer.due-receive.delete', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
         }
     </script>
 @endpush

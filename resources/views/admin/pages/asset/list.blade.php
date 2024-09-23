@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.assets.index') }}" method="GET" 
+                                <form action="{{ route('admin.assets.index') }}" method="GET"
                                     class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
@@ -158,9 +158,6 @@
             </div>
         </section>
     </div>
-
-    <x-admin.delete-modal />
-
 
     {{-- add Asset --}}
     <div class="modal" id="addAssetType">
@@ -350,7 +347,9 @@
         });
 
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ route('admin.assets.destroy', '') }}' + "/" + id)
+            let url = "{{ route('admin.assets.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
         }
     </script>
 @endpush

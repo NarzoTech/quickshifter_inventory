@@ -151,9 +151,6 @@
         </section>
     </div>
 
-    <x-admin.delete-modal />
-
-
     {{-- add Expense type --}}
     <div class="modal" id="addExpense">
         <div class="modal-dialog modal-lg">
@@ -318,7 +315,9 @@
             });
 
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.expense.destroy', '') }}' + "/" + id)
+                let url = "{{ route('admin.expense.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
             }
         </script>
     @endpush

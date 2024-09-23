@@ -132,17 +132,18 @@
             </div>
         </section>
     </div>
-    <x-admin.delete-modal />
 @endsection
 
 @push('js')
     <script>
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ url('/admin/languages/') }}' + "/" + id)
+            let url = "{{ route('admin.languages.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
         }
 
         function changeStatus(id, type) {
-            
+
             var isDemo = "{{ env('PROJECT_MODE') ?? 1 }}"
             if (isDemo == 0) {
                 toastr.error("{{ __('This Is Demo Version. You Can Not Change Anything') }}");

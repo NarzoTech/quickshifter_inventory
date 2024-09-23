@@ -34,13 +34,12 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.suppliers.index') }}" method="GET" 
-                                    class="card-body">
+                                <form action="{{ route('admin.suppliers.index') }}" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="Search name, email and phone number...">
-                                                <button type="submit">
+                                            <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>
                                         </div>
@@ -213,8 +212,6 @@
             </div>
         </section>
     </div>
-
-    <x-admin.delete-modal />
 
     {{-- add Supplier --}}
     <div class="modal" id="addSupplier">
@@ -507,7 +504,9 @@
             })
 
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ route('admin.suppliers.destroy', '') }}' + "/" + id)
+                let url = "{{ route('admin.suppliers.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
             }
 
             function status(id) {

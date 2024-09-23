@@ -105,13 +105,14 @@
                 </div>
         </section>
     </div>
-    <x-admin.delete-modal />
 @endsection
 
 @push('js')
     <script>
         function deleteData(id) {
-            $("#deleteForm").attr("action", "{{ url('admin/admin/') }}" + "/" + id)
+            let url = "{{ route('admin.admin.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
         }
 
         function changeAdminStatus(id) {

@@ -89,7 +89,6 @@
             </div>
         </section>
     </div>
-    <x-admin.delete-modal />
 @endsection
 
 @push('js')
@@ -97,7 +96,9 @@
         "use strict"
 
         function deleteData(id) {
-            $("#deleteForm").attr("action", "{{ url('/admin/role/') }}" + "/" + id)
+            let url = "{{ route('admin.role.destroy', ':id') }}"
+                url = url.replace(':id', id);
+                $("#deleteForm").attr("action", url);
         }
     </script>
 @endpush

@@ -152,7 +152,6 @@
             </div>
         </div>
     </div>
-    <x-admin.delete-modal />
 @endsection
 @push('css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
