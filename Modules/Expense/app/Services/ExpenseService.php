@@ -92,10 +92,13 @@ class ExpenseService
 
     public function destroy($id)
     {
-        // delete payment
-        $payment = Payment::where('expense_id', $id)->first();
-        $payment->delete();
+        $expense = $this->expense->find($id);
+        // delete payment and from trash
+        $expense->payments()->withTrashed()->forceDelete();
 
-        $this->expense->find($id)->delete();
+
+
+        // delete expense a
+        return $expense->delete();
     }
 }

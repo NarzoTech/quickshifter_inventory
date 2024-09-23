@@ -3,6 +3,7 @@
 namespace Modules\Expense\app\Models;
 
 use App\Models\Admin;
+use App\Models\Payment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Accounts\app\Models\Account;
@@ -41,5 +42,10 @@ class Expense extends Model
     public function createdBy()
     {
         return $this->belongsTo(Admin::class, 'created_by')->withDefault();
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }
