@@ -232,7 +232,7 @@
                                                                 <td>{{ $withdraw->note }}</td>
                                                                 <td>{{ $withdraw->amount }}</td>
                                                                 <td>
-                                                                    <a href="{{ route('admin.opening-balance.edit', $deposit->id) }}"
+                                                                    <a href="{{ route('admin.opening-balance.edit', $withdraw->id) }}"
                                                                         class="btn btn-primary btn-sm">Edit</a>
                                                                     <a href="javascript:void(0)"
                                                                         onclick="deleteData({{ $withdraw->id }})"

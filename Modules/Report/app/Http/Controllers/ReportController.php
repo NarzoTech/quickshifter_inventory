@@ -22,7 +22,7 @@ use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
-use Modules\Service\app\Models\ServiceCategory;
+use Modules\Service\app\Models\Service;
 use Modules\Supplier\app\Services\SupplierService;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Supplier\app\Models\SupplierPayment;
@@ -75,6 +75,8 @@ class ReportController extends Controller
     {
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+
         $openingBalance = $this->accountsService->getOpeningBalance($fromDate);
         $currentBalance = $this->accountsService->accountBalance($fromDate, $toDate) + $openingBalance;
 
@@ -82,13 +84,14 @@ class ReportController extends Controller
         $date = date('Y-m-d');
 
         // services calculation
-        $services = ProductSale::whereNotNull('service_id')->where(function ($query)  use ($date) {
-            $query->whereHas('sale', function ($q) use ($date) {
-                $q->where('order_date', $date);
+        $services = ProductSale::whereNotNull('service_id')->where(function ($query)  use ($fromDate, $toDate) {
+            $query->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->where('order_date', '>=', $fromDate);
+                $q->where('order_date', '<=', $toDate);
             });
         })->get();
 
-        $washId = ServiceCategory::where('name', 'Wash')->first()?->id;
+        $washId = Service::where('name', 'Wash')->first()?->id;
         if ($services->where('service_id', $washId)->first()) {
             $washData = [];
             $washData['date'] = now()->parse($services->where('service_id', $washId)->first()->sale->order_date)->format('d-M');
@@ -119,9 +122,10 @@ class ReportController extends Controller
         }
 
         $sales = ProductSale::where('source', 1)
-            ->where(function ($query)  use ($date) {
-                $query->whereHas('sale', function ($q) use ($date) {
-                    $q->where('order_date', $date);
+            ->where(function ($query)  use ($fromDate, $toDate) {
+                $query->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                    $q->where('order_date', '>=', $fromDate);
+                    $q->where('order_date', '<=', $toDate);
                 });
             })->whereNotNull('product_id')->get();
 
@@ -131,6 +135,7 @@ class ReportController extends Controller
             $lastPurchasePrice += remove_comma($sale->product->LastPurchasePrice) * $sale->quantity;
         }
 
+
         if ($sales->first()) {
             $newData = [];
             $newData['date'] = now()->parse($sales->first()->sale->order_date)->format('d-M');
@@ -138,7 +143,7 @@ class ReportController extends Controller
             $newData['category'] = "Sale (Own Inventory)";
             $newData['particular'] = '';
             $newData['debit'] = 0;
-            $newData['credit'] = $sales->sum('price');
+            $newData['credit'] = $sales->sum('sub_total');
             $newData['iv'] = $lastPurchasePrice;
 
             $newData = (object)$newData;
@@ -147,9 +152,10 @@ class ReportController extends Controller
 
 
         $otherIncome = ProductSale::where('source', 2)
-            ->where(function ($query)  use ($date) {
-                $query->whereHas('sale', function ($q) use ($date) {
-                    $q->where('order_date', $date);
+            ->where(function ($query)  use ($fromDate, $toDate) {
+                $query->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                    $q->where('order_date', '>=', $fromDate);
+                    $q->where('order_date', '<=', $toDate);
                 });
             })->get();
 
@@ -174,10 +180,18 @@ class ReportController extends Controller
         }
 
 
-        $purchases = Purchase::where('purchase_date', '=', $date)->with('payments')->get();
+        $purchases = Purchase::query();
+
+        if ($fromDate) {
+            $purchases = $purchases->where('purchase_date', '>=', $fromDate);
+        }
+
+        if ($toDate) {
+            $purchases = $purchases->where('purchase_date', '<=', $toDate);
+        }
+        $purchases = $purchases->with('payments')->get();
 
         // purchase
-
         foreach ($purchases as $purchase) {
             $payment = $purchase->payments->where('payment_type', 'purchase')->first();
 
@@ -193,7 +207,8 @@ class ReportController extends Controller
                 $newData = (object)$newData;
                 $data->push($newData);
             }
-            if ($purchase->due_amount) {
+
+            if ($purchase->due_amount != '0.00') {
                 $newData = [];
                 $newData['date'] = now()->parse($purchase->first()->purchase_date)->format('d-M');
                 $newData['mode'] = 'Credit';
@@ -209,7 +224,7 @@ class ReportController extends Controller
 
 
         // expense calculation
-        $expenses = Expense::where('date', $date)->get();
+        $expenses = Expense::whereBetween('date', [$fromDate, $toDate])->get();
 
         foreach ($expenses as $expense) {
             $newData = [];
@@ -227,9 +242,9 @@ class ReportController extends Controller
 
 
         // salary calculation
-        $salaries = EmployeeSalary::where('date', $date)->get();
+        $salaries = EmployeeSalary::whereBetween('date', [$fromDate, $toDate])->get();
         foreach ($salaries as $salary) {
-            $newData = collect([]);
+            $newData = [];
             $newData['date'] = now()->parse($salary->date)->format('d-M');
             $newData['mode'] = 'Cash';
             $newData['category'] = 'Salary';
@@ -237,10 +252,9 @@ class ReportController extends Controller
             $newData['debit'] = $salary->amount;
             $newData['credit'] = 0;
             $newData['iv'] = 0;
+            $newData = (object)$newData;
             $data->push($newData);
         }
-
-
 
         if (request('export')) {
             $fileName = 'dts-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';

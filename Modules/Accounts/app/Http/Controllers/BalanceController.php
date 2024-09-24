@@ -35,6 +35,7 @@ class BalanceController extends Controller
         $accounts->map(function ($account) use (&$accountBalance) {
             $accountBalance += $account->balance();
         });
+
         return view('accounts::balance', compact('accounts', 'deposits', 'withdraws', 'totalDeposits', 'totalWithdraws', 'accountBalance'));
     }
 

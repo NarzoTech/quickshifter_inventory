@@ -157,7 +157,9 @@ class AccountsController extends Controller
         $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'];
 
         $openingBalance = $this->accountsService->getOpeningBalance($fromDate);
-        $currentBalance = $this->accountsService->accountBalance($fromDate, $toDate) + $openingBalance;
+        // $currentBalance = $this->accountsService->accountBalance($fromDate, $toDate) + $openingBalance;
+
+        $currentBalance = $openingBalance + $data['totalReceive'] - $data['totalPay'];
         return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance'));
     }
 }
