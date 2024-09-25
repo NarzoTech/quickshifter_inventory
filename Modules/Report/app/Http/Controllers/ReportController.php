@@ -25,6 +25,7 @@ use Modules\Sales\app\Models\SalesReturn;
 use Modules\Service\app\Models\Service;
 use Modules\Supplier\app\Services\SupplierService;
 use Maatwebsite\Excel\Facades\Excel;
+use Modules\Service\app\Models\ServiceCategory;
 use Modules\Supplier\app\Models\SupplierPayment;
 
 class ReportController extends Controller
@@ -91,30 +92,32 @@ class ReportController extends Controller
             });
         })->get();
 
-        $washId = Service::where('name', 'Wash')->first()?->id;
-        if ($services->where('service_id', $washId)->first()) {
+        $serviceCategory = ServiceCategory::where('name', 'Wash')->first()?->id;
+        $washId = Service::where('category_id', $serviceCategory)->get()->pluck('id')->toArray();
+        $wash = $services->whereIn('service_id', $washId);
+        if ($wash?->first()) {
             $washData = [];
-            $washData['date'] = now()->parse($services->where('service_id', $washId)->first()->sale->order_date)->format('d-M');
+            $washData['date'] = now()->parse($wash->first()->sale->order_date)->format('d-M');
             $washData['mode'] = 'Cash';
             $washData['category'] = "Wash";
             $washData['particular'] = '';
             $washData['debit'] = 0;
-            $washData['credit'] = $services->where('service_id', $washId)->sum('price');
+            $washData['credit'] = $wash->sum('price');
             $washData['iv'] = 0;
 
             $washData = (object)$washData;
             $data->push($washData);
         }
 
-
-        if ($services->where('service_id', '!=', $washId)->first()) {
+        $otherServices = $services->whereNotIn('service_id', $washId);
+        if ($otherServices?->first()) {
             $serviceData = [];
-            $serviceData['date'] = now()->parse($services->where('service_id', '!=', $washId)->first()->sale->order_date)->format('d-M');
+            $serviceData['date'] = now()->parse($otherServices?->first()->sale->order_date)->format('d-M');
             $serviceData['mode'] = 'Cash';
             $serviceData['category'] = "Service";
             $serviceData['particular'] = '';
             $serviceData['debit'] = 0;
-            $serviceData['credit'] = $services->where('service_id', '!=', $washId)->sum('price');
+            $serviceData['credit'] = $otherServices?->sum('price');
             $serviceData['iv'] = 0;
 
             $serviceData = (object)$serviceData;

@@ -134,7 +134,8 @@
                                                     <td>{{ $report->sale_return }}</td>
                                                     <td>{{ currency($report->purchase_price) }}</td>
                                                     <td>{{ currency($report->selling_price) }}</td>
-                                                    <td>{{ currency($report->sub_total) }}</td>
+                                                    <td>{{ currency($report->sub_total - $report->purchase_price * $report->quantity) }}
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

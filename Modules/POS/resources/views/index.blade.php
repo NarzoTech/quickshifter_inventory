@@ -1161,19 +1161,18 @@
                         <i class="fas fa-edit"></i>
                     </a>`;
                     deleteBtn.after(newButton);
-
                     $.ajax({
                         type: 'get',
                         data: {
                             rowid: rowId,
                             purchase_price: purchasePrice,
                             selling_price: sellingPrice,
-                            price: val,
+                            price: sellingPrice,
                         },
                         url: "{{ route('admin.cart.price.update') }}",
                         success: function(response) {
                             $('#stockUpdateModal').modal('hide')
-                            updatePrice(rowId, val)
+                            updatePrice(rowId, sellingPrice)
                             calculateExtra()
                             totalSummery();
                         }

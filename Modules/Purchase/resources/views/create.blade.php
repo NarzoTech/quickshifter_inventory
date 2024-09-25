@@ -344,11 +344,7 @@
             var unit_price = tr.find('input[name="unit_price[]"]').val();
             var total = quantity * unit_price;
             tr.find('input[name="total[]"]').val(total);
-
-
-
             calculateTotalAmount();
-
         });
 
         $(document).on('change', '[name="selling_price[]"]', function() {
@@ -372,11 +368,6 @@
             var tr = $(this).closest('tr');
             var unit_price = tr.find('input[name="unit_price[]"]').val();
             var profit = tr.find('input[name="profit[]"]').val();
-
-            if (unit_price != 0) {
-                var selling_price = parseFloat(unit_price) + (parseFloat(unit_price) * parseFloat(profit) / 100);
-                tr.find('input[name="selling_price[]"]').val(selling_price);
-            }
 
             calculateTotalAmount();
         })

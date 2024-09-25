@@ -258,11 +258,11 @@
                                                     <td>
                                                         <img src="https://amarsolution.com/backend/images/cash-flow-icon/7.png"
                                                             class="icon-img" />
-                                                        Investment
+                                                        Service
                                                     </td>
                                                     <td>
                                                         <span>
-                                                            TK 0.00
+                                                            {{ currency($data['serviceSale']) }}
                                                         </span>
                                                     </td>
                                                     <td>

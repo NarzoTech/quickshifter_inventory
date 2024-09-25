@@ -124,11 +124,14 @@ class AccountsController extends Controller
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
         $data = [];
 
-        $data['productSale'] = CustomerPayment::where('payment_type', 'sale')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        $data['productSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
+            $q->whereBetween('order_date', [$fromDate, $toDate]);
+        })->whereNotNull('product_id')->sum('sub_total');
 
-        // $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
-        //     $q->whereBetween('order_date', [$fromDate, $toDate]);
-        // })->whereNotNull('service_id')->sum('sub_total');
+        $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
+            $q->whereBetween('order_date', [$fromDate, $toDate]);
+        })->whereNotNull('service_id')->sum('sub_total');
+
 
         $data['customer_due'] = Sale::whereBetween('order_date', [$fromDate, $toDate])->whereNotNull('customer_id')->sum('due_amount');
 
@@ -154,7 +157,7 @@ class AccountsController extends Controller
 
         $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'];
 
-        $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'];
+        $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'] + $data['serviceSale'];
 
         $openingBalance = $this->accountsService->getOpeningBalance($fromDate);
         // $currentBalance = $this->accountsService->accountBalance($fromDate, $toDate) + $openingBalance;
