@@ -43,7 +43,7 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-        checkAdminHasPermissionAndThrowException('customer.view');
+        // checkAdminHasPermissionAndThrowException('customer.view');
 
         $query = User::query();
 
@@ -88,7 +88,7 @@ class CustomerController extends Controller
     // store
     public function store(Request $request)
     {
-        checkAdminHasPermissionAndThrowException('customer.create');
+        // checkAdminHasPermissionAndThrowException('customer.create');
 
         $this->saveUser($request);
 
@@ -107,7 +107,7 @@ class CustomerController extends Controller
     }
     public function show($id)
     {
-        checkAdminHasPermissionAndThrowException('customer.view');
+        // checkAdminHasPermissionAndThrowException('customer.view');
 
         $user = User::findOrFail($id);
 

@@ -11,19 +11,19 @@
         </div>
 
         <ul class="sidebar-menu">
-            @adminCan('dashboard.view')
-                <li class="{{ isRoute('admin.dashboard', 'active') }}">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i>
-                        <span>{{ __('Dashboard') }}</span>
-                    </a>
-                </li>
-            @endadminCan
+            {{-- @adminCan('dashboard.view') --}}
+            <li class="{{ isRoute('admin.dashboard', 'active') }}">
+                <a class="nav-link" href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i>
+                    <span>{{ __('Dashboard') }}</span>
+                </a>
+            </li>
+            {{-- @endadminCan --}}
 
-            @if (Module::isEnabled('Supplier') && checkAdminHasPermission('customer.view'))
+            @if (Module::isEnabled('Supplier'))
                 @include('supplier::sidebar')
             @endif
 
-            @if (Module::isEnabled('Customer') && checkAdminHasPermission('customer.view'))
+            @if (Module::isEnabled('Customer'))
                 @include('customer::sidebar')
             @endif
 
@@ -137,9 +137,10 @@
 
             @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('setting.view'))
                 <li
-                    class="nav-item dropdown {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*'], 'active') }}">
+                    class="nav-item dropdown {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database'], 'active') }}">
                     <a href="javascript:void()" class="nav-link has-dropdown"><i
-                            class="fas fa-box"></i><span>{{ __('Settings') }}</span></a>
+                            class="fas fa-box"></i><span>{{ __('Settings') }}</span>
+                    </a>
 
                     <ul class="dropdown-menu">
                         <li class="{{ isRoute('admin.settings', 'active') }}">
@@ -165,6 +166,11 @@
                         <li class="{{ isRoute('admin.courier.settings', 'active') }}">
                             <a class="nav-link" href="{{ route('admin.courier.settings') }}">
                                 {{ __('Courier Settings') }}
+                            </a>
+                        </li>
+                        <li class="{{ isRoute('admin.reset.database', 'active') }}">
+                            <a class="nav-link" href="{{ route('admin.reset.database') }}">
+                                {{ __('Reset Database') }}
                             </a>
                         </li>
                         @if (Module::isEnabled('Tax'))

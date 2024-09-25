@@ -28,12 +28,12 @@ class ProfileController extends Controller
 
     public function profile_update(Request $request)
     {
-        checkAdminHasPermissionAndThrowException('admin.profile.update');
+        // checkAdminHasPermissionAndThrowException('admin.profile.update');
 
         $admin = Auth::guard('admin')->user();
         $rules = [
             'name' => 'required',
-            'email' => 'required|unique:admins,email,'.$admin->id,
+            'email' => 'required|unique:admins,email,' . $admin->id,
 
         ];
         $customMessages = [
@@ -60,7 +60,7 @@ class ProfileController extends Controller
 
     public function update_password(Request $request)
     {
-        checkAdminHasPermissionAndThrowException('admin.profile.update');
+        // checkAdminHasPermissionAndThrowException('admin.profile.update');
 
         $admin = Auth::guard('admin')->user();
         $rules = [
@@ -83,7 +83,6 @@ class ProfileController extends Controller
             $notification = ['messege' => $notification, 'alert-type' => 'success'];
 
             return $this->redirectWithMessage(RedirectType::UPDATE->value, '', [], $notification);
-
         } else {
             $notification = __('Current password does not match');
             $notification = ['messege' => $notification, 'alert-type' => 'error'];

@@ -69,6 +69,9 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('notice/create', [NoticeController::class, 'create'])->name('notice.create');
     Route::post('notice/store', [NoticeController::class, 'store'])->name('notice.store');
 
+    Route::get('reset/database', [SettingController::class, 'resetDatabase'])->name('reset.database');
+    Route::delete('reset/database', [SettingController::class, 'clearDatabase'])->name('database-clear-success');
+
     // Warehouse
     Route::resource('warehouse', WarehouseController::class)->only(['index', 'store', 'update', 'destroy']);
 });

@@ -10,10 +10,6 @@
     </a>
 </li>
 
-{{-- @if (Module::isEnabled('Language') && checkAdminHasPermission('language.view'))
-    @include('language::sidebar')
-@endif --}}
-
 <li class="menu-header">{{ __('Extra Settings') }}</li>
 
 <li class="{{ Route::is('admin.cache-clear') ? 'active' : '' }}"><a class="nav-link"
