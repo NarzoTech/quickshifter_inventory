@@ -135,52 +135,52 @@
                 </a>
             </li> --}}
 
-            @if (Module::isEnabled('GlobalSetting') && checkAdminHasPermission('setting.view'))
-                <li
-                    class="nav-item dropdown {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database'], 'active') }}">
-                    <a href="javascript:void()" class="nav-link has-dropdown"><i
-                            class="fas fa-box"></i><span>{{ __('Settings') }}</span>
-                    </a>
 
-                    <ul class="dropdown-menu">
-                        <li class="{{ isRoute('admin.settings', 'active') }}">
-                            <a class="nav-link" href="{{ route('admin.settings') }}">
-                                {{ __('Business Settings') }}
-                            </a>
-                        </li>
-                        <li class="{{ isRoute('admin.print.settings', 'active') }}">
-                            <a class="nav-link" href="{{ route('admin.print.settings') }}">
-                                {{ __('Print Settings') }}
-                            </a>
-                        </li>
-                        <li class="{{ isRoute('admin.business*', 'active') }}">
-                            <a class="nav-link" href="{{ route('admin.business.index') }}">
-                                {{ __('Business Branches') }}
-                            </a>
-                        </li>
-                        <li class="{{ isRoute('admin.notice.create', 'active') }}">
-                            <a class="nav-link" href="{{ route('admin.notice.create') }}">
-                                {{ __('Notice Send') }}
-                            </a>
-                        </li>
-                        <li class="{{ isRoute('admin.courier.settings', 'active') }}">
-                            <a class="nav-link" href="{{ route('admin.courier.settings') }}">
-                                {{ __('Courier Settings') }}
-                            </a>
-                        </li>
-                        <li class="{{ isRoute('admin.reset.database', 'active') }}">
-                            <a class="nav-link" href="{{ route('admin.reset.database') }}">
-                                {{ __('Reset Database') }}
-                            </a>
-                        </li>
-                        @if (Module::isEnabled('Tax'))
-                            @include('tax::sidebar')
-                        @endif
-                    </ul>
-                </li>
+            <li
+                class="nav-item dropdown {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database'], 'active') }}">
+                <a href="javascript:void()" class="nav-link has-dropdown"><i
+                        class="fas fa-box"></i><span>{{ __('Settings') }}</span>
+                </a>
 
-                <li class="mb-5"></li>
-            @endif
+                <ul class="dropdown-menu">
+                    <li class="{{ isRoute('admin.settings', 'active') }}">
+                        <a class="nav-link" href="{{ route('admin.settings') }}">
+                            {{ __('Business Settings') }}
+                        </a>
+                    </li>
+                    <li class="{{ isRoute('admin.print.settings', 'active') }}">
+                        <a class="nav-link" href="{{ route('admin.print.settings') }}">
+                            {{ __('Print Settings') }}
+                        </a>
+                    </li>
+                    <li class="{{ isRoute('admin.business*', 'active') }}">
+                        <a class="nav-link" href="{{ route('admin.business.index') }}">
+                            {{ __('Business Branches') }}
+                        </a>
+                    </li>
+                    <li class="{{ isRoute('admin.notice.create', 'active') }}">
+                        <a class="nav-link" href="{{ route('admin.notice.create') }}">
+                            {{ __('Notice Send') }}
+                        </a>
+                    </li>
+                    <li class="{{ isRoute('admin.courier.settings', 'active') }}">
+                        <a class="nav-link" href="{{ route('admin.courier.settings') }}">
+                            {{ __('Courier Settings') }}
+                        </a>
+                    </li>
+                    <li class="{{ isRoute('admin.reset.database', 'active') }}">
+                        <a class="nav-link" href="{{ route('admin.reset.database') }}">
+                            {{ __('Reset Database') }}
+                        </a>
+                    </li>
+                    @if (Module::isEnabled('Tax'))
+                        @include('tax::sidebar')
+                    @endif
+                </ul>
+            </li>
+
+            <li class="mb-5"></li>
+
         </ul>
     </aside>
 </div>

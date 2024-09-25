@@ -20,7 +20,7 @@ class ProfileController extends Controller
 
     public function edit_profile()
     {
-        abort_unless(checkAdminHasPermission(['admin.profile.view', 'admin.profile.edit']), 403);
+        // abort_unless(checkAdminHasPermission(['admin.profile.view', 'admin.profile.edit']), 403);
         $admin = Auth::guard('admin')->user();
 
         return view('admin.profile.edit_profile', compact('admin'));

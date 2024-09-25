@@ -95,6 +95,7 @@ class ReportController extends Controller
         $serviceCategory = ServiceCategory::where('name', 'Wash')->first()?->id;
         $washId = Service::where('category_id', $serviceCategory)->get()->pluck('id')->toArray();
         $wash = $services->whereIn('service_id', $washId);
+
         if ($wash?->first()) {
             $washData = [];
             $washData['date'] = now()->parse($wash->first()->sale->order_date)->format('d-M');
@@ -102,7 +103,7 @@ class ReportController extends Controller
             $washData['category'] = "Wash";
             $washData['particular'] = '';
             $washData['debit'] = 0;
-            $washData['credit'] = $wash->sum('price');
+            $washData['credit'] = $wash->sum('sub_total');
             $washData['iv'] = 0;
 
             $washData = (object)$washData;
@@ -117,7 +118,7 @@ class ReportController extends Controller
             $serviceData['category'] = "Service";
             $serviceData['particular'] = '';
             $serviceData['debit'] = 0;
-            $serviceData['credit'] = $otherServices?->sum('price');
+            $serviceData['credit'] = $otherServices?->sum('sub_total');
             $serviceData['iv'] = 0;
 
             $serviceData = (object)$serviceData;
