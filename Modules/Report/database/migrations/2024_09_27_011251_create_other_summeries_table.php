@@ -16,10 +16,11 @@ return new class extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('seller_id')->nullable();
             $table->date('date');
-            $table->text('description')->nullable();
             $table->decimal('amount', 15, 2)->default(0);
             $table->decimal('paid', 15, 2)->default(0);
             $table->decimal('due', 15, 2)->default(0);
+            $table->string('memo_number')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

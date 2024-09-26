@@ -43,4 +43,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('other-summery/customer', [OtherSummeryController::class, 'customer'])->name('other-summery.customer');
 
     Route::post('other-summery/customer', [OtherSummeryController::class, 'customerStore'])->name('other-summery.customer.store');
+
+    Route::put('other-summery/customer/{id}', [OtherSummeryController::class, 'customerUpdate'])->name('other-summery.customer.update');
+
+    Route::delete('other-summery/customer/{id}', [OtherSummeryController::class, 'customerDelete'])->name('other-summery.customer.delete');
 });

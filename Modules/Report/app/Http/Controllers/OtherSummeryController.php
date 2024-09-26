@@ -70,6 +70,28 @@ class OtherSummeryController extends Controller
         }
     }
 
+    public function customerUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'customer_id' => 'required',
+            'date' => 'required|date',
+            'amount' => 'required',
+        ]);
+        $summery =  OtherSummery::find($id);
+
+        $data = $request->except('_token');
+        $data['date'] = now()->parse($request->date);
+        $summery->update($data);
+        return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Customer due summery updated successfully']);
+    }
+
+    public function customerDelete($id)
+    {
+        $summery =  OtherSummery::find($id);
+        $summery->delete();
+        return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Customer due summery deleted successfully']);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

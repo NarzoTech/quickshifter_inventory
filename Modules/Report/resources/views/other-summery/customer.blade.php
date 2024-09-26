@@ -116,30 +116,46 @@
                                         <thead>
                                             <tr>
                                                 <th>{{ __('Sl') }}</th>
+                                                <th>{{ __('Date') }}</th>
                                                 <th>{{ __('Name') }}</th>
                                                 <th>{{ __('Company') }}</th>
                                                 <th>{{ __('Phone') }}</th>
                                                 <th>{{ __('Total') }}</th>
                                                 <th>{{ __('Paid') }}</th>
                                                 <th>{{ __('Due') }}</th>
+                                                <th>{{ __('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($summeries as $summery)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ now()->parse($summery->date)->format('d-m-Y') }}</td>
                                                     <td>{{ $summery->customer->name }}</td>
                                                     <td>{{ $summery->customer->company }}</td>
                                                     <td>{{ $summery->customer->phone }}</td>
                                                     <td>{{ $summery->amount }}</td>
                                                     <td>{{ $summery->paid }}</td>
                                                     <td>{{ $summery->due }}</td>
+                                                    <td>
+                                                        <div class="btn-group">
+                                                            <a href="javascript:void(0);"
+                                                                class="btn btn-primary mr-2 btn-sm" data-toggle="modal"
+                                                                data-target="#editCustomer-{{ $summery->id }}">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm"
+                                                                onclick="deleteData({{ $summery->id }})">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             @endforeach
 
                                             @if ($summeries->count() > 0)
                                                 <tr>
-                                                    <td colspan="4" class="text-right">
+                                                    <td colspan="5" class="text-right">
                                                         Total
                                                     </td>
                                                     <td>
@@ -232,4 +248,89 @@
             </div>
         </div>
     </div>
+
+
+    @foreach ($summeries as $summery)
+        <div class="modal" id="editCustomer-{{ $summery->id }}">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ __('Add Customer Other Due') }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="{{ route('admin.other-summery.customer.update', $summery->id) }}" method="POST"
+                            id="add-customer-due-{{ $summery->id }}">
+                            @csrf
+                            @method('PUT')
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="customer_id">{{ __('Customer Name') }}</label>
+                                    <select name="customer_id" id="customer_id" class="form-control select2"
+                                        data-control="select2" data-dropdown-parent="#editCustomer-{{ $summery->id }}">
+                                        <option value="">{{ __('Select Group') }}</option>
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->id }}"
+                                                {{ $customer->id == $summery->customer_id ? 'selected' : '' }}>
+                                                {{ $customer->name }} -
+                                                {{ $customer->phone }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="date">{{ __('Date') }}</label>
+                                    <input type="text" class="form-control datepicker" id="date" name="date"
+                                        value="{{ now()->parse($summery->date)->format('d-m-Y') }}">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="amount">{{ __('Total Amount') }}</label>
+                                    <input type="text" class="form-control" id="amount" name="amount"
+                                        value="{{ $summery->amount }}">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="paid">{{ __('Paid') }}</label>
+                                    <input type="text" class="form-control" id="paid" name="paid"
+                                        value="{{ $summery->paid }}">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="due">{{ __('Due') }}</label>
+                                    <input type="text" class="form-control" id="due" name="due"
+                                        value="{{ $summery->due }}">
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label for="description">{{ __('Description') }}</label>
+                                    <textarea name="description" id="description" class="form-control height-80px" rows="3">{{ $summery->description }}</textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary"
+                            form="add-customer-due-{{ $summery->id }}">Save</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
+
+
+@push('js')
+    <script>
+        function deleteData(id) {
+            let url = '{{ route('admin.other-summery.customer.delete', ':id') }}';
+            url = url.replace(':id', id);
+            $("#deleteForm").attr('action', url);
+            $('#deleteModal').modal('show');
+        }
+    </script>
+@endpush

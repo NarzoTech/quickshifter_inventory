@@ -22,6 +22,7 @@ class OtherSummery extends Model
         'seller_id',
         'date',
         'description',
+        'memo_number',
         'amount',
         'paid',
         'due',
