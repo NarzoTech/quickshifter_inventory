@@ -16,7 +16,7 @@
     </ul>
 </li>
 
-<li class="nav-item dropdown {{ isRoute(['admin.other-summery.customer', 'admin.report.dts'], 'active') }}">
+<li class="nav-item dropdown {{ isRoute(['admin.other-summery.customer', 'admin.other-summery.supplier'], 'active') }}">
     <a href="javascript:void()" class="nav-link has-dropdown"><i
             class="fas fa-newspaper"></i><span>{{ __('Others Summery') }}</span></a>
 
@@ -26,9 +26,9 @@
                 {{ __('Customer Other Due') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.report.dts') }}">
-                {{ __('DTS') }}
+        <li class="{{ Route::is('admin.other-summery.supplier') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.other-summery.supplier') }}">
+                {{ __('Supplier Other Due') }}
             </a>
         </li>
     </ul>

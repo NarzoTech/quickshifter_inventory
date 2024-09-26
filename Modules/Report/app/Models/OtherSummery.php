@@ -19,7 +19,7 @@ class OtherSummery extends Model
      */
     protected $fillable = [
         'customer_id',
-        'seller_id',
+        'supplier_id',
         'date',
         'description',
         'memo_number',
@@ -35,6 +35,6 @@ class OtherSummery extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'seller_id');
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 }

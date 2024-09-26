@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Report\app\Models\OtherSummery;
+use Modules\Supplier\app\Models\Supplier;
 
 class OtherSummeryController extends Controller
 {
@@ -19,7 +20,7 @@ class OtherSummeryController extends Controller
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $customers = User::all();
-        $summeries =  OtherSummery::with('customer');
+        $summeries =  OtherSummery::with('customer')->whereNotNull('customer_id');
 
         if ($fromDate || $toDate) {
             $summeries = $summeries->whereBetween('date', [$fromDate, $toDate]);
@@ -92,51 +93,84 @@ class OtherSummeryController extends Controller
         return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Customer due summery deleted successfully']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function supplier()
     {
-        return view('report::create');
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
+        $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
+        $suppliers = Supplier::all();
+        $summeries =  OtherSummery::with('supplier')->whereNotNull('supplier_id');
+
+        if ($fromDate || $toDate) {
+            $summeries = $summeries->whereBetween('date', [$fromDate, $toDate]);
+        }
+        if (request()->keyword) {
+            $summeries = $summeries->where(function ($q) {
+                $q->whereHas('supplier', function ($q) {
+                    $q->where('name', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('phone', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('company', 'like', '%' . request()->keyword . '%');
+                });
+            });
+        }
+
+        $data['total_amount'] = $summeries->sum('amount');
+        $data['total_paid'] = $summeries->sum('paid');
+        $data['total_due'] = $summeries->sum('due');
+
+
+        $summeries = $summeries->paginate(20);
+        return view('report::other-summery.supplier', compact('suppliers', 'summeries', 'data'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): RedirectResponse
+
+    public function supplierStore(Request $request)
     {
-        //
+        $request->validate([
+            'supplier_id' => 'required',
+            'date' => 'required|date',
+            'amount' => 'required',
+        ]);
+        $supplier = Supplier::find($request->supplier_id);
+        if (!$supplier) {
+            return redirect()->back()->with(['alert-type' => 'error', 'messege' => 'Supplier not found']);
+        }
+
+        $summery =  OtherSummery::create([
+            'supplier_id' => $request->supplier_id,
+            'date' => now()->parse($request->date),
+            'amount' => $request->amount,
+            'paid' => $request->paid,
+            'due' => $request->due,
+            'description' => $request->description,
+            'memo_number' => $request->memo_number,
+        ]);
+        if ($summery) {
+            return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Supplier due summery created successfully']);
+        } else {
+            return redirect()->back()->with(['alert-type' => 'error', 'messege' => 'Something went wrong']);
+        }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
+    public function supplierUpdate(Request $request, $id)
     {
-        return view('report::show');
+        $request->validate([
+            'supplier_id' => 'required',
+            'date' => 'required|date',
+            'amount' => 'required',
+        ]);
+        $summery =  OtherSummery::find($id);
+
+        $data = $request->except('_token');
+        $data['date'] = now()->parse($request->date);
+        $summery->update($data);
+        return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Supplier due summery updated successfully']);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function  supplierDelete($id)
     {
-        return view('report::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id): RedirectResponse
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
+        $summery =  OtherSummery::find($id);
+        $summery->delete();
+        return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Supplier due summery deleted successfully']);
     }
 }

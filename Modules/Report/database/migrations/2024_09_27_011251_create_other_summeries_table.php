@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('other_summeries', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id')->nullable();
-            $table->unsignedBigInteger('seller_id')->nullable();
+            $table->unsignedBigInteger('supplier_id')->nullable();
             $table->date('date');
             $table->decimal('amount', 15, 2)->default(0);
             $table->decimal('paid', 15, 2)->default(0);
