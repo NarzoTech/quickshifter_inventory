@@ -38,7 +38,7 @@
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="Product Name, SKU, Barcode...">
+                                                class="form-control" placeholder="Name, phone, company , memo number...">
                                             <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>

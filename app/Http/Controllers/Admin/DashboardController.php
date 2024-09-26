@@ -8,15 +8,27 @@ use Modules\Customer\app\Models\CustomerDue;
 use Modules\Language\app\Models\Language;
 use Modules\Product\app\Models\Product;
 use Modules\Sales\app\Models\Sale;
+use Modules\Supplier\app\Services\SupplierService;
 
 class DashboardController extends Controller
 {
+    public function __construct(private SupplierService $supplierService)
+    {
+        $this->middleware('auth:admin');
+    }
     public function dashboard()
     {
         $data['customerDues'] = CustomerDue::where('status', 1)->sum('due_amount');
         $data['todaySales'] = Sale::whereDate('order_date', date('Y-m-d'))->sum('grand_total');
         $data['totalProducts'] = Product::count();
 
+        $suppliers = $this->supplierService->allSupplier();
+
+        $data['total_supplier_due'] = 0;
+        foreach ($suppliers->get() as $supplier) {
+            $totalReturn = $supplier->purchaseReturn->sum('return_amount');
+            $data['total_supplier_due'] += $supplier->total_due - $totalReturn;
+        }
 
         $data['suppliersDues'] = 0;
         return view('admin.dashboard', compact('data'));

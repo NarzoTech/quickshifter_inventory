@@ -110,7 +110,9 @@ class OtherSummeryController extends Controller
                     $q->where('name', 'like', '%' . request()->keyword . '%')
                         ->orWhere('phone', 'like', '%' . request()->keyword . '%')
                         ->orWhere('company', 'like', '%' . request()->keyword . '%');
-                });
+                })
+                    ->orWhere('memo_number', 'like', '%' . request()->keyword . '%')
+                ;
             });
         }
 

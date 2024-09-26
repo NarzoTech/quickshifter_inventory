@@ -5,20 +5,6 @@
 @section('admin-content')
     <div class="main-content">
 
-        @if ($setting->is_queable == 'active' && Cache::get('corn_working') !== 'working')
-            <div class="alert alert-danger alert-has-icon alert-dismissible show fade">
-                <div class="alert-icon"><i class="fas fa-sync"></i></div>
-                <div class="alert-body">
-                    <div class="alert-title"><a href="{{ route('admin.general-setting') }}" target="_blank"
-                            rel="noopener noreferrer">{{ __('Corn Job Is Not Running! Many features will be disabled and face errors') }}</a>
-                    </div>
-                    <button class="close" data-dismiss="alert">
-                        <span><i class="fas fa-times"></i></span>
-                    </button>
-                </div>
-            </div>
-        @endif
-
         <section class="section">
             <div class="section-header">
                 <h1>{{ __('Dashboard') }}</h1>
@@ -52,7 +38,7 @@
                                     <h4>{{ __('Supplier Due') }}</h4>
                                 </div>
                                 <div class="card-body">
-                                    {{ currency($data['suppliersDues']) }}
+                                    {{ currency($data['total_supplier_due']) }}
                                 </div>
                             </div>
                         </div>
