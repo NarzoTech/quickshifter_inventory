@@ -17,6 +17,7 @@ use Modules\Customer\app\Models\Vehicle;
 use Modules\LiveChat\app\Models\Message;
 use Modules\Order\app\Models\OrderReview;
 use Modules\Sales\app\Models\Sale;
+use Modules\Sales\app\Models\SalesReturn;
 
 class User extends Model
 {
@@ -70,8 +71,14 @@ class User extends Model
     public function sales()
     {
 
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $from_date = null;
+        $to_date = null;
+        if (request()->from_date) {
+            $from_date = now()->parse(request()->from_date);
+        }
+        if (request()->to_date) {
+            $to_date = now()->parse(request()->to_date);
+        }
 
         // current route
         $route = request()->route()->getName();
@@ -79,28 +86,47 @@ class User extends Model
 
         $sales = $this->hasMany(Sale::class, 'customer_id');
 
-        if ($route == 'admin.report.customers') {
-
-            return $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        if ($from_date || $to_date) {
+            $sales = $sales->whereBetween('order_date', [$from_date, $to_date]);
         }
 
-        return $sales;
+        if ($route == 'admin.report.customers') {
+
+            return $sales->whereBetween('order_date', [$from_date, $to_date]);
+        }
+
+        return $sales->with('saleReturns');
     }
     public function payment()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $from_date = null;
+        $to_date = null;
+        if (request()->from_date) {
+            $from_date = now()->parse(request()->from_date);
+        }
+        if (request()->to_date) {
+            $to_date = now()->parse(request()->to_date);
+        }
 
         // current route
         $route = request()->route()->getName();
         $payment = $this->hasMany(CustomerPayment::class, 'customer_id');
 
+        if ($from_date || $to_date) {
+            $payment = $payment->whereBetween('payment_date', [$from_date, $to_date]);
+        }
 
         if ($route == 'admin.report.customers') {
-            return $payment->whereBetween('payment_date', [$fromDate, $toDate]);
+            return $payment->whereBetween('payment_date', [$from_date, $to_date]);
         }
 
         return $payment;
+    }
+
+    public function saleReturn()
+    {
+        $return = $this->hasManyThrough(Sale::class, SalesReturn::class, 'customer_id', 'id', 'id', 'sale_id');
+        return $return;
     }
 
     public function getTotalPaidAttribute()
@@ -118,7 +144,6 @@ class User extends Model
 
     public function orderReviews()
     {
-
         return $this->hasMany(OrderReview::class, 'user_id');
     }
 }

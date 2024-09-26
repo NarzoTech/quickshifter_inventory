@@ -64,6 +64,30 @@ class CustomerController extends Controller
             $users = $query->orderBy('id', $orderBy);
         }
 
+        $data['totalSale'] = 0;
+        $data['pay'] = 0;
+        $data['total_return'] = 0;
+        $data['total_return_pay'] = 0;
+        $data['total_due'] = 0;
+        $data['total_advance'] = 0;
+        $data['total_due_dismiss'] = 0;
+
+        foreach ($query->get() as $customer) {
+            $data['totalSale'] += $customer->sales->sum('grand_total');
+            // $data['pay'] += $customer->total_paid;
+
+            // $totalReturn = $customer->purchaseReturn->sum('return_amount');
+            // $data['total_return'] += $totalReturn;
+
+            // $data['total_return_pay'] += $customer->purchaseReturn->sum(
+            //     'received_amount',
+            // );
+
+            // $data['total_due'] += $customer->total_due - $totalReturn;
+            // $data['total_advance'] += $customer->advance;
+            // $data['total_due_dismiss'] += $customer->total_due_dismiss;
+        }
+
         if ($request->filled('par-page')) {
             if ($request->get('par-page') == 'all') {
                 $users = $query->get();
@@ -82,6 +106,7 @@ class CustomerController extends Controller
             'groups' => $groups,
             'areaList' => $areaList,
             'vehicles' => $vehicles,
+            'data' => $data
         ]);
     }
 

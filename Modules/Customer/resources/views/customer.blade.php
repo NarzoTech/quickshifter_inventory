@@ -202,6 +202,15 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
+
+                                            <tr>
+                                                <td colspan="4" class="text-right">
+                                                    <strong>{{ __('Total') }}</strong>
+                                                </td>
+                                                <td>
+                                                    {{ currency($data['totalSale']) }}
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
