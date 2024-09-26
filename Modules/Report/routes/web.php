@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Report\app\Http\Controllers\OtherSummeryController;
 use Modules\Report\app\Http\Controllers\ReportController;
 
 /*
@@ -37,4 +38,9 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('report/supplier', [ReportController::class, 'supplier'])->name('report.supplier');
     Route::get('report/salary', [ReportController::class, 'salary'])->name('report.salary');
     Route::get('report/supplier-payment', [ReportController::class, 'supplierPayment'])->name('report.supplier-payment');
+
+
+    Route::get('other-summery/customer', [OtherSummeryController::class, 'customer'])->name('other-summery.customer');
+
+    Route::post('other-summery/customer', [OtherSummeryController::class, 'customerStore'])->name('other-summery.customer.store');
 });
