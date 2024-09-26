@@ -188,7 +188,7 @@
                                                                 @endif
                                                                 <a class="dropdown-item"
                                                                     href="#">{{ __('Sales') }}</a>
-                                                                <a href="javascript:;"  class="dropdown-item"
+                                                                <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $supplier->id }})">
                                                                     Delete</a>
                                                             </div>
@@ -196,6 +196,33 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
+
+                                            <tr>
+                                                <td colspan="4" class="text-right font-weight-bold">
+                                                    Total
+                                                </td>
+                                                <td colspan="1">
+                                                    {{ currency($data['totalPurchase']) }}
+                                                </td>
+                                                <td colspan="1">
+                                                    {{ currency($data['pay']) }}
+                                                </td>
+                                                <td colspan="1">
+                                                    {{ currency($data['total_return']) }}
+                                                </td>
+                                                <td colspan="1">
+                                                    {{ currency($data['total_return_pay']) }}
+                                                </td>
+                                                <td colspan="1">
+                                                    {{ currency($data['total_due']) }}
+                                                </td>
+                                                <td colspan="1">
+                                                    {{ currency($data['total_advance']) }}
+                                                </td>
+                                                <td colspan="1">
+                                                    {{ currency($data['total_due_dismiss']) }}
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

@@ -35,6 +35,28 @@ class SupplierController extends Controller
             return Excel::download(new SupplierExport($this->supplierService), $fileName);
         }
 
+        $data['totalPurchase'] = 0;
+        $data['pay'] = 0;
+        $data['total_return'] = 0;
+        $data['total_return_pay'] = 0;
+        $data['total_due'] = 0;
+        $data['total_advance'] = 0;
+        $data['total_due_dismiss'] = 0;
+        foreach ($suppliers->get() as $supplier) {
+            $data['totalPurchase'] += $supplier->total_purchase;
+            $data['pay'] += $supplier->total_paid;
+
+            $totalReturn = $supplier->purchaseReturn->sum('return_amount');
+            $data['total_return'] += $totalReturn;
+
+            $data['total_return_pay'] += $supplier->purchaseReturn->sum(
+                'received_amount',
+            );
+
+            $data['total_due'] += $supplier->total_due - $totalReturn;
+            $data['total_advance'] += $supplier->advance;
+            $data['total_due_dismiss'] += $supplier->total_due_dismiss;
+        }
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
@@ -47,7 +69,10 @@ class SupplierController extends Controller
         }
         $groups = $this->userGroup->getUserGroup()->where('type', 'supplier')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
-        return view('supplier::index', compact('suppliers', 'groups', 'areaList'));
+
+
+
+        return view('supplier::index', compact('suppliers', 'groups', 'areaList', 'data'));
     }
 
     /**
