@@ -16,43 +16,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.accounts.index') }}" method="GET" onchange="this.submit()"
-                                    class="card-body">
+                                <form action="" method="GET" onchange="this.submit()" class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4 form-group">
-                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="{{ __('Search') }}">
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="">{{ __('Order By') }}</option>
-                                                <option value="1" {{ request('order_by') == '1' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-                                                <option value="0" {{ request('order_by') == '0' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="par-page" id="par-page" class="form-control">
-                                                <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('10') }}
-                                                </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('50') }}
-                                                </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('100') }}
-                                                </option>
-                                                <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('All') }}
-                                                </option>
-                                            </select>
-                                        </div>
                                         <div class="col-md-2 form-group">
                                             <input type="text" class="form-control datepicker" name="from_date"
                                                 value="{{ request()->get('from_date') ?? date('d-m-Y') }}"
