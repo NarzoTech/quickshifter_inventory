@@ -105,11 +105,17 @@
                                         </thead>
                                         <tbody>
                                             @php
-                                                $balance = $openingBalance;
+                                                $balance = 0;
                                             @endphp
                                             @foreach ($data as $index => $dts)
                                                 @php
                                                     if ($dts->mode != 'Credit' && $dts->category != 'Inventory') {
+                                                        $balance += $dts->credit - $dts->debit;
+                                                    }
+                                                    if (
+                                                        $dts->category == 'Inventory' &&
+                                                        ($dts->mode == 'R/P Credit' || $dts->mode == 'Cash')
+                                                    ) {
                                                         $balance += $dts->credit - $dts->debit;
                                                     }
                                                 @endphp

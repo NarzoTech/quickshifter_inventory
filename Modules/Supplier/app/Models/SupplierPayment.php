@@ -6,6 +6,7 @@ use App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Accounts\app\Models\Account;
+use Modules\Purchase\app\Models\Purchase;
 use Modules\Supplier\Database\factories\SupplierPaymentFactory;
 
 class SupplierPayment extends Model
@@ -34,6 +35,11 @@ class SupplierPayment extends Model
     ];
 
 
+    public function purchase()
+    {
+
+        return $this->belongsTo(Purchase::class, 'purchase_id', 'id');
+    }
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');

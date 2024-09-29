@@ -52,7 +52,9 @@ class SupplierService
 
     public function find($id)
     {
-        return $this->supplier->find($id);
+        $supplier = $this->supplier->with('duePurchase')->find($id);
+
+        return $supplier;
     }
 
     public function storeSupplier(Request $request)

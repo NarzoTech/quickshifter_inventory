@@ -124,9 +124,12 @@ class AccountsController extends Controller
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
         $data = [];
 
-        $data['productSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
-            $q->whereBetween('order_date', [$fromDate, $toDate]);
-        })->whereNotNull('product_id')->sum('sub_total');
+        // $data['productSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
+        //     $q->whereBetween('order_date', [$fromDate, $toDate]);
+        // })->whereNotNull('product_id')->sum('paid_amount');
+
+        $data['productSale'] = CustomerPayment::where('payment_type', 'sale')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+
 
 
         $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {

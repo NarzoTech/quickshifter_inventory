@@ -122,7 +122,7 @@ class Account extends Model
         // Customer Payments Received and Paid before the start date
         $customerPaymentsReceived = $this->customerPayments()
             ->where('is_received', 1)
-            ->where('payment_date', '<=', $startDate)
+            ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
 

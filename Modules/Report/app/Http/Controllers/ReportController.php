@@ -103,7 +103,7 @@ class ReportController extends Controller
             $washData['category'] = "Wash";
             $washData['particular'] = '';
             $washData['debit'] = 0;
-            $washData['credit'] = $wash->sum('sub_total');
+            $washData['credit'] = (int)$wash->sum('sub_total');
             $washData['iv'] = 0;
 
             $washData = (object)$washData;
@@ -118,7 +118,7 @@ class ReportController extends Controller
             $serviceData['category'] = "Service";
             $serviceData['particular'] = '';
             $serviceData['debit'] = 0;
-            $serviceData['credit'] = $otherServices?->sum('sub_total');
+            $serviceData['credit'] = (int)$otherServices?->sum('sub_total');
             $serviceData['iv'] = 0;
 
             $serviceData = (object)$serviceData;
@@ -148,8 +148,8 @@ class ReportController extends Controller
             $newData['category'] = "Sale (Own Inventory)";
             $newData['particular'] = '';
             $newData['debit'] = 0;
-            $newData['credit'] = $sales->sum('sub_total');
-            $newData['iv'] = $lastPurchasePrice;
+            $newData['credit'] = (int)$sales->sum('sub_total');
+            $newData['iv'] = (int)$lastPurchasePrice;
 
             $newData = (object)$newData;
             $data->push($newData);
@@ -177,8 +177,8 @@ class ReportController extends Controller
             $newData['mode'] = 'Cash';
             $newData['category'] = "Other Income (Parts-Local Market)";
             $newData['particular'] = '';
-            $newData['debit'] = $debit;
-            $newData['credit'] = $credit;
+            $newData['debit'] = (int)$debit;
+            $newData['credit'] = (int)$credit;
             $newData['iv'] = 0;
             $newData = (object)$newData;
             $data->push($newData);
@@ -198,32 +198,70 @@ class ReportController extends Controller
 
         // purchase
         foreach ($purchases as $purchase) {
-            $payment = $purchase->payments->where('payment_type', 'purchase')->first();
+            $payment = $purchase->payments()->where('is_paid', 1)->where('payment_date', $fromDate)->sum('amount');
 
-            if ($payment->amount != '0.00') {
+            if ($payment != 0) {
                 $newData = [];
-                $newData['date'] = now()->parse($purchase->first()->purchase_date)->format('d-M');
+                $newData['date'] = now()->parse($purchase->purchase_date)->format('d-M');
                 $newData['mode'] = 'Cash';
                 $newData['category'] = "Inventory";
                 $newData['particular'] = $purchase->supplier->name ?? 'Guest';
-                $newData['debit'] = $payment->amount;
+                $newData['debit'] = (int)$payment;
                 $newData['credit'] = 0;
                 $newData['iv'] = 0;
                 $newData = (object)$newData;
                 $data->push($newData);
             }
 
-            if ($purchase->due_amount != '0.00') {
+            if ($purchase->total_amount) {
                 $newData = [];
-                $newData['date'] = now()->parse($purchase->first()->purchase_date)->format('d-M');
+                $newData['date'] = now()->parse($purchase->purchase_date)->format('d-M');
                 $newData['mode'] = 'Credit';
                 $newData['category'] = "Inventory";
                 $newData['particular'] = $purchase->supplier->name ?? 'Guest';
-                $newData['debit'] = $purchase->due_amount;
+                $newData['debit'] = (int)$purchase->total_amount - $payment;
                 $newData['credit'] = 0;
                 $newData['iv'] = 0;
                 $newData = (object)$newData;
                 $data->push($newData);
+            }
+        }
+
+
+        // supplier payments
+        $supplierPayment = SupplierPayment::whereBetween('payment_date', [$fromDate, $toDate])
+            ->whereNotNull('purchase_id')
+            ->whereHas('purchase', function ($q) {
+                $q->whereColumn(
+                    'payment_date',
+                    '!=',
+                    'purchase_date'
+                );
+            })
+            ->orderBy('purchase_id', 'asc')
+            ->get();
+
+        $processedPurchases = [];
+
+        foreach ($supplierPayment as $index => $payment) {
+            if (in_array($payment->purchase_id, $processedPurchases)) {
+                continue;
+            }
+
+            $paymentAmount = $supplierPayment->where('purchase_id', $payment->purchase_id)->sum('amount');
+            $count = $supplierPayment->where('purchase_id', $payment->purchase_id)->count();
+            if ($payment->purchase->purchase_date != $payment->payment_date) {
+                $newData = [];
+                $newData['date'] = now()->parse($payment->payment_date)->format('d-M');
+                $newData['mode'] = 'R/P Credit';
+                $newData['category'] = "Inventory";
+                $newData['particular'] = $payment->supplier->name ?? 'Guest';
+                $newData['debit'] = (int)$paymentAmount;
+                $newData['credit'] = 0;
+                $newData['iv'] = 0;
+                $newData = (object)$newData;
+                $data->push($newData);
+                $processedPurchases[] = $payment->purchase_id;
             }
         }
 
@@ -237,7 +275,7 @@ class ReportController extends Controller
             $newData['mode'] = 'Cash';
             $newData['category'] = $expense->expenseType->name;
             $newData['particular'] = $expense->note;
-            $newData['debit'] = $expense->amount;
+            $newData['debit'] = (int)$expense->amount;
             $newData['credit'] = 0;
             $newData['iv'] = 0;
 
@@ -254,7 +292,7 @@ class ReportController extends Controller
             $newData['mode'] = 'Cash';
             $newData['category'] = 'Salary';
             $newData['particular'] = $salary->employee->name;
-            $newData['debit'] = $salary->amount;
+            $newData['debit'] = (int)$salary->amount;
             $newData['credit'] = 0;
             $newData['iv'] = 0;
             $newData = (object)$newData;

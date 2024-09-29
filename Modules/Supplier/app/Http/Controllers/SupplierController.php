@@ -149,7 +149,7 @@ class SupplierController extends Controller
 
     public function duePay($id)
     {
-        $supplier = $this->supplierService->find($id)->with('duePurchase')->first();
+        $supplier = $this->supplierService->find($id);
         $accounts = $this->accountsService->all()->with('bank')->get();
         return view('supplier::due-pay', compact('supplier', 'accounts'));
     }
