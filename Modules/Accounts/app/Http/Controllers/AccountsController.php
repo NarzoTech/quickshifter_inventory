@@ -128,12 +128,13 @@ class AccountsController extends Controller
             $q->whereBetween('order_date', [$fromDate, $toDate]);
         })->whereNotNull('product_id')->sum('sub_total');
 
+
         $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
             $q->whereBetween('order_date', [$fromDate, $toDate]);
         })->whereNotNull('service_id')->sum('sub_total');
 
 
-        $data['customer_due'] = Sale::whereBetween('order_date', [$fromDate, $toDate])->whereNotNull('customer_id')->sum('due_amount');
+        $data['customer_due'] = CustomerPayment::where('payment_type', 'due_receive')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
 
         $data['sale_return'] = SalesReturn::whereBetween('return_date', [$fromDate, $toDate])->sum('return_amount');
         $data['balance_deposit'] = Balance::where('balance_type', 'deposit')->whereBetween('date', [$fromDate, $toDate])->sum('amount');

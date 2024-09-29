@@ -43,9 +43,4 @@ class Expense extends Model
     {
         return $this->belongsTo(Admin::class, 'created_by')->withDefault();
     }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
 }

@@ -35,7 +35,7 @@
                                             @foreach ($sales as $key => $sale)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $sale->order_date }}</td>
+                                                    <td>{{ $sale->order_date->format('d-m-y') }}</td>
                                                     <td>{{ $sale->invoice }}</td>
                                                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                                     <td>{{ $sale->user->name }}</td>

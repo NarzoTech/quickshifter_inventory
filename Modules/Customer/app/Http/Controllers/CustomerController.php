@@ -237,7 +237,6 @@ class CustomerController extends Controller
 
     public function dueReceive(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'receiving_amount' => 'required',
         ]);

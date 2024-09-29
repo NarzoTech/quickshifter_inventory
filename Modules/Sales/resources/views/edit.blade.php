@@ -477,7 +477,8 @@
                                             <td class="text-right w-40">
 
                                                 <input type="text" class="form-control datepicker" name="sale_date"
-                                                    value="{{ date('Y-m-d') }}" autocomplete="off">
+                                                    value="{{ now()->parse($sale->order_date)->format('d-m-Y') }}"
+                                                    autocomplete="off">
                                             </td>
                                         </tr>
                                     </tfoot>

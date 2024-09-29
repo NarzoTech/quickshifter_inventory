@@ -41,17 +41,6 @@ class ExpenseService
             'created_by' => auth('admin')->id(),
         ]);
 
-        // create the transaction
-        Payment::create([
-            'expense_id' => $expense->id,
-            'account_id' => $account->id,
-            'payment_type' => 'expense',
-            'amount' => $request->amount,
-            'payment_date' => now()->parse($request->purchase_date),
-            'is_paid' => 1,
-            'note' => $request->note,
-            'created_by' => auth('admin')->user()->id,
-        ]);
 
         return $expense;
     }
@@ -73,20 +62,6 @@ class ExpenseService
             'payment_type' => $request->payment_type,
             'expense_type_id' => $request->expense_type_id,
         ]);
-
-
-        // update payment
-        $payment = Payment::where('expense_id', $id)->first();
-        $payment->update([
-            'account_id' => $account->id,
-            'payment_type' => 'expense',
-            'amount' => $request->amount,
-            'payment_date' => now()->parse($request->purchase_date),
-            'is_paid' => 1,
-            'note' => $request->note,
-            'updated_by' => auth('admin')->user()->id,
-        ]);
-
         return $expense;
     }
 
@@ -94,8 +69,6 @@ class ExpenseService
     {
         $expense = $this->expense->find($id);
         // delete payment and from trash
-        $expense->payments()->withTrashed()->forceDelete();
-
 
 
         // delete expense a

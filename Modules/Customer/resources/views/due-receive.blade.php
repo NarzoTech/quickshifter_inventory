@@ -278,6 +278,60 @@
 
                 totalAmount()
             })
+
+            $('input[name="receiving_amount"]').on('input', function() {
+                let value = parseFloat($(this).val());
+
+
+                // reset all the amount
+                $('input[name="amount[]"]').val(0);
+
+                // uncheck checkbox-all
+                $('#checkbox-all').prop('checked', false);
+
+                // uncheck all the checkbox
+                $('input[name="select"]').prop('checked', false);
+                $('.number').text(0);
+                $('.delete-section').addClass('d-none');
+                $('.delete-section').removeClass('d-flex');
+
+
+                // get all the row
+                $('input[name="amount[]"]').each(function() {
+                    // due amount the previous sibling
+                    let due = $(this).closest('tr').find('td:eq(4)').text();
+                    // remove icon
+                    due = parseFloat(due.replace(/[^0-9.]/g, ''));
+
+                    // calculate the due amount
+                    if (value <= due) {
+                        if (value > 0) {
+                            $(this).val(value);
+                            $(this).closest('tr').find('input[name="select"]').prop('checked',
+                                true);
+                            value = value - due;
+                        }
+
+                    } else {
+                        if (due > 0) {
+                            $(this).val(due);
+                            value = value - due;
+                            $(this).closest('tr').find('input[name="select"]').prop('checked',
+                                true);
+                        }
+                    }
+                });
+
+                // check checkbox-all if all are checked
+                var total = $('input[name="select"]').length;
+                var number = $('input[name="select"]:checked').length;
+                if (total == number) {
+                    $('#checkbox-all').prop('checked', true);
+                } else {
+                    $('#checkbox-all').prop('checked', false);
+                }
+
+            })
         });
 
 

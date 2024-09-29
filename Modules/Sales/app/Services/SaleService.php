@@ -121,7 +121,7 @@ class SaleService
                 'customer_id' => $request->order_customer_id,
                 'account_id' => $account->id,
                 'amount' => $request->paying_amount[$key],
-                'payment_date' => now(),
+                'payment_date' => now()->parse($request->sale_date),
                 'created_by' => auth('admin')->user()->id,
             ];
             if ($customerId == 'walk-in-customer') {
@@ -266,7 +266,7 @@ class SaleService
                     'customer_id' => $request->order_customer_id,
                     'account_id' => $account->id,
                     'amount' => $request->paying_amount[$key],
-                    'payment_date' => now(),
+                    'payment_date' => now()->parse($request->sale_date),
                     'created_by' => auth('admin')->user()->id,
                 ];
                 if ($customerId == 'walk-in-customer') {

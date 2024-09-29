@@ -104,36 +104,46 @@ class Account extends Model
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
+
         // Supplier Payments Received and Paid before the start date
         $supplierPaymentsReceived = $this->supplierPayments()
             ->where('is_received', 1)
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
+
         $supplierPaymentsPaid = $this->supplierPayments()
             ->where('is_paid', 1)
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
+
+
         // Customer Payments Received and Paid before the start date
         $customerPaymentsReceived = $this->customerPayments()
             ->where('is_received', 1)
-            ->where('payment_date', '<', $startDate)
+            ->where('payment_date', '<=', $startDate)
             ->sum('amount');
+
 
         $customerPaymentsPaid = $this->customerPayments()
             ->where('is_paid', 1)
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
+
+
         // Deposits, Withdrawals, Assets, and Expenses before the start date
         $deposit = $this->deposits()
             ->where('date', '<', $startDate)
             ->sum('amount');
 
+
+
         $withdraw = $this->withdraws()
             ->where('date', '<', $startDate)
             ->sum('amount');
+
 
         $asset = $this->assets()
             ->where('date', '<', $startDate)
@@ -147,6 +157,7 @@ class Account extends Model
         $openingBalance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
             - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid);
 
+        // dd($receivedPayments, $paidPayments, $supplierPaymentsReceived, $supplierPaymentsPaid, $customerPaymentsReceived, $customerPaymentsPaid, $deposit, $withdraw, $asset, $expenses, $openingBalance);
         return $openingBalance;
     }
 
