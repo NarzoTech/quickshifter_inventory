@@ -13,7 +13,7 @@
                 <form action="{{ route('admin.customers.store') }}" method="POST" id="add-customer-form">
                     @csrf
                     <div class="row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-5">
                             <label for="name">{{ __('Customer Name') }}<span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name">
                         </div>
@@ -25,6 +25,10 @@
                                     <option value="{{ $group->id }}">{{ $group->name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="due">{{ __('Due') }}</label>
+                            <input type="text" class="form-control" id="due" name="due">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="phone">{{ __('Phone') }}</label>

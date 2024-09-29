@@ -62,10 +62,11 @@ class User extends Model
     }
     public function getTotalDueAttribute()
     {
+        $prevDue = $this->wallet_balance;
         $totalSales = $this->sales->sum('grand_total');
 
         $due = $totalSales - $this->payment->sum('amount');
-        return $due;
+        return $due + $prevDue;
     }
 
     public function sales()

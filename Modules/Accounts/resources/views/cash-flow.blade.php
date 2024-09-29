@@ -16,16 +16,20 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="" method="GET" onchange="this.submit()" class="card-body">
+                                <form action="" method="GET" class="card-body">
                                     <div class="row">
-                                        <div class="col-md-2 form-group">
+                                        <div class="col-md-4 form-group">
                                             <input type="text" class="form-control datepicker" name="from_date"
                                                 value="{{ request()->get('from_date') ?? date('d-m-Y') }}"
                                                 placeholder="From Date">
                                         </div>
-                                        <div class="col-md-2 form-group">
+                                        <div class="col-md-4 form-group">
                                             <input type="text" class="form-control datepicker" name="to_date"
                                                 value="{{ request()->get('to_date') ?? date('d-m-Y') }}">
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <button type="submit" class="btn btn-primary w-100"><i
+                                                    class="fas fa-search"></i></button>
                                         </div>
                                     </div>
                                 </form>

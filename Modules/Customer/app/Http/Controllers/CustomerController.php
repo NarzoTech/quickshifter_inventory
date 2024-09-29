@@ -169,6 +169,7 @@ class CustomerController extends Controller
         $user->status = $request->status;
         $user->guest = $request->guest ? 1 : 0;
         $user->address = $request->address;
+        $user->wallet_balance = $request->due;
         $user->save();
 
         return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customers.index', [], ['messege' => 'Customer updated successfully.', 'alert-type' => 'success']);
@@ -206,6 +207,7 @@ class CustomerController extends Controller
         $user->vehicle_id = $request->vehicle_id;
         $user->membership = $request->membership;
         $user->plate_number = $request->plate_number;
+        $user->wallet_balance = $request->due;
         $user->date = now()->parse($request->date);
         $user->status = $request->status;
         $user->guest = $request->guest ? 1 : 0;
