@@ -109,7 +109,9 @@
                                             @endphp
                                             @foreach ($data as $index => $dts)
                                                 @php
-                                                    $balance += $dts->credit - $dts->debit;
+                                                    if ($dts->mode != 'Credit' && $dts->category != 'Inventory') {
+                                                        $balance += $dts->credit - $dts->debit;
+                                                    }
                                                 @endphp
                                                 <tr>
                                                     <td>

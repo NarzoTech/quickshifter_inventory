@@ -200,7 +200,7 @@ class ReportController extends Controller
         foreach ($purchases as $purchase) {
             $payment = $purchase->payments->where('payment_type', 'purchase')->first();
 
-            if ($payment) {
+            if ($payment->amount != '0.00') {
                 $newData = [];
                 $newData['date'] = now()->parse($purchase->first()->purchase_date)->format('d-M');
                 $newData['mode'] = 'Cash';
