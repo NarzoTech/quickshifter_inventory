@@ -32,13 +32,14 @@
                                             <thead>
                                                 <tr>
                                                     <th>
-                                                        {{ __('SL')}}
+                                                        {{ __('SL') }}
                                                     </th>
                                                     <th>{{ __('Date') }}</th>
                                                     <th>{{ __('Invoice No') }}</th>
                                                     <th>{{ __('Supplier') }}</th>
                                                     <th>{{ __('Amount') }}</th>
                                                     <th>{{ __('Paid By') }}</th>
+                                                    <th>{{ __('Action') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -46,13 +47,26 @@
                                                 @foreach ($payments as $payment)
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ now()->parse($payment->payment_date)->format('d M , Y') }}</td>
+                                                        <td>{{ now()->parse($payment->payment_date)->format('d M , Y') }}
+                                                        </td>
                                                         <td>{{ $payment->purchase?->invoice_number }}</td>
                                                         <td>{{ $payment->supplier->name }}</td>
                                                         <td>{{ $payment->amount }}</td>
                                                         <td>{{ $payment->createdBy->name }}</td>
+                                                        <td>
+                                                            <div class="btn-group">
+                                                                <a href="{{ route('admin.customer.due-receive.edit', $payment->id) }}"
+                                                                    class="btn btn-primary btn-sm mr-2">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </a>
+
+                                                                <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                                    onclick="deleteData({{ $payment->id }})">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
                                                     </tr>
-                                                    
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -67,3 +81,15 @@
         </section>
     </div>
 @endsection
+
+
+@push('js')
+    <script>
+        function deleteData(id) {
+            let url = "{{ route('admin.supplier.due-receive.delete', ':id') }}"
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
+        }
+    </script>
+@endpush

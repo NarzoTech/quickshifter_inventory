@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
+use Modules\Supplier\app\Models\SupplierPayment;
 use Modules\Supplier\app\Services\SupplierService;
 
 class SupplierController extends Controller
@@ -192,6 +193,14 @@ class SupplierController extends Controller
     {
         $payments = $this->supplierService->duePayHistory();
         return view('supplier::due-pay-history', compact('payments'));
+    }
+
+    public function dueReceiveDelete($id)
+    {
+
+        $payments = $this->supplierService->dueReceiveDelete($id);
+
+        return back()->with(['messege' => 'Payment deleted successfully', 'alert-type' => 'success']);
     }
 
     public function changeStatus($id)

@@ -153,6 +153,18 @@ class SupplierService
         return $list;
     }
 
+    public function dueReceiveDelete($id)
+    {
+        $payment = SupplierPayment::find($id);
+
+        $payment->purchase->paid_amount = $payment->purchase->paid_amount - $payment->amount;
+        $payment->purchase->due_amount = $payment->purchase->due_amount + $payment->amount;
+        $payment->purchase->payment_status = $payment->purchase->due_amount == 0 ? 'paid' : 'due';
+        $payment->purchase->save();
+
+        $payment->delete();
+    }
+
     public function genInvoiceNumber()
     {
         $number = 001;
