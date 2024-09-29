@@ -356,6 +356,14 @@ class CustomerController extends Controller
         $due->save();
 
 
+        // update sale
+        $sale = $payment->sale;
+        $sale->payment_status = $sale->due_amount == $payment->amount ? 'paid' : 'due';
+        $sale->paid_amount = $sale->paid_amount - $payment->amount;
+        $sale->due_amount = $sale->due_amount + $payment->amount;
+        $sale->save();
+
+
         // customer ledger delete
 
         $payment->delete();

@@ -55,11 +55,6 @@
                                                         <td>{{ $payment->createdBy->name }}</td>
                                                         <td>
                                                             <div class="btn-group">
-                                                                <a href="{{ route('admin.customer.due-receive.edit', $payment->id) }}"
-                                                                    class="btn btn-primary btn-sm">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </a>
-
                                                                 <a href="javascript:;" class="btn btn-danger btn-sm"
                                                                     onclick="deleteData({{ $payment->id }})">
                                                                     <i class="fas fa-trash"></i>
