@@ -114,7 +114,7 @@ class EmployeeSalaryController extends Controller
 
     public function salaryList()
     {
-        $employees = $this->employee->all()->where('status', 1)->paginate(20);
-        return view('employee::salary.salary-list', compact('employees'));
+        $payments = EmployeeSalary::with('employee')->paginate(20);
+        return view('employee::salary.salary-list', compact('payments'));
     }
 }

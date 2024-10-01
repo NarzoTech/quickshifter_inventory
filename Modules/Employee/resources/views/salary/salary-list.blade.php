@@ -83,9 +83,6 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="{{ route('admin.employee.create') }}" class="btn btn-primary"><i
-                                            class="fa fa-plus"></i>
-                                        {{ __('Add New Employee') }}</a>
                                 </h4>
                             </div>
                             <div class="card-body"></div>
@@ -94,68 +91,31 @@
                                     <thead>
                                         <tr>
                                             <th>{{ __('Sl') }}</th>
-                                            <th>{{ __('Employee Name') }}</th>
-                                            <th>{{ __('Employee Picture') }}</th>
-                                            <th>{{ __('Designation') }}</th>
+                                            <th>{{ __('Employee') }}</th>
+                                            <th>{{ __('Paid') }}</th>
+                                            <th>{{ __('Date') }}</th>
                                             {{-- <th style="display: none;">Business Branch</th> --}}
-                                            <th>{{ __('Phone') }}</th>
-                                            <th>{{ __('Email') }}</th>
-                                            <th>{{ __('Salary') }}</th>
-                                            <th>{{ __('Status') }}</th>
-                                            <th>{{ __('Joining Date') }}</th>
+                                            <th>{{ __('Note') }}</th>
                                             <th>{{ __('Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($employees as $index => $employee)
+                                        @forelse ($payments as $index => $payment)
                                             <tr>
-                                                <td>{{ ++$index }}</td>
-                                                <td>{{ $employee->name }}</td>
+                                                <td>{{ $payments->firstItem() + $index }}</td>
+                                                <td>{{ $payment->employee?->name }}</td>
+                                                <td>{{ currency($payment->amount) }}</td>
+                                                <td>{{ now()->parse($payment->date)->format('d-m-Y') }}</td>
+                                                <td>{{ $payment->note }}</td>
                                                 <td>
-                                                    <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
-                                                        alt="" width="50px" height="50px">
-                                                </td>
-                                                <td>{{ $employee->designation }}</td>
-                                                {{-- <td style="display: none;">{{ $employee->business_branch->name }}</td> --}}
-                                                <td>{{ $employee->mobile }}</td>
-                                                <td>{{ $employee->email }}</td>
-                                                <td>{{ $employee->salary }}</td>
-                                                <td>
-                                                    @if ($employee->status == 1)
-                                                        <span class="badge badge-success">
-                                                            {{ __('Active') }}
-                                                        </span>
-                                                    @else
-                                                        <span class="badge badge-danger">
-                                                            {{ __('Inactive') }}
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $employee->join_date }}</td>
-                                                <td>
-                                                    <div class="btn-group" role="group">
-                                                        <button id="btnGroupDrop{{ $employee->id }}" type="button"
-                                                            class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false">{{ __('Action') }}</button>
-                                                        <div class="dropdown-menu"
-                                                            aria-labelledby="btnGroupDrop{{ $employee->id }}">
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
-
-
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
-
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
-
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
-
-                                                            <a href="javascript:;" class="dropdown-item"
-                                                                onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
-                                                        </div>
+                                                    <div class="btn-group">
+                                                        <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
+                                                            class="btn btn-primary btn-sm mr-2"><i
+                                                                class="fa fa-edit"></i></a>
+                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                            onclick="deleteData({{ $payment->id }})">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -168,7 +128,7 @@
                             </div>
                             @if (request()->get('par-page') !== 'all')
                                 <div class="float-right">
-                                    {{ $employees->onEachSide(0)->links() }}
+                                    {{ $payments->onEachSide(0)->links() }}
                                 </div>
                             @endif
                         </div>
@@ -182,7 +142,7 @@
     @push('js')
         <script>
             function deleteData(id) {
-                let url = "{{ route('admin.employee.destroy', ':id') }}"
+                let url = "{{ route('admin.employee.salary.destroy', ':id') }}"
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
                 $('#deleteModal').modal('show');
