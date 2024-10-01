@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Accounts\Database\factories\AccountFactory;
 use Modules\Customer\app\Models\CustomerPayment;
+use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
 use Modules\Supplier\app\Models\SupplierPayment;
 
@@ -64,6 +65,10 @@ class Account extends Model
     {
 
         return $this->hasMany(Expense::class, 'account_id');
+    }
+    public function salary()
+    {
+        return $this->hasMany(EmployeeSalary::class, 'account_id', 'id');
     }
 
     public function supplierPayments()
@@ -153,11 +158,13 @@ class Account extends Model
             ->where('date', '<', $startDate)
             ->sum('amount');
 
+        $salary = $this->salary()
+            ->where('date', '<', $startDate)
+            ->sum('amount');
+
         // Calculate Opening Balance
         $openingBalance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
-            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid);
-
-        // dd($receivedPayments, $paidPayments, $supplierPaymentsReceived, $supplierPaymentsPaid, $customerPaymentsReceived, $customerPaymentsPaid, $deposit, $withdraw, $asset, $expenses, $openingBalance);
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary);
         return $openingBalance;
     }
 

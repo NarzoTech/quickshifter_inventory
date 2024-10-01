@@ -28,12 +28,10 @@ class EmployeeSalaryController extends Controller
     {
 
         $employee = $this->employee->find($id);
-        $month = $request->month ?? now()->format('m');
+        $month = $request->month ?? now()->format('F');
         $year = $request->year ?? now()->format('Y');
 
         $payments = EmployeeSalary::where('employee_id', $id)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
             ->get();
         return view('employee::salary.index', compact('payments', 'employee'));
     }
@@ -103,7 +101,9 @@ class EmployeeSalaryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $salary = EmployeeSalary::find($id);
+        $salary->delete();
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['messege' => 'Employee salary deleted successfully', 'alert-type' => 'success']);
     }
 
     public function salaryInfo(Request $request, $id)

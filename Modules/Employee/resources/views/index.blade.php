@@ -211,7 +211,7 @@
                                         <select name="month" id="month" class="form-control">
                                             <option value="">{{ __('Select Month') }}</option>
                                             @foreach ($months as $key => $month)
-                                                <option value="{{ $key }}"
+                                                <option value="{{ $month }}"
                                                     {{ $month == date('F') ? 'selected' : '' }}>{{ $month }}
                                                 </option>
                                             @endforeach

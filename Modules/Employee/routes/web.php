@@ -20,6 +20,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('employee/status/{id}', [EmployeeController::class, 'status'])->name('employee.status');
     Route::get('employee/{id}/salary-view/', [EmployeeSalaryController::class, 'index'])->name('employee.salary.view');
     Route::get('employee/{id}/salary-edit/', [EmployeeSalaryController::class, 'edit'])->name('employee.salary.edit');
+    Route::delete('employee/{id}/salary-delete/', [EmployeeSalaryController::class, 'destroy'])->name('employee.salary.destroy');
     Route::put('employee/{id}/salary-update/', [EmployeeSalaryController::class, 'update'])->name('employee.salary.update');
     Route::get('employee/{id}/salary-pay/', [EmployeeSalaryController::class, 'create'])->name('employee.salary.create');
     Route::post('employee/{id}/salary-pay/', [EmployeeSalaryController::class, 'store'])->name('employee.salary.store');

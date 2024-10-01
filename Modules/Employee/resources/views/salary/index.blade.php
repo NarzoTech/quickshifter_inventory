@@ -65,8 +65,15 @@
                                                 <td>{{ $payment->date }}</td>
                                                 <td>{{ $payment->note }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
-                                                        class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                                    <div class="btn-group">
+                                                        <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
+                                                            class="btn btn-primary btn-sm mr-2"><i
+                                                                class="fa fa-edit"></i></a>
+                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                            onclick="deleteData({{ $payment->id }})">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty
@@ -83,3 +90,13 @@
         </section>
     </div>
 @endsection
+@push('js')
+    <script>
+        function deleteData(id) {
+            let url = "{{ route('admin.employee.salary.destroy', ':id') }}"
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
+        }
+    </script>
+@endpush

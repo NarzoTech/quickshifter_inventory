@@ -4,6 +4,7 @@ namespace Modules\Employee\app\Services;
 
 use Modules\Accounts\app\Models\Account;
 use Modules\Employee\app\Models\Employee;
+use Modules\Employee\app\Models\EmployeeSalary;
 
 class EmployeeService
 {
@@ -45,7 +46,7 @@ class EmployeeService
         $data = $request->except('_token');
         $data['employee_id'] = $employee->id;
         $data['date'] = now()->parse($request->date);
-        $data['month'] = now()->parse($request->date)->format('F');
+        $data['month'] = now()->parse($request->month)->format('F');
         $data['year'] = now()->parse($request->date)->format('Y');
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
         $data['salary'] = $request->salary;
