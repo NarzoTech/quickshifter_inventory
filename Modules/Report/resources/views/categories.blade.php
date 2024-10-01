@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Barcode Wise Product Report') }}</title>
+    <title>{{ __('Category Report') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Barcode Wise Product Report') }}</h1>
+                <h1>{{ __('Category Report') }}</h1>
             </div>
 
             <div class="section-body">
