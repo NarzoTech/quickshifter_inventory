@@ -712,12 +712,9 @@
                             $("#customer_id").html(response.view)
                         },
                         error: function(response) {
-
                             if (response.status == 500) {
                                 toastr.error("{{ __('Server error occurred') }}")
                             }
-                            console.log(response);
-
                         }
                     });
                 })
@@ -1086,6 +1083,7 @@
         }
 
         function openPaymentModal() {
+            calDue();
             $('.pos-footer').css('z-index', 0);
             const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
             const discountAmount = $('#tds').text();
@@ -1123,6 +1121,8 @@
             } else {
                 $('.discount-row').removeClass('d-none');
             }
+
+
 
             $('#payment-modal').modal('show')
         }
@@ -1299,7 +1299,6 @@
 
             let totalAmount = $('#total_amountModal').text();
             totalAmount = parseFloat(totalAmount);
-            console.log(totalAmount, amountVal);
             if (totalAmount > amountVal) {
                 $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
                 $(".due-date").removeClass('d-none');
@@ -1326,7 +1325,7 @@
             $(id).modal('hide')
             $('.pos-footer').css('z-index', 9000)
             $('#checkoutForm').trigger('reset');
-            $('#due_amountModal').text(0);
+            calDue()
         }
 
         $(document).on('keydown', function(event) {
@@ -1425,6 +1424,7 @@
                     success: function(response) {
                         $('#previous_due').text(response.total_due);
                         $('.due').removeClass('d-none')
+                        calDue();
                     }
                 })
             } else {
@@ -1443,6 +1443,7 @@
             let orderDue = "{{ $sale->due_amount }}";
             currentDue = parseFloat(currentDue ? currentDue : 0);
             const totalDue = currentDue + previous_due - parseFloat(orderDue);
+            console.log(totalDue);
             $('#due_amountModal').text(`{{ currency_icon() }}${totalDue}`)
         }
     </script>

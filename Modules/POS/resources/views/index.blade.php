@@ -1344,6 +1344,7 @@
                 $('.discount-row').removeClass('d-none');
             }
 
+            calDue()
             $('#payment-modal').modal('show')
         }
 
@@ -1547,7 +1548,7 @@
             $(id).modal('hide')
             $('.pos-footer').css('z-index', 9000)
             $('#checkoutForm').trigger('reset');
-            $('#due_amountModal').text(0);
+            calDue()
         }
 
         $(document).on('keydown', function(event) {
@@ -1675,6 +1676,7 @@
                     success: function(response) {
                         $('#previous_due').text(response.total_due);
                         $('.due').removeClass('d-none')
+                        calDue()
                     }
                 })
             } else {
