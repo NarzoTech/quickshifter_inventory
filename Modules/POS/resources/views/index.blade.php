@@ -648,62 +648,6 @@
                                             </td>
                                         </tr>
                                     </tfoot>
-
-                                    {{-- <tfoot id="instalmentPayment" hidden>
-                                        <tr>
-                                            <td class="pl-2" style="vertical-align: middle">
-                                                <label>Due</label>
-                                            </td>
-                                            <td colspan="3">
-                                                <input type="text" class="form-control form-control-sm"
-                                                    name="total_due" readonly>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="pl-2" style="vertical-align: middle">
-                                                <label>Tenor (in Months)</label>
-                                            </td>
-                                            <td colspan="3">
-                                                <input type="text"
-                                                    class="form-control form-control-sm installment_month"
-                                                    name="installment_month" autocomplete="off">
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="pl-2" style="vertical-align: middle">
-                                                <label>Rate of Interest (%)</label>
-                                            </td>
-                                            <td colspan="3">
-
-                                                <div class="input-group">
-                                                    <input type="text"
-                                                        class="form-control form-control-sm interest_rate"
-                                                        name="interest_rate" max="100" id="interest_rate"
-                                                        autocomplete="off" disabled>
-                                                    <div class="input-group-prepend"
-                                                        style="padding: 7px;background: #7a888240;">
-                                                        <div class="input-group-text">
-                                                            <input type="checkbox" id="no_interest" value="1">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="pl-2" style="vertical-align: middle">
-                                                <label>Monthly Installment</label>
-                                            </td>
-                                            <td colspan="3">
-                                                <input type="text"
-                                                    class="form-control form-control-sm installment_amount"
-                                                    name="installment_amount" readonly>
-                                            </td>
-                                        </tr>
-
-                                    </tfoot> --}}
                                 </table>
                             </div>
                             <div class="mt-4">
@@ -1602,6 +1546,8 @@
         function modalHide(id) {
             $(id).modal('hide')
             $('.pos-footer').css('z-index', 9000)
+            $('#checkoutForm').trigger('reset');
+            $('#due_amountModal').text(0);
         }
 
         $(document).on('keydown', function(event) {

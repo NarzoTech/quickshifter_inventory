@@ -137,7 +137,7 @@
 
 
             <li
-                class="nav-item dropdown {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database'], 'active') }}">
+                class="nav-item dropdown {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'active') }}">
                 <a href="javascript:void()" class="nav-link has-dropdown"><i
                         class="fas fa-box"></i><span>{{ __('Settings') }}</span>
                 </a>
@@ -171,6 +171,11 @@
                     <li class="{{ isRoute('admin.reset.database', 'active') }}">
                         <a class="nav-link" href="{{ route('admin.reset.database') }}">
                             {{ __('Reset Database') }}
+                        </a>
+                    </li>
+                    <li class="{{ isRoute('admin.cache.clear', 'active') }}">
+                        <a class="nav-link" href="{{ route('admin.cache.clear') }}">
+                            {{ __('Clear Cache') }}
                         </a>
                     </li>
                     @if (Module::isEnabled('Tax'))

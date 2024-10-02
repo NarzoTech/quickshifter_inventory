@@ -17,9 +17,12 @@ use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\WarehouseController;
 use App\Http\Controllers\StockController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*  End Admin panel Controller  */
+
+
 
 Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     /* Start admin auth route */
@@ -74,4 +77,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
 
     // Warehouse
     Route::resource('warehouse', WarehouseController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::get('clear-cache', function () {
+        Artisan::call('cache:clear');
+        return to_route('admin.dashboard')->with(['messege' => 'Cache clear successfully', 'alert-type' => 'success']);
+    })->name('cache.clear');
 });

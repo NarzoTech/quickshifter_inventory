@@ -203,7 +203,7 @@ function currency($price = '')
 
         return $price;
     } else {
-        return $currency_icon . '0.00';
+        return $currency_icon . '0';
     }
 }
 

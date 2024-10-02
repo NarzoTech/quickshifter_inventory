@@ -1325,6 +1325,8 @@
         function modalHide(id) {
             $(id).modal('hide')
             $('.pos-footer').css('z-index', 9000)
+            $('#checkoutForm').trigger('reset');
+            $('#due_amountModal').text(0);
         }
 
         $(document).on('keydown', function(event) {
