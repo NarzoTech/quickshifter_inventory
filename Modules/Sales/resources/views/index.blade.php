@@ -119,8 +119,9 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
 
+                                {{ $sales->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>
