@@ -36,10 +36,28 @@ class SalesController extends Controller
     {
         $sales = $this->saleService->getSales();
 
-        if (request()->customer) {
-            $sales = $sales->where('customer_id', request()->customer);
+        if (request()->keyword !== null) {
+            $sales = $sales->where(function ($query) {
+                $query->whereHas('customer', function ($q) {
+                    $q->where('name', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('email', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('phone', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('address', 'like', '%' . request()->keyword . '%');
+                })->orWhere('invoice', 'like', '%' . request()->keyword . '%');
+            });
         }
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->subDay()->format('Y-m-d') : '';
+        $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
+
+        // from date and to date
+        if ($fromDate) {
+            $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
+
+
         $sales = $sales->orderBy('id', 'desc')->paginate(20);
+        $sales->appends(request()->query());
         $title = 'Sales List';
         return view('sales::index', compact('sales', 'title'));
     }

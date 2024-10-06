@@ -11,6 +11,39 @@
 
             <div class="section-body">
                 <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <form action="" method="GET" class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 form-group search-wrapper">
+                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                                class="form-control" placeholder="{{ __('Customer Name, Invoice No') }}">
+                                            <button type="submit">
+                                                <i class="far fa-arrow-alt-circle-right"></i>
+                                            </button>
+                                        </div>
+
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" placeholder="From Date" name="from_date"
+                                                value="{{ request()->get('from_date') }}" class="form-control datepicker">
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <input type="text" placeholder="To Date" name="to_date"
+                                                value="{{ request()->get('to_date') }}" class="form-control datepicker">
+                                        </div>
+                                        <div class="col-md-1 form-group">
+                                            <a href="{{ route('admin.purchase.index') }}"
+                                                class="btn btn-danger">{{ __('Reset') }}</a>
+                                        </div>
+                                        <div class="col-md-1 form-group">
+                                            <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
                             <div class="card-body text-center">
