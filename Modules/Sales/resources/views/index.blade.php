@@ -33,7 +33,7 @@
                                                 value="{{ request()->get('to_date') }}" class="form-control datepicker">
                                         </div>
                                         <div class="col-md-1 form-group">
-                                            <a href="{{ route('admin.purchase.index') }}"
+                                            <a href="{{ route('admin.sales.index') }}"
                                                 class="btn btn-danger">{{ __('Reset') }}</a>
                                         </div>
                                         <div class="col-md-1 form-group">

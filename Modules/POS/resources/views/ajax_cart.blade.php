@@ -14,8 +14,23 @@
     <tbody>
         @php
             $cumalitive_sub_total = $cumalitive_sub_total ?? 0;
+
+            // set rowid
+            foreach ($cart_contents as $key => $cart_content) {
+                $cart_contents[$key]['rowid'] = $key;
+            }
+
         @endphp
         @foreach ($cart_contents as $cart_index => $cart_content)
+            @php
+                if (!isset($cart_content['rowid'])) {
+                    // set rowid
+                    $cart_content['rowid'] = rand(1000000, 9999999);
+                    $cart_contents[$cart_index]['rowid'] = $cart_content['rowid'];
+                    // put it in session
+                    session()->put('cart', $cart_contents);
+                }
+            @endphp
             <tr data-rowid="{{ $cart_content['rowid'] }}">
                 <td>
                     <p>{{ $cart_content['name'] }}</p>

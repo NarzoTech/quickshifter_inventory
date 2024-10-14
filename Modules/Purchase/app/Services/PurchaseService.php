@@ -111,6 +111,8 @@ class PurchaseService
 
             $product = Product::find($id);
             $product->stock += $request->quantity[$index];
+            $product->cost = $request->unit_price[$index];
+            $product->price = $request->selling_price[$index];
             $product->save();
 
 
