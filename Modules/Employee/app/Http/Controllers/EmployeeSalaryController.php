@@ -31,9 +31,9 @@ class EmployeeSalaryController extends Controller
         $month = $request->month ?? now()->format('F');
         $year = $request->year ?? now()->format('Y');
 
-        $payments = EmployeeSalary::where('employee_id', $id)
+        $payments = EmployeeSalary::where('employee_id', $id)->where('month', $month)->where('year', $year)
             ->get();
-        return view('employee::salary.index', compact('payments', 'employee'));
+        return view('employee::salary.index', compact('payments', 'employee', 'month'));
     }
 
     /**

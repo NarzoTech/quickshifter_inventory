@@ -39,6 +39,7 @@
                                 <p>Salary: {{ currency($employee->salary) }}</p>
                                 <p>Phone: {{ $employee->phone }}</p>
                                 <p>Paid Amount: {{ currency($payments->sum('amount')) }}</p>
+                                <p>Payment Month: <b>{{ $month }}</b></p>
                             </div>
                         </div>
                         <div class="card">
@@ -57,11 +58,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $paidAmount = 0;
+                                        @endphp
                                         @forelse ($payments as $index => $payment)
+                                            @php
+                                                $paidAmount += $payment->amount;
+                                            @endphp
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
                                                 <td>{{ currency($payment->amount) }}</td>
-                                                <td>{{ currency($employee->salary - $payment->amount) }}</td>
+                                                <td>{{ currency($employee->salary - $paidAmount) }}</td>
                                                 <td>{{ $payment->date }}</td>
                                                 <td>{{ $payment->note }}</td>
                                                 <td>
