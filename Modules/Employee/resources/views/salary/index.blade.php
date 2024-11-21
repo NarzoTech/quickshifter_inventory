@@ -58,18 +58,20 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>0</td>
-                                            <td>{{ currency(0) }}</td>
-                                            <td>{{ currency($employee->salary) }}</td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                        </tr>
+                                        @if ($payments->count() > 0)
+                                            <tr>
+                                                <td>0</td>
+                                                <td>{{ currency(0) }}</td>
+                                                <td>{{ currency($employee->salary) }}</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                            </tr>
+                                        @endif
                                         @php
                                             $paidAmount = 0;
                                         @endphp
-                                        @forelse ($payments as $index => $payment)
+                                        @foreach ($payments as $index => $payment)
                                             @php
                                                 $paidAmount += $payment->amount;
                                             @endphp
@@ -91,11 +93,17 @@
                                                     </div>
                                                 </td>
                                             </tr>
-                                        @empty
-                                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
-                                                colspan="10"></x-empty-table>
-                                        @endforelse
+                                        @endforeach
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td class="font-weight-bold">{{ __('Total') }}</td>
+
+                                            <td class="font-weight-bold">{{ currency($payments->sum('amount')) }}</td>
+                                            <td class="font-weight-bold">
+                                                {{ currency($employee->salary - $payments->sum('amount')) }}</td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
