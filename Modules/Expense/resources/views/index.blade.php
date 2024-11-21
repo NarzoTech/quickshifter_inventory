@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Expenses') }}</title>
+    <title>{{ __('Expenses List') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Bank List') }}</h1>
+                <h1>{{ __('Expenses List') }}</h1>
             </div>
 
             <div class="section-body">
@@ -36,26 +36,46 @@
                             <div class="card-body">
                                 <form action="" method="GET" class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4 form-group search-wrapper">
+                                        <div class="col-md-6 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="{{ __('Search') }}">
                                             <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>
                                         </div>
+
                                         <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="">{{ __('Order By') }}</option>
-                                                <option value="1" {{ request('order_by') == '1' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-                                                <option value="0" {{ request('order_by') == '0' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
+                                            <select name="order_type" id="order_type" class="form-control">
+                                                <option value="id"
+                                                    {{ request('order_type') == 'id' ? 'selected' : '' }}>
+                                                    {{ __('Serial') }}</option>
+
+                                                <option value="date"
+                                                    {{ request('order_type') == 'date' ? 'selected' : '' }}>
+                                                    {{ __('Date') }}</option>
+
+                                                <option value="amount"
+                                                    {{ request('order_type') == 'amount' ? 'selected' : '' }}>
+                                                    {{ __('Amount') }}</option>
+
                                             </select>
                                         </div>
                                         <div class="col-md-2 form-group">
-                                            <select name="par-page" id="par-page" class="form-control">
+                                            <select name="order_by" id="order_by" class="form-control">
+                                                <option value="desc"
+                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                                    {{ __('DESC') }}
+                                                </option>
+                                                <option value="asc"
+                                                    {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                                    {{ __('ASC') }}
+                                                </option>
+
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2 form-group">
+                                            <select name="par_page" id="par-page" class="form-control">
                                                 <option value="">{{ __('Per Page') }}</option>
                                                 <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
                                                     {{ __('10') }}
@@ -72,6 +92,23 @@
                                                     {{ __('All') }}
                                                 </option>
                                             </select>
+                                        </div>
+                                        <div class="col-md-3 form-group">
+                                            <input type="text" placeholder="From Date" name="from_date"
+                                                value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                                autocomplete="off">
+                                        </div>
+                                        <div class="col-md-3 form-group">
+                                            <input type="text" placeholder="To Date" name="to_date"
+                                                value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                                autocomplete="off">
+                                        </div>
+                                        <div class="col-md-1 form-group">
+                                            <a href="{{ route('admin.expense.index') }}"
+                                                class="btn btn-danger">{{ __('Reset') }}</a>
+                                        </div>
+                                        <div class="col-md-1 form-group">
+                                            <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
                                         </div>
                                     </div>
                                 </form>
@@ -171,7 +208,8 @@
                             </div>
                             <div class="form-group col-12">
                                 <label for="name">{{ __('Expense Type') }}<span class="text-danger">*</span></label>
-                                <select name="expense_type_id" id="" class="form-control">
+                                <select name="expense_type_id" id="" class="form-control select2"
+                                    data-dropdown-parent="#addExpense">
                                     <option value="">{{ __('Expense Type') }}</option>
                                     @foreach ($types as $type)
                                         <option value="{{ $type->id }}">{{ $type->name }}</option>
@@ -239,7 +277,8 @@
                                 <div class="form-group col-12">
                                     <label for="name">{{ __('Expense Type') }}<span
                                             class="text-danger">*</span></label>
-                                    <select name="expense_type_id" id="" class="form-control">
+                                    <select name="expense_type_id" id="" class="form-control select2"
+                                        data-dropdown-parent="#editExpense{{ $expense->id }}">
                                         <option value="">{{ __('Expense Type') }}</option>
                                         @foreach ($types as $type)
                                             <option value="{{ $type->id }}"

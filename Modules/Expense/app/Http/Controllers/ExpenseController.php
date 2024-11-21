@@ -46,8 +46,23 @@ class ExpenseController extends Controller
                     });
             });
         }
+        if (request('order_type')) {
+            $expenses = $expenses->orderBy(request('order_type'), request('order_by'));
+        } else {
+            $expenses = $expenses->orderBy('id', 'desc');
+        }
+        if (request('from_date') && request('to_date')) {
+            $from = now()->parse(request('from_date'));
+            $to = now()->parse(request('to_date'));
+            $expenses = $expenses->whereBetween('date', [$from, $to]);
+        }
 
-        $expenses = $expenses->latest()->paginate(10);
+        if (request('par_page')) {
+            $expenses = $expenses->paginate(request('par_page'));
+        } else {
+            $expenses = $expenses->paginate(20);
+        }
+
         $types = ExpenseType::all();
         $accounts = Account::all();
         return view('expense::index', compact('expenses', 'types', 'accounts'));
