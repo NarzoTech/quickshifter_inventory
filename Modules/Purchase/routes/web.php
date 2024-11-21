@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Product\app\Http\Controllers\ProductController;
 use Modules\Purchase\app\Http\Controllers\PurchaseController;
 use Modules\Purchase\app\Http\Controllers\PurchaseReturnController;
 use Modules\Purchase\app\Http\Controllers\PurchaseReturnTypeController;
@@ -32,4 +33,6 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('purchase/return/{id}/edit', [PurchaseReturnController::class, 'edit'])->name('purchase.return.edit');
     Route::put('purchase/return/{id}/update', [PurchaseReturnController::class, 'update'])->name('purchase.return.update');
     Route::delete('purchase/return/{id}/destroy', [PurchaseReturnController::class, 'destroy'])->name('purchase.return.destroy');
+
+    Route::post('purchase/product-search', [ProductController::class, 'searchProducts'])->name('purchase.product.search');
 });

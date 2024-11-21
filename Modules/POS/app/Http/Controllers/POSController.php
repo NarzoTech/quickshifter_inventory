@@ -90,7 +90,7 @@ class POSController extends Controller
 
         $categories = Category::where('status', 1)->get();
         $brands = $this->brandService->getActiveBrands();
-        $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
+        $customers = User::orderBy('name', 'asc')->where('status', 1)->get();
 
         $cart_contents = session('POSCART') ?? [];
         $accounts = Account::with('bank')->get();
@@ -394,7 +394,7 @@ class POSController extends Controller
             $user->email_verified_at = now();
             $user->save();
 
-            $customers = User::orderBy('id', 'desc')->where('status', 'active')->get();
+            $customers = User::orderBy('name', 'asc')->where('status', 'active')->get();
 
             $customer_html = "<option value=''>" . trans('Select Customer') . "</option><option value='walk-in-customer'>walk-in-customer</option>";
             foreach ($customers as $customer) {

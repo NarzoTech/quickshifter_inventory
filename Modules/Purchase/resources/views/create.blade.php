@@ -330,13 +330,44 @@
             $(row).closest('tr').remove();
             calculateTotalAmount();
         }
-
+        const products = @json($products);
         $(document).on('change', '#product_id', function() {
             let product_id = $(this).val();
-            const products = @json($products);
+
             const product = products.find(p => p.id == product_id);
             addPurchaseRow(product);
         });
+
+        // when search product will not in the product list. it will search from the database;
+        $(document).on('input', '[aria-controls="select2-product_id-results"]', function() {
+            let input = $(this).val();
+            // check if input its in product name or product code
+            const filteredProducts = products.filter(p => p.name.toLowerCase().includes(input.toLowerCase()) ||
+                p.barcode.toLowerCase().includes(input.toLowerCase()));
+
+            if (filteredProducts.length == 0) {
+                // check if input its in product name or product code in the database
+                $.ajax({
+                    url: "{{ route('admin.purchase.product.search') }}",
+                    type: 'POST',
+                    data: {
+                        keyword: input
+                    },
+                    success: function(response) {
+                        if (response.status) {
+                            let html = '';
+                            response.data.forEach(product => {
+                                products.push(product);
+                                html +=
+                                    `<option value="${product.id}">${product.name}</option>`;
+                            });
+                            $('#product_id').append(html);
+                        }
+
+                    }
+                })
+            }
+        })
 
         $(document).on('input', 'input[name="quantity[]"], input[name="unit_price[]"]', function() {
             var tr = $(this).closest('tr');

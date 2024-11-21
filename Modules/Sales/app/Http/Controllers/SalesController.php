@@ -100,7 +100,7 @@ class SalesController extends Controller
 
         $categories = Category::where('status', 1)->get();
         $brands = $this->brandService->getActiveBrands();
-        $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
+        $customers = User::orderBy('name', 'asc')->where('status', 1)->get();
         $accounts = Account::with('bank')->get();
         $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();

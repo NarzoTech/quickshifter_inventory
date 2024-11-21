@@ -441,6 +441,21 @@ class ProductController extends Controller
             ]);
         }
     }
+    function searchProducts(Request $request)
+    {
+        $product =  $this->productService->getProducts()->get();
+        if (!$product->count()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Product not found',
+            ]);
+        } else {
+            return response()->json([
+                'status' => true,
+                'data' => $product,
+            ]);
+        }
+    }
     public function barcode()
     {
         return view('product::products.barcode-table');

@@ -45,7 +45,7 @@
                                     @method('PUT')
                                     <div class="row">
                                         <div class="col-md-8 row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="name">{{ __('Name') }}<span
                                                             class="text-danger">*</span></label>
@@ -66,6 +66,25 @@
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                     @error('name')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="sku">{{ __('SKU') }}<span
+                                                            class="text-danger">*</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" name="sku" class="form-control currency"
+                                                            id="sku" value="{{ old('sku', $product->sku) }}">
+                                                        <div class="input-group-prepend">
+                                                            <div class="input-group-text generate_sku cursor-pointer">
+                                                                <i class="fas fa-barcode"></i>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    @error('sku')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
@@ -107,21 +126,14 @@
                                                     @enderror
                                                 </div>
                                             </div>
+
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="sku">{{ __('SKU') }}<span
-                                                            class="text-danger">*</span></label>
-                                                    <div class="input-group">
-                                                        <input type="text" name="sku" class="form-control currency"
-                                                            id="sku" value="{{ old('sku', $product->sku) }}">
-                                                        <div class="input-group-prepend">
-                                                            <div class="input-group-text generate_sku cursor-pointer">
-                                                                <i class="fas fa-barcode"></i>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    @error('sku')
+                                                    <label for="cost">{{ __('Purchase Price') }}
+                                                        ({{ currency_icon() }})</label>
+                                                    <input type="number" name="cost" class="form-control" id="cost"
+                                                        value="{{ old('cost', $product->cost) }}">
+                                                    @error('cost')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
                                                 </div>
@@ -138,17 +150,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="cost">{{ __('Purchase Price') }}
-                                                        ({{ currency_icon() }})</label>
-                                                    <input type="number" name="cost" class="form-control" id="cost"
-                                                        value="{{ old('cost', $product->cost) }}">
-                                                    @error('cost')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                            </div>
+
 
                                             {{-- <div class="col-md-4">
                                                 <div class="form-group">
@@ -160,7 +162,7 @@
                                                     @enderror
                                                 </div>
                                             </div> --}}
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label>{{ __('Stock alert') }}</label>
                                                     <input type="number" class="form-control" name="stock_alert"

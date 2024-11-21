@@ -55,7 +55,7 @@
                                                 <th>{{ __('Date') }}</th>
                                                 <th>{{ __('Invoice No') }}</th>
                                                 <th>{{ __('Customer') }}</th>
-                                                <th>{{ __('Sale By') }}</th>
+                                                <th>{{ __('Remark') }}</th>
                                                 <th>{{ __('Sale Amount') }}</th>
                                                 <th>{{ __('Total Amount') }}</th>
                                                 <th>{{ __('Paid Amount') }}</th>
@@ -71,7 +71,7 @@
                                                     <td>{{ $sale->order_date->format('d-m-y') }}</td>
                                                     <td>{{ $sale->invoice }}</td>
                                                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
-                                                    <td>{{ $sale->user->name }}</td>
+                                                    <td>{{ $sale->sale_note }}</td>
                                                     <td>{{ $sale->total_price }}</td>
                                                     <td>{{ $sale->grand_total }}</td>
                                                     <td>{{ $sale->paid_amount }}</td>
