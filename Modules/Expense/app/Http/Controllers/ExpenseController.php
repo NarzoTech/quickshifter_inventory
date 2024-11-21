@@ -28,7 +28,26 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        $expenses = Expense::paginate(20);
+        $expenses = Expense::query();
+
+        if (request('keyword')) {
+            $keyword = request('keyword');
+            $expenses = $expenses->where(function ($query) use ($keyword) {
+                $query->where('amount', 'like', "%{$keyword}%")
+                    ->orWhereHas('expenseType', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    })
+                    ->orWhere('amount', 'like', "%{$keyword}%")
+                    ->orWhereHas('account', function ($q) use ($keyword) {
+                        $q->where('account_type', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('createdBy', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+            });
+        }
+
+        $expenses = $expenses->latest()->paginate(10);
         $types = ExpenseType::all();
         $accounts = Account::all();
         return view('expense::index', compact('expenses', 'types', 'accounts'));

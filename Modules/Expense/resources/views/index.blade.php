@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.expense.type.index') }}" method="GET" class="card-body">
+                                <form action="" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
@@ -106,11 +106,11 @@
                                         <tbody>
                                             @forelse ($expenses as $index => $expense)
                                                 <tr>
-                                                    <td>{{ $loop->first + $index }}</td>
+                                                    <td>{{ $expenses->firstItem() + $index }}</td>
                                                     <td>{{ $expense->date }}</td>
                                                     <td>{{ $expense->createdBy->name }}</td>
                                                     <td>{{ $expense->expenseType->name }}</td>
-                                                    <td>{{ $expense->amount }}</td>
+                                                    <td>{{ currency($expense->amount) }}</td>
                                                     <td>{{ ucfirst($expense->payment_type) }}</td>
                                                     <td>{{ $expense->note }}</td>
                                                     <td>
