@@ -110,6 +110,11 @@
                                         <div class="col-md-1 form-group">
                                             <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
                                         </div>
+                                        <div class="col-md-2 form-group">
+                                            <button type="button" class="btn btn-secondary export"><i
+                                                    class="far fa-file-excel"></i>
+                                                {{ __('Excel') }}</button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -171,6 +176,18 @@
                                                 <x-empty-table :name="__('Bank')" route="" create="no"
                                                     :message="__('No data found!')" colspan="6"></x-empty-table>
                                             @endforelse
+
+                                            @if ($expenses->count() > 0)
+                                                <tr>
+                                                    <td colspan="4">
+                                                        {{ __('Total') }}
+                                                    </td>
+                                                    <td>
+                                                        {{ currency($totalAmount) }}
+                                                    </td>
+                                                    <td colspan="3"></td>
+                                                </tr>
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>

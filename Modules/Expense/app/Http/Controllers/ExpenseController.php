@@ -3,12 +3,14 @@
 namespace Modules\Expense\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\ExpensesExport;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
 use Modules\Expense\app\Http\Requests\ExpenseRequest;
 use Modules\Expense\app\Models\Expense;
@@ -57,6 +59,12 @@ class ExpenseController extends Controller
             $expenses = $expenses->whereBetween('date', [$from, $to]);
         }
 
+        if (request('export')) {
+            $fileName = 'expenses-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new ExpensesExport($expenses->get()), $fileName);
+        }
+        $totalAmount = $expenses->sum('amount');
+
         if (request('par_page')) {
             $expenses = $expenses->paginate(request('par_page'));
         } else {
@@ -65,7 +73,7 @@ class ExpenseController extends Controller
 
         $types = ExpenseType::all();
         $accounts = Account::all();
-        return view('expense::index', compact('expenses', 'types', 'accounts'));
+        return view('expense::index', compact('expenses', 'types', 'accounts', 'totalAmount'));
     }
 
     /**
