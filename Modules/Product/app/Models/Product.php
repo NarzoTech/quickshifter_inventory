@@ -139,6 +139,8 @@ class Product extends Model
     }
 
 
+
+
     public function getSalesReturnAttribute()
     {
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
@@ -218,6 +220,16 @@ class Product extends Model
         return $totalQuantity > 0 ? $totalPrice / $totalQuantity : 0;
     }
 
+
+    public function getCostAttribute()
+    {
+        $lastPurchase = $this->getLastPurchasePriceAttribute();
+
+        return $lastPurchase > 0 ? $lastPurchase : $this->attributes['cost'];
+    }
+
+    // public function getPriceAttribute() {}
+
     public function getLastPurchasePriceAttribute()
     {
         $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->get();
@@ -228,8 +240,7 @@ class Product extends Model
     public function getSellingPriceAttribute()
     {
         $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->first();
-
-        return $purchase ? $purchase->sale_price : $this->price;
+        return $purchase ? $purchase->sale_price : $this->attributes['price'];
     }
 
     public function stockDetails(): HasMany
@@ -330,9 +341,9 @@ class Product extends Model
         $this->attributes['attributes'] = json_encode($value);
     }
 
-    public function getPriceAttribute($value)
+    public function getPriceAttribute()
     {
-        return number_format($value, 2);
+        return $this->getSellingPriceAttribute();
     }
 
 

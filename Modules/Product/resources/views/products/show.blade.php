@@ -67,7 +67,7 @@
                                             </tr>
                                             <tr>
                                                 <th>{{ $product->barcode }}</th>
-                                                <th>{{ currency($product->current_price) }}</th>
+                                                <th>{{ currency($product->cost) }}</th>
                                                 <th>{{ currency($product->selling_price) }}</th>
                                                 <th>{{ $product->stock }}</th>
                                             </tr>
