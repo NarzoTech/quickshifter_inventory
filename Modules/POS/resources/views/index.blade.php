@@ -1603,6 +1603,10 @@
                         totalSummery();
 
                         $('.pos-footer').css('z-index', 9000);
+
+                        // reset customer select
+                        $("#customer_id").val('').trigger('change')
+
                     } else {
                         toastr.error(response.message)
                     }
