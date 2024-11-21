@@ -19,8 +19,26 @@ class ExpenseTypeController extends Controller
      */
     public function index()
     {
-        $types = ExpenseType::paginate(20);
-        return view('expense::type',compact('types'));
+        $types = ExpenseType::query();
+
+        if (request('keyword')) {
+            $keyword = request('keyword');
+            $types = $types->where(function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            });
+        }
+        if (request('order_type')) {
+            $types = $types->orderBy(request('order_type'), request('order_by'));
+        } else {
+            $types = $types->orderBy('id', 'desc');
+        }
+        if (request('par_page')) {
+            $types = $types->paginate(request('par_page'));
+        } else {
+            $types = $types->paginate(20);
+        }
+
+        return view('expense::type', compact('types'));
     }
 
     /**

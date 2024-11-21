@@ -179,7 +179,7 @@
 
                                             @if ($expenses->count() > 0)
                                                 <tr>
-                                                    <td colspan="4">
+                                                    <td colspan="4" class="text-center font-weight-bold">
                                                         {{ __('Total') }}
                                                     </td>
                                                     <td>

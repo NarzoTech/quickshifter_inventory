@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('Expense Type') }}</title>
+    <title>{{ __('Expense Type List') }}</title>
 @endsection
 
 @push('css')
@@ -25,7 +25,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-header">
-                <h1>{{ __('Bank List') }}</h1>
+                <h1>{{ __('Expense Type List') }}</h1>
             </div>
 
             <div class="section-body">
@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.expense.type.index') }}" method="GET" class="card-body">
+                                <form action="" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
@@ -44,34 +44,53 @@
                                             </button>
                                         </div>
                                         <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="">{{ __('Order By') }}</option>
-                                                <option value="1" {{ request('order_by') == '1' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-                                                <option value="0" {{ request('order_by') == '0' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
+                                            <select name="order_type" id="order_type" class="form-control">
+                                                <option value="id"
+                                                    {{ request('order_type') == 'id' ? 'selected' : '' }}>
+                                                    {{ __('Serial') }}</option>
+                                                <option value="name"
+                                                    {{ request('order_type') == 'name' ? 'selected' : '' }}>
+                                                    {{ __('Name') }}</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2 form-group">
-                                            <select name="par-page" id="par-page" class="form-control">
+                                            <select name="order_by" id="order_by" class="form-control">
+                                                <option value="desc"
+                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                                    {{ __('DESC') }}
+                                                </option>
+                                                <option value="asc"
+                                                    {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                                    {{ __('ASC') }}
+                                                </option>
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 form-group">
+                                            <select name="par_page" id="par_page" class="form-control">
                                                 <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                                <option value="10" {{ '10' == request('par_page') ? 'selected' : '' }}>
                                                     {{ __('10') }}
                                                 </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                                <option value="50" {{ '50' == request('par_page') ? 'selected' : '' }}>
                                                     {{ __('50') }}
                                                 </option>
                                                 <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ '100' == request('par_page') ? 'selected' : '' }}>
                                                     {{ __('100') }}
                                                 </option>
                                                 <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                                    {{ 'all' == request('par_page') ? 'selected' : '' }}>
                                                     {{ __('All') }}
                                                 </option>
                                             </select>
+                                        </div>
+                                        <div class="col-md-1 form-group">
+                                            <a href="{{ route('admin.expense.type.index') }}"
+                                                class="btn btn-danger">{{ __('Reset') }}</a>
+                                        </div>
+                                        <div class="col-md-1 form-group">
+                                            <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
                                         </div>
                                     </div>
                                 </form>
@@ -85,7 +104,7 @@
                                 <h4>
                                     <a href="javascript:;" data-toggle="modal" data-target="#addExpense"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Expense') }}</a>
+                                        {{ __('Add Expense Type') }}</a>
                                 </h4>
                             </div>
                             <div class="card-body">
@@ -130,7 +149,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                @if (request()->get('par-page') !== 'all')
+                                @if (request()->get('par_page') !== 'all')
                                     <div class="float-right">
                                         {{ $types->onEachSide(0)->links() }}
                                     </div>
