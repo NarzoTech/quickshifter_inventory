@@ -109,7 +109,10 @@ class EmployeeSalaryController extends Controller
     public function salaryInfo(Request $request, $id)
     {
         $employee = $this->employee->find($id);
-        return ['advanceAmount' => $employee->getAdvanceAmountAttribute($request->month, $request->year), 'dueAmount' => $employee->getDueAmountAttribute($request->month, $request->year)];
+
+        $amount = $employee->getPaidAmountAttribute($request->month, $request->year);
+
+        return ['advanceAmount' => $amount, 'dueAmount' => $employee->getDueAmountAttribute($request->month, $request->year)];
     }
 
     public function salaryList()

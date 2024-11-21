@@ -58,6 +58,14 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <tr>
+                                            <td>0</td>
+                                            <td>{{ currency(0) }}</td>
+                                            <td>{{ currency($employee->salary) }}</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
                                         @php
                                             $paidAmount = 0;
                                         @endphp

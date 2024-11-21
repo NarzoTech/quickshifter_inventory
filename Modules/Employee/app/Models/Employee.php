@@ -58,6 +58,14 @@ class Employee extends Model
     {
         $month = $month ?? now()->format('F');
         $year = $year ?? now()->format('Y');
-        return $this->salary - $this->getAdvanceAmountAttribute($month, $year);
+        return $this->salary - $this->getPaidAmountAttribute($month, $year);
+    }
+
+    public function getPaidAmountAttribute($month = null, $year = null)
+    {
+        $month = $month ?? now()->format('F');
+        $year = $year ?? now()->format('Y');
+
+        return $this->employeeSalary->where('month', $month)->where('year', $year)->sum('amount');
     }
 }

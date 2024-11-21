@@ -195,7 +195,8 @@
                     url: "{{ route('admin.employee.salary.info', $employee->id) }}",
                     data: {
                         month: month,
-                        year: year
+                        year: year,
+                        type: "{{ request('pay') }}"
                     },
                     success: function(data) {
                         $('#already_salary').val(data.advanceAmount);
