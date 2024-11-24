@@ -65,7 +65,7 @@
             </a>
 
             <ul class="dropdown-menu">
-                <li class="{{ Route::is('admin.quotation.create') ? 'active' : '' }}">
+                <li class="{{ Route::is('admin.quotation.create') ? 'mm-active' : '' }}">
                     <a href="{{ route('admin.quotation.create') }}">
                         <i class="metismenu-icon">
                         </i>
@@ -73,7 +73,7 @@
                     </a>
                 </li>
                 <li
-                    class="{{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'active' : '' }}">
+                    class="{{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'mm-active' : '' }}">
                     <a href="{{ route('admin.quotation.index') }}">
                         <i class="metismenu-icon">
                         </i>
@@ -115,5 +115,64 @@
         @if (Module::isEnabled('Employee'))
             @include('employee::sidebar')
         @endif
+
+        <li
+            class="{{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'mm-active') }}">
+
+            <a href="javascript:;">
+                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Settings') }}
+                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+            </a>
+
+
+            <ul>
+                <li>
+                    <a href="{{ route('admin.settings') }}" class="{{ isRoute('admin.settings', 'mm-active') }}">
+                        {{ __('Business Settings') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.print.settings') }}"
+                        class="{{ isRoute('admin.print.settings', 'mm-active') }}">
+                        {{ __('Print Settings') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.business.index') }}"
+                        class="{{ isRoute('admin.business*', 'mm-active') }}">
+                        {{ __('Business Branches') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.notice.create') }}"
+                        class="{{ isRoute('admin.notice.create', 'mm-active') }}">
+                        {{ __('Notice Send') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.courier.settings') }}"
+                        class="{{ isRoute('admin.courier.settings', 'mm-active') }}">
+                        {{ __('Courier Settings') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.reset.database') }}"
+                        class="{{ isRoute('admin.reset.database', 'mm-active') }}">
+                        {{ __('Reset Database') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.cache.clear') }}"
+                        class="{{ isRoute('admin.cache.clear', 'mm-active') }}">
+                        {{ __('Clear Cache') }}
+                    </a>
+                </li>
+                @if (Module::isEnabled('Tax'))
+                    @include('tax::sidebar')
+                @endif
+            </ul>
+        </li>
+
+        <li class="mb-5"></li>
     </ul>
 </div>
