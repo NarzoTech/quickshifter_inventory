@@ -1,21 +1,21 @@
-<li class="nav-item dropdown {{ isRoute(['admin.employee.*', 'admin.salary.*'], 'active') }}">
-    <a href="javascript:void()" class="nav-link has-dropdown">
-        <i class="fas fa-cart-arrow-down"></i><span>{{ __('Employees') }}</span>
+<li class="{{ isRoute(['admin.employee.*', 'admin.salary.*'], 'mm-active') }}">
+    <a href="javascript:;">
+        <i class="metismenu-icon pe-7s-display2"></i> {{ __('Employees') }}
+        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
     </a>
-
-    <ul class="dropdown-menu">
-        <li class="{{ isRoute('admin.employee.index', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.employee.index') }}">
+    <ul>
+        <li>
+            <a href="{{ route('admin.employee.index') }}" class="{{ isRoute('admin.employee.index', 'mm-active') }}">
                 {{ __('Employee List') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.employee.create', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.employee.create') }}">
+        <li>
+            <a href="{{ route('admin.employee.create') }}" class="{{ isRoute('admin.employee.create', 'mm-active') }}">
                 {{ __('Add New Employee') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.salary.list', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.salary.list') }}">
+        <li>
+            <a href="{{ route('admin.salary.list') }}" class="{{ isRoute('admin.salary.list', 'mm-active') }}">
                 {{ __('All Paid Salary') }}
             </a>
         </li>

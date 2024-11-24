@@ -1,21 +1,24 @@
-<li class="nav-item dropdown {{ isRoute(['admin.expense.*', 'admin.expense.type.index'], 'active') }}">
-    <a href="javascript:void()" class="nav-link has-dropdown">
-        <i class="fas fa-cart-arrow-down"></i><span>{{ __('Manage Expense') }}</span>
+<li class="{{ isRoute(['admin.expense.*', 'admin.expense.type.index'], 'mm-active') }}">
+    <a href="javascript:;">
+        <i class="metismenu-icon pe-7s-display2"></i> {{ __('Manage Expense') }}
+        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
     </a>
 
-    <ul class="dropdown-menu">
-        <li class="{{ isRoute('admin.expense.create', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.expense.index') }}?type=new">
+    <ul>
+        <li>
+            <a href="{{ route('admin.expense.index') }}?type=new"
+                class="{{ isRoute('admin.expense.create', 'mm-active') }}">
                 {{ __('New Expense') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.expense.index', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.expense.index') }}">
+        <li>
+            <a href="{{ route('admin.expense.index') }}" class="{{ isRoute('admin.expense.index', 'mm-active') }}">
                 {{ __('Expense List') }}
             </a>
         </li>
-        <li class="{{ isRoute('admin.expense.type.index', 'active') }}">
-            <a class="nav-link" href="{{ route('admin.expense.type.index') }}">
+        <li>
+            <a href="{{ route('admin.expense.type.index') }}"
+                class="{{ isRoute('admin.expense.type.index', 'mm-active') }}">
                 {{ __('Expense Type') }}
             </a>
         </li>

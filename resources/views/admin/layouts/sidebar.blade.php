@@ -1,0 +1,119 @@
+<div class="app-sidebar__inner">
+    <ul class="vertical-nav-menu">
+        <li class="app-sidebar__heading">Menu</li>
+        <li class="mm-active">
+            <a href="{{ route('admin.dashboard') }}">
+                <i class="metismenu-icon pe-7s-graph">
+                </i>Dashboard
+            </a>
+        </li>
+
+
+        @if (Module::isEnabled('Supplier'))
+            @include('supplier::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Customer'))
+            @include('customer::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Product'))
+            @include('product::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Purchase'))
+            @include('purchase::sidebar')
+        @endif
+
+        <li>
+            <a href="javascript:;">
+                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Inventory') }}
+                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+            </a>
+            <ul>
+                <li>
+                    <a href="{{ route('admin.stock.index') }}">
+                        <i class="metismenu-icon">
+                        </i>
+                        {{ __('Stock') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.category.index') }}">
+                        <i class="metismenu-icon">
+                        </i>
+                        {{ __('Adjustments') }}
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        @if (Module::isEnabled('Service'))
+            @include('service::sidebar')
+        @endif
+        @if (Module::isEnabled('Sales'))
+            @include('sales::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Accounts'))
+            @include('accounts::sidebar')
+        @endif
+        <li class="{{ Route::is('admin.quotation*') ? 'mm-active' : '' }}">
+            <a href="javascript:;">
+                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Quotations') }}
+                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+            </a>
+
+            <ul class="dropdown-menu">
+                <li class="{{ Route::is('admin.quotation.create') ? 'active' : '' }}">
+                    <a href="{{ route('admin.quotation.create') }}">
+                        <i class="metismenu-icon">
+                        </i>
+                        {{ __('Add Quotation') }}
+                    </a>
+                </li>
+                <li
+                    class="{{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'active' : '' }}">
+                    <a href="{{ route('admin.quotation.index') }}">
+                        <i class="metismenu-icon">
+                        </i>
+                        {{ __('Add Quotation') }}
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @if (Module::isEnabled('Report'))
+            @include('report::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Expense'))
+            @include('expense::sidebar')
+        @endif
+
+        <li class="{{ Route::is('admin.asset-category*') || Route::is('admin.assets*') ? 'mm-active' : '' }}">
+            <a href="javascript:;">
+                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Assets') }}
+                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+            </a>
+
+            <ul>
+                <li>
+                    <a href="{{ route('admin.assets.index') }}"
+                        class="{{ Route::is('admin.assets*') ? 'mm-active' : '' }}">
+                        {{ __('Asset List') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.asset-category.index') }}"
+                        class="{{ Route::is('admin.asset-category*') ? 'mm-active' : '' }}">
+                        {{ __('Asset Type') }}
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        @if (Module::isEnabled('Employee'))
+            @include('employee::sidebar')
+        @endif
+    </ul>
+</div>

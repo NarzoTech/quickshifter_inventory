@@ -6,7 +6,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return to_route('admin.dashboard');
+    return view('admin.pages.dashboard');
 })->name('home');
 
 Route::get('/dashboard', function () {
@@ -54,9 +54,9 @@ Route::get('/payment-addon-faild', [PaymentController::class, 'payment_addon_fai
 
 /**payment related route end */
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
-require __DIR__.'/admin.php';
+require __DIR__ . '/admin.php';
 
 Route::fallback(function () {
     abort(404);

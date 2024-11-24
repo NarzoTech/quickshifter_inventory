@@ -1,4 +1,4 @@
-<li class="nav-item dropdown {{ isRoute(['admin.suppliers.*', 'admin.supplierGroup.index']) ? 'active' : '' }}">
+{{-- <li class="nav-item dropdown {{ isRoute(['admin.suppliers.*', 'admin.supplierGroup.index']) ? 'active' : '' }}">
     <a href="javascript:void()" class="nav-link has-dropdown">
         <i class="fas fa-users"></i><span>{{ __('Manage Suppliers') }}</span>
     </a>
@@ -17,6 +17,33 @@
         <li class="{{ isRoute('admin.supplierGroup.index') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.supplierGroup.index') }}">
                 {{ __('Supplier Group') }}
+            </a>
+        </li>
+    </ul>
+</li> --}}
+
+
+<li>
+    <a href="javascript:;">
+        <i class="metismenu-icon pe-7s-browser"></i> {{ __('Manage Suppliers') }}
+        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+    </a>
+    <ul>
+        <li>
+            <a href="{{ route('admin.suppliers.index') }}">
+                <i class="metismenu-icon"></i> {{ __('Supplier List') }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('admin.suppliers.due-pay-history') }}">
+                <i class="metismenu-icon">
+                </i>{{ __('Supplier Due Paid List') }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('admin.supplierGroup.index') }}">
+                <i class="metismenu-icon">
+                </i>{{ __('Supplier Group') }}
             </a>
         </li>
     </ul>
