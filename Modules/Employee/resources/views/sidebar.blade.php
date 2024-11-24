@@ -3,7 +3,7 @@
         <i class="metismenu-icon pe-7s-display2"></i> {{ __('Employees') }}
         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
     </a>
-    <ul>
+    <ul class="mm-collapse {{ isRoute(['admin.employee.*', 'admin.salary.*'], 'mm-show') }}">
         <li>
             <a href="{{ route('admin.employee.index') }}" class="{{ isRoute('admin.employee.index', 'mm-active') }}">
                 {{ __('Employee List') }}

@@ -25,24 +25,17 @@
             @include('purchase::sidebar')
         @endif
 
-        <li>
+        <li class="{{ Route::is('admin.stock.index') ? 'mm-active' : '' }}">
             <a href="javascript:;">
                 <i class="metismenu-icon pe-7s-display2"></i> {{ __('Inventory') }}
                 <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
             </a>
-            <ul>
+
+            <ul class="mm-collapse {{ Route::is('admin.stock.index') ? 'mm-show' : '' }}">
                 <li>
-                    <a href="{{ route('admin.stock.index') }}">
-                        <i class="metismenu-icon">
-                        </i>
+                    <a href="{{ route('admin.stock.index') }}"
+                        class="{{ Route::is('admin.stock.index') ? 'mm-active' : '' }}">
                         {{ __('Stock') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.category.index') }}">
-                        <i class="metismenu-icon">
-                        </i>
-                        {{ __('Adjustments') }}
                     </a>
                 </li>
             </ul>
@@ -64,20 +57,17 @@
                 <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
             </a>
 
-            <ul class="dropdown-menu">
-                <li class="{{ Route::is('admin.quotation.create') ? 'mm-active' : '' }}">
-                    <a href="{{ route('admin.quotation.create') }}">
-                        <i class="metismenu-icon">
-                        </i>
+            <ul class="mm-collapse {{ Route::is('admin.quotation*') ? 'mm-show' : '' }}">
+                <li>
+                    <a href="{{ route('admin.quotation.create') }}"
+                        class="{{ Route::is('admin.quotation.create') ? 'active' : '' }}">
                         {{ __('Add Quotation') }}
                     </a>
                 </li>
-                <li
-                    class="{{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'mm-active' : '' }}">
-                    <a href="{{ route('admin.quotation.index') }}">
-                        <i class="metismenu-icon">
-                        </i>
-                        {{ __('Add Quotation') }}
+                <li>
+                    <a href="{{ route('admin.quotation.index') }}"
+                        class="{{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'active' : '' }}">
+                        {{ __('Quotation Manage') }}
                     </a>
                 </li>
             </ul>
@@ -96,7 +86,8 @@
                 <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
             </a>
 
-            <ul>
+            <ul
+                class="mm-collapse {{ Route::is('admin.asset-category*') || Route::is('admin.assets*') ? 'mm-show' : '' }}">
                 <li>
                     <a href="{{ route('admin.assets.index') }}"
                         class="{{ Route::is('admin.assets*') ? 'mm-active' : '' }}">
@@ -125,7 +116,8 @@
             </a>
 
 
-            <ul>
+            <ul
+                class="mm-collapse isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'mm-show') }}">
                 <li>
                     <a href="{{ route('admin.settings') }}" class="{{ isRoute('admin.settings', 'mm-active') }}">
                         {{ __('Business Settings') }}

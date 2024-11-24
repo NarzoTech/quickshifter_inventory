@@ -4,7 +4,7 @@
         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
     </a>
 
-    <ul>
+    <ul class="mm-collapse {{ isRoute(['admin.expense.*', 'admin.expense.type.index'], 'mm-show') }}">
         <li>
             <a href="{{ route('admin.expense.index') }}?type=new"
                 class="{{ isRoute('admin.expense.create', 'mm-active') }}">

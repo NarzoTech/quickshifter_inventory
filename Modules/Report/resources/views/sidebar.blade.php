@@ -4,7 +4,7 @@
         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
     </a>
 
-    <ul>
+    <ul class="mm-collapse {{ isRoute(['admin.report.other-income', 'admin.report.dts'], 'mm-show') }}">
         <li>
             <a href="{{ route('admin.report.other-income') }}"
                 class="{{ Route::is('admin.report.other-income') ? 'mm-active' : '' }}">
@@ -29,7 +29,7 @@
         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
     </a>
 
-    <ul>
+    <ul class="mm-collapse {{ isRoute(['admin.other-summery.customer', 'admin.other-summery.supplier'], 'mm-show') }}">
         <li>
             <a href="{{ route('admin.other-summery.customer') }}"
                 class="{{ Route::is('admin.other-summery.customer') ? 'mm-active' : '' }}">
@@ -72,7 +72,7 @@
         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
     </a>
 
-    <ul>
+    <ul class="mm-collapse {{ isRoute($routeList, 'mm-show') }}">
         <li>
             <a href="javascript:;">
                 {{ __('All Reports') }}
