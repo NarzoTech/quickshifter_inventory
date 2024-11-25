@@ -17,6 +17,7 @@
     <meta name="msapplication-tap-highlight" content="no">
 
     <link rel="stylesheet" href="{{ url('backend/assets/css/base.min.css') }}">
+    <link rel="icon" href="{{ asset($setting->favicon) }}">
 
     {{-- bootstrap 5 cdn --}}
     <link href="{{ url('backend/assets/css/bootstrap.min.css') }}">
@@ -25,6 +26,12 @@
     <link rel="stylesheet" href="{{ url('backend/assets/css/dev.css') }}">
 
     @stack('styles')
+
+    <style>
+        .logo-src {
+            background-image: url('{{ asset($setting->logo) }}') !important;
+        }
+    </style>
 
 </head>
 

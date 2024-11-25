@@ -6,47 +6,31 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
 
+
     @yield('title')
 
-    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/fontawesome/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-social.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/components.css') }}">
-    @if (session()->has('text_direction') && session()->get('text_direction') !== 'ltr')
-        <link rel="stylesheet" href="{{ asset('backend/css/rtl.css') }}">
-        <link rel="stylesheet" href="{{ asset('backend/css/dev_rtl.css') }}">
-    @endif
-    <link rel="stylesheet" href="{{ asset('global/toastr/toastr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap4-toggle.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/dev.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/tagify.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-tagsinput.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/fontawesome-iconpicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-datepicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/clockpicker/dist/bootstrap-clockpicker.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/datetimepicker/jquery.datetimepicker.css') }}">
-    <link rel="stylesheet" href="{{ asset('backend/css/iziToast.min.css') }}">
-
+    <link rel="icon" href="{{ asset($setting->favicon) }}">
+    <link rel="stylesheet" href="{{ url('backend/assets/css/base.min.css') }}">
     <script src="{{ asset('global/js/jquery-3.7.1.min.js') }}"></script>
+
+    <style>
+        .app-logo {
+            background-image: url({{ asset($setting->logo) }});
+        }
+    </style>
 
 </head>
 
 <body>
-    <div id="app">
-        @yield('content')
+    <div class="app-container app-theme-white body-tabs-shadow">
+        <div class="app-container">
+            <div class="h-100">
+                @yield('content')
+            </div>
+        </div>
     </div>
 
-
-    <script src="{{ asset('backend/js/popper.min.js') }}"></script>
-    <script src="{{ asset('backend/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('backend/js/jquery.nicescroll.min.js') }}"></script>
-    <script src="{{ asset('backend/js/moment.min.js') }}"></script>
-    <script src="{{ asset('backend/js/stisla.js') }}"></script>
-    <script src="{{ asset('backend/js/scripts.js') }}"></script>
-    <script src="{{ asset('global/toastr/toastr.min.js') }}"></script>
-    <script src="{{ asset('backend/js/modules-toastr.js') }}"></script>
+    @include('admin.layouts.javascripts')
 
     <script>
         @if (Session::has('messege'))
