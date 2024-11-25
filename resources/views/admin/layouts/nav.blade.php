@@ -19,22 +19,36 @@
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
 
-
-
-            <!-- Place this tag where you want the button to render. -->
-            <li class="nav-item lh-1 me-4">
-                <a class="github-button" href="https://github.com/themeselection/sneat-html-admin-template-free"
-                    data-icon="octicon-star" data-size="large" data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
+            <li class="dropdown dropdown-list-toggle">
+                <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                    <i class="fa fa-money"></i> {{ __('Sale Report') }}</i>
+                </a>
             </li>
-
-
-
+            <li class="dropdown dropdown-list-toggle">
+                <a href="{{ route('admin.stock.index') }}" class="nav-link nav-link-lg">
+                    <i class="fas fa-box"></i> {{ __('Stock') }}</i>
+                </a>
+            </li>
+            <li class="dropdown dropdown-list-toggle">
+                <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                    <i class="fas fa-chart-bar"></i> {{ __('Today\'s Summery') }}</i>
+                </a>
+            </li>
+            <li class="dropdown dropdown-list-toggle">
+                <a href="{{ route('admin.sales.return.list') }}" class="nav-link nav-link-lg">
+                    <i class="fas fa-shopping-bag"></i> {{ __('Return Orders') }}</i>
+                </a>
+            </li>
+            <li class="dropdown dropdown-list-toggle">
+                <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                    <i class="fas fa-cart-plus"></i> {{ __('POS') }}</i>
+                </a>
+            </li>
             <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle">
+                        <img src="{{ asset($header_admin->image) }}" alt class="w-px-40 h-auto rounded-circle">
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -43,13 +57,13 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <img src="../assets/img/avatars/1.png" alt
+                                        <img src="{{ asset($header_admin->image) }}" alt
                                             class="w-px-40 h-auto rounded-circle">
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-0">John Doe</h6>
-                                    <small class="text-muted">Admin</small>
+                                    <h6 class="mb-0">{{ $header_admin->name }}</h6>
+                                    <small class="text-muted">{{ $header_admin->getRoleNames()->first() }}</small>
                                 </div>
                             </div>
                         </a>
@@ -57,30 +71,25 @@
                     <li>
                         <div class="dropdown-divider my-1"></div>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <i class="bx bx-user bx-md me-3"></i><span>My Profile</span>
-                        </a>
-                    </li>
-                    <li>
+                    @adminCan(['admin.profile.view', 'admin.profile.edit'])
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.edit-profile') }}">
+                                <i class="bx bx-user bx-md me-3"></i><span>My Profile</span>
+                            </a>
+                        </li>
+                    @endadminCan
+                    {{-- <li>
                         <a class="dropdown-item" href="#">
                             <i class="bx bx-cog bx-md me-3"></i><span>Settings</span>
                         </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            <span class="d-flex align-items-center align-middle">
-                                <i class="flex-shrink-0 bx bx-credit-card bx-md me-3"></i><span
-                                    class="flex-grow-1 align-middle">Billing Plan</span>
-                                <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
-                            </span>
-                        </a>
-                    </li>
+                    </li> --}}
                     <li>
                         <div class="dropdown-divider my-1"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="javascript:void(0);">
+                        <a class="dropdown-item" href="javascript:void(0);"
+                            onclick="event.preventDefault();
+                                document.getElementById('admin-logout-form').submit();">
                             <i class="bx bx-power-off bx-md me-3"></i><span>Log Out</span>
                         </a>
                     </li>

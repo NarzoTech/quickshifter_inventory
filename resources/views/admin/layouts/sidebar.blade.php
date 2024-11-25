@@ -231,8 +231,6 @@
 
     <div class="menu-inner-shadow"></div>
 
-
-
     <ul class="menu-inner py-1">
 
         <li class="menu-item {{ Route::is('admin.dashboard') ? 'active' : '' }}">
@@ -242,42 +240,23 @@
             </a>
         </li>
 
-        <!-- Layouts -->
-        <li class="menu-item active open">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-layout"></i>
-                <div class="text-truncate" data-i18n="Layouts">Layouts</div>
-            </a>
+        @if (Module::isEnabled('Supplier'))
+            @include('supplier::sidebar')
+        @endif
 
-            <ul class="menu-sub">
 
-                <li class="menu-item">
-                    <a href="layouts-without-menu.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Without menu">Without menu</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-without-navbar.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Without navbar">Without navbar</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-fluid.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Fluid">Fluid</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-container.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Container">Container</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-blank.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Blank">Blank</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
+        @if (Module::isEnabled('Customer'))
+            @include('customer::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Product'))
+            @include('product::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Purchase'))
+            @include('purchase::sidebar')
+        @endif
+
 
         <!-- Front Pages -->
         <li class="menu-item">

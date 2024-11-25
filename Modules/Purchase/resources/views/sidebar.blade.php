@@ -1,28 +1,29 @@
-<li class="{{ Route::is('admin.purchase.*') ? 'mm-active' : '' }}">
-    <a href="javascript:;">
-        <i class="metismenu-icon pe-7s-plugin"></i> {{ __('Manage Purchase') }}
-        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+<li class="menu-item {{ Route::is('admin.purchase.*') ? 'active open' : '' }}">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class='menu-icon tf-icons bx bx-store'></i>
+        <div class="text-truncate" data-i18n="{{ __('Manage Purchase') }}">{{ __('Manage Purchase') }}</div>
     </a>
-
-    <ul class="mm-collapse {{ Route::is('admin.purchase.*') ? 'mm-show' : '' }}">
-        <li>
-            <a class="nav-link" href="{{ route('admin.purchase.create') }}">
-                {{ __('Add Purchase') }}
+    <ul class="menu-sub">
+        <li class="menu-item {{ Route::is('admin.purchase.create') ? 'active' : '' }}">
+            <a href="{{ route('admin.purchase.create') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Add Purchase') }}">{{ __('Add Purchase') }}</div>
             </a>
         </li>
-        <li>
-            <a class="nav-link" href="{{ route('admin.purchase.index') }}">
-                {{ __('Manage Purchase') }}
+        <li class="menu-item {{ Route::is('admin.purchase.index') ? 'active' : '' }}">
+            <a href="{{ route('admin.purchase.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Manage Purchase') }}">{{ __('Manage Purchase') }}</div>
             </a>
         </li>
-        <li class="{{ isRoute('admin.purchase.return.index') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.purchase.return.index') }}">
-                {{ __('Purchases Return List') }}
+        <li class="menu-item {{ Route::is('admin.purchase.return.index') ? 'active' : '' }}">
+            <a href="{{ route('admin.purchase.return.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Purchases Return List') }}">
+                    {{ __('Purchases Return List') }}</div>
             </a>
         </li>
-        <li class="{{ isRoute('admin.purchase.return.type.list') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ route('admin.purchase.return.type.list') }}">
-                {{ __('Purchases Return Type') }}
+        <li class="menu-item {{ Route::is('admin.purchase.return.type.list') ? 'active' : '' }}">
+            <a href="{{ route('admin.purchase.return.type.list') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Purchases Return Type') }}">
+                    {{ __('Purchases Return Type') }}</div>
             </a>
         </li>
     </ul>

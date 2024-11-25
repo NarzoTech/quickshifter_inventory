@@ -1,3 +1,6 @@
+@php
+    $header_admin = Auth::guard('admin')->user();
+@endphp
 <!DOCTYPE html>
 
 <html lang="en" class="light-style layout-menu-fixed layout-compact " dir="ltr" data-theme="theme-default"
@@ -23,6 +26,7 @@
 
     <link rel="stylesheet" href="{{ asset('backend/assets/vendor/fonts/boxicons.css') }}" />
 
+    <link rel="stylesheet" href="{{ asset('global/css/all.min.css') }}">
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('backend/assets/vendor/css/core.css') }}"
@@ -40,8 +44,7 @@
 
     <!-- Helpers -->
     <script src="{{ asset('backend/assets/vendor/js/helpers.js') }}"></script>
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+
     <script src="{{ asset('backend/assets/js/config.js') }}"></script>
 
 </head>
@@ -84,6 +87,11 @@
     </div>
     <!-- / Layout wrapper -->
 
+    <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
+
+    @include('admin.layouts.javascripts')
 
     <!-- Place this tag before closing body tag for github widget button. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>

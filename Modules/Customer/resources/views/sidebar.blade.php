@@ -1,36 +1,33 @@
 <li
-    class="{{ isRoute(['admin.customers.index', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list'], 'mm-active') }}">
-    <a href="javascript:;">
-        <i class="metismenu-icon pe-7s-plugin"></i> {{ __('Manage Customer') }}
-        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+    class="menu-item {{ isRoute(['admin.customers.index', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list'], 'active open') }}">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class='menu-icon tf-icons bx bx-store'></i>
+        <div class="text-truncate" data-i18n="{{ __('Manage Customer') }}">{{ __('Manage Customer') }}</div>
     </a>
-    <ul
-        class="mm-collapse {{ isRoute(['admin.customers.index', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list'], 'mm-show') }}">
-        <li>
-            <a href="{{ route('admin.customers.index') }}" class="{{ isRoute('admin.customers.index', 'mm-active') }}">
-                {{ __('Customers') }}
+    <ul class="menu-sub">
+        <li class="menu-item {{ isRoute('admin.customers.index', 'active') }}">
+            <a href="{{ route('admin.customers.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Landing">{{ __('Customers') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.customers.due-receive.list') }}"
-                class="{{ isRoute('admin.customers.due-receive.list', 'mm-active') }}">
-                {{ __('Due Receive List') }}
+        <li class="menu-item {{ isRoute('admin.customers.due-receive.list', 'active') }}">
+            <a href="{{ route('admin.customers.due-receive.list') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Due Receive List') }}">{{ __('Due Receive List') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.customerGroup.index') }}"
-                class="{{ isRoute('admin.customerGroup.index', 'mm-active') }}">
-                {{ __('Customer Group') }}
+        <li class="menu-item {{ isRoute('admin.customerGroup.index', 'active') }}">
+            <a href="{{ route('admin.customerGroup.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Customer Group') }}">{{ __('Customer Group') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.vehicle.index') }}" class="{{ isRoute('admin.vehicle.index', 'mm-active') }}">
-                {{ __('Vehicle List') }}
+        <li class="menu-item {{ isRoute('admin.vehicle.index', 'active') }}">
+            <a href="{{ route('admin.vehicle.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Vehicle List') }}">{{ __('Vehicle List') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.area.index') }}" class="{{ isRoute('admin.area.index', 'mm-active') }}">
-                {{ __('Area List') }}
+        <li class="menu-item {{ isRoute('admin.area.index', 'active') }}">
+            <a href="{{ route('admin.area.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Help Center">{{ __('Area List') }}</div>
             </a>
         </li>
     </ul>

@@ -1,84 +1,81 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Dashboard') }}</title>
 @endsection
-@section('admin-content')
-    <div class="main-content">
+@section('content')
+    <section class="section">
+        <div class="section-header">
+            <h1>{{ __('Dashboard') }}</h1>
+        </div>
 
-        <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Dashboard') }}</h1>
-            </div>
-
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                        <div class="card card-statistic-1">
-                            <div class="card-icon bg-primary">
-                                <i class="fas fa-money-bill-alt"></i>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-primary">
+                            <i class="fas fa-money-bill-alt"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>{{ __('Customer Due') }}</h4>
                             </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>{{ __('Customer Due') }}</h4>
-                                </div>
-                                <div class="card-body">
-                                    {{ currency($data['customerDues']) }}
-                                </div>
+                            <div class="card-body">
+                                {{ currency($data['customerDues']) }}
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                        <div class="card card-statistic-1">
-                            <div class="card-icon bg-info">
-                                <i class="fas fa-money-bill-alt"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>{{ __('Supplier Due') }}</h4>
-                                </div>
-                                <div class="card-body">
-                                    {{ currency($data['total_supplier_due']) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                        <div class="card card-statistic-1">
-                            <div class="card-icon bg-info">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>{{ __('Total Products') }}</h4>
-                                </div>
-                                <div class="card-body">
-                                    {{ $data['totalProducts'] }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                        <div class="card card-statistic-1">
-                            <div class="card-icon bg-info">
-                                <i class="fas fa-money-bill-alt"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>{{ __('Today Sales') }}</h4>
-                                </div>
-                                <div class="card-body">
-                                    {{ currency($data['todaySales']) }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-info">
+                            <i class="fas fa-money-bill-alt"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>{{ __('Supplier Due') }}</h4>
+                            </div>
+                            <div class="card-body">
+                                {{ currency($data['total_supplier_due']) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-info">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>{{ __('Total Products') }}</h4>
+                            </div>
+                            <div class="card-body">
+                                {{ $data['totalProducts'] }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                    <div class="card card-statistic-1">
+                        <div class="card-icon bg-info">
+                            <i class="fas fa-money-bill-alt"></i>
+                        </div>
+                        <div class="card-wrap">
+                            <div class="card-header">
+                                <h4>{{ __('Today Sales') }}</h4>
+                            </div>
+                            <div class="card-body">
+                                {{ currency($data['todaySales']) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
 @endsection
 
 @push('js')

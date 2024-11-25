@@ -1,56 +1,50 @@
-<li class="app-sidebar__heading">{{ __('Manage Product') }}</li>
-
 <li
-    class="{{ Route::is('admin.product.*') || Route::is('admin.unit.*') || Route::is('admin.category.*') || Route::is('admin.brand.*') ? 'mm-active' : '' }}">
-    <a href="javascript:;">
-
-        <i class="metismenu-icon pe-7s-plugin"></i> {{ __('Manage Product') }}
-        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+    class="menu-item {{ Route::is('admin.product.*') || Route::is('admin.unit.*') || Route::is('admin.category.*') || Route::is('admin.brand.*') ? 'active open' : '' }}">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class='menu-icon tf-icons bx bx-store'></i>
+        <div class="text-truncate" data-i18n="Front Pages">{{ __('Manage Product') }}</div>
     </a>
-
-    <ul
-        class="mm-collapse {{ Route::is('admin.product.*') || Route::is('admin.unit.*') || Route::is('admin.category.*') || Route::is('admin.brand.*') ? 'mm-show' : '' }}">
-        <li>
-            <a href="{{ route('admin.product.index') }}"
-                class="{{ Route::is('admin.product.index') || Route::is('admin.product.edit') || Route::is('admin.product.show') ? 'mm-active' : '' }}">
-                {{ __('Product List') }}
+    <ul class="menu-sub">
+        <li
+            class="menu-item {{ Route::is('admin.product.index') || Route::is('admin.product.edit') || Route::is('admin.product.show') ? 'active' : '' }}">
+            <a href="{{ route('admin.product.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Product List') }}">{{ __('Product List') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.product.create') }}"
-                class="{{ Route::is('admin.product.create') ? 'mm-active' : '' }}">
-                {{ __('Add Product') }}
+        <li class="menu-item {{ Route::is('admin.product.create') ? 'active' : '' }}">
+            <a href="{{ route('admin.product.create') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Pricing">{{ __('Add Product') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.unit.index') }}" class="{{ Route::is('admin.unit*') ? 'mm-active' : '' }}">
-                {{ __('Unit Type') }}
+        <li class="menu-item {{ Route::is('admin.unit.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.unit.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Payment">{{ __('Unit Type') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.category.index') }}"
-                class="{{ Route::is('admin.category*') ? 'mm-active' : '' }}">
-                {{ __('Category') }}
+        <li class="menu-item {{ Route::is('admin.category.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.category.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Checkout">{{ __('Category') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.brand.index') }}" class="{{ Route::is('admin.brand*') ? 'mm-active' : '' }}">
-                {{ __('Brand') }}
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('admin.attribute.index') }}"
-                class="{{ Route::is('admin.attribute*') ? 'mm-active' : '' }}">
-                {{ __('Attribute') }}
+        <li class="menu-item {{ Route::is('admin.brand.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.brand.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Help Center">{{ __('Brand') }}</div>
             </a>
         </li>
 
 
-        <li>
-            <a href="{{ route('admin.product.barcode') }}"
-                class="{{ Route::is('admin.product.barcode') ? 'mm-active' : '' }}">
-                {{ __('Print Barcode') }} / {{ __('Label') }}
+        <li class="menu-item {{ Route::is('admin.attribute.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.attribute.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Help Center">{{ __('Attribute') }}</div>
             </a>
         </li>
+        <li class="menu-item {{ Route::is('admin.product.barcode') ? 'active' : '' }}">
+            <a href="{{ route('admin.product.barcode') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="Help Center">{{ __('Print Barcode') }} / {{ __('Label') }}
+                </div>
+            </a>
+        </li>
+
+
     </ul>
 </li>

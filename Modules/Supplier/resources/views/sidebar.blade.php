@@ -1,26 +1,23 @@
-<li class="{{ isRoute(['admin.suppliers.*', 'admin.supplierGroup.index']) ? 'mm-active' : '' }}">
-    <a href="javascript:;">
-        <i class="metismenu-icon pe-7s-browser"></i> {{ __('Manage Suppliers') }}
-        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+<li class="menu-item {{ isRoute(['admin.suppliers.*', 'admin.supplierGroup.index']) ? 'active open' : '' }}">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-layout"></i>
+        <div class="text-truncate" data-i18n="Layouts">{{ __('Manage Suppliers') }}</div>
     </a>
 
-    <ul class="mm-collapse {{ isRoute(['admin.suppliers.*', 'admin.supplierGroup.index']) ? 'mm-show' : '' }}">
-        <li>
-            <a href="{{ route('admin.suppliers.index') }}"
-                class="{{ isRoute(['admin.suppliers.index', 'admin.suppliers.ledger'], 'mm-active') }}">
-                {{ __('Supplier List') }}
+    <ul class="menu-sub">
+        <li class="menu-item {{ isRoute(['admin.suppliers.index', 'admin.suppliers.ledger'], 'active') }}">
+            <a href="{{ route('admin.suppliers.index') }}" class="menu-link">
+                <div class="text-truncate" data-i18n="Without menu">{{ __('Supplier List') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.suppliers.due-pay-history') }}"
-                class="{{ isRoute('admin.suppliers.due-pay-history', 'mm-active') }}">
-                {{ __('Supplier Due Paid List') }}
+        <li class="menu-item {{ isRoute('admin.suppliers.due-pay-history', 'active') }}">
+            <a href="{{ route('admin.suppliers.due-pay-history') }}" class="menu-link">
+                <div class="text-truncate" data-i18n="Without navbar">{{ __('Supplier Due Paid List') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.supplierGroup.index') }}"
-                class="{{ isRoute('admin.supplierGroup.index') ? 'mm-active' : '' }}">
-                {{ __('Supplier Group') }}
+        <li class="menu-item {{ isRoute('admin.supplierGroup.index', 'active') }}">
+            <a href="{{ route('admin.supplierGroup.index') }}" class="menu-link">
+                <div class="text-truncate" data-i18n="Fluid">{{ __('Supplier Group') }}</div>
             </a>
         </li>
     </ul>
