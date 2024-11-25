@@ -87,7 +87,9 @@
 
 
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="">Add Supplier</a>
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"><i
+                        class="fa fa-plus"></i>
+                    {{ __('Add Supplier') }}</a>
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
                     Excel</button>
                 <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
@@ -211,6 +213,124 @@
         </div>
     </div>
 
+    {{-- add Supplier --}}
+    <div>
+        <div class="modal fade" id="addSupplier" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ __('Add Supplier') }}</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form action="{{ route('admin.suppliers.store') }}" method="POST" id="add-supplier-form">
+                            @csrf
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="name">{{ __('Supplier Name') }}<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="company">{{ __('Company') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fa fa-briefcase"></i>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control" id="company" name="company">
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="phone">{{ __('Phone') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fas fa-phone-alt"></i>
+                                            </div>
+                                        </div>
+                                        <input type="text" class="form-control" id="phone" name="phone">
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="email">{{ __('Email') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fas fa-envelope"></i>
+                                            </div>
+                                        </div>
+                                        <input type="email" class="form-control" id="email" name="email">
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="group_id">{{ __('Supplier Group') }}</label>
+                                    <select name="group_id" id="group_id" class="form-control">
+                                        <option value="">{{ __('Select Group') }}</option>
+                                        @foreach ($groups as $group)
+                                            <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="area_id">{{ __('Area') }}</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                            </div>
+                                        </div>
+                                        <select name="area_id" id="area_id" class="form-control">
+                                            <option value="">{{ __('Select Area') }}</option>
+                                            @foreach ($areaList as $list)
+                                                <option value="{{ $list->id }}">{{ $list->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4 ">
+                                    <label for="date">{{ __('Date') }}</label>
+                                    <input type="text" class="form-control datepicker" id="date" name="date">
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label for="status">{{ __('Status') }}</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1">{{ __('Active') }}</option>
+                                        <option value="0">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
+                                    <label class="custom-switch mt-2">
+                                        <input type="checkbox" name="guest" class="custom-switch-input"
+                                            value="1">
+                                        <span class="custom-switch-indicator"></span>
+                                        <label for="guest" class="ml-2">{{ __('Guest Supplier') }}</label>
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label for="address">{{ __('Address') }}</label>
+                                    <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" form="add-supplier-form">Save</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- edit Supplier --}}
     @foreach ($suppliers as $index => $supplier)
