@@ -9,6 +9,8 @@ Route::get('/', function () {
     return view('admin.pages.dashboard');
 })->name('home');
 
+Route::view('/table', 'admin.pages.table')->name('table');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth:web', 'verified'])->name('dashboard');

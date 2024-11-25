@@ -1,7 +1,7 @@
 <div class="app-sidebar__inner">
     <ul class="vertical-nav-menu">
         <li class="app-sidebar__heading">Menu</li>
-        <li class="mm-active">
+        <li class="{{ Route::is('admin.dashboard') ? 'mm-active' : '' }}">
             <a href="{{ route('admin.dashboard') }}">
                 <i class="metismenu-icon pe-7s-graph">
                 </i>Dashboard

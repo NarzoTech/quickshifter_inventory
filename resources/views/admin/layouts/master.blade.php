@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>ArchitectUI HTML Demo</title>
+    @yield('title')
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
 
@@ -14,6 +14,12 @@
     <meta name="msapplication-tap-highlight" content="no">
 
     <link rel="stylesheet" href="{{ url('backend/assets/css/base.min.css') }}">
+
+    {{-- bootstrap 5 cdn --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ url('backend/assets/css/dev.css') }}">
 
     @stack('styles')
 

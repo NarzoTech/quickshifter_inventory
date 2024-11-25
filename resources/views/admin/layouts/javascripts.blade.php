@@ -2,7 +2,9 @@
 
 <!--CORE-->
 <script src="{{ url('global/js/jquery-3.7.1.min.js') }}"></script>
-<script src="{{ url('global/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url('backend/js/bootstrap.bundle.min.js') }}"></script>
+
+
 <script src="{{ url('backend/js/metismenu.js') }}"></script>
 <script src="{{ url('/backend/assets/js/scripts-init/app.js') }}"></script>
 <script src="{{ url('/backend/assets/js/scripts-init/demo.js') }}"></script>
@@ -146,4 +148,4 @@
 <script src="{{ url('backend/assets/js/scripts-init/tables.js') }}"></script>
 
 
-@stack('scripts')
+@stack('js')
