@@ -1,79 +1,64 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Supplier Due Pay') }}</title>
 @endsection
 
-@section('admin-content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Supplier Due Pay') }}</h1>
-
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a
-                            href="{{ route('admin.purchase.index') }}">{{ __('Supplier Due Pay') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Supplier Due Pay') }}</div>
-                </div>
+@section('content')
+    <div class="card mt-3 mb-3">
+        <div class="card-header-tab card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4><i class="fas fa-list"></i>Supplier Due Pay</h4>
             </div>
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="">{{ __('Supplier Due Pay') }}</div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>
-                                                        {{ __('SL') }}
-                                                    </th>
-                                                    <th>{{ __('Date') }}</th>
-                                                    <th>{{ __('Invoice No') }}</th>
-                                                    <th>{{ __('Supplier') }}</th>
-                                                    <th>{{ __('Amount') }}</th>
-                                                    <th>{{ __('Paid By') }}</th>
-                                                    <th>{{ __('Action') }}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
+                    Excel</button>
+                <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
+                    PDF</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table style="width: 100%;" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                {{ __('SL') }}
+                            </th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Invoice No') }}</th>
+                            <th>{{ __('Supplier') }}</th>
+                            <th>{{ __('Amount') }}</th>
+                            <th>{{ __('Paid By') }}</th>
+                            <th>{{ __('Action') }}</th>
+                        </tr>
 
-                                                @foreach ($payments as $payment)
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ now()->parse($payment->payment_date)->format('d M , Y') }}
-                                                        </td>
-                                                        <td>{{ $payment->purchase?->invoice_number }}</td>
-                                                        <td>{{ $payment->supplier->name }}</td>
-                                                        <td>{{ $payment->amount }}</td>
-                                                        <td>{{ $payment->createdBy->name }}</td>
-                                                        <td>
-                                                            <div class="btn-group">
-                                                                <a href="javascript:;" class="btn btn-danger btn-sm"
-                                                                    onclick="deleteData({{ $payment->id }})">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($payments as $payment)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ now()->parse($payment->payment_date)->format('d M , Y') }}
+                                </td>
+                                <td>{{ $payment->purchase?->invoice_number }}</td>
+                                <td>{{ $payment->supplier->name }}</td>
+                                <td>{{ $payment->amount }}</td>
+                                <td>{{ $payment->createdBy->name }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="javascript:;" class="btn btn-danger btn-sm"
+                                            onclick="deleteData({{ $payment->id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </div>
-                                </div>
+                                </td>
+                            </tr>
+                        @endforeach
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                    </tbody>
+                </table>
             </div>
-        </section>
+        </div>
     </div>
 @endsection
 
