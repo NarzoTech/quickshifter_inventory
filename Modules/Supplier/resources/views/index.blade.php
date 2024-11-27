@@ -7,8 +7,6 @@
 
 
 @section('content')
-    <x-admin.breadcrumb :title="__('Suppliers List')"></x-admin.breadcrumb>
-
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -82,12 +80,11 @@
 
     <div class="card mt-3 mb-3">
         <div class="card-header-tab card-header">
-            <div class="card-header-title font-size-lg text-capitalize font-weight-normal"><i
-                    class="header-icon lnr-laptop-phone mr-3 text-muted opacity-6"> </i>Suppliers List</div>
-
-
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4><i class="fas fa-list"></i> Suppliers List</h4>
+            </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"><i
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"> <i
                         class="fa fa-plus"></i>
                     {{ __('Add Supplier') }}</a>
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
@@ -145,8 +142,8 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $supplier->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-toggle="modal"
-                                                data-target="#showSupplier{{ $supplier->id }}">Show</a>
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                data-bs-target="#showSupplier{{ $supplier->id }}">Show</a>
                                             <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
                                                 data-bs-target="#editSupplier{{ $supplier->id }}">Edit</a>
 
@@ -214,119 +211,109 @@
     </div>
 
     {{-- add Supplier --}}
-    <div>
-        <div class="modal fade" id="addSupplier" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
 
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Add Supplier') }}</h4>
-                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <form action="{{ route('admin.suppliers.store') }}" method="POST" id="add-supplier-form">
-                            @csrf
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="name">{{ __('Supplier Name') }}<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="company">{{ __('Company') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fa fa-briefcase"></i>
-                                            </div>
+    <div class="modal fade" id="addSupplier" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">{{ __('Add Supplier') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.suppliers.store') }}" method="POST" id="add-supplier-form">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="name">{{ __('Supplier Name') }}<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="company">{{ __('Company') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fa fa-briefcase"></i>
                                         </div>
-                                        <input type="text" class="form-control" id="company" name="company">
                                     </div>
+                                    <input type="text" class="form-control" id="company" name="company">
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="phone">{{ __('Phone') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fas fa-phone-alt"></i>
-                                            </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="phone">{{ __('Phone') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-phone-alt"></i>
                                         </div>
-                                        <input type="text" class="form-control" id="phone" name="phone">
                                     </div>
+                                    <input type="text" class="form-control" id="phone" name="phone">
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="email">{{ __('Email') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fas fa-envelope"></i>
-                                            </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="email">{{ __('Email') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-envelope"></i>
                                         </div>
-                                        <input type="email" class="form-control" id="email" name="email">
                                     </div>
+                                    <input type="email" class="form-control" id="email" name="email">
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="group_id">{{ __('Supplier Group') }}</label>
-                                    <select name="group_id" id="group_id" class="form-control">
-                                        <option value="">{{ __('Select Group') }}</option>
-                                        @foreach ($groups as $group)
-                                            <option value="{{ $group->id }}">{{ $group->name }}</option>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="group_id">{{ __('Supplier Group') }}</label>
+                                <select name="group_id" id="group_id" class="form-control">
+                                    <option value="">{{ __('Select Group') }}</option>
+                                    @foreach ($groups as $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="area_id">{{ __('Area') }}</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </div>
+                                    </div>
+                                    <select name="area_id" id="area_id" class="form-control">
+                                        <option value="">{{ __('Select Area') }}</option>
+                                        @foreach ($areaList as $list)
+                                            <option value="{{ $list->id }}">{{ $list->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="area_id">{{ __('Area') }}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <div class="input-group-text">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                        </div>
-                                        <select name="area_id" id="area_id" class="form-control">
-                                            <option value="">{{ __('Select Area') }}</option>
-                                            @foreach ($areaList as $list)
-                                                <option value="{{ $list->id }}">{{ $list->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-4 ">
-                                    <label for="date">{{ __('Date') }}</label>
-                                    <input type="text" class="form-control datepicker" id="date" name="date">
-                                </div>
-
-                                <div class="form-group col-md-4">
-                                    <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1">{{ __('Active') }}</option>
-                                        <option value="0">{{ __('Inactive') }}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
-                                    <label class="custom-switch mt-2">
-                                        <input type="checkbox" name="guest" class="custom-switch-input"
-                                            value="1">
-                                        <span class="custom-switch-indicator"></span>
-                                        <label for="guest" class="ml-2">{{ __('Guest Supplier') }}</label>
-                                    </label>
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <label for="address">{{ __('Address') }}</label>
-                                    <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
-                                </div>
                             </div>
-                        </form>
-                    </div>
+                            <div class="form-group col-md-4 ">
+                                <label for="date">{{ __('Date') }}</label>
+                                <input type="text" class="form-control datepicker" id="date" name="date">
+                            </div>
 
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" form="add-supplier-form">Save</button>
-                    </div>
-
+                            <div class="form-group col-md-4">
+                                <label for="status">{{ __('Status') }}</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="1">{{ __('Active') }}</option>
+                                    <option value="0">{{ __('Inactive') }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
+                                <label class="custom-switch mt-2">
+                                    <input type="checkbox" name="guest" class="custom-switch-input" value="1">
+                                    <span class="custom-switch-indicator"></span>
+                                    <label for="guest" class="ml-2">{{ __('Guest Supplier') }}</label>
+                                </label>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="address">{{ __('Address') }}</label>
+                                <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" form="add-supplier-form">Save</button>
                 </div>
             </div>
         </div>
@@ -334,17 +321,13 @@
 
     {{-- edit Supplier --}}
     @foreach ($suppliers as $index => $supplier)
-        <div class="modal" id="editSupplier{{ $supplier->id }}">
-            <div class="modal-dialog modal-lg">
+        <div class="modal fade" id="editSupplier{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
-
-                    <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Edit Supplier') }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h5 class="modal-title" id="exampleModalLabel1">{{ __('Edit Supplier') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
-                    <!-- Modal body -->
                     <div class="modal-body">
                         <form action="{{ route('admin.suppliers.update', $supplier->id) }}" method="POST"
                             id="edit-supplier-form{{ $supplier->id }}">
@@ -408,14 +391,11 @@
                             </div>
                         </form>
                     </div>
-
-                    <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary"
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success"
                             form="edit-supplier-form{{ $supplier->id }}">{{ __('Update') }}</button>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -424,16 +404,13 @@
 
     {{-- Show Supplier --}}
     @foreach ($suppliers as $index => $supplier)
-        <div class="modal" id="showSupplier{{ $supplier->id }}">
-            <div class="modal-dialog">
+        <div class="modal fade" id="showSupplier{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Supplier') }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h5 class="modal-title" id="exampleModalLabel1">{{ __('Supplier') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
-                    <!-- Modal body -->
                     <div class="modal-body">
                         <div class="row">
                             {{-- table --}}
@@ -480,12 +457,10 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    </div>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
 
+                    </div>
                 </div>
             </div>
         </div>

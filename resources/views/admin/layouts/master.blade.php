@@ -50,6 +50,8 @@
 
     <script src="{{ asset('backend/assets/js/config.js') }}"></script>
 
+    <link rel="stylesheet" href="{{ asset('backend/css/dev.css') }}" />
+
 
     <script>
         console.log(window.TemplateCustomizer());

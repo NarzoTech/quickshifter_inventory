@@ -3,6 +3,7 @@
     <script src="{{ asset('backend/assets/vendor/js/bootstrap.js') }}"></script>
     <script src="{{ asset('backend/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
     <script src="{{ asset('backend/assets/vendor/js/menu.js') }}"></script>
+    <script src="{{ asset('global/js/all.min.js') }}"></script>
 
 
     <!-- Vendors JS -->
