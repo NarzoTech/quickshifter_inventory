@@ -6,10 +6,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('admin.pages.dashboard');
+    return to_route('admin.dashboard');
 })->name('home');
-
-Route::view('/table', 'admin.pages.table')->name('table');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -24,6 +24,8 @@
 <IfModule mod_rewrite.c>
 <IfModule mod_negotiation.c>
 Options -MultiViews -Indexes
+    Header set Access-Control-Allow-Origin "*"
+
 </IfModule>
 
     RewriteEngine On
@@ -33,6 +35,7 @@ Options -MultiViews -Indexes
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d

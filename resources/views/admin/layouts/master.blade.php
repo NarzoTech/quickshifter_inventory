@@ -3,8 +3,9 @@
 @endphp
 <!DOCTYPE html>
 
-<html lang="en" class="light-style layout-menu-fixed layout-compact " dir="ltr" data-theme="theme-default"
-    data-style="dark">
+<html lang="en" class="light-style layout-menu-fixed layout-compact layout-navbar-fixed" dir="ltr"
+    data-theme="theme-default" data-style="light" data-assets-path="{{ asset('backend/assets') }}/"
+    data-template="vertical-menu-template">
 
 <head>
     <meta charset="utf-8" />
@@ -45,8 +46,14 @@
     <!-- Helpers -->
     <script src="{{ asset('backend/assets/vendor/js/helpers.js') }}"></script>
 
+    <script src="{{ asset('backend/assets/vendor/js/template-customizer.js') }}"></script>
+
     <script src="{{ asset('backend/assets/js/config.js') }}"></script>
 
+
+    <script>
+        console.log(window.TemplateCustomizer());
+    </script>
 </head>
 
 <body>
@@ -90,6 +97,9 @@
     <form id="admin-logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
         @csrf
     </form>
+
+
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 
     @include('admin.layouts.javascripts')
 
