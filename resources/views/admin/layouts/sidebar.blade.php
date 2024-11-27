@@ -257,6 +257,30 @@
             @include('purchase::sidebar')
         @endif
 
+        <li class="menu-item {{ Route::is('admin.stock.index') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class='menu-icon tf-icons bx bx-store'></i>
+                <div class="text-truncate" data-i18n="{{ __('Inventory') }}">{{ __('Inventory') }}</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Route::is('admin.stock.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.stock.index') }}" class="menu-link" target="_blank">
+                        <div class="text-truncate" data-i18n="{{ __('Stock') }}">{{ __('Stock') }}</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        @if (Module::isEnabled('Service'))
+            @include('service::sidebar')
+        @endif
+        @if (Module::isEnabled('Sales'))
+            @include('sales::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Accounts'))
+            @include('accounts::sidebar')
+        @endif
 
         <!-- Front Pages -->
         <li class="menu-item">

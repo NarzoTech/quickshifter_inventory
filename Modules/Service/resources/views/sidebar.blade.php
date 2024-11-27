@@ -1,18 +1,17 @@
-<li class="{{ isRoute(['admin.serviceCategory.*', 'admin.service.*'], 'mm-active') }}">
-    <a href="javascript:;">
-        <i class="metismenu-icon pe-7s-display2"></i> {{ __('Manage Services') }}
-        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+<li class="menu-item {{ isRoute(['admin.serviceCategory.*', 'admin.service.*'], 'active open') }}">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class='menu-icon tf-icons bx bx-store'></i>
+        <div class="text-truncate" data-i18n="{{ __('Manage Services') }}">{{ __('Manage Services') }}</div>
     </a>
-
-    <ul class="mm-collapse {{ isRoute(['admin.serviceCategory.*', 'admin.service.*'], 'mm-show') }}">
-        <li class="{{ isRoute('admin.service.index', 'mm-active') }}">
-            <a class="nav-link" href="{{ route('admin.service.index') }}">
-                {{ __('Service List') }}
+    <ul class="menu-sub">
+        <li class="menu-item {{ isRoute('admin.service.index', 'active') }}">
+            <a href="{{ route('admin.service.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Service List') }}">{{ __('Service List') }}</div>
             </a>
         </li>
-        <li class="{{ isRoute('admin.serviceCategory.index', 'mm-active') }}">
-            <a class="nav-link" href="{{ route('admin.serviceCategory.index') }}">
-                {{ __('Service Category') }}
+        <li class="menu-item {{ isRoute('admin.serviceCategory.index', 'active') }}">
+            <a href="{{ route('admin.serviceCategory.index') }}" class="menu-link" target="_blank">
+                <div class="text-truncate" data-i18n="{{ __('Service Category') }}">{{ __('Service Category') }}</div>
             </a>
         </li>
     </ul>
