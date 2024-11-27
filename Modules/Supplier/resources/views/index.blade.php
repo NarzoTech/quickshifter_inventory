@@ -14,7 +14,7 @@
                     <form action="" method="GET">
                         <div class="row">
                             <div class="col-xxl-3 col-md-4">
-                                <div class="form-group filter-search-wrapper">
+                                <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search...">
                                     <button type="submit">
