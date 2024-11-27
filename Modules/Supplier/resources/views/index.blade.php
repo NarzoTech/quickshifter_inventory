@@ -213,7 +213,7 @@
     {{-- add Supplier --}}
 
     <div class="modal fade" id="addSupplier" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel1">{{ __('Add Supplier') }}</h5>
@@ -230,39 +230,30 @@
                             <div class="form-group col-md-6">
                                 <label for="company">{{ __('Company') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <i class="fa fa-briefcase"></i>
-                                        </div>
-                                    </div>
+                                    <span class="input-group-text" id="basic-addon11"><i
+                                            class="fa fa-briefcase"></i></span>
                                     <input type="text" class="form-control" id="company" name="company">
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="phone">{{ __('Phone') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <i class="fas fa-phone-alt"></i>
-                                        </div>
-                                    </div>
+                                    <span class="input-group-text" id="basic-addon11"><i
+                                            class="fas fa-phone-alt"></i></span>
                                     <input type="text" class="form-control" id="phone" name="phone">
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="email">{{ __('Email') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <i class="fas fa-envelope"></i>
-                                        </div>
-                                    </div>
+                                    <span class="input-group-text" id="basic-addon11"><i
+                                            class="fas fa-envelope"></i></span>
                                     <input type="email" class="form-control" id="email" name="email">
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="group_id">{{ __('Supplier Group') }}</label>
-                                <select name="group_id" id="group_id" class="form-control">
+                                <select name="group_id" id="group_id" class="form-select">
                                     <option value="">{{ __('Select Group') }}</option>
                                     @foreach ($groups as $group)
                                         <option value="{{ $group->id }}">{{ $group->name }}</option>
@@ -272,11 +263,9 @@
                             <div class="form-group col-md-4">
                                 <label for="area_id">{{ __('Area') }}</label>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                        </div>
-                                    </div>
+                                    <span class="input-group-text" id="basic-addon11"><i
+                                            class="fas fa-map-marker-alt"></i></span>
+
                                     <select name="area_id" id="area_id" class="form-control">
                                         <option value="">{{ __('Select Area') }}</option>
                                         @foreach ($areaList as $list)
@@ -322,7 +311,7 @@
     {{-- edit Supplier --}}
     @foreach ($suppliers as $index => $supplier)
         <div class="modal fade" id="editSupplier{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel1">{{ __('Edit Supplier') }}</h5>
