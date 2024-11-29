@@ -194,9 +194,10 @@
                                         </div>
                                     </div>
                                     <div class="card-action d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-success mr-2">{{ __('Submit') }}</button>
                                         <a href="{{ route('admin.purchase.index') }}"
-                                            class="btn btn-danger">{{ __('Cancel') }}</a>
+                                            class="btn btn-danger me-2">{{ __('Cancel') }}</a>
+                                        <button type="submit" class="btn btn-success">{{ __('Submit') }}</button>
+
                                     </div>
                                 </div>
 

@@ -77,53 +77,53 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table style="width: 100%;" class="table table-hover">
-                    <thead>
+
+            <table style="width: 100%;" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ __('SN') }}</th>
+                        <th>{{ __('Name') }}</th>
+                        <th>{{ __('Discount') }}</th>
+                        <th>{{ __('Status') }}</th>
+                        <th>{{ __('Action') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($customerGroups as $index => $group)
                         <tr>
-                            <th>{{ __('SN') }}</th>
-                            <th>{{ __('Name') }}</th>
-                            <th>{{ __('Discount') }}</th>
-                            <th>{{ __('Status') }}</th>
-                            <th>{{ __('Action') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($customerGroups as $index => $group)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $group->name }}</td>
-                                <td>{{ $group->discount }}</td>
-                                <td>
-                                    @if ($group->status == 1)
-                                        <span class="badge badge-success">{{ __('Active') }}</span>
-                                    @else
-                                        <span class="badge badge-danger">{{ __('Inactive') }}</span>
-                                    @endif
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $group->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editGroup{{ $group->id }}">Edit</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $group->id }})">
-                                                Delete</a>
-                                        </div>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $group->name }}</td>
+                            <td>{{ $group->discount }}</td>
+                            <td>
+                                @if ($group->status == 1)
+                                    <span class="badge badge-success">{{ __('Active') }}</span>
+                                @else
+                                    <span class="badge badge-danger">{{ __('Inactive') }}</span>
+                                @endif
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button id="btnGroupDrop{{ $group->id }}" type="button"
+                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        Action
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
+                                        <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                            data-bs-target="#editGroup{{ $group->id }}">Edit</a>
+                                        <a href="javascript:;" class="dropdown-item"
+                                            onclick="deleteData({{ $group->id }})">
+                                            Delete</a>
                                     </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <x-empty-table :name="__('Customer Group')" route="" create="no" :message="__('No data found!')"
-                                colspan="6"></x-empty-table>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <x-empty-table :name="__('Customer Group')" route="" create="no" :message="__('No data found!')"
+                            colspan="6"></x-empty-table>
+                    @endforelse
+                </tbody>
+            </table>
+
             @if (request()->get('par-page') !== 'all')
                 <div class="float-right">
                     {{ $customerGroups->onEachSide(0)->links() }}

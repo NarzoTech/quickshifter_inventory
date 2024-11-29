@@ -71,7 +71,7 @@ class Product extends Model
     public function getCurrentPriceAttribute()
     {
         // check last purchase
-        $purchase = PurchaseDetails::where('product_id', $this->id)->orderBy('id', 'desc')->first();
+        $purchase =  $this->latestPurchaseDetail;
 
         // get the selling price
 
@@ -232,15 +232,20 @@ class Product extends Model
 
     public function getLastPurchasePriceAttribute()
     {
-        $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->get();
+        $purchase = $this->latestPurchaseDetail;
 
-        return $purchase->count() > 0 ? $purchase->first()->purchase_price : 0;
+        return $purchase ? $purchase->purchase_price : 0;
     }
 
     public function getSellingPriceAttribute()
     {
-        $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->first();
-        return $purchase ? $purchase->sale_price : $this->attributes['price'];
+        $latestPurchase = $this->latestPurchaseDetail;
+        return $latestPurchase ? $latestPurchase->sale_price : $this->attributes['price'];
+    }
+
+    public function latestPurchaseDetail(): HasOne
+    {
+        return $this->hasOne(PurchaseDetails::class, 'product_id', 'id')->latestOfMany();
     }
 
     public function stockDetails(): HasMany
@@ -271,7 +276,7 @@ class Product extends Model
     }
     public function getHasVariantAttribute(): bool
     {
-        return $this->variants->count() > 0;
+        return $this->variants_count > 0;
     }
 
     public function getActualPriceAttribute()

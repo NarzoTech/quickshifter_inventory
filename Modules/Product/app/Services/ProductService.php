@@ -54,8 +54,7 @@ class ProductService
     // get all active products
     public function allActiveProducts($request)
     {
-        $products = $this->product->where('status', 1)->with('category');
-
+        $products = $this->product->where('status', 1)->withCount('variants')->with('category', 'purchaseDetails', 'latestPurchaseDetail');
 
         return $products;
     }
