@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Product') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -43,10 +43,9 @@
                                                     <td>{{ currency($variant['cost']) }}</td>
                                                     <td>
                                                         @foreach ($variant['attributes'] as $attr)
-
                                                             {{ $attr['attribute_value'] }} @if (!$loop->last)
-                                                                {{ __(' , ') }} @endif
-
+                                                                {{ __(' , ') }}
+                                                            @endif
                                                         @endforeach
                                                     </td>
                                                     <td>
@@ -54,10 +53,10 @@
                                                             class="btn btn-primary btn-sm"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
 
-                                                        <button type="button"  onclick="deleteData({{ $variant['id'] }})"
-                                                                class="btn btn-danger btn-sm">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                            </button>
+                                                        <button type="button" onclick="deleteData({{ $variant['id'] }})"
+                                                            class="btn btn-danger btn-sm">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -1,4 +1,4 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Product Gallery Images') }}</title>
 @endsection
@@ -14,7 +14,7 @@
         }
     </style>
 @endpush
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('admin.product-gallery.store',$product->id) }}" method="post">
+                                <form action="{{ route('admin.product-gallery.store', $product->id) }}" method="post">
                                     @csrf
                                     <div class="row">
                                         @if (Module::isEnabled('Media'))
@@ -48,10 +48,11 @@
                                                 <div class="form-group">
                                                     @php
                                                         $images = $product->images;
-                                                        
-                                                        $images = $images? explode(',',$images[0]): [];
+
+                                                        $images = $images ? explode(',', $images[0]) : [];
                                                     @endphp
-                                                    <x-media::media-input name="images[]" multiple="yes" :dataImages="$images" label_text="Gallery Images"/>
+                                                    <x-media::media-input name="images[]" multiple="yes" :dataImages="$images"
+                                                        label_text="Gallery Images" />
                                                 </div>
                                             </div>
                                         @endif

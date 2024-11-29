@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Update Role') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -66,7 +66,9 @@
                                                         @php $i=1; @endphp
                                                         @foreach ($permission_groups as $group)
                                                             @php
-                                                                $permissionss = App\Models\Admin::getpermissionsByGroupName($group->name);
+                                                                $permissionss = App\Models\Admin::getpermissionsByGroupName(
+                                                                    $group->name,
+                                                                );
                                                                 $j = 1;
                                                             @endphp
                                                             <div class="mb-2 col-md-6 row bottom-border">

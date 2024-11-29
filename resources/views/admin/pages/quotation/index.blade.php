@@ -1,27 +1,10 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Current Stock') }}</title>
 @endsection
 
-@push('css')
-    <style>
-        thead tr:nth-child(odd) {
-            background-color: lightskyblue;
 
-        }
-
-
-        thead tr:nth-child(even) {
-            background-color: lightpink;
-        }
-
-        thead>tr>th {
-            /* background-color: lightseagreen; */
-            color: white !important;
-        }
-    </style>
-@endpush
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -34,12 +17,12 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="" method="GET"  class="card-body">
+                                <form action="" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="{{ __('Search') }}">
-                                                <button type="submit">
+                                            <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>
                                         </div>
@@ -111,7 +94,7 @@
                                                                 class="btn btn-sm btn-primary">{{ __('Sale') }}</a>
 
                                                             <a href="javascript:;" class="btn btn-sm btn-danger"
-                                                                onclick="deleteData({{ $quotation->id }})" >{{ __('Delete') }}</a>
+                                                                onclick="deleteData({{ $quotation->id }})">{{ __('Delete') }}</a>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -139,9 +122,9 @@
     <script>
         function deleteData(id) {
             let url = "{{ route('admin.quotation.destroy', ':id') }}"
-                url = url.replace(':id', id);
-                $("#deleteForm").attr("action", url);
-                $('#deleteModal').modal('show');
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
         }
     </script>
 @endpush

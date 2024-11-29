@@ -1,10 +1,10 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 
 @section('title')
     <title>{{ __('Pos Settings') }}</title>
 @endsection
 
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -23,9 +23,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_phone" class="custom-switch-input" value="1" @if ($pos_settings->show_phone)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_phone" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_phone) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span class="custom-switch-description">{{ __('Show Phone') }}</span>
                                                 </label>
@@ -34,9 +33,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_address" class="custom-switch-input" value="1" @if ($pos_settings->show_address)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_address" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_address) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span class="custom-switch-description">{{ __('Show Address') }}</span>
                                                 </label>
@@ -45,9 +43,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_email" class="custom-switch-input" value="1" @if ($pos_settings->show_email)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_email" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_email) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span class="custom-switch-description">{{ __('Show Email') }}</span>
                                                 </label>
@@ -56,9 +53,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_customer" class="custom-switch-input" value="1" @if ($pos_settings->show_customer)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_customer" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_customer) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span class="custom-switch-description">{{ __('Show Customer') }}</span>
                                                 </label>
@@ -67,10 +63,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_warehouse"
-                                                        class="custom-switch-input" value="1" @if ($pos_settings->show_warehouse)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_warehouse" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_warehouse) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span
                                                         class="custom-switch-description">{{ __('Show Warehouse') }}</span>
@@ -80,9 +74,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_discount" class="custom-switch-input" value="1" @if ($pos_settings->show_discount)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_discount" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_discount) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span
                                                         class="custom-switch-description">{{ __('Show Tax & Discount & Shipping') }}</span>
@@ -92,9 +85,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_barcode" class="custom-switch-input" value="1" @if ($pos_settings->show_barcode)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_barcode" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_barcode) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span class="custom-switch-description">{{ __('Show Barcode') }}</span>
                                                 </label>
@@ -103,9 +95,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="show_note" class="custom-switch-input" value="1" @if ($pos_settings->show_note)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="show_note" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->show_note) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span
                                                         class="custom-switch-description">{{ __('Show Note to Customer') }}</span>
@@ -115,9 +106,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="custom-switch mt-2">
-                                                    <input type="checkbox" name="is_printable" class="custom-switch-input" value="1" @if ($pos_settings->is_printable)
-                                                        checked
-                                                    @endif>
+                                                    <input type="checkbox" name="is_printable" class="custom-switch-input"
+                                                        value="1" @if ($pos_settings->is_printable) checked @endif>
                                                     <span class="custom-switch-indicator"></span>
                                                     <span
                                                         class="custom-switch-description">{{ __('Print Invoice Automatically') }}</span>

@@ -1,4 +1,4 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Account List') }}</title>
 @endsection
@@ -14,7 +14,7 @@
         }
     </style>
 @endpush
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -265,7 +265,7 @@
 
         function removeDisabled(selector) {
             // remove all disabled attribute 
-            
+
             $('.mobile_section').find('input, select').each(function() {
                 $(this).attr('disabled', true);
             });

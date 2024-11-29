@@ -1,4 +1,4 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Invoice') }}</title>
 @endsection
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ asset('/backend/css/invoice.css') }}">
 @endpush
 
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <div class="container-fluid">
             <section class="page">

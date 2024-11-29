@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Brand List') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -70,7 +70,7 @@
 
                                         @if (Module::isEnabled('Media'))
                                             <div class="form-group col-md-8 offset-md-2">
-                                                <x-media::media-input name="image" label_text="Image" requ/>
+                                                <x-media::media-input name="image" label_text="Image" requ />
                                             </div>
                                         @endif
                                         <div class="text-center offset-md-2 col-md-8">

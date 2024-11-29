@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Edit Currency') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -63,7 +63,8 @@
                                         <div class="form-group col-12">
                                             <label>{{ __('Default') }} <span class="text-danger">*</span></label>
                                             <select name="is_default" class="form-control">
-                                                <option value="no" {{ $currency->is_default == 'no' ? 'selected' : '' }}>
+                                                <option value="no"
+                                                    {{ $currency->is_default == 'no' ? 'selected' : '' }}>
                                                     {{ __('No') }}</option>
                                                 <option value="yes"
                                                     {{ $currency->is_default == 'yes' ? 'selected' : '' }}>
@@ -82,7 +83,8 @@
                                                     {{ $currency->currency_position == 'before_price_with_space' ? 'selected' : '' }}
                                                     value="before_price_with_space">{{ __('Before Price With Space') }}
                                                 </option>
-                                                <option {{ $currency->currency_position == 'after_price' ? 'selected' : '' }}
+                                                <option
+                                                    {{ $currency->currency_position == 'after_price' ? 'selected' : '' }}
                                                     value="after_price">{{ __('After Price') }}</option>
                                                 <option
                                                     {{ $currency->currency_position == 'after_price_with_space' ? 'selected' : '' }}
@@ -94,7 +96,8 @@
                                         <div class="form-group col-12">
                                             <label>{{ __('Status') }} <span class="text-danger">*</span></label>
                                             <select name="status" class="form-control">
-                                                <option value="active" {{ $currency->status == 'active' ? 'selected' : '' }}>
+                                                <option value="active"
+                                                    {{ $currency->status == 'active' ? 'selected' : '' }}>
                                                     {{ __('Active') }}</option>
                                                 <option value="inactive"
                                                     {{ $currency->status == 'inactive' ? 'selected' : '' }}>

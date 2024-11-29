@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Currency List') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -96,9 +96,9 @@
 
         function deleteData(id) {
             let url = "{{ route('admin.currency.destroy', ':id') }}"
-                url = url.replace(':id', id);
-                $("#deleteForm").attr("action", url);
-                $('#deleteModal').modal('show');
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
         }
     </script>
 @endsection

@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Brand Edit') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -32,7 +32,7 @@
                                     @csrf
                                     @method('PUT')
 
-                                    <input type="hidden" name="lang_code" value="{{request()->lang_code}}">
+                                    <input type="hidden" name="lang_code" value="{{ request()->lang_code }}">
                                     <div class="row">
                                         <div class="col-md-8 offset-md-2">
                                             <div class="form-group">

@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Product') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -28,13 +28,15 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <form method="POST" action ="{{route('admin.store-related-products',$product->id)}}">
+                                            <form method="POST"
+                                                action ="{{ route('admin.store-related-products', $product->id) }}">
                                                 @csrf
                                                 @foreach ($products as $prod)
                                                     <tr>
                                                         <td>
                                                             <input type="checkbox" name="product_id[]"
-                                                                value="{{ $prod->id }}" @if (in_array($prod->id, $relatedProducts)) checked @endif>
+                                                                value="{{ $prod->id }}"
+                                                                @if (in_array($prod->id, $relatedProducts)) checked @endif>
                                                         </td>
                                                         <td>
                                                             <img src="{{ asset($prod->photo) }}" alt="{{ $prod->name }}"

@@ -1,4 +1,4 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Product Variations') }}</title>
 @endsection
@@ -14,7 +14,7 @@
         }
     </style>
 @endpush
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -179,12 +179,12 @@
                         variationTableHTML +=
                             `<td >
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <input type="text" class="form-control selling-price w-75" name="price[]" placeholder="Enter Selling Price" value="{{$product->price}}">
+                                <input type="text" class="form-control selling-price w-75" name="price[]" placeholder="Enter Selling Price" value="{{ $product->price }}">
                             </div>
                         </td>
                         <td >
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <input type="text" class="form-control buying-price w-75" name="cost[]" placeholder="Enter Buying Price" value="{{$product->cost}}">
+                                <input type="text" class="form-control buying-price w-75" name="cost[]" placeholder="Enter Buying Price" value="{{ $product->cost }}">
                             </div>
                         </td>
 

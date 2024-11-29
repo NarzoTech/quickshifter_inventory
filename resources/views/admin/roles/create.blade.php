@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Create Role') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -75,7 +75,9 @@
                                                                 <div
                                                                     class="col-9 role-{{ $i }}-management-checkbox">
                                                                     @php
-                                                                        $permissionss = App\Models\Admin::getpermissionsByGroupName($group->name);
+                                                                        $permissionss = App\Models\Admin::getpermissionsByGroupName(
+                                                                            $group->name,
+                                                                        );
                                                                         $j = 1;
                                                                     @endphp
                                                                     @foreach ($permissionss as $permission)

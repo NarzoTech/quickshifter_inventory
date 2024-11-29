@@ -1,27 +1,10 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Purchase List') }}</title>
 @endsection
 
-@push('css')
-    <style>
-        thead tr:nth-child(odd) {
-            background-color: lightskyblue;
 
-        }
-
-
-        thead tr:nth-child(even) {
-            background-color: lightpink;
-        }
-
-        thead>tr>th {
-            /* background-color: lightseagreen; */
-            color: white !important;
-        }
-    </style>
-@endpush
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">

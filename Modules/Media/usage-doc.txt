@@ -1,4 +1,4 @@
-@section('admin-content')
+@section('content')
     <form
        {{-- Media File input --}}
         @if (Module::isEnabled('Media'))

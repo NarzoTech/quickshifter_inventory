@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('System Update') . ' - ' . $setting->app_name ?? 'AppeyTech' }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
@@ -282,8 +282,8 @@
 						$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
 							? "or drop files here"
 							: `${
-                            									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
-                            							  }`
+                                    									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
+                                    							  }`
 					}`
                         );
                 });

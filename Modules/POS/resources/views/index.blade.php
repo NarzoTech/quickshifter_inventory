@@ -1,4 +1,4 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>
         {{ __('POS') }}</title>
@@ -87,7 +87,7 @@
         }
     </style>
 @endpush
-@section('admin-content')
+@section('content')
 
     <!-- Main Content -->
     <div class="main-content">

@@ -1,4 +1,4 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Import customers') }}</title>
 @endsection
@@ -6,7 +6,7 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/dropzone.min.css') }}">
 @endpush
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">

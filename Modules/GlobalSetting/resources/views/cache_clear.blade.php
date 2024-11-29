@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Clear cache') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
