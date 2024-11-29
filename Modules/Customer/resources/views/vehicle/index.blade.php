@@ -117,7 +117,7 @@
                             </tr>
                         @empty
                             <x-empty-table :name="__('Vehicle')" route="" create="no" :message="__('No data found!')"
-                                colspan="6"></x-empty-table>
+                                colspan="7"></x-empty-table>
                         @endforelse
                     </tbody>
                 </table>
