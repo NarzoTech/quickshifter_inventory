@@ -1,102 +1,135 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Brands') }}</title>
+    <title>{{ __('Brand List') }}</title>
 @endsection
-@section('admin-content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Brands') }}</h1>
-            </div>
-
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-12 col-md-12 col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="{{ route('admin.brand.create') }}" class="btn btn-primary"><i
-                                            class="fa fa-plus"></i>
-                                        {{ __('Add Brand') }}</a>
-                                </h4>
-                                <div class="card-header-form">
-                                    <form id="product_search_form">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="search"
-                                                placeholder="{{ __('Search here..') }}" autocomplete="off"
-                                                value="{{ request()->get('search') }}">
-                                            <div class="input-group-btn">
-                                                <button class="btn btn-primary" style="padding:9px"><i
-                                                        class="fas fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
+@section('content')
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-1">
+                    <form action="" method="GET">
+                        <div class="row">
+                            <div class="col-xxl-3 col-md-3">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="card-body text-center">
-                                <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
-                                    <span><span class="number">0 </span> rows selected</span>
-                                    <button class="btn btn-danger delete-button">Delete</button>
+                            <div class="col-xxl-2 col-md-3">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    <div class="custom-checkbox custom-control">
-                                                        <input type="checkbox" data-checkboxes="checkgroup"
-                                                            data-checkbox-role="dad" class="custom-control-input"
-                                                            id="checkbox-all">
-                                                        <label for="checkbox-all"
-                                                            class="custom-control-label">&nbsp;</label>
-                                                    </div>
-                                                </th>
-                                                <th>{{ __('SL.') }}</th>
-                                                <th>{{ __('Image') }}</th>
-                                                <th class="text-left">{{ __('Name') }}</th>
-                                                <th>{{ __('Action') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($brands as $index => $brand)
-                                                <tr>
-                                                    <td>
-                                                        <div class="custom-checkbox custom-control">
-                                                            <input type="checkbox" data-checkboxes="checkgroup"
-                                                                class="custom-control-input"
-                                                                id="checkbox-{{ $brand->id }}" name="select">
-                                                            <label for="checkbox-{{ $brand->id }}"
-                                                                class="custom-control-label">&nbsp;</label>
-                                                        </div>
-                                                    </td>
-                                                    <td>{{ $index + $brands->firstItem() }}</td>
-                                                    <td><img src="{{ $brand->image_url }}" alt="" class="img-fluid"
-                                                            style="width: 80px"></td>
-                                                    <td class="text-left">{{ $brand->name }}</td>
-                                                    <td>
-                                                        <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
-                                                            class="btn btn-primary mr-1 btn-sm" data-bs-toggle="tooltip"
-                                                            title="Edit"><i class="fas fa-pencil-alt"></i></a>
+                            </div>
+                            <div class="col-xxl-2 col-md-3">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
 
-                                                        <a href="javascript:;" data-bs-target="#deleteModal"
-                                                            data-bs-toggle="modal" class="btn btn-danger btn-sm"
-                                                            onclick="deleteData({{ $brand->id }})"><i
-                                                                class="fas fa-trash"></i></a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="float-right">
-                                    {{ $brands->links() }}
+                            <div class="col-xxl-1 col-md-3">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+
+    <div class="card mt-3 mb-3">
+        <div class="card-header-tab card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4><i class="fas fa-list"></i> {{ __('Brand List') }}</h4>
+            </div>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <a href="{{ route('admin.brand.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                    {{ __('Add Brand') }}</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
+                <span><span class="number">0 </span> rows selected</span>
+                <button class="btn btn-danger delete-button">Delete</button>
+            </div>
+            <div class="table-responsive">
+                <table style="width: 100%;" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="custom-checkbox custom-control">
+                                    <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
+                                        class="custom-control-input" id="checkbox-all">
+                                    <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                </div>
+                            </th>
+                            <th>{{ __('SL.') }}</th>
+                            <th>{{ __('Image') }}</th>
+                            <th class="text-left">{{ __('Name') }}</th>
+                            <th>{{ __('Action') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($brands as $index => $brand)
+                            <tr>
+                                <td>
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
+                                            id="checkbox-{{ $brand->id }}" name="select">
+                                        <label for="checkbox-{{ $brand->id }}"
+                                            class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                </td>
+                                <td>{{ $index + $brands->firstItem() }}</td>
+                                <td><img src="{{ $brand->image_url }}" alt="" class="img-fluid"
+                                        style="width: 80px"></td>
+                                <td class="text-left">{{ $brand->name }}</td>
+                                <td>
+                                    <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
+                                        class="btn btn-primary mr-1 btn-sm" data-bs-toggle="tooltip" title="Edit"><i
+                                            class="fas fa-pencil-alt"></i></a>
+
+                                    <a href="javascript:;" data-bs-target="#deleteModal" data-bs-toggle="modal"
+                                        class="btn btn-danger btn-sm" onclick="deleteData({{ $brand->id }})"><i
+                                            class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $brands->onEachSide(0)->links() }}
+                </div>
+            @endif
+        </div>
     </div>
 @endsection
 
