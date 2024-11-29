@@ -79,7 +79,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addbank"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addbank"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Bank') }}</a>
                                 </h4>
@@ -110,7 +110,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $bank->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
+                                                                    data-bs-toggle="modal fade"
                                                                     data-bs-target="#editbank{{ $bank->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $bank->id }})">
@@ -140,13 +140,13 @@
     </div>
 
     {{-- add bank --}}
-    <div class="modal" id="addbank">
+    <div class="modal fade" id="addbank">
         <div class="modal-dialog">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Bank') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -162,7 +162,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-bank-form">Save</button>
                 </div>
 
@@ -173,14 +173,14 @@
 
     {{-- edit bank --}}
     @foreach ($banks as $index => $bank)
-        <div class="modal" id="editbank{{ $bank->id }}">
+        <div class="modal fade" id="editbank{{ $bank->id }}">
             <div class="modal-dialog">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Bank') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -201,7 +201,8 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-bank-form{{ $bank->id }}">{{ __('Update') }}</button>
                     </div>

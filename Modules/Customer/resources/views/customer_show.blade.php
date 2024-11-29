@@ -42,18 +42,18 @@
                                 @else
                                     <p class="title">{{ __('Email verified') }} : <b>{{ __('None') }}</b> </p>
 
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#verifyModal"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#verifyModal"
                                         class="btn btn-success mb-3">{{ __('Send Verify Link to Mail') }}</a>
                                 @endif
 
-                                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#sendMailModal"
+                                <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#sendMailModal"
                                     class="btn btn-primary sendMail mb-3">{{ __('Send Mail To Customer') }}</a>
 
                                 @if ($user->is_banned == 'yes')
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#bannedModal"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#bannedModal"
                                         class="btn btn-warning mb-3">{{ __('Remove to Banned') }}</a>
                                 @else
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#bannedModal"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#bannedModal"
                                         class="btn btn-warning mb-3">{{ __('Make a Banned') }}</a>
                                 @endif
 
@@ -181,7 +181,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Banned request confirmation') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -202,7 +202,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary">{{ __('Send Request') }}</button>
                     </form>
                 </div>
@@ -218,7 +218,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Send verify link to customer mail') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -232,7 +232,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary">{{ __('Send Request') }}</button>
                     </form>
                 </div>
@@ -248,7 +248,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Send mail to customer') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -269,7 +269,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary">{{ __('Send Mail') }}</button>
                     </form>
                 </div>

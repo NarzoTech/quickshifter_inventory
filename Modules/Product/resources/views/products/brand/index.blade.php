@@ -79,7 +79,7 @@
                                                             title="Edit"><i class="fas fa-pencil-alt"></i></a>
 
                                                         <a href="javascript:;" data-bs-target="#deleteModal"
-                                                            data-bs-toggle="modal" class="btn btn-danger btn-sm"
+                                                            data-bs-toggle="modal fade" class="btn btn-danger btn-sm"
                                                             onclick="deleteData({{ $brand->id }})"><i
                                                                 class="fas fa-trash"></i></a>
                                                     </td>

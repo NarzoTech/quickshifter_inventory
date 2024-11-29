@@ -1,11 +1,11 @@
-<div class="modal" id="categoryModal">
+<div class="modal fade" id="categoryModal">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">{{ __('Create Category') }}</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal fade">{{ __('×') }}</button>
             </div>
 
             <!-- Modal body -->
@@ -59,7 +59,7 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
                 <button type="submit" class="btn btn-success" form="categoryForm"><i class="fa fa-save"></i>
                     {{ __('Save') }}</button>
 

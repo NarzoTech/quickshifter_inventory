@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
 
-                                <button class="btn btn-danger" data-bs-toggle="modal"
+                                <button class="btn btn-danger" data-bs-toggle="modal fade"
                                     data-bs-target="#cacheClearModal">{{ __('Clear cache') }}</button>
 
                             </div>
@@ -50,7 +50,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Cache Clear Confirmation') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -60,7 +60,8 @@
                 <div class="modal-footer bg-whitesmoke br">
                     <form action="{{ route('admin.cache-clear-confirm') }}" method="POST">
                         @csrf
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Yes, Clear') }}</button>
 
                     </form>

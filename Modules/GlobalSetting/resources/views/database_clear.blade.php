@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
 
-                                <button class="btn btn-danger" data-bs-toggle="modal"
+                                <button class="btn btn-danger" data-bs-toggle="modal fade"
                                     data-bs-target="#clearDatabaseModal">{{ __('Clear Database') }}</button>
 
                             </div>
@@ -50,7 +50,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Clear Database Confirmation') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -61,7 +61,8 @@
                     <form id="deleteForm" action="{{ route('admin.database-clear-success') }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Yes, Delete') }}</button>
                     </form>
                 </div>

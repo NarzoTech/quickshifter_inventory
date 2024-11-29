@@ -145,7 +145,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Item Delete Confirmation') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -157,7 +157,8 @@
                         @csrf
                         @method('DELETE')
 
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Yes, Delete') }}</button>
 
                     </form>

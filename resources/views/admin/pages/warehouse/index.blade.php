@@ -17,7 +17,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal"
+                                    <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal fade"
                                         data-bs-target="#addWarehouse"><i class="fa fa-plus"></i>
                                         {{ __('Add Warehouse') }}</a>
                                 </h4>
@@ -65,7 +65,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="javascript:;" data-bs-toggle="modal"
+                                                        <a href="javascript:;" data-bs-toggle="modal fade"
                                                             data-bs-target="#editWarehouse{{ $house->id }}"
                                                             class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
@@ -86,14 +86,14 @@
     </div>
 
     <!-- Add Warehouse modal -->
-    <div class="modal" id="addWarehouse">
+    <div class="modal fade" id="addWarehouse">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Add Warehouse</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -130,7 +130,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-warehouse-form">Save</button>
                 </div>
 
@@ -142,14 +142,14 @@
     {{-- edit warehouse modal --}}
 
     @foreach ($warehouses as $index => $house)
-        <div class="modal" id="editWarehouse{{ $house->id }}">
+        <div class="modal fade" id="editWarehouse{{ $house->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">Edit Warehouse</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -194,7 +194,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="update-warehouse-form{{ $house->id }}">Update</button>
                     </div>

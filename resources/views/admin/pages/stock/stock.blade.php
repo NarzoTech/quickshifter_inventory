@@ -179,7 +179,7 @@
                                                         {{-- {{ route('admin.stock.reset', $product->id) }} --}}
                                                         <a href="javascript:;" class="btn btn-danger btn-sm"
                                                             title="Reset Stock" onclick="resetStock({{ $product->id }})"
-                                                            data-bs-target="#stockModal" data-bs-toggle="modal">
+                                                            data-bs-target="#stockModal" data-bs-toggle="modal fade">
                                                             <i class="fas fa-undo"></i>
                                                         </a>
                                                     </td>
@@ -208,7 +208,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Stock Reset Confirmation') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -219,7 +219,8 @@
                     <form id="resetForm" action="" method="POST">
                         @csrf
                         @method('PUT')
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Yes, Reset') }}</button>
                     </form>
                 </div>

@@ -68,13 +68,13 @@
                                                         class="btn btn-primary btn-sm"><i class="fa fa-eye"
                                                             aria-hidden="true"></i></a>
 
-                                                    <a href="javascript:;" data-bs-toggle="modal" {{-- data-bs-target="#deleteModal" --}}
+                                                    <a href="javascript:;" data-bs-toggle="modal fade" {{-- data-bs-target="#deleteModal" --}}
                                                         class="btn btn-danger btn-sm"
                                                         onclick="deleteData({{ $order->order_id }})"><i class="fa fa-trash"
                                                             aria-hidden="true"></i></a>
 
-                                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#status"
-                                                        class="btn btn-warning btn-sm status-btn"
+                                                    <a href="javascript:;" data-bs-toggle="modal fade"
+                                                        data-bs-target="#status" class="btn btn-warning btn-sm status-btn"
                                                         data-id="{{ $order->order_id }}"
                                                         data-status="{{ $order->delivery_status }}"
                                                         data-method="{{ $order->delivery_method }}"
@@ -106,7 +106,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">{{ __('Status') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -129,7 +129,8 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="button" class="btn btn-success" id="update">{{ __('Update') }}</button>
                     </div>
                 </div>

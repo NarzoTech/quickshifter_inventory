@@ -82,7 +82,7 @@
                                                                     </button>
                                                                 </form>
 
-                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                <a href="javascript:;" data-bs-toggle="modal fade"
                                                                     data-bs-target="#deleteModal" onclick="deleteData()"
                                                                     class="btn btn-danger">{{ __('Delete Update File') }}</a>
                                                             </div>

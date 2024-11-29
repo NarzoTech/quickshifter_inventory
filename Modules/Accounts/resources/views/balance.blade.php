@@ -194,7 +194,7 @@
                                                                     <a href="javascript:void(0)"
                                                                         onclick="deleteData({{ $deposit->id }})"
                                                                         class="btn btn-danger btn-sm"
-                                                                        data-bs-toggle="modal"
+                                                                        data-bs-toggle="modal fade"
                                                                         data-bs-target="#deleteModal">
                                                                         <i class="fas fa-trash"></i>
                                                                     </a>

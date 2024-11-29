@@ -70,5 +70,5 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
 </div>

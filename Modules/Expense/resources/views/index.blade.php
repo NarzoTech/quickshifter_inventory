@@ -125,7 +125,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addExpense"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Expense') }}</a>
                                 </h4>
@@ -164,7 +164,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $expense->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
+                                                                    data-bs-toggle="modal fade"
                                                                     data-bs-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
@@ -205,13 +205,13 @@
     </div>
 
     {{-- add Expense type --}}
-    <div class="modal" id="addExpense">
+    <div class="modal fade" id="addExpense">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Expense') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade">{{ __('×') }}</button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -259,7 +259,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary" form="add-bank-form">{{ __('Save') }}</button>
                 </div>
 
@@ -269,14 +269,15 @@
 
     {{-- edit expense --}}
     @foreach ($expenses as $index => $expense)
-        <div class="modal" id="editExpense{{ $expense->id }}">
+        <div class="modal fade" id="editExpense{{ $expense->id }}">
             <div class="modal-dialog">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Expense') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
+                        <button type="button" class="btn-close"
+                            data-bs-dismiss="modal fade">{{ __('×') }}</button>
                     </div>
 
                     <!-- Modal body -->
@@ -334,7 +335,8 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-type-form{{ $expense->id }}">{{ __('Update') }}</button>
                     </div>

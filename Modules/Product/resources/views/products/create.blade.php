@@ -109,7 +109,7 @@
                                                             @endforeach
                                                         </select>
                                                         <div class="input-group-append">
-                                                            <a href="javascript:;" data-bs-toggle="modal"
+                                                            <a href="javascript:;" data-bs-toggle="modal fade"
                                                                 data-bs-target="#categoryModal" class="btn btn-primary"><i
                                                                     class="fa fa-plus"></i></a>
                                                         </div>
@@ -133,7 +133,7 @@
                                                             @endforeach
                                                         </select>
                                                         <div class="input-group-append">
-                                                            <a href="javascript:;" data-bs-toggle="modal"
+                                                            <a href="javascript:;" data-bs-toggle="modal fade"
                                                                 data-bs-target="#brandModal" class="btn btn-primary"><i
                                                                     class="fa fa-plus"></i></a>
                                                         </div>
@@ -243,7 +243,7 @@
                                                                 @endforeach
                                                             </select>
                                                             <div class="input-group-append">
-                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                <a href="javascript:;" data-bs-toggle="modal fade"
                                                                     data-bs-target="#unitModal" class="btn btn-primary"><i
                                                                         class="fa fa-plus"></i></a>
                                                             </div>

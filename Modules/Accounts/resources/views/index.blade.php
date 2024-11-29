@@ -171,7 +171,7 @@
                                                                 aria-labelledby="btnGroupDrop{{ $account->id }}">
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.accounts.edit', $account->id) }}">Edit</a>
-                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                <a href="javascript:;" data-bs-toggle="modal fade"
                                                                     data-bs-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $account->id }})">
                                                                     Delete</a>
@@ -231,9 +231,9 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $account->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
+                                                                    data-bs-toggle="modal fade"
                                                                     data-bs-target="#editbank{{ $account->id }}">Edit</a>
-                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                <a href="javascript:;" data-bs-toggle="modal fade"
                                                                     data-bs-target="#deleteModal" class="dropdown-item"
                                                                     onclick="deleteData({{ $account->id }})">
                                                                     Delete</a>
@@ -295,7 +295,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $account->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
+                                                                    data-bs-toggle="modal fade"
                                                                     data-bs-target="#editbank{{ $account->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $account->id }})">

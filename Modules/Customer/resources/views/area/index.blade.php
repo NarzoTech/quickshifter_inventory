@@ -80,7 +80,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addarea"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addarea"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Area') }}</a>
                                 </h4>
@@ -111,7 +111,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $area->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
+                                                                    data-bs-toggle="modal fade"
                                                                     data-bs-target="#editarea{{ $area->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $area->id }})">
@@ -142,14 +142,14 @@
 
 
     {{-- add area --}}
-    <div class="modal" id="addarea">
+    <div class="modal fade" id="addarea">
         <div class="modal-dialog">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add area') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -167,7 +167,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-area-form">Save</button>
                 </div>
 
@@ -178,14 +178,14 @@
 
     {{-- edit area --}}
     @foreach ($areas as $index => $area)
-        <div class="modal" id="editarea{{ $area->id }}">
+        <div class="modal fade" id="editarea{{ $area->id }}">
             <div class="modal-dialog">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Add area') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -206,7 +206,8 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-area-form{{ $area->id }}">{{ __('Update') }}</button>
                     </div>

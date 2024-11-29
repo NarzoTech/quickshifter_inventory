@@ -142,7 +142,8 @@
                                                     $setting->mail_password != 'mail_password' &&
                                                     $setting->mail_port != 'mail_port')
                                                 @php($test_email = true)
-                                                <button class="btn btn-primary" data-bs-toggle="modal" type="button"
+                                                <button class="btn btn-primary" data-bs-toggle="modal fade"
+                                                    type="button"
                                                     data-bs-target="#testEmail">{{ __('Test Mail Credentials') }}</button>
                                             @endif
                                         </form>
@@ -190,7 +191,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">{{ __('Test Mail Credentials') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -201,7 +202,7 @@
                         <form action="{{ route('admin.test-mail-credentials') }}" action="" method="POST">
                             @csrf
                             <button type="button" class="btn btn-danger"
-                                data-dismiss="modal">{{ __('Close') }}</button>
+                                data-dismiss="modal fade">{{ __('Close') }}</button>
                             <button type="submit" class="btn btn-primary">{{ __('Yes') }}</button>
                         </form>
                     </div>

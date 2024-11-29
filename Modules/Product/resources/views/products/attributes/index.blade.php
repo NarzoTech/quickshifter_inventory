@@ -50,7 +50,7 @@
                                                                 class="fas fa-pencil-alt"></i></a>
                                                         <a href="javascript:void(0)"
                                                             class="btn btn-danger btn-action trigger--fire-modal-1 deleteForm"
-                                                            data-bs-toggle="modal" title="{{ __('Delete') }}"
+                                                            data-bs-toggle="modal fade" title="{{ __('Delete') }}"
                                                             data-url="{{ route('admin.attribute.destroy', $attribute->id) }}"
                                                             data-form="deleteForm" data-id="{{ $attribute->id }}"><i
                                                                 class="fas fa-trash"></i></a>
@@ -83,7 +83,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">{{ __('Confirm Delete') }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -94,7 +94,8 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                            <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal fade">{{ __('Close') }}</button>
                             <button type="submit" class="btn btn-success">{{ __('Yes, Delete') }}</button>
                         </div>
                     </div>

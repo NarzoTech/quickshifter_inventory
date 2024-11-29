@@ -140,7 +140,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $purchase->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
+                                                                    data-bs-toggle="modal fade"
                                                                     data-bs-target="#showCustomer{{ $purchase->id }}">Show</a>
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.purchase.invoice', $purchase->id) }}">Invoice</a>
@@ -177,14 +177,14 @@
 
     {{-- edit customer --}}
     @foreach ($purchases as $index => $purchase)
-        <div class="modal" id="editCustomer{{ $purchase->id }}">
+        <div class="modal fade" id="editCustomer{{ $purchase->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Add Customer') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -239,7 +239,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-customer-form{{ $purchase->id }}">{{ __('Update') }}</button>
                     </div>
@@ -252,13 +252,13 @@
 
     {{-- Show customer --}}
     @foreach ($purchases as $index => $purchase)
-        <div class="modal" id="showCustomer{{ $purchase->id }}">
+        <div class="modal fade" id="showCustomer{{ $purchase->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Customer') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -302,7 +302,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     </div>
 
                 </div>

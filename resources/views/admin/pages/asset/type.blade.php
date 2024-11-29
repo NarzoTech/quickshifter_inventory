@@ -83,7 +83,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addAssetType"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Asset Type') }}</a>
                                 </h4>
@@ -114,7 +114,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $type->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
+                                                                    data-bs-toggle="modal fade"
                                                                     data-bs-target="#editType{{ $type->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $type->id }})">
@@ -144,13 +144,13 @@
     </div>
 
     {{-- add Asset Type --}}
-    <div class="modal" id="addAssetType">
+    <div class="modal fade" id="addAssetType">
         <div class="modal-dialog">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Asset Type') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -166,7 +166,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-bank-form">Save</button>
                 </div>
 
@@ -176,14 +176,14 @@
 
     {{-- edit Asset Type --}}
     @foreach ($types as $index => $type)
-        <div class="modal" id="editType{{ $type->id }}">
+        <div class="modal fade" id="editType{{ $type->id }}">
             <div class="modal-dialog">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Asset Type') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -204,7 +204,8 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-dismiss="modal fade">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-type-form{{ $type->id }}">{{ __('Update') }}</button>
                     </div>

@@ -84,9 +84,9 @@
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
                     {{ __('Import Customers') }}</a>
-                <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()" data-bs-toggle="modal"
+                <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()" data-bs-toggle="modal fade"
                     data-bs-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer" class="btn btn-primary"> <i
+                <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addCustomer" class="btn btn-primary"> <i
                         class="fa fa-plus"></i>
                     {{ __('Add Supplier Group') }}</a>
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
@@ -145,10 +145,10 @@
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $user->id }}">
 
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal fade"
                                                 data-bs-target="#showCustomer{{ $user->id }}">Show</a>
 
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal fade"
                                                 data-bs-target="#editCustomer{{ $user->id }}">Edit</a>
 
                                             <a class="dropdown-item"
@@ -209,14 +209,14 @@
 
     {{-- edit customer --}}
     @foreach ($users as $index => $user)
-        <div class="modal" id="editCustomer{{ $user->id }}">
+        <div class="modal fade" id="editCustomer{{ $user->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Add Customer') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -323,7 +323,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-customer-form{{ $user->id }}">{{ __('Update') }}</button>
                     </div>
@@ -336,13 +336,13 @@
 
     {{-- Show customer --}}
     @foreach ($users as $index => $user)
-        <div class="modal" id="showCustomer{{ $user->id }}">
+        <div class="modal fade" id="showCustomer{{ $user->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Customer') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -386,7 +386,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     </div>
 
                 </div>
@@ -401,7 +401,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Item Delete Confirmation') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -421,7 +421,8 @@
                 </div>
                 <div class="modal-footer bg-whitesmoke br">
 
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger"
+                        data-dismiss="modal fade">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary"
                         form="allDeleteForm">{{ __('Yes, Delete') }}</button>
                 </div>

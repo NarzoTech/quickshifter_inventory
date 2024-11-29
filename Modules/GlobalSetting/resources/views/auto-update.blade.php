@@ -75,7 +75,7 @@
                                                             </button>
                                                         </form>
 
-                                                        <a href="javascript:;" data-bs-toggle="modal"
+                                                        <a href="javascript:;" data-bs-toggle="modal fade"
                                                             data-bs-target="#deleteModal" onclick="deleteData()"
                                                             class="btn btn-danger">{{ __('Delete Update File') }}</a>
                                                     </div>
@@ -282,8 +282,8 @@
 						$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
 							? "or drop files here"
 							: `${
-                    									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
-                    							  }`
+                        									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
+                        							  }`
 					}`
                         );
                 });

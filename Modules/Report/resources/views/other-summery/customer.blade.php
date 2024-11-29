@@ -105,7 +105,7 @@
                                     {{ __('Customer Other Due') }}
                                 </h4>
                                 <div>
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer"
+                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addCustomer"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Customer') }}</a>
                                 </div>
@@ -140,7 +140,8 @@
                                                     <td>
                                                         <div class="btn-group">
                                                             <a href="javascript:void(0);"
-                                                                class="btn btn-primary mr-2 btn-sm" data-bs-toggle="modal"
+                                                                class="btn btn-primary mr-2 btn-sm"
+                                                                data-bs-toggle="modal fade"
                                                                 data-bs-target="#editCustomer-{{ $summery->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>
@@ -187,14 +188,14 @@
 
 
 
-    <div class="modal" id="addCustomer">
+    <div class="modal fade" id="addCustomer">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Customer Other Due') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -241,7 +242,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-customer-due">Save</button>
                 </div>
 
@@ -251,14 +252,14 @@
 
 
     @foreach ($summeries as $summery)
-        <div class="modal" id="editCustomer-{{ $summery->id }}">
+        <div class="modal fade" id="editCustomer-{{ $summery->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Add Customer Other Due') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -312,7 +313,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="add-customer-due-{{ $summery->id }}">Save</button>
                     </div>

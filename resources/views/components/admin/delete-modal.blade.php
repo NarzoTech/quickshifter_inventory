@@ -7,7 +7,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{ __('Item Delete Confirmation') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>{{ __('Are You sure want to delete this item ?') }}</p>
@@ -18,7 +18,7 @@
                     @method('DELETE')
 
                     <button type="button" class="btn btn-outline-danger"
-                        data-bs-dismiss="modal">{{ __('Close') }}</button>
+                        data-bs-dismiss="modal fade">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary">{{ __('Yes, Delete') }}</button>
 
                 </form>

@@ -70,7 +70,7 @@
                 <h4><i class="fas fa-list"></i> {{ __('Vehicles List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addVehicle" class="btn btn-primary"><i
+                <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addVehicle" class="btn btn-primary"><i
                         class="fa fa-plus"></i>
                     {{ __('Add Vehicle') }}</a>
             </div>
@@ -106,7 +106,7 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $vehicle->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal fade"
                                                 data-bs-target="#editVehicle{{ $vehicle->id }}">Edit</a>
                                             <a href="javascript:;" class="dropdown-item"
                                                 onclick="deleteData({{ $vehicle->id }})">
@@ -132,14 +132,14 @@
 
 
     {{-- add Vehicle --}}
-    <div class="modal" id="addVehicle">
+    <div class="modal fade" id="addVehicle">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Vehicle') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -173,7 +173,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-Vehicle-form">Save</button>
                 </div>
 
@@ -184,14 +184,14 @@
 
     {{-- edit Vehicle --}}
     @foreach ($vehicles as $index => $vehicle)
-        <div class="modal" id="editVehicle{{ $vehicle->id }}">
+        <div class="modal fade" id="editVehicle{{ $vehicle->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Add Vehicle') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -233,7 +233,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-Vehicle-form{{ $vehicle->id }}">{{ __('Update') }}</button>
                     </div>
