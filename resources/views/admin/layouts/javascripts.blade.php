@@ -30,16 +30,16 @@
         var type = "{{ Session::get('alert-type', 'info') }}"
         switch (type) {
             case 'info':
-                toastr.info("{{ $value }}");
+                toastr.info("{{ $value }}", '', options);
                 break;
             case 'success':
-                toastr.success("{{ $value }}");
+                toastr.success("{{ $value }}", '', options);
                 break;
             case 'warning':
-                toastr.warning("{{ $value }}");
+                toastr.warning("{{ $value }}", '', options);
                 break;
             case 'error':
-                toastr.error("{{ $value }}");
+                toastr.error("{{ $value }}", '', options);
                 break;
         }
         @endsession

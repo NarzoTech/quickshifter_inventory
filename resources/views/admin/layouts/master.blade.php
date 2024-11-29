@@ -25,7 +25,7 @@
         rel="stylesheet">
 
 
-    <link rel="stylesheet" href="{{ asset('global/toastr/toastr.min.css') }}">
+
     <link rel="stylesheet" href="{{ asset('backend/css/bootstrap4-toggle.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/css/tagify.css') }}">
@@ -57,6 +57,7 @@
 
     <script src="{{ asset('backend/assets/js/config.js') }}"></script>
 
+    <link rel="stylesheet" href="{{ asset('global/toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/css/dev.css') }}" />
 
 </head>
@@ -103,6 +104,7 @@
         @csrf
     </form>
 
+    @include('components.admin.delete-modal')
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 
