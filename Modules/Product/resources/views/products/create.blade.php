@@ -17,17 +17,7 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
 
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a
-                            href="{{ route('admin.product.index') }}">{{ __('Product List') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Add Product') }}</div>
-                </div>
-            </div>
             <div class="section-body">
                 <div class="mt-4 row">
                     <div class="col-12">
@@ -159,8 +149,8 @@
                                                 <div class="form-group">
                                                     <label for="price">{{ __('Selling Price') }}
                                                         ({{ currency_icon() }})</label>
-                                                    <input type="number" name="price" class="form-control"
-                                                        id="price" value="{{ old('price') }}">
+                                                    <input type="number" name="price" class="form-control" id="price"
+                                                        value="{{ old('price') }}">
                                                     @error('price')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror

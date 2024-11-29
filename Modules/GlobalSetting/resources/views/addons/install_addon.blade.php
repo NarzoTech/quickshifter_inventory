@@ -11,95 +11,90 @@
                     <a href="{{ route('admin.settings') }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
                 </div>
                 <h1>{{ __('Install Addon') }}</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.settings') }}">{{ __('Settings') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Install Addon') }}</div>
-                </div>
+
             </div>
 
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>{{ __('Install Addon') }}</h4>
-                                <div class="card-header-action">
-                                    @adminCan('addon.view')
-                                        <a href="{{ route('admin.addons.view') }}" class="btn btn-success"><i
-                                                class="fas fa-plug"></i>
-                                            {{ __('Manage Addons') }}</a>
-                                    @endadminCan
+    </div>
+    </div>
+
+    <div class="section-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{{ __('Install Addon') }}</h4>
+                        <div class="card-header-action">
+                            @adminCan('addon.view')
+                                <a href="{{ route('admin.addons.view') }}" class="btn btn-success"><i class="fas fa-plug"></i>
+                                    {{ __('Manage Addons') }}</a>
+                            @endadminCan
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="mb-5 col-12">
+                                <div class="box">
+                                    <form action="{{ route('admin.addons.store') }}" method="POST"
+                                        enctype="multipart/form-data" class="d-flex justify-content-center">
+                                        @csrf
+                                        <input class="drag-input" type="file" data_btn_text="Browse"
+                                            placeholder="drage and drop file here" accept="application/zip"
+                                            name="zip_file" />
+                                        <button class="btn btn-primary"><i class="fa fa-upload"></i>
+                                            {{ __('Upload') }}</button>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="mb-5 col-12">
-                                        <div class="box">
-                                            <form action="{{ route('admin.addons.store') }}" method="POST"
-                                                enctype="multipart/form-data" class="d-flex justify-content-center">
-                                                @csrf
-                                                <input class="drag-input" type="file" data_btn_text="Browse"
-                                                    placeholder="drage and drop file here" accept="application/zip"
-                                                    name="zip_file" />
-                                                <button class="btn btn-primary"><i class="fa fa-upload"></i>
-                                                    {{ __('Upload') }}</button>
-                                            </form>
-                                        </div>
-                                    </div>
 
-                                    <div class="mt-3 col-12">
-                                        <hr>
-                                        @foreach ($addonFiles as $fileName => $jsonInfo)
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-12">
-                                                            @if (is_object($jsonInfo))
-                                                                <p>{{ __('Name') }}: {{ $jsonInfo->name }}</p>
-                                                                <p>{{ __('Description') }}: {{ $jsonInfo->description }}
-                                                                </p>
-                                                                <p>{{ __('Author') }}: {{ $jsonInfo?->author?->name }}
-                                                                </p>
-                                                                <p>{{ __('Email') }}: {{ $jsonInfo?->author?->email }}
-                                                                </p>
-                                                                <p>{{ __('Version') }}: {{ $jsonInfo->version }}</p>
-                                                                <p>{{ __('Last Update') }}: {{ $jsonInfo->last_update }}
-                                                                </p>
-                                                            @endif
-                                                        </div>
+                            <div class="mt-3 col-12">
+                                <hr>
+                                @foreach ($addonFiles as $fileName => $jsonInfo)
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    @if (is_object($jsonInfo))
+                                                        <p>{{ __('Name') }}: {{ $jsonInfo->name }}</p>
+                                                        <p>{{ __('Description') }}: {{ $jsonInfo->description }}
+                                                        </p>
+                                                        <p>{{ __('Author') }}: {{ $jsonInfo?->author?->name }}
+                                                        </p>
+                                                        <p>{{ __('Email') }}: {{ $jsonInfo?->author?->email }}
+                                                        </p>
+                                                        <p>{{ __('Version') }}: {{ $jsonInfo->version }}</p>
+                                                        <p>{{ __('Last Update') }}: {{ $jsonInfo->last_update }}
+                                                        </p>
+                                                    @endif
+                                                </div>
 
-                                                        <div class="col-12">
-                                                            <div
-                                                                class="d-flex justify-items-center justify-content-between ">
-                                                                <form action="{{ route('admin.addons.install.start') }}"
-                                                                    method="post">
-                                                                    @csrf
-                                                                    <button class="btn btn-primary">
-                                                                        {{ __('Start Install Process') }}
-                                                                    </button>
-                                                                </form>
+                                                <div class="col-12">
+                                                    <div class="d-flex justify-items-center justify-content-between ">
+                                                        <form action="{{ route('admin.addons.install.start') }}"
+                                                            method="post">
+                                                            @csrf
+                                                            <button class="btn btn-primary">
+                                                                {{ __('Start Install Process') }}
+                                                            </button>
+                                                        </form>
 
-                                                                <a href="javascript:;" data-bs-toggle="modal"
-                                                                    data-bs-target="#deleteModal" onclick="deleteData()"
-                                                                    class="btn btn-danger">{{ __('Delete Update File') }}</a>
-                                                            </div>
-                                                        </div>
+                                                        <a href="javascript:;" data-bs-toggle="modal"
+                                                            data-bs-target="#deleteModal" onclick="deleteData()"
+                                                            class="btn btn-danger">{{ __('Delete Update File') }}</a>
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endforeach
+                                        </div>
                                     </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-        </section>
+
+        </div>
+    </div>
+    </section>
     </div>
 @endsection
 

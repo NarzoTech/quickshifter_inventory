@@ -9,17 +9,7 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
 
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a
-                            href="{{ route('admin.product.index') }}">{{ __('Product List') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Import Products') }}</div>
-                </div>
-            </div>
             <div class="section-body">
                 <div class="mt-4 row">
                     <div class="col-12">

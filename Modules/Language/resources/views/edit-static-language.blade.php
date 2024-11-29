@@ -19,7 +19,7 @@
                     <div class="breadcrumb-item active">
                         <a href="{{ route('admin.languages.index') }}">{{ __('Manage Language') }}</a>
                     </div>
-                    <div class="breadcrumb-item">{{ __('Translate Language') }} ({{ $language->name }})</div>
+
                 </div>
             </div>
 

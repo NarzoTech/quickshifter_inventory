@@ -20,14 +20,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
 
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Invoice') }}</div>
-                </div>
-            </div>
             <div class="section-body">
                 <div class="invoice">
                     <div class="invoice-print">
@@ -215,7 +208,8 @@
                                                             id="payment_status">
                                                             @foreach ($paymentStatus as $payment)
                                                                 <option class="text-capitalize"
-                                                                    value="{{ $payment }}">{{ ucfirst($payment) }}
+                                                                    value="{{ $payment }}">
+                                                                    {{ ucfirst($payment) }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -268,7 +262,8 @@
                     <div class="text-md-right print-area">
                         <hr>
                         <button class="btn btn-success btn-icon icon-left" onclick="window.print()"><i
-                                class="fas fa-print"></i> {{ __('Print') }}</button>
+                                class="fas fa-print"></i>
+                            {{ __('Print') }}</button>
                         <button class="btn btn-danger btn-icon icon-left" data-bs-toggle="modal"
                             data-bs-target="#deleteModal" onclick="deleteData({{ $order->order_id }})"><i
                                 class="fas fa-times"></i>

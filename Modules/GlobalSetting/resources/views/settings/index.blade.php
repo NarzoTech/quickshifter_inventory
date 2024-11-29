@@ -15,7 +15,7 @@
                     <div class="breadcrumb-item active">
                         <a href="{{ route('admin.settings') }}">{{ __('Settings') }}</a>
                     </div>
-                    <div class="breadcrumb-item">{{ __('General Setting') }}</div>
+
                 </div>
             </div>
             <div class="section-body">

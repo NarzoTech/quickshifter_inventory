@@ -5,14 +5,7 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Settings') }}</div>
-                </div>
-            </div>
+
 
             <div class="section-body">
                 <div class="row">

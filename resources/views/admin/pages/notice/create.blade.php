@@ -13,7 +13,7 @@
                     <div class="breadcrumb-item active">
                         <a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
                     </div>
-                    <div class="breadcrumb-item">{{ __('Create Notice') }}</div>
+
                 </div>
             </div>
             <div class="section-body">

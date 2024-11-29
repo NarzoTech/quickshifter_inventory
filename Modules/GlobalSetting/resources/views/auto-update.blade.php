@@ -11,98 +11,93 @@
                     <a href="{{ route('admin.settings') }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
                 </div>
                 <h1>{{ __('System Update') }}</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.settings') }}">{{ __('Settings') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('System Update') }}</div>
-                </div>
+
             </div>
 
-            @if (function_exists('showUpdateAvailablity'))
-                <div class="section-body">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-end">
-                                    <h4>
-                                        {!! $updateAvailablity->status
-                                            ? '<i class="fas fa-times text-danger"></i> ' . $updateAvailablity->message
-                                            : '<i class="fas fa-check text-success"></i> ' . $updateAvailablity->message !!}
+    </div>
+    </div>
 
-                                    </h4>
-                                </div>
-                                <div class="card-body">
-                                    @if ($zipLoaded)
-                                        @if ($updateAvailablity->status && !$files)
-                                            <div class="row">
-                                                <div class="col-12 mb-5">
-                                                    <div class="box">
-                                                        <form action="{{ route('admin.system-update.store') }}"
-                                                            method="POST" enctype="multipart/form-data"
-                                                            class="d-flex justify-content-center">
-                                                            @csrf
-                                                            <input class="drag-input" type="file" data_btn_text="Browse"
-                                                                placeholder="drage and drop file here"
-                                                                accept="application/zip" name="zip_file" />
-                                                            <button class="btn btn-primary"><i class="fa fa-upload"></i>
-                                                                {{ __('Upload') }}</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
+    @if (function_exists('showUpdateAvailablity'))
+        <div class="section-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-end">
+                            <h4>
+                                {!! $updateAvailablity->status
+                                    ? '<i class="fas fa-times text-danger"></i> ' . $updateAvailablity->message
+                                    : '<i class="fas fa-check text-success"></i> ' . $updateAvailablity->message !!}
+
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            @if ($zipLoaded)
+                                @if ($updateAvailablity->status && !$files)
+                                    <div class="row">
+                                        <div class="col-12 mb-5">
+                                            <div class="box">
+                                                <form action="{{ route('admin.system-update.store') }}" method="POST"
+                                                    enctype="multipart/form-data" class="d-flex justify-content-center">
+                                                    @csrf
+                                                    <input class="drag-input" type="file" data_btn_text="Browse"
+                                                        placeholder="drage and drop file here" accept="application/zip"
+                                                        name="zip_file" />
+                                                    <button class="btn btn-primary"><i class="fa fa-upload"></i>
+                                                        {{ __('Upload') }}</button>
+                                                </form>
                                             </div>
-                                        @endif
+                                        </div>
+                                    </div>
+                                @endif
 
-                                        @if ($files)
-                                            <div class="row">
-                                                <div class="my-3 border col-12">
-                                                    <h2 class="pt-2">{{ __('Available Update File Structure') }}</h2>
-                                                    <hr>
-                                                    <ul class="mt-3 list-group file-preview-box">
-                                                        @foreach ($files as $file)
-                                                            <li class="list-group-item">{{ $file }}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="d-flex justify-items-center justify-content-between ">
-                                                        <form action="{{ route('admin.system-update.redirect') }}"
-                                                            method="post">
-                                                            @csrf
-                                                            <button class="btn btn-primary">
-                                                                {{ __('Start Update Process') }}
-                                                            </button>
-                                                        </form>
+                                @if ($files)
+                                    <div class="row">
+                                        <div class="my-3 border col-12">
+                                            <h2 class="pt-2">{{ __('Available Update File Structure') }}</h2>
+                                            <hr>
+                                            <ul class="mt-3 list-group file-preview-box">
+                                                @foreach ($files as $file)
+                                                    <li class="list-group-item">{{ $file }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-items-center justify-content-between ">
+                                                <form action="{{ route('admin.system-update.redirect') }}" method="post">
+                                                    @csrf
+                                                    <button class="btn btn-primary">
+                                                        {{ __('Start Update Process') }}
+                                                    </button>
+                                                </form>
 
-                                                        <a href="javascript:;" data-bs-toggle="modal"
-                                                            data-bs-target="#deleteModal" onclick="deleteData()"
-                                                            class="btn btn-danger">{{ __('Delete Update File') }}</a>
-                                                    </div>
-                                                </div>
-                                            @else
-                                                <div class="row">
-                                                    <div class="col-12 d-flex justify-content-center">
-                                                        <a href="{{ route('admin.system-update.index', ['type' => 'check']) }}"
-                                                            class="btn btn-success">{{ __('Check Update') }}</a>
-                                                    </div>
-                                                </div>
-                                        @endif
+                                                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                    onclick="deleteData()"
+                                                    class="btn btn-danger">{{ __('Delete Update File') }}</a>
+                                            </div>
+                                        </div>
                                     @else
                                         <div class="row">
                                             <div class="col-12 d-flex justify-content-center">
-                                                <h1>{{ __('PHP Extension Zip Not Loaded, Please Enable this first and then try again.') }}
-                                                </h1>
+                                                <a href="{{ route('admin.system-update.index', ['type' => 'check']) }}"
+                                                    class="btn btn-success">{{ __('Check Update') }}</a>
                                             </div>
                                         </div>
-                                    @endif
+                                @endif
+                            @else
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <h1>{{ __('PHP Extension Zip Not Loaded, Please Enable this first and then try again.') }}
+                                        </h1>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
-            @endif
-        </section>
+            </div>
+        </div>
+    @endif
+    </section>
     </div>
 @endsection
 
@@ -282,8 +277,8 @@
 						$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
 							? "or drop files here"
 							: `${
-                                    									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
-                                    							  }`
+                                                									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
+                                                							  }`
 					}`
                         );
                 });
