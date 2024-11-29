@@ -25,6 +25,13 @@
         rel="stylesheet">
 
 
+    <link rel="stylesheet" href="{{ asset('global/toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap4-toggle.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/css/tagify.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-datepicker.min.css') }}">
+
+
     <link rel="stylesheet" href="{{ asset('backend/assets/vendor/fonts/boxicons.css') }}" />
 
     <link rel="stylesheet" href="{{ asset('global/css/all.min.css') }}">

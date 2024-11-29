@@ -1,230 +1,205 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('All Customers') }}</title>
+    <title>{{ __('Customers List') }}</title>
 @endsection
-
-@push('css')
-    <style>
-        thead tr:nth-child(odd) {
-            background-color: lightskyblue;
-
-        }
-
-
-        thead tr:nth-child(even) {
-            background-color: lightpink;
-        }
-
-        thead>tr>th {
-            /* background-color: lightseagreen; */
-            color: white !important;
-        }
-    </style>
-@endpush
-@section('admin-content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>{{ __('All Customers') }}</h1>
-            </div>
-
-            <div class="section-body">
-                <div class="row">
-                    {{-- Search filter --}}
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="" method="GET" onchange="this.submit()"
-                                    class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4 form-group">
-                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="Search name, email and phone number...">
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="">{{ __('Order By') }}</option>
-                                                <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-                                                <option value="desc"
-                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="par-page" id="par-page" class="form-control">
-                                                <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('10') }}
-                                                </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('50') }}
-                                                </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('100') }}
-                                                </option>
-                                                <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('All') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="From Date" name="from_date"
-                                                value="{{ request()->get('from_date') }}" class="form-control datepicker">
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="To Date" name="to_date"
-                                                value="{{ request()->get('to_date') }}" class="form-control datepicker">
-                                        </div>
-                                    </div>
-                                    {{-- excel  buttons --}}
-                                    <div class="row">
-                                        <div class="col-md-4 form-group mx-auto">
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                <button type="button" class="btn btn-secondary export"><i
-                                                        class="far fa-file-excel"></i>
-                                                    Excel</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i
-                                            class="fa fa-upload"></i>
-                                        {{ __('Import Customers') }}</a>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addCustomer"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Customer') }}</a>
-                                    <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()"
-                                        data-toggle="modal"
-                                        data-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive table-invoice">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th rowspan="2">{{ __('SN') }}</th>
-                                                <th rowspan="2">{{ __('Name') }}</th>
-                                                <th rowspan="2">{{ __('Phone') }}</th>
-                                                <th rowspan="2">{{ __('Area') }}</th>
-                                                <th colspan="5">{{ __('Sale') }}</th>
-                                                <th colspan="3">{{ __('Sale Return') }}</th>
-                                                <th rowspan="2">{{ __('Total Due') }}</th>
-                                                <th rowspan="2">{{ __('Action') }}</th>
-                                            </tr>
-                                            <tr>
-                                                <th>{{ __('Total') }}</th>
-                                                <th>{{ __('Pay') }}</th>
-                                                <th>{{ __('Due') }}</th>
-                                                <th>{{ __('Dismiss') }}</th>
-                                                <th>{{ __('Advance') }}</th>
-                                                <th>{{ __('Total') }}</th>
-                                                <th>{{ __('Pay') }}</th>
-                                                <th>{{ __('Due') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($users as $index => $user)
-                                                <tr>
-                                                    <td>{{ ++$index }}</td>
-                                                    <td>{{ $user->name }}</td>
-                                                    <td>{{ $user->phone }}</td>
-                                                    <td>{{ $user->area->name }}</td>
-                                                    <td>{{ currency($user->sales->sum('grand_total')) }}</td>
-                                                    <td>{{ currency($user->total_paid) }}</td>
-                                                    <td>{{ currency($user->total_due) }}</td>
-                                                    <td>{{ currency($user->total_sale_return) }}</td>
-                                                    <td>{{ currency($user->advances()) }}</td>
-                                                    <td>{{ currency($user->total_sale_return_pay) }}</td>
-                                                    <td>{{ currency($user->total_sale_return_due) }}</td>
-                                                    <td>{{ currency($user->total_due) }}</td>
-
-                                                    <td>
-                                                        <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop{{ $user->id }}" type="button"
-                                                                class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                Action
-                                                            </button>
-                                                            <div class="dropdown-menu"
-                                                                aria-labelledby="btnGroupDrop{{ $user->id }}">
-
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#showCustomer{{ $user->id }}">Show</a>
-
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editCustomer{{ $user->id }}">Edit</a>
-
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
-                                                                    Receive</a>
-
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Dismiss</a>
-
-
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    onclick="status('{{ $user->id }}')"
-                                                                    data-status="{{ $user->id }}">
-                                                                    {{ $user->status == 1 ? 'Deactivated' : 'Activate' }}
-                                                                </a>
-
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
-
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
-
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
-
-                                                                <a href="javascript:;" class="dropdown-item"
-                                                                    onclick="deleteData({{ $user->id }})">
-                                                                    Delete</a>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-
-                                            <tr>
-                                                <td colspan="4" class="text-right">
-                                                    <strong>{{ __('Total') }}</strong>
-                                                </td>
-                                                <td>
-                                                    {{ currency($data['totalSale']) }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+@section('content')
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-1">
+                    <form action="" method="GET">
+                        <div class="row">
+                            <div class="col-xxl-3 col-md-4">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
-                                @if (request()->get('par-page') !== 'all')
-                                    <div class="float-right">
-                                        {{ $users->onEachSide(0)->links() }}
-                                    </div>
-                                @endif
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="From Date" name="from_date"
+                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="To Date" name="to_date"
+                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-1 col-md-4">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+
+    <div class="card mt-3 mb-3">
+        <div class="card-header-tab card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4><i class="fas fa-list"></i>{{ __('Customers List') }}</h4>
+            </div>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
+                    {{ __('Import Customers') }}</a>
+                <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()" data-toggle="modal"
+                    data-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer" class="btn btn-primary"> <i
+                        class="fa fa-plus"></i>
+                    {{ __('Add Supplier Group') }}</a>
+                <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
+                    Excel</button>
+                <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
+                    PDF</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table style="width: 100%;" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">{{ __('SN') }}</th>
+                            <th rowspan="2">{{ __('Name') }}</th>
+                            <th rowspan="2">{{ __('Phone') }}</th>
+                            <th rowspan="2">{{ __('Area') }}</th>
+                            <th colspan="5">{{ __('Sale') }}</th>
+                            <th colspan="3">{{ __('Sale Return') }}</th>
+                            <th rowspan="2">{{ __('Total Due') }}</th>
+                            <th rowspan="2">{{ __('Action') }}</th>
+                        </tr>
+                        <tr>
+                            <th>{{ __('Total') }}</th>
+                            <th>{{ __('Pay') }}</th>
+                            <th>{{ __('Due') }}</th>
+                            <th>{{ __('Dismiss') }}</th>
+                            <th>{{ __('Advance') }}</th>
+                            <th>{{ __('Total') }}</th>
+                            <th>{{ __('Pay') }}</th>
+                            <th>{{ __('Due') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $index => $user)
+                            <tr>
+                                <td>{{ ++$index }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->phone }}</td>
+                                <td>{{ $user->area->name }}</td>
+                                <td>{{ currency($user->sales->sum('grand_total')) }}</td>
+                                <td>{{ currency($user->total_paid) }}</td>
+                                <td>{{ currency($user->total_due) }}</td>
+                                <td>{{ currency($user->total_sale_return) }}</td>
+                                <td>{{ currency($user->advances()) }}</td>
+                                <td>{{ currency($user->total_sale_return_pay) }}</td>
+                                <td>{{ currency($user->total_sale_return_due) }}</td>
+                                <td>{{ currency($user->total_due) }}</td>
+
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $user->id }}" type="button"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $user->id }}">
+
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                data-bs-target="#showCustomer{{ $user->id }}">Show</a>
+
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                data-bs-target="#editCustomer{{ $user->id }}">Edit</a>
+
+                                            <a class="dropdown-item"
+                                                href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
+                                                Receive</a>
+
+                                            <a class="dropdown-item"
+                                                href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Dismiss</a>
+
+
+                                            <a class="dropdown-item" href="javascript:;"
+                                                onclick="status('{{ $user->id }}')"
+                                                data-status="{{ $user->id }}">
+                                                {{ $user->status == 1 ? 'Deactivated' : 'Activate' }}
+                                            </a>
+
+                                            <a class="dropdown-item"
+                                                href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
+
+                                            <a class="dropdown-item"
+                                                href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
+
+                                            <a class="dropdown-item"
+                                                href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
+
+                                            <a href="javascript:;" class="dropdown-item"
+                                                onclick="deleteData({{ $user->id }})">
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+
+                        <tr>
+                            <td colspan="4" class="text-right">
+                                <strong>{{ __('Total') }}</strong>
+                            </td>
+                            <td>
+                                {{ currency($data['totalSale']) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $users->onEachSide(0)->links() }}
+                </div>
+            @endif
+        </div>
     </div>
 
 
