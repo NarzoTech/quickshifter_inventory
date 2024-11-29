@@ -211,7 +211,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Expense') }}</h4>
-                    <button type="button" class="close" data-dismiss="modal">{{ __('×') }}</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -276,7 +276,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Expense') }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">{{ __('×') }}</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
                     </div>
 
                     <!-- Modal body -->
