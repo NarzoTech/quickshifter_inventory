@@ -11,9 +11,7 @@
             </div>
         </div>
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Edit Media') }}</h1>
-            </div>
+
 
             <div class="section-body">
                 <div class="mt-4 row">

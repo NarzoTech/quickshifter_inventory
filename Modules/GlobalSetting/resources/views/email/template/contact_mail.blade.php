@@ -6,9 +6,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Email Template') }}</h1>
-            </div>
+
 
             <div class="section-body">
                 <a href="{{ route('admin.email-configuration') }}" class="btn btn-primary"><i class="fas fa-list"></i>

@@ -91,9 +91,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('POS') }}</h1>
-            </div>
+
 
             <div class="section-body">
                 <div class="row mt-4">

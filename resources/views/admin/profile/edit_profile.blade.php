@@ -5,9 +5,7 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Edit Profile') }}</h1>
-            </div>
+
 
             {{-- edit profile area  --}}
             <div class="section-body">

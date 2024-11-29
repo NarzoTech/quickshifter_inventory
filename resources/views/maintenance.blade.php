@@ -128,9 +128,9 @@
                 <div class="two spin-two"></div>
                 <div class="three spin-one"></div>
             </div>
-            <h1>{{$setting->maintenance_title}}</h1>
+
             {!! clean($setting->maintenance_description) !!}
-            
+
         </div>
     </div>
 </body>

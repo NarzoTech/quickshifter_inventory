@@ -5,7 +5,7 @@
 @section('content')
     <section class="section">
         <div class="section-header">
-            <h1>{{ __('Dashboard') }}</h1>
+
         </div>
 
         <div class="section-body">

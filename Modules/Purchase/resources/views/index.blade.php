@@ -7,9 +7,7 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Purchase List') }}</h1>
-            </div>
+
 
             <div class="section-body">
                 <div class="row">
@@ -37,8 +35,7 @@
                                                 <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
                                                     {{ __('50') }}
                                                 </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                                <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
                                                     {{ __('100') }}
                                                 </option>
                                                 <option value="all"

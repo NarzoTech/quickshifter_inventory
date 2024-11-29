@@ -7,9 +7,7 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Expense Type List') }}</h1>
-            </div>
+
 
             <div class="section-body">
                 <div class="row">
@@ -42,8 +40,7 @@
                                                     {{ request('order_by') == 'desc' ? 'selected' : '' }}>
                                                     {{ __('DESC') }}
                                                 </option>
-                                                <option value="asc"
-                                                    {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                                <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
                                                     {{ __('ASC') }}
                                                 </option>
 

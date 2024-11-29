@@ -6,9 +6,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Email Template') }}</h1>
-            </div>
+
 
             <div class="section-body">
                 <a href="{{ route('admin.email-configuration') }}" class="btn btn-primary"><i class="fas fa-list"></i>
@@ -49,8 +47,7 @@
                                     @csrf
                                     @method('PUT')
                                     <div class="form-group">
-                                        <label for="">{{ __('Subject') }} <span
-                                                class="text-danger">*</span></label>
+                                        <label for="">{{ __('Subject') }} <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" value="{{ $template->subject }}"
                                             name="subject">
                                     </div>
