@@ -68,7 +68,7 @@
                             </div>
                             <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>

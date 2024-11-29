@@ -1,8 +1,8 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Category') }}</title>
+    <title>{{ __('Category List') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-header">
@@ -97,6 +97,66 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-1">
+                    <form action="" method="GET">
+                        <div class="row">
+                            <div class="col-xxl-3 col-md-3">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-3">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-3">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-1 col-md-3">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
