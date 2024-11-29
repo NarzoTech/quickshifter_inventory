@@ -1,79 +1,61 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Customer Due Receive') }}</title>
+    <title>{{ __('Customer Due Receive List') }}</title>
 @endsection
 
-@section('admin-content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Customer Due Receive') }}</h1>
-
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a
-                            href="{{ route('admin.purchase.index') }}">{{ __('Customer Due Receive') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Customer Due Receive') }}</div>
-                </div>
+@section('content')
+    <div class="card mt-3 mb-3">
+        <div class="card-header-tab card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4><i class="fas fa-list"></i> {{ __('Customer Due Receive List') }}</h4>
             </div>
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="">{{ __('Customer Due Receive') }}</div>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>
-                                                        {{ __('SL') }}
-                                                    </th>
-                                                    <th>{{ __('Date') }}</th>
-                                                    <th>{{ __('Invoice No') }}</th>
-                                                    <th>{{ __('Customer') }}</th>
-                                                    <th>{{ __('Amount') }}</th>
-                                                    <th>{{ __('Receive By') }}</th>
-                                                    <th>{{ __('Action') }}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table style="width: 100%;" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                {{ __('SL') }}
+                            </th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Invoice No') }}</th>
+                            <th>{{ __('Customer') }}</th>
+                            <th>{{ __('Amount') }}</th>
+                            <th>{{ __('Receive By') }}</th>
+                            <th>{{ __('Action') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                                                @foreach ($payments as $payment)
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ now()->parse($payment->payment_date)->format('d M , Y') }}
-                                                        </td>
-                                                        <td>{{ $payment->sale?->invoice }}</td>
-                                                        <td>{{ $payment->customer->name }}</td>
-                                                        <td>{{ $payment->amount }}</td>
-                                                        <td>{{ $payment->createdBy->name }}</td>
-                                                        <td>
-                                                            <div class="btn-group">
-                                                                <a href="javascript:;" class="btn btn-danger btn-sm"
-                                                                    onclick="deleteData({{ $payment->id }})">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </a>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                        @foreach ($payments as $payment)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ now()->parse($payment->payment_date)->format('d M , Y') }}
+                                </td>
+                                <td>{{ $payment->sale?->invoice }}</td>
+                                <td>{{ $payment->customer->name }}</td>
+                                <td>{{ $payment->amount }}</td>
+                                <td>{{ $payment->createdBy->name }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="javascript:;" class="btn btn-danger btn-sm"
+                                            onclick="deleteData({{ $payment->id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-        </section>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $payments->onEachSide(0)->links() }}
+                </div>
+            @endif
+        </div>
     </div>
 @endsection
 @push('js')

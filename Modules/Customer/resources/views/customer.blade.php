@@ -79,7 +79,7 @@
     <div class="card mt-3 mb-3">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i>{{ __('Customers List') }}</h4>
+                <h4><i class="fas fa-list"></i> {{ __('Customers List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
