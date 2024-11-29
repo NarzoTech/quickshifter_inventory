@@ -86,7 +86,6 @@ class ProductAttributeController extends Controller
             Log::error($ex->getMessage());
             return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.attribute.index', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
         }
-
     }
 
     /**
@@ -141,7 +140,6 @@ class ProductAttributeController extends Controller
                 return response()->json(['status' => true, 'data' => $values]);
             } else {
                 return response()->json(['status' => false, 'message' => 'No values found']);
-
             }
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
