@@ -84,7 +84,7 @@
                 <h4><i class="fas fa-list"></i> Suppliers List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addSupplier" class="btn btn-primary"> <i
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"> <i
                         class="fa fa-plus"></i>
                     {{ __('Add Supplier') }}</a>
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
@@ -142,9 +142,9 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $supplier->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal fade"
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
                                                 data-bs-target="#showSupplier{{ $supplier->id }}">Show</a>
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal fade"
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
                                                 data-bs-target="#editSupplier{{ $supplier->id }}">Edit</a>
 
                                             <a class="dropdown-item"
@@ -218,7 +218,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel1">{{ __('Add Supplier') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('admin.suppliers.store') }}" method="POST" id="add-supplier-form">
@@ -302,7 +302,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" form="add-supplier-form">Save</button>
                 </div>
             </div>
@@ -316,8 +316,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel1">{{ __('Edit Supplier') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"
-                            aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form action="{{ route('admin.suppliers.update', $supplier->id) }}" method="POST"
@@ -383,7 +382,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-success"
                             form="edit-supplier-form{{ $supplier->id }}">{{ __('Update') }}</button>
                     </div>
@@ -400,8 +399,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel1">{{ __('Supplier') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"
-                            aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -450,7 +448,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
 
                     </div>
                 </div>

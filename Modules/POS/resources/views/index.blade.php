@@ -439,7 +439,7 @@
         <div class="modal-dialog mw-100 w-75" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -681,7 +681,7 @@
             <div class="modal-content hold-modal">
                 <div class="modal-header">
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -714,7 +714,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content hold-modal">
                 <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

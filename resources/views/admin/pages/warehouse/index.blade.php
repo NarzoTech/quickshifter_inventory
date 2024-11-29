@@ -17,7 +17,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal fade"
+                                    <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#addWarehouse"><i class="fa fa-plus"></i>
                                         {{ __('Add Warehouse') }}</a>
                                 </h4>
@@ -65,7 +65,7 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="javascript:;" data-bs-toggle="modal fade"
+                                                        <a href="javascript:;" data-bs-toggle="modal"
                                                             data-bs-target="#editWarehouse{{ $house->id }}"
                                                             class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
@@ -93,7 +93,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Add Warehouse</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -130,7 +130,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-warehouse-form">Save</button>
                 </div>
 
@@ -149,7 +149,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">Edit Warehouse</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -194,7 +194,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="update-warehouse-form{{ $house->id }}">Update</button>
                     </div>

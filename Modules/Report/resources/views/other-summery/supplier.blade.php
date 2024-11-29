@@ -105,7 +105,7 @@
                                     {{ __('Supplier Other Due') }}
                                 </h4>
                                 <div>
-                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addSupplier"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Supplier Other Due') }}</a>
                                 </div>
@@ -142,8 +142,7 @@
                                                     <td>
                                                         <div class="btn-group">
                                                             <a href="javascript:void(0);"
-                                                                class="btn btn-primary mr-2 btn-sm"
-                                                                data-bs-toggle="modal fade"
+                                                                class="btn btn-primary mr-2 btn-sm" data-bs-toggle="modal"
                                                                 data-bs-target="#editSupplier-{{ $summery->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>
@@ -197,7 +196,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Supplier Other Due') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -248,7 +247,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-supplier-due">Save</button>
                 </div>
 
@@ -265,7 +264,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Add Supplier Other Due') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -324,7 +323,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="add-supplier-due-{{ $summery->id }}">Save</button>
                     </div>

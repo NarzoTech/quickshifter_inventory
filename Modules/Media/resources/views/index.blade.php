@@ -97,8 +97,8 @@
                                         <div class="media_item position-relative" data-id="{{ $media->id }}">
                                             <img class="rounded img-thumbnail select-media-for-delete"
                                                 src="{{ asset($media->path) }}" alt="{{ $media->atl_text }}">
-                                            <a href="javascript:;" data-id="{{ $media->id }}"
-                                                data-bs-toggle="modal fade" data-bs-target="#deleteModal"
+                                            <a href="javascript:;" data-id="{{ $media->id }}" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal"
                                                 class="destroy rounded-circle p-2 position-absolute"><i
                                                     class="fas fa-trash text-danger"></i>
                                             </a>
@@ -138,7 +138,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

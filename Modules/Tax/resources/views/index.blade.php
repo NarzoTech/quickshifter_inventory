@@ -73,7 +73,7 @@
                                                                         class="fa fa-trash" aria-hidden="true"></i></a>
                                                             @endadminCan
                                                         @else
-                                                            <a href="javascript:;" data-bs-toggle="modal fade"
+                                                            <a href="javascript:;" data-bs-toggle="modal"
                                                                 data-bs-target="#canNotDeleteModal"
                                                                 class="btn btn-danger btn-sm" disabled><i
                                                                     class="fa fa-trash" aria-hidden="true"></i></a>
@@ -105,7 +105,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal fade">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                 </div>
             </div>
         </div>

@@ -5,7 +5,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">{{ __('Create Unit') }}</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal fade">{{ __('×') }}</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
             </div>
 
             <!-- Modal body -->

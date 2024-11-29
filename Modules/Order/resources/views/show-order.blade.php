@@ -269,7 +269,7 @@
                         <hr>
                         <button class="btn btn-success btn-icon icon-left" onclick="window.print()"><i
                                 class="fas fa-print"></i> {{ __('Print') }}</button>
-                        <button class="btn btn-danger btn-icon icon-left" data-bs-toggle="modal fade"
+                        <button class="btn btn-danger btn-icon icon-left" data-bs-toggle="modal"
                             data-bs-target="#deleteModal" onclick="deleteData({{ $order->order_id }})"><i
                                 class="fas fa-times"></i>
                             {{ __('Delete') }}</button>

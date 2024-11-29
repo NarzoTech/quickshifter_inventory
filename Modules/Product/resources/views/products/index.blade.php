@@ -162,7 +162,7 @@
                                                     <td class="d-flex justify-content-center align-items-center">
 
 
-                                                        <button type="button" data-bs-toggle="modal fade"
+                                                        <button type="button" data-bs-toggle="modal"
                                                             @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
                                                                 @else
                                                                 onclick="deleteData({{ $product->id }})" @endif

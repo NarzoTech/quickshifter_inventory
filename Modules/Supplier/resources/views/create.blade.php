@@ -78,7 +78,7 @@
                                                             class="btn btn-primary btn-sm mr-2"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
 
-                                                        <button type="button" data-bs-toggle="modal fade"
+                                                        <button type="button" data-bs-toggle="modal"
                                                             @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
                                                                 @else
                                                                 onclick="deleteData({{ $product->id }})" @endif

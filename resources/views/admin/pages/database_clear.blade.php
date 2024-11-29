@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
 
-                                <button class="btn btn-danger" data-bs-toggle="modal fade"
+                                <button class="btn btn-danger" data-bs-toggle="modal"
                                     data-bs-target="#clearDatabaseModal">{{ __('Clear Database') }}</button>
 
                             </div>

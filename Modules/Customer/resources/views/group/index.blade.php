@@ -71,7 +71,7 @@
                 <h4><i class="fas fa-list"></i> {{ __('Customer Group List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addgroup" class="btn btn-primary"><i
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addgroup" class="btn btn-primary"><i
                         class="fa fa-plus"></i>
                     {{ __('Add Customer Group') }}</a>
             </div>
@@ -108,7 +108,7 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal fade"
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
                                                 data-bs-target="#editGroup{{ $group->id }}">Edit</a>
                                             <a href="javascript:;" class="dropdown-item"
                                                 onclick="deleteData({{ $group->id }})">
@@ -145,7 +145,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Customer Group') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -179,7 +179,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-group-form">Save</button>
                 </div>
 
@@ -197,8 +197,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Customer Group') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"
-                            aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -240,7 +239,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-group-form{{ $group->id }}">{{ __('Update') }}</button>
                     </div>

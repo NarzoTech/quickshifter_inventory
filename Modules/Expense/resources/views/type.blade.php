@@ -102,7 +102,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addExpense"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Expense Type') }}</a>
                                 </h4>
@@ -133,7 +133,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $type->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal fade"
+                                                                    data-bs-toggle="modal"
                                                                     data-bs-target="#editType{{ $type->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $type->id }})">
@@ -170,7 +170,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Expense Type') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -186,7 +186,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-bank-form">Save</button>
                 </div>
 
@@ -203,7 +203,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Expense Type') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->

@@ -1,5 +1,5 @@
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal fade" data-bs-target="#exampleModal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Pay with stripe
     </button>
 
@@ -10,7 +10,7 @@
 
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal fade" data-bs-target="#bankModal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bankModal">
         Pay via direct bank
     </button>
 
@@ -21,7 +21,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
@@ -61,8 +61,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger"
-                        data-bs-dismiss="modal fade">{{ __('Cancel') }}</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
                     <button class="btn btn-primary btn-block" type="submit">{{ __('Payment') }}</button>
                 </div>
                 </form>
@@ -78,7 +77,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="bankModalLabel">Pay via direct bank</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 

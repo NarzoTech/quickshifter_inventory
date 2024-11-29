@@ -68,12 +68,12 @@
                                 </div>
 
                                 @if ($order->payment_status == 'pending')
-                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#rejectPayment"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#rejectPayment"
                                         class="btn btn-danger">{{ __('Make reject payment') }}</a>
                                 @endif
 
                                 @if ($order->payment_status == 'rejected' || $order->payment_status == 'pending')
-                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#approvePayment"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#approvePayment"
                                         class="btn btn-success">{{ __('Make approved payment') }}</a>
                                 @endif
 
@@ -97,7 +97,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">{{ __('Delete Order') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -122,7 +122,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Payment Reject') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -160,7 +160,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Payment Approved') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

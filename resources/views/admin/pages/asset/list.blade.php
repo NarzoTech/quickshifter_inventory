@@ -84,7 +84,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addAssetType"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Asset') }}</a>
                                 </h4>
@@ -129,7 +129,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $type->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal fade"
+                                                                    data-bs-toggle="modal"
                                                                     data-bs-target="#editType{{ $type->id }}">{{ __('Edit') }}</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $type->id }})">{{ __('Delete') }}</a>
@@ -164,7 +164,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Asset') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade">{{ __('×') }}</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -248,8 +248,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Asset') }}</h4>
-                        <button type="button" class="btn-close"
-                            data-bs-dismiss="modal fade">{{ __('×') }}</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
                     </div>
 
                     <!-- Modal body -->

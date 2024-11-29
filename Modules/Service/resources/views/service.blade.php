@@ -83,7 +83,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#addService"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addService"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Service') }}</a>
                                 </h4>
@@ -118,7 +118,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $service->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal fade"
+                                                                    data-bs-toggle="modal"
                                                                     data-bs-target="#editService{{ $service->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $service->id }})">
@@ -155,7 +155,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Service') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -204,7 +204,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-service-form">Save</button>
                 </div>
 
@@ -222,7 +222,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Service') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->

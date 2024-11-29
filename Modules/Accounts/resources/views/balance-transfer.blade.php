@@ -80,7 +80,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal fade" data-bs-target="#transferModal"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#transferModal"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add New') }}</a>
                                 </h4>
@@ -112,7 +112,7 @@
                                                     <td>{{ $balanceTransfer->date }}</td>
                                                     <td>{{ $balanceTransfer->note }}</td>
                                                     <td>
-                                                        <a href="javascript:;" data-bs-toggle="modal fade"
+                                                        <a href="javascript:;" data-bs-toggle="modal"
                                                             data-bs-target="#editTransferModal-{{ $balanceTransfer->id }}">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
@@ -144,7 +144,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Create Balance Transfer') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <!-- Modal body -->
@@ -209,7 +209,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-transfer-form">Save</button>
                 </div>
 
@@ -227,7 +227,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Balance Transfer') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -297,7 +297,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-transfer-form{{ $transfer->id }}">Save</button>
                     </div>

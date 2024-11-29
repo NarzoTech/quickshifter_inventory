@@ -142,8 +142,7 @@
                                                     $setting->mail_password != 'mail_password' &&
                                                     $setting->mail_port != 'mail_port')
                                                 @php($test_email = true)
-                                                <button class="btn btn-primary" data-bs-toggle="modal fade"
-                                                    type="button"
+                                                <button class="btn btn-primary" data-bs-toggle="modal" type="button"
                                                     data-bs-target="#testEmail">{{ __('Test Mail Credentials') }}</button>
                                             @endif
                                         </form>
@@ -191,7 +190,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">{{ __('Test Mail Credentials') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade" aria-label="Close">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>

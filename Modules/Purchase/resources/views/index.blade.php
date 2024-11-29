@@ -140,7 +140,7 @@
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $purchase->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal fade"
+                                                                    data-bs-toggle="modal"
                                                                     data-bs-target="#showCustomer{{ $purchase->id }}">Show</a>
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.purchase.invoice', $purchase->id) }}">Invoice</a>
@@ -184,7 +184,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Add Customer') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -239,7 +239,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-customer-form{{ $purchase->id }}">{{ __('Update') }}</button>
                     </div>
@@ -258,7 +258,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Customer') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal fade"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -302,7 +302,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal fade">Close</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                     </div>
 
                 </div>
