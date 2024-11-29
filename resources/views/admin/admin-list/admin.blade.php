@@ -62,7 +62,7 @@
                                                             <a href="javascript:;"
                                                                 onclick="changeAdminStatus({{ $admin->id }})">
                                                                 <input id="status_toggle" type="checkbox" checked
-                                                                    data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                    data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                     data-off="{{ __('Inactive') }}" data-onstyle="success"
                                                                     data-offstyle="danger">
                                                             </a>
@@ -70,7 +70,7 @@
                                                             <a href="javascript:;"
                                                                 onclick="changeAdminStatus({{ $admin->id }})">
                                                                 <input id="status_toggle" type="checkbox"
-                                                                    data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                    data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                     data-off="{{ __('Inactive') }}" data-onstyle="success"
                                                                     data-offstyle="danger">
                                                             </a>
@@ -110,9 +110,9 @@
     <script>
         function deleteData(id) {
             let url = "{{ route('admin.admin.destroy', ':id') }}"
-                url = url.replace(':id', id);
-                $("#deleteForm").attr("action", url);
-                $('#deleteModal').modal('show');
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
         }
 
         function changeAdminStatus(id) {

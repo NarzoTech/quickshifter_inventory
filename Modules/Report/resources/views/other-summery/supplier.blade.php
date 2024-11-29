@@ -105,7 +105,7 @@
                                     {{ __('Supplier Other Due') }}
                                 </h4>
                                 <div>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addSupplier"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Supplier Other Due') }}</a>
                                 </div>
@@ -142,8 +142,8 @@
                                                     <td>
                                                         <div class="btn-group">
                                                             <a href="javascript:void(0);"
-                                                                class="btn btn-primary mr-2 btn-sm" data-toggle="modal"
-                                                                data-target="#editSupplier-{{ $summery->id }}">
+                                                                class="btn btn-primary mr-2 btn-sm" data-bs-toggle="modal"
+                                                                data-bs-target="#editSupplier-{{ $summery->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>
                                                             <a href="javascript:void(0);" class="btn btn-danger btn-sm"

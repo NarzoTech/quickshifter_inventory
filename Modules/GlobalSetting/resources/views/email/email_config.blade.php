@@ -26,12 +26,12 @@
                             <div class="card-body">
                                 <ul class="nav nav-pills flex-column" id="emailTab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active show" id="setting-tab" data-toggle="tab"
+                                        <a class="nav-link active show" id="setting-tab" data-bs-toggle="tab"
                                             href="#setting_tab" role="tab" aria-controls="setting"
                                             aria-selected="true">{{ __('Setting') }}</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" id="email-template-tab" data-toggle="tab"
+                                        <a class="nav-link" id="email-template-tab" data-bs-toggle="tab"
                                             href="#email_template_tab" role="tab" aria-controls="email-template"
                                             aria-selected="false">{{ __('Email Template') }}</a>
                                     </li>
@@ -142,8 +142,8 @@
                                                     $setting->mail_password != 'mail_password' &&
                                                     $setting->mail_port != 'mail_port')
                                                 @php($test_email = true)
-                                                <button class="btn btn-primary" data-toggle="modal" type="button"
-                                                    data-target="#testEmail">{{ __('Test Mail Credentials') }}</button>
+                                                <button class="btn btn-primary" data-bs-toggle="modal" type="button"
+                                                    data-bs-target="#testEmail">{{ __('Test Mail Credentials') }}</button>
                                             @endif
                                         </form>
                                     </div>
@@ -221,7 +221,7 @@
                 $('#emailTab a:first').tab('show');
             }
 
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
                 var newTab = $(e.target).attr('href').substring(1);
                 localStorage.setItem('activeTab', newTab);
             });

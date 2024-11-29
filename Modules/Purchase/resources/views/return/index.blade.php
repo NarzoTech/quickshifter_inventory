@@ -59,7 +59,7 @@
                                                             <div class="btn-group" role="group">
                                                                 <button id="btnGroupDrop{{ $list->id }}" type="button"
                                                                     class="btn btn-primary dropdown-toggle"
-                                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
                                                                     aria-expanded="false">
                                                                     Action
                                                                 </button>

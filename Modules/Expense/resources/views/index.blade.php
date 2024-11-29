@@ -125,7 +125,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addExpense"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Expense') }}</a>
                                 </h4>
@@ -159,13 +159,13 @@
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $expense->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">{{ __('Action') }}</button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $expense->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
                                                             </div>

@@ -59,7 +59,7 @@
                                                             <a href="javascript:;"
                                                                 onclick="changeProductStatus({{ $product->id }})">
                                                                 <input id="status_toggle" type="checkbox" checked
-                                                                    data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                    data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                     data-off="{{ __('InActive') }}" data-onstyle="success"
                                                                     data-offstyle="danger">
                                                             </a>
@@ -67,7 +67,7 @@
                                                             <a href="javascript:;"
                                                                 onclick="changeProductStatus({{ $product->id }})">
                                                                 <input id="status_toggle" type="checkbox"
-                                                                    data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                    data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                     data-off="{{ __('InActive') }}" data-onstyle="success"
                                                                     data-offstyle="danger">
                                                             </a>
@@ -78,17 +78,17 @@
                                                             class="btn btn-primary btn-sm mr-2"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
 
-                                                            <button type="button" data-toggle="modal"
-                                                                @if ($product->orders->count() > 0) data-target="#canNotDeleteModal"
+                                                        <button type="button" data-bs-toggle="modal"
+                                                            @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
                                                                 @else
                                                                 onclick="deleteData({{ $product->id }})" @endif
-                                                                class="btn btn-danger btn-sm mr-2">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                            </button>
+                                                            class="btn btn-danger btn-sm mr-2">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </button>
                                                         <div class="dropdown d-inline">
                                                             <button class="btn btn-primary btn-sm dropdown-toggle"
                                                                 type="button" id="dropdownMenuButton2"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 <i class="fas fa-cog"></i>
                                                             </button>

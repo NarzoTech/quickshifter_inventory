@@ -106,7 +106,7 @@
                         </div>
                         <div class="btn-actions-pane-right text-capitalize actions-icon-btn">
                             <div class="btn-group dropdown">
-                                <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                <button type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                                     class="btn-icon btn-icon-only btn btn-link">
                                     <i class="pe-7s-menu btn-icon-wrapper"></i>
                                 </button>
@@ -265,8 +265,8 @@
                         </div>
                         <div class="btn-actions-pane-right text-capitalize actions-icon-btn">
                             <div class="btn-group dropdown">
-                                <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                    class="btn-icon btn-icon-only btn btn-link">
+                                <button type="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false" class="btn-icon btn-icon-only btn btn-link">
                                     <i class="pe-7s-menu btn-icon-wrapper"></i>
                                 </button>
                                 <div tabindex="-1" role="menu" aria-hidden="true"
@@ -718,7 +718,7 @@
                     Dynamic Tables</div>
                 <div class="btn-actions-pane-right actions-icon-btn">
                     <div class="btn-group dropdown">
-                        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        <button type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                             class="btn-icon btn-icon-only btn btn-link"><i
                                 class="pe-7s-menu btn-icon-wrapper"></i></button>
                         <div tabindex="-1" role="menu" aria-hidden="true"
@@ -1234,8 +1234,8 @@
                         </div>
                         <div class="btn-actions-pane-right text-capitalize actions-icon-btn">
                             <div class="btn-group dropdown">
-                                <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                    class="btn-icon btn-icon-only btn btn-link"><i
+                                <button type="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false" class="btn-icon btn-icon-only btn btn-link"><i
                                         class="pe-7s-menu btn-icon-wrapper"></i></button>
                                 <div tabindex="-1" role="menu" aria-hidden="true"
                                     class="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link dropdown-menu">
@@ -1318,8 +1318,8 @@
                                                 </div>
                                                 <div class="widget-content-right widget-content-actions">
                                                     <div class="d-inline-block dropdown">
-                                                        <button type="button" data-toggle="dropdown"
-                                                            aria-haspopup="true" data-toggle="dropdown"
+                                                        <button type="button" data-bs-toggle="dropdown"
+                                                            aria-haspopup="true" data-bs-toggle="dropdown"
                                                             aria-expanded="false"
                                                             class="border-0 btn-transition btn btn-link">
                                                             <i class="fa fa-ellipsis-h"></i>
@@ -1493,8 +1493,8 @@
                                                 </div>
                                                 <div class="widget-content-right widget-content-actions">
                                                     <div class="d-inline-block dropdown">
-                                                        <button type="button" data-toggle="dropdown"
-                                                            aria-haspopup="true" data-toggle="dropdown"
+                                                        <button type="button" data-bs-toggle="dropdown"
+                                                            aria-haspopup="true" data-bs-toggle="dropdown"
                                                             aria-expanded="false"
                                                             class="border-0 btn-transition btn btn-link">
                                                             <i class="fa fa-ellipsis-h"></i>
@@ -1632,8 +1632,8 @@
                         </div>
                         <div class="btn-actions-pane-right text-capitalize actions-icon-btn">
                             <div class="btn-group dropdown">
-                                <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                    class="btn-icon btn-icon-only btn btn-link"><i
+                                <button type="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false" class="btn-icon btn-icon-only btn btn-link"><i
                                         class="pe-7s-menu btn-icon-wrapper"></i></button>
                                 <div tabindex="-1" role="menu" aria-hidden="true"
                                     class="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link dropdown-menu">

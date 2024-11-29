@@ -83,7 +83,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addcategory"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addcategory"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Service Category') }}</a>
                                 </h4>
@@ -107,15 +107,15 @@
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $category->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $category->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editcategory{{ $category->id }}">Edit</a>
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editcategory{{ $category->id }}">Edit</a>
                                                                 <a href="javascript:;"class="dropdown-item"
                                                                     onclick="deleteData({{ $category->id }})">
                                                                     Delete</a>

@@ -68,12 +68,12 @@
                                                         class="btn btn-primary btn-sm"><i class="fa fa-eye"
                                                             aria-hidden="true"></i></a>
 
-                                                    <a href="javascript:;" data-toggle="modal" {{-- data-target="#deleteModal" --}}
+                                                    <a href="javascript:;" data-bs-toggle="modal" {{-- data-bs-target="#deleteModal" --}}
                                                         class="btn btn-danger btn-sm"
                                                         onclick="deleteData({{ $order->order_id }})"><i class="fa fa-trash"
                                                             aria-hidden="true"></i></a>
 
-                                                    <a href="javascript:;" data-toggle="modal" data-target="#status"
+                                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#status"
                                                         class="btn btn-warning btn-sm status-btn"
                                                         data-id="{{ $order->order_id }}"
                                                         data-status="{{ $order->delivery_status }}"
@@ -129,8 +129,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
                         <button type="button" class="btn btn-success" id="update">{{ __('Update') }}</button>
                     </div>
                 </div>

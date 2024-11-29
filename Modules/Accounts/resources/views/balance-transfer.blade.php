@@ -34,8 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="" method="GET" onchange="this.submit()"
-                                    class="card-body">
+                                <form action="" method="GET" onchange="this.submit()" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
@@ -81,7 +80,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#transferModal"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#transferModal"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add New') }}</a>
                                 </h4>
@@ -113,8 +112,8 @@
                                                     <td>{{ $balanceTransfer->date }}</td>
                                                     <td>{{ $balanceTransfer->note }}</td>
                                                     <td>
-                                                        <a href="javascript:;" data-toggle="modal"
-                                                            data-target="#editTransferModal-{{ $balanceTransfer->id }}">
+                                                        <a href="javascript:;" data-bs-toggle="modal"
+                                                            data-bs-target="#editTransferModal-{{ $balanceTransfer->id }}">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
                                                     </td>

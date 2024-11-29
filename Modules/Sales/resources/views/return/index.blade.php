@@ -50,7 +50,8 @@
                                                     <td>
                                                         <div class="btn-group mb-2">
                                                             <button class="btn btn-info btn-sm dropdown-toggle"
-                                                                type="button" data-toggle="dropdown" aria-haspopup="true"
+                                                                type="button" data-bs-toggle="dropdown"
+                                                                aria-haspopup="true"
                                                                 aria-expanded="false">{{ __('Action') }}</button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item view-sale" href="javascript:;"

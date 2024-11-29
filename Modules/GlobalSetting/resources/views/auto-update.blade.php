@@ -75,8 +75,8 @@
                                                             </button>
                                                         </form>
 
-                                                        <a href="javascript:;" data-toggle="modal"
-                                                            data-target="#deleteModal" onclick="deleteData()"
+                                                        <a href="javascript:;" data-bs-toggle="modal"
+                                                            data-bs-target="#deleteModal" onclick="deleteData()"
                                                             class="btn btn-danger">{{ __('Delete Update File') }}</a>
                                                     </div>
                                                 </div>
@@ -210,6 +210,7 @@
 @push('js')
     <script>
         "use strict";
+
         function deleteData() {
             $("#deleteForm").attr("action", "{{ url('admin/system-update/delete') }}")
         }
@@ -281,8 +282,8 @@
 						$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
 							? "or drop files here"
 							: `${
-            									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
-            							  }`
+                    									$(this).parents(".kwt-file").find(".kwt-file__input")[0].placeholder
+                    							  }`
 					}`
                         );
                 });

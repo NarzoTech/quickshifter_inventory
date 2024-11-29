@@ -102,13 +102,13 @@
                             <div class="col-md-12">
                                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="products-tab" data-toggle="tab"
-                                            data-target="#products" type="button" role="tab" aria-controls="products"
-                                            aria-selected="true">{{ __('Products') }}</button>
+                                        <button class="nav-link active" id="products-tab" data-bs-toggle="tab"
+                                            data-bs-target="#products" type="button" role="tab"
+                                            aria-controls="products" aria-selected="true">{{ __('Products') }}</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="service-tab" data-toggle="tab" data-target="#service"
-                                            type="button" role="tab" aria-controls="profile"
+                                        <button class="nav-link" id="service-tab" data-bs-toggle="tab"
+                                            data-bs-target="#service" type="button" role="tab" aria-controls="profile"
                                             aria-selected="false">{{ __('Service') }}</button>
                                     </li>
                                 </ul>

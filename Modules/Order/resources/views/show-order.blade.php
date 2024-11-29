@@ -213,9 +213,10 @@
                                                         <label for="payment_status">{{ __('Payment Status') }}</label>
                                                         <select name="payment_status" class="form-control"
                                                             id="payment_status">
-                                                            @foreach($paymentStatus as $payment)
+                                                            @foreach ($paymentStatus as $payment)
                                                                 <option class="text-capitalize"
-                                                                    value="{{ $payment }}">{{ ucfirst($payment) }}</option>
+                                                                    value="{{ $payment }}">{{ ucfirst($payment) }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -268,8 +269,9 @@
                         <hr>
                         <button class="btn btn-success btn-icon icon-left" onclick="window.print()"><i
                                 class="fas fa-print"></i> {{ __('Print') }}</button>
-                        <button class="btn btn-danger btn-icon icon-left" data-toggle="modal" data-target="#deleteModal"
-                            onclick="deleteData({{ $order->order_id }})"><i class="fas fa-times"></i>
+                        <button class="btn btn-danger btn-icon icon-left" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal" onclick="deleteData({{ $order->order_id }})"><i
+                                class="fas fa-times"></i>
                             {{ __('Delete') }}</button>
                     </div>
                 </div>
@@ -280,7 +282,7 @@
     @include('components.admin.preloader')
     <script>
         function deleteData(id) {
-            $("#deleteForm").attr("action", "{{ route('admin.order-delete','') }}" + "/" + id)
+            $("#deleteForm").attr("action", "{{ route('admin.order-delete', '') }}" + "/" + id)
         }
     </script>
 @endsection
@@ -300,45 +302,45 @@
             })
 
             $("#update").on('click', function(e) {
-                    $('.preloader_area').removeClass('d-none');
-                    e.preventDefault()
-                    var status = $('#delivery_status').val();
-                    if (status == 6) {
-                        var cancel_note = $('#cancel_note').val();
-                        if (cancel_note == '') {
-                            toastr.error('Cancel note is required');
+                $('.preloader_area').removeClass('d-none');
+                e.preventDefault()
+                var status = $('#delivery_status').val();
+                if (status == 6) {
+                    var cancel_note = $('#cancel_note').val();
+                    if (cancel_note == '') {
+                        toastr.error('Cancel note is required');
+                        $('.preloader_area').addClass('d-none');
+                        return;
+                    }
+                }
+                var orderId = $('[name="order_id"]').val();
+                const payment = $('#payment_status').val();
+                $.ajax({
+                    url: "{{ route('admin.order.status') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        status: status,
+                        orderId: orderId,
+                        payment: payment,
+                        cancel_note: cancel_note
+                    },
+                    success: function(response) {
+                        if (response.error) {
+                            toastr.error(response.error);
                             $('.preloader_area').addClass('d-none');
                             return;
                         }
+                        toastr.success(response.success);
+                        $('.preloader_area').addClass('d-none');
+                        location.reload()
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        $('.preloader_area').addClass('d-none');
                     }
-                    var orderId = $('[name="order_id"]').val();
-                    const payment = $('#payment_status').val();
-                    $.ajax({
-                        url: "{{ route('admin.order.status') }}",
-                        type: "POST",
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            status: status,
-                            orderId: orderId,
-                            payment: payment,
-                            cancel_note: cancel_note
-                        },
-                        success: function(response) {
-                            if (response.error) {
-                                toastr.error(response.error);
-                                $('.preloader_area').addClass('d-none');
-                                return;
-                            }
-                            toastr.success(response.success);
-                            $('.preloader_area').addClass('d-none');
-                            location.reload()
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                            $('.preloader_area').addClass('d-none');
-                        }
-                    });
                 });
+            });
         })
     </script>
 @endpush

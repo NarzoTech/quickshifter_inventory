@@ -18,8 +18,8 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-12">
-                        <button class="btn btn-primary collapsed" type="button" data-toggle="collapse"
-                            data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        <button class="btn btn-primary collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                             Upload new image
                         </button>
                         <div class="collapse mt-3" id="collapseExample" style="">
@@ -97,8 +97,8 @@
                                         <div class="media_item position-relative" data-id="{{ $media->id }}">
                                             <img class="rounded img-thumbnail select-media-for-delete"
                                                 src="{{ asset($media->path) }}" alt="{{ $media->atl_text }}">
-                                            <a href="javascript:;" data-id="{{ $media->id }}" data-toggle="modal"
-                                                data-target="#deleteModal"
+                                            <a href="javascript:;" data-id="{{ $media->id }}" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal"
                                                 class="destroy rounded-circle p-2 position-absolute"><i
                                                     class="fas fa-trash text-danger"></i>
                                             </a>

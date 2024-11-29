@@ -84,8 +84,8 @@
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
                     {{ __('Import Customers') }}</a>
-                <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()" data-toggle="modal"
-                    data-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
+                <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()" data-bs-toggle="modal"
+                    data-bs-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer" class="btn btn-primary"> <i
                         class="fa fa-plus"></i>
                     {{ __('Add Supplier Group') }}</a>

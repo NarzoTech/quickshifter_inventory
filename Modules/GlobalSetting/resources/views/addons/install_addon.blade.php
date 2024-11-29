@@ -58,12 +58,16 @@
                                                     <div class="row">
                                                         <div class="col-12">
                                                             @if (is_object($jsonInfo))
-                                                            <p>{{ __('Name') }}: {{ $jsonInfo->name }}</p>
-                                                            <p>{{ __('Description') }}: {{ $jsonInfo->description }}</p>
-                                                            <p>{{ __('Author') }}: {{ $jsonInfo?->author?->name }}</p>
-                                                            <p>{{ __('Email') }}: {{ $jsonInfo?->author?->email }}</p>
-                                                            <p>{{ __('Version') }}: {{ $jsonInfo->version }}</p>
-                                                            <p>{{ __('Last Update') }}: {{ $jsonInfo->last_update }}</p>
+                                                                <p>{{ __('Name') }}: {{ $jsonInfo->name }}</p>
+                                                                <p>{{ __('Description') }}: {{ $jsonInfo->description }}
+                                                                </p>
+                                                                <p>{{ __('Author') }}: {{ $jsonInfo?->author?->name }}
+                                                                </p>
+                                                                <p>{{ __('Email') }}: {{ $jsonInfo?->author?->email }}
+                                                                </p>
+                                                                <p>{{ __('Version') }}: {{ $jsonInfo->version }}</p>
+                                                                <p>{{ __('Last Update') }}: {{ $jsonInfo->last_update }}
+                                                                </p>
                                                             @endif
                                                         </div>
 
@@ -78,8 +82,8 @@
                                                                     </button>
                                                                 </form>
 
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#deleteModal" onclick="deleteData()"
+                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                    data-bs-target="#deleteModal" onclick="deleteData()"
                                                                     class="btn btn-danger">{{ __('Delete Update File') }}</a>
                                                             </div>
                                                         </div>

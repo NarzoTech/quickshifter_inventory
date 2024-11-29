@@ -34,12 +34,12 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="" method="GET"  class="card-body">
+                                <form action="" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="{{ __('Search') }}">
-                                                <button type="submit">
+                                            <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>
                                         </div>
@@ -179,7 +179,7 @@
                                                         {{-- {{ route('admin.stock.reset', $product->id) }} --}}
                                                         <a href="javascript:;" class="btn btn-danger btn-sm"
                                                             title="Reset Stock" onclick="resetStock({{ $product->id }})"
-                                                            data-target="#stockModal" data-toggle="modal">
+                                                            data-bs-target="#stockModal" data-bs-toggle="modal">
                                                             <i class="fas fa-undo"></i>
                                                         </a>
                                                     </td>

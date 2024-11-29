@@ -106,13 +106,13 @@
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop{{ $group->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                                             aria-haspopup="true" aria-expanded="false">
                                             Action
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-toggle="modal"
-                                                data-target="#editGroup{{ $group->id }}">Edit</a>
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                data-bs-target="#editGroup{{ $group->id }}">Edit</a>
                                             <a href="javascript:;"class="dropdown-item"
                                                 onclick="deleteData({{ $group->id }})">
                                                 Delete</a>

@@ -45,12 +45,12 @@
                                                     </td>
                                                     <td>
                                                         <a href="{{ route('admin.attribute.edit', $attribute->id) }}"
-                                                            class="btn btn-primary btn-action mr-1" data-toggle="tooltip"
+                                                            class="btn btn-primary btn-action mr-1" data-bs-toggle="tooltip"
                                                             title="{{ __('Edit') }}"><i
                                                                 class="fas fa-pencil-alt"></i></a>
                                                         <a href="javascript:void(0)"
                                                             class="btn btn-danger btn-action trigger--fire-modal-1 deleteForm"
-                                                            data-toggle="modal" title="{{ __('Delete') }}"
+                                                            data-bs-toggle="modal" title="{{ __('Delete') }}"
                                                             data-url="{{ route('admin.attribute.destroy', $attribute->id) }}"
                                                             data-form="deleteForm" data-id="{{ $attribute->id }}"><i
                                                                 class="fas fa-trash"></i></a>

@@ -34,13 +34,12 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="{{ route('admin.service.index') }}" method="GET"
-                                    class="card-body">
+                                <form action="{{ route('admin.service.index') }}" method="GET" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                 class="form-control" placeholder="{{ __('Search') }}">
-                                                <button type="submit">
+                                            <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>
                                         </div>
@@ -84,7 +83,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addService"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addService"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Service') }}</a>
                                 </h4>
@@ -112,15 +111,15 @@
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $service->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $service->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editService{{ $service->id }}">Edit</a>
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editService{{ $service->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $service->id }})">
                                                                     Delete</a>

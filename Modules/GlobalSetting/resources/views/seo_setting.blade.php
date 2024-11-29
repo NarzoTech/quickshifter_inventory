@@ -29,7 +29,7 @@
                                         @foreach ($pages as $index => $page)
                                             <li class="nav-item border rounded mb-1">
                                                 <a class="nav-link {{ $index == 0 ? 'active' : '' }}"
-                                                    id="error-tab-{{ $page->id }}" data-toggle="tab"
+                                                    id="error-tab-{{ $page->id }}" data-bs-toggle="tab"
                                                     href="#errorTab-{{ $page->id }}" role="tab"
                                                     aria-controls="errorTab-{{ $page->id }}"
                                                     aria-selected="true">{{ $page->page_name }}</a>
@@ -101,7 +101,7 @@
                 $('#seo_tab a:first').tab('show');
             }
 
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
                 var newTab = $(e.target).attr('href').substring(1);
                 localStorage.setItem('activeTab', newTab);
             });

@@ -1,6 +1,6 @@
 @extends('admin.master_layout')
 @section('title')
-<title>{{ __('Order Details') }}</title>
+    <title>{{ __('Order Details') }}</title>
 @endsection
 @section('admin-content')
     <div class="main-content">
@@ -19,7 +19,9 @@
 
                                         <tr>
                                             <td>{{ __('Name') }}</td>
-                                            <td><a href="{{ route('admin.customer-show', $order->user_id) }}">{{ $order?->user?->name }}</a></td>
+                                            <td><a
+                                                    href="{{ route('admin.customer-show', $order->user_id) }}">{{ $order?->user?->name }}</a>
+                                            </td>
                                         </tr>
 
                                         <tr>
@@ -38,43 +40,46 @@
                                                 @if ($order->payment_status == 'success')
                                                     <div class="badge badge-success">{{ __('Success') }}</div>
                                                 @elseif ($order->payment_status == 'rejected')
-                                                <div class="badge badge-danger">{{ __('Rejected') }}</div>
+                                                    <div class="badge badge-danger">{{ __('Rejected') }}</div>
                                                 @else
                                                     <div class="badge badge-danger">{{ __('Pending') }}</div>
                                                 @endif
                                             </td>
                                         </tr>
 
-                                            <tr>
-                                                <td>{{ __('Status') }}</td>
-                                                <td>
-                                                    @if ($order->order_status == 'success')
-                                                        <div class="badge badge-success">{{ __('Success') }}</div>
-                                                    @else
-                                                        <div class="badge badge-danger">{{ __('Pending') }}</div>
-                                                    @endif
-                                                </td>
+                                        <tr>
+                                            <td>{{ __('Status') }}</td>
+                                            <td>
+                                                @if ($order->order_status == 'success')
+                                                    <div class="badge badge-success">{{ __('Success') }}</div>
+                                                @else
+                                                    <div class="badge badge-danger">{{ __('Pending') }}</div>
+                                                @endif
+                                            </td>
 
-                                            </tr>
+                                        </tr>
 
-                                            <tr>
-                                                <td>{{ __('Transaction') }}</td>
-                                                <td>{!! nl2br($order->transaction_id) !!}</td>
-                                            </tr>
+                                        <tr>
+                                            <td>{{ __('Transaction') }}</td>
+                                            <td>{!! nl2br($order->transaction_id) !!}</td>
+                                        </tr>
 
                                     </table>
                                 </div>
 
-                            @if ($order->payment_status == 'pending')
-                                <a href="javascript:;" data-toggle="modal" data-target="#rejectPayment" class="btn btn-danger">{{ __('Make reject payment') }}</a>
-                            @endif
+                                @if ($order->payment_status == 'pending')
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#rejectPayment"
+                                        class="btn btn-danger">{{ __('Make reject payment') }}</a>
+                                @endif
 
-                            @if ($order->payment_status == 'rejected' || $order->payment_status == 'pending')
-                                <a href="javascript:;" data-toggle="modal" data-target="#approvePayment" class="btn btn-success">{{ __('Make approved payment') }}</a>
-                            @endif
+                                @if ($order->payment_status == 'rejected' || $order->payment_status == 'pending')
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#approvePayment"
+                                        class="btn btn-success">{{ __('Make approved payment') }}</a>
+                                @endif
 
 
-                                <a href="" data-url="{{ route('admin.order-delete', $order->id) }}" class="btn btn-danger delete">{{ __('Delete Order') }}</a>
+                                <a href="" data-url="{{ route('admin.order-delete', $order->id) }}"
+                                    class="btn btn-danger delete">{{ __('Delete Order') }}</a>
                             </div>
 
                         </div>
@@ -88,7 +93,7 @@
         <div class="modal-dialog" role="document">
             <form action="" method="POST">
                 @csrf
-                @method("DELETE")
+                @method('DELETE')
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">{{ __('Delete Order') }}</h5>
@@ -110,15 +115,16 @@
 
 
     <!--Payment Reject Modal -->
-    <div class="modal fade" id="rejectPayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal fade" id="rejectPayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                    <div class="modal-header">
-                            <h5 class="modal-title">{{ __('Payment Reject') }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                        </div>
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Payment Reject') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="container-fluid">
                         <form action="{{ route('admin.order-payment-reject', $order->id) }}" method="POST">
@@ -127,10 +133,13 @@
                                 <label for="">{{ __('Subject') }}</label>
                                 <input type="text" name="subject" class="form-control">
                             </div>
-                            @php($default_value = "[[name]]")
+                            @php($default_value = '[[name]]')
                             <div class="form-group">
-                                <label for="">{{ __('Description') }} <span data-toggle="tooltip" data-placement="top" class="fa fa-info-circle text--primary" title="Don't remove the [[name]] keyword, user name will be dynamic using it"> </label>
-                                <textarea name="description" class="form-control text-area-5" cols="30" rows="10">{{ 'Dear '.$default_value }}</textarea>
+                                <label for="">{{ __('Description') }} <span data-bs-toggle="tooltip"
+                                        data-placement="top" class="fa fa-info-circle text--primary"
+                                        title="Don't remove the [[name]] keyword, user name will be dynamic using it">
+                                </label>
+                                <textarea name="description" class="form-control text-area-5" cols="30" rows="10">{{ 'Dear ' . $default_value }}</textarea>
                             </div>
                     </div>
                 </div>
@@ -138,21 +147,22 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary">{{ __('Save Data') }}</button>
                 </div>
-                        </form>
+                </form>
             </div>
         </div>
     </div>
 
     <!--Payment Approved Modal -->
-    <div class="modal fade" id="approvePayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal fade" id="approvePayment" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                    <div class="modal-header">
-                            <h5 class="modal-title">{{ __('Payment Approved') }}</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                        </div>
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Payment Approved') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <div class="container-fluid">
                         <form action="{{ route('admin.order-payment-approved', $order->id) }}" method="POST">
@@ -161,10 +171,13 @@
                                 <label for="">{{ __('Subject') }}</label>
                                 <input type="text" name="subject" class="form-control">
                             </div>
-                            @php($default_value = "[[name]]")
+                            @php($default_value = '[[name]]')
                             <div class="form-group">
-                                <label for="">{{ __('Description') }} <span data-toggle="tooltip" data-placement="top" class="fa fa-info-circle text--primary" title="Don't remove the [[name]] keyword, user name will be dynamic using it"> </label>
-                                <textarea name="description" class="form-control text-area-5" cols="30" rows="10">{{ 'Dear '.$default_value }}</textarea>
+                                <label for="">{{ __('Description') }} <span data-bs-toggle="tooltip"
+                                        data-placement="top" class="fa fa-info-circle text--primary"
+                                        title="Don't remove the [[name]] keyword, user name will be dynamic using it">
+                                </label>
+                                <textarea name="description" class="form-control text-area-5" cols="30" rows="10">{{ 'Dear ' . $default_value }}</textarea>
                             </div>
                     </div>
                 </div>
@@ -172,7 +185,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary">{{ __('Save Data') }}</button>
                 </div>
-                        </form>
+                </form>
             </div>
         </div>
     </div>
@@ -194,7 +207,4 @@
             })
         </script>
     @endpush
-
 @endsection
-
-

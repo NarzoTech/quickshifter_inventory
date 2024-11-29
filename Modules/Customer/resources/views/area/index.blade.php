@@ -34,8 +34,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                                <form action="" method="GET" onchange="this.submit()"
-                                    class="card-body">
+                                <form action="" method="GET" onchange="this.submit()" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
@@ -81,7 +80,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addarea"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addarea"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Area') }}</a>
                                 </h4>
@@ -105,15 +104,15 @@
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $area->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $area->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editarea{{ $area->id }}">Edit</a>
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editarea{{ $area->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $area->id }})">
                                                                     Delete</a>

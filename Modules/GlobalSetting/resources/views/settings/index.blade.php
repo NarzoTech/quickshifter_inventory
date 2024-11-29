@@ -58,7 +58,7 @@
                 $("#generalTab a:first").tab("show");
             }
 
-            $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+            $('a[data-bs-toggle="tab"]').on("shown.bs.tab", function(e) {
                 var newTab = $(e.target).attr("href").substring(1);
                 localStorage.setItem("activeTab", newTab);
             });

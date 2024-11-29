@@ -1,11 +1,13 @@
-@props(['label_text' => __('Thumbnail Image'), ' multiple' => 'no', 'dataImages' => false , 'required' => false])
+@props(['label_text' => __('Thumbnail Image'), ' multiple' => 'no', 'dataImages' => false, 'required' => false])
 
 {{-- Media preview area --}}
-<div class="select-media-preview d-flex"></div>
+<div class="select-media-preview d-flex">
+</div>
 
 <label>{{ $label_text }}@if ($required)
-    <span class="text-danger">*</span>
-@endif</label>
+        <span class="text-danger">*</span>
+    @endif
+</label>
 <div class="input-group">
     <input {!! $attributes->merge(['class' => 'form-control']) !!} type="hidden" id="mediaInputId">
     <div class="input-group-append">
@@ -33,11 +35,11 @@
                 <div class="modal-body" id="mediaList">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="upload-tab" data-toggle="tab" href="#uploadImage" role="tab"
-                                aria-controls="upload" aria-selected="false">{{ __('Upload image') }}</a>
+                            <a class="nav-link active" id="upload-tab" data-bs-toggle="tab" href="#uploadImage"
+                                role="tab" aria-controls="upload" aria-selected="false">{{ __('Upload image') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="media-tab" data-toggle="tab" href="#mediaLibary" role="tab"
+                            <a class="nav-link" id="media-tab" data-bs-toggle="tab" href="#mediaLibary" role="tab"
                                 aria-controls="media" aria-selected="false">{{ __('Media Libary') }}</a>
                         </li>
                     </ul>

@@ -133,15 +133,15 @@
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $purchase->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $purchase->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#showCustomer{{ $purchase->id }}">Show</a>
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#showCustomer{{ $purchase->id }}">Show</a>
                                                                 <a class="dropdown-item"
                                                                     href="{{ route('admin.purchase.invoice', $purchase->id) }}">Invoice</a>
                                                                 <a class="dropdown-item"

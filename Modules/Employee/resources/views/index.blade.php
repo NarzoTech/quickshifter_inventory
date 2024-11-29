@@ -136,7 +136,7 @@
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $employee->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">{{ __('Action') }}</button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $employee->id }}">

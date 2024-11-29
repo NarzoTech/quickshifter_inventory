@@ -75,12 +75,12 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('admin.category.edit', $category->id) }}"
-                                                    class="btn btn-primary btn-sm mr-1" data-toggle="tooltip"
+                                                    class="btn btn-primary btn-sm mr-1" data-bs-toggle="tooltip"
                                                     title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
 
                                                 <a href="javascript:void(0)"
                                                     class="btn btn-danger trigger--fire-modal-1 deleteForm btn-sm"
-                                                    data-toggle="tooltip" title="{{ __('Delete') }}"
+                                                    data-bs-toggle="tooltip" title="{{ __('Delete') }}"
                                                     data-url="{{ route('admin.category.destroy', $category->id) }}"
                                                     data-form="deleteForm"><i class="fas fa-trash"></i></a>
                                             </td>

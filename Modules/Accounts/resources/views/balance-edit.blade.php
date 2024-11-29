@@ -157,13 +157,13 @@
                     <div class="col-xl-7">
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
-                                <a href="#home1" class="btn btn-success" data-toggle="tab" aria-expanded="false"
+                                <a href="#home1" class="btn btn-success" data-bs-toggle="tab" aria-expanded="false"
                                     class="nav-link active">
                                     Deposit
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#profile1" class="btn btn-info ml-2" data-toggle="tab" aria-expanded="true"
+                                <a href="#profile1" class="btn btn-info ml-2" data-bs-toggle="tab" aria-expanded="true"
                                     class="nav-link">
                                     Withdraw
                                 </a>
@@ -200,8 +200,9 @@
                                                                     </a>
                                                                     <a href="javascript:void(0)"
                                                                         onclick="deleteData({{ $deposit->id }})"
-                                                                        class="btn btn-danger btn-sm" data-toggle="modal"
-                                                                        data-target="#deleteModal">
+                                                                        class="btn btn-danger btn-sm"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#deleteModal">
                                                                         <i class="fas fa-trash"></i>
                                                                     </a>
                                                                 </td>
@@ -260,7 +261,6 @@
             </div>
         </section>
     </div>
-
 @endsection
 @push('js')
     <script>

@@ -17,8 +17,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#addWarehouse"><i class="fa fa-plus"></i>
+                                    <a href="javascript:;" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#addWarehouse"><i class="fa fa-plus"></i>
                                         {{ __('Add Warehouse') }}</a>
                                 </h4>
                                 <div class="card-header-form">
@@ -65,10 +65,11 @@
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        <a href="javascript:;" data-toggle="modal" data-target="#editWarehouse{{ $house->id }}"
+                                                        <a href="javascript:;" data-bs-toggle="modal"
+                                                            data-bs-target="#editWarehouse{{ $house->id }}"
                                                             class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
-                                                        <a href="javascript:;"  class="btn btn-danger btn-sm"
+                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
                                                             onclick="deleteData({{ $house->id }})"><i
                                                                 class="fa fa-trash" aria-hidden="true"></i></a>
                                                     </td>
@@ -153,35 +154,38 @@
 
                     <!-- Modal body -->
                     <div class="modal-body">
-                        <form action="{{ route('admin.warehouse.update',$house->id) }}" method="POST" id="update-warehouse-form{{ $house->id }}">
+                        <form action="{{ route('admin.warehouse.update', $house->id) }}" method="POST"
+                            id="update-warehouse-form{{ $house->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ $house->name }}">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ $house->name }}">
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label for="phone">{{ __('Phone') }}</label>
-                                    <input type="text" class="form-control" id="phone" value="{{ $house->phone }}" name="phone">
+                                    <input type="text" class="form-control" id="phone"
+                                        value="{{ $house->phone }}" name="phone">
                                 </div>
                                 <div class="form-group col-md-6 ">
                                     <label for="email">{{ __('Email') }}</label>
-                                    <input type="email" class="form-control" id="email" value="{{ $house->email }}" name="email">
+                                    <input type="email" class="form-control" id="email"
+                                        value="{{ $house->email }}" name="email">
                                 </div>
                                 <div class="form-group col-md-6 ">
                                     <label for="city">{{ __('City') }}</label>
-                                    <input type="text" class="form-control" id="city" value="{{ $house->city }}" name="city">
+                                    <input type="text" class="form-control" id="city"
+                                        value="{{ $house->city }}" name="city">
                                 </div>
                                 <div class="form-group col-md-6 ">
                                     <label for="status">{{ __('Status') }}</label>
-                                    <select  name="status" id="status" class="form-control">
-                                        <option value="1" @if ($house->status == 1)
-                                            selected
-                                        @endif>{{ __('Active') }}</option>
-                                        <option value="0" @if ($house->status == 0)
-                                            selected
-                                        @endif>{{ __('Inactive') }}</option>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1" @if ($house->status == 1) selected @endif>
+                                            {{ __('Active') }}</option>
+                                        <option value="0" @if ($house->status == 0) selected @endif>
+                                            {{ __('Inactive') }}</option>
                                     </select>
                                 </div>
                             </div>
@@ -191,7 +195,8 @@
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" form="update-warehouse-form{{ $house->id }}">Update</button>
+                        <button type="submit" class="btn btn-primary"
+                            form="update-warehouse-form{{ $house->id }}">Update</button>
                     </div>
 
                 </div>

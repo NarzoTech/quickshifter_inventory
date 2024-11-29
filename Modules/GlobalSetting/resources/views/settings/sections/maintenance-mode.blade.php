@@ -8,11 +8,10 @@
             </div>
         </div>
         <input onchange="changeMaintenanceModeStatus()" {{ $setting->maintenance_mode ? 'checked' : '' }}
-            id="maintenance_mode_toggle" type="checkbox" data-toggle="toggle" data-on="{{ __('Active') }}"
+            id="maintenance_mode_toggle" type="checkbox" data-bs-toggle="toggle" data-on="{{ __('Active') }}"
             data-off="{{ __('Inactive') }}" data-onstyle="success" data-offstyle="danger">
     </div>
-    <form action="{{ route('admin.update-maintenance-mode') }}" method="POST"
-        enctype="multipart/form-data">
+    <form action="{{ route('admin.update-maintenance-mode') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 

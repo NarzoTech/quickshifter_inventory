@@ -46,7 +46,7 @@
                                                             <a href="javascript:;"
                                                                 onclick="changeStatus({{ $tax->id }})">
                                                                 <input id="status_toggle" type="checkbox" checked
-                                                                    data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                    data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                     data-off="{{ __('InActive') }}" data-onstyle="success"
                                                                     data-offstyle="danger">
                                                             </a>
@@ -54,7 +54,7 @@
                                                             <a href="javascript:;"
                                                                 onclick="changeStatus({{ $tax->id }})">
                                                                 <input id="status_toggle" type="checkbox"
-                                                                    data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                    data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                     data-off="{{ __('InActive') }}" data-onstyle="success"
                                                                     data-offstyle="danger">
                                                             </a>
@@ -68,7 +68,7 @@
                                                         @endadminCan
                                                         @if ($tax->products->count() == 0)
                                                             @adminCan('tax.delete')
-                                                                <a href="javascript:;"  class="btn btn-danger btn-sm"
+                                                                <a href="javascript:;" class="btn btn-danger btn-sm"
                                                                     onclick="deleteData({{ $tax->id }})"><i
                                                                         class="fa fa-trash" aria-hidden="true"></i></a>
                                                             @endadminCan

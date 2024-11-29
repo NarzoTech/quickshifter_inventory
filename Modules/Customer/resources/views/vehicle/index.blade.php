@@ -1,26 +1,8 @@
 @extends('admin.master_layout')
 @section('title')
-    <title>{{ __('All Vehicles') }}</title>
+    <title>{{ __('Vehicles List') }}</title>
 @endsection
 
-@push('css')
-    <style>
-        thead tr:nth-child(odd) {
-            background-color: lightskyblue;
-
-        }
-
-
-        thead tr:nth-child(even) {
-            background-color: lightpink;
-        }
-
-        thead>tr>th {
-            /* background-color: lightseagreen; */
-            color: white !important;
-        }
-    </style>
-@endpush
 @section('admin-content')
     <div class="main-content">
         <section class="section">
@@ -80,7 +62,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h4>
-                                    <a href="javascript:;" data-toggle="modal" data-target="#addVehicle"
+                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addVehicle"
                                         class="btn btn-primary"><i class="fa fa-plus"></i>
                                         {{ __('Add Vehicle') }}</a>
                                 </h4>
@@ -112,15 +94,15 @@
                                                         <div class="btn-group" role="group">
                                                             <button id="btnGroupDrop{{ $vehicle->id }}" type="button"
                                                                 class="btn btn-primary dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false">
                                                                 Action
                                                             </button>
                                                             <div class="dropdown-menu"
                                                                 aria-labelledby="btnGroupDrop{{ $vehicle->id }}">
                                                                 <a class="dropdown-item" href="javascript:;"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editVehicle{{ $vehicle->id }}">Edit</a>
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editVehicle{{ $vehicle->id }}">Edit</a>
                                                                 <a href="javascript:;" class="dropdown-item"
                                                                     onclick="deleteData({{ $vehicle->id }})">
                                                                     Delete</a>

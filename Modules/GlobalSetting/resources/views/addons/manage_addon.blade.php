@@ -59,7 +59,7 @@
                                                                 <a href="{{ route('admin.addons.update.status', $addon->slug) }}"
                                                                     class="btn btn-success">{{ __('Enable') }}</a>
                                                             @endif
-                                                            <a data-toggle="modal" data-target="#deleteModal"
+                                                            <a data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                                 href="{{ route('admin.addons.uninstall', $addon->slug) }}"
                                                                 onclick="deleteData('{{ route('admin.addons.uninstall', $addon->slug) }}')"
                                                                 class="btn btn-danger">{{ __('Uninstall') }}</a>

@@ -24,9 +24,9 @@
                 <nav class="navbar navbar-expand-lg main-navbar">
                     <div class="mr-auto form-inline">
                         <ul class="mr-3 navbar-nav d-flex align-items-center">
-                            <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i
+                            <li><a href="#" data-bs-toggle="sidebar" class="nav-link nav-link-lg"><i
                                         class="fas fa-bars"></i></a></li>
-                            <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-none"><i
+                            <li><a href="#" data-bs-toggle="search" class="nav-link nav-link-lg d-none"><i
                                         class="fas fa-search"></i></a></li>
                             @if (Module::isEnabled('Language') && Route::has('set-language'))
                                 <form id="setLanguageHeader" action="{{ route('set-language') }}">
@@ -74,7 +74,7 @@
                             </a>
                         </li>
 
-                        <li class="dropdown"><a href="#" data-toggle="dropdown"
+                        <li class="dropdown"><a href="#" data-bs-toggle="dropdown"
                                 class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                                 @if ($header_admin->image)
                                     <img alt="image" src="{{ asset($header_admin->image) }}"

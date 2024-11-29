@@ -33,8 +33,8 @@
                                     </div>
                                 </div>
 
-                                <button class="btn btn-danger" data-toggle="modal"
-                                    data-target="#clearDatabaseModal">{{ __('Clear Database') }}</button>
+                                <button class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#clearDatabaseModal">{{ __('Clear Database') }}</button>
 
                             </div>
                         </div>

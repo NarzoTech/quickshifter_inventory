@@ -109,8 +109,8 @@
                                                             @endforeach
                                                         </select>
                                                         <div class="input-group-append">
-                                                            <a href="javascript:;" data-toggle="modal"
-                                                                data-target="#categoryModal" class="btn btn-primary"><i
+                                                            <a href="javascript:;" data-bs-toggle="modal"
+                                                                data-bs-target="#categoryModal" class="btn btn-primary"><i
                                                                     class="fa fa-plus"></i></a>
                                                         </div>
                                                     </div>
@@ -133,8 +133,8 @@
                                                             @endforeach
                                                         </select>
                                                         <div class="input-group-append">
-                                                            <a href="javascript:;" data-toggle="modal"
-                                                                data-target="#brandModal" class="btn btn-primary"><i
+                                                            <a href="javascript:;" data-bs-toggle="modal"
+                                                                data-bs-target="#brandModal" class="btn btn-primary"><i
                                                                     class="fa fa-plus"></i></a>
                                                         </div>
                                                     </div>
@@ -243,8 +243,8 @@
                                                                 @endforeach
                                                             </select>
                                                             <div class="input-group-append">
-                                                                <a href="javascript:;" data-toggle="modal"
-                                                                    data-target="#unitModal" class="btn btn-primary"><i
+                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                    data-bs-target="#unitModal" class="btn btn-primary"><i
                                                                         class="fa fa-plus"></i></a>
                                                             </div>
                                                             @error('unit_id')

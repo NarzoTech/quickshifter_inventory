@@ -75,7 +75,7 @@
                                                             <input class="self-default-{{ $language->id }} default-status"
                                                                 id="status_toggle" type="checkbox"
                                                                 {{ $language->is_default ? 'checked' : '' }}
-                                                                data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                 data-off="{{ __('Inactive') }}" data-onstyle="success"
                                                                 data-offstyle="danger">
                                                         </a>
@@ -94,7 +94,7 @@
                                                             onclick="changeStatus({{ $language->id }}, 'status')">
                                                             <input id="status_toggle" type="checkbox"
                                                                 {{ $language->status ? 'checked' : '' }}
-                                                                data-toggle="toggle" data-on="{{ __('Active') }}"
+                                                                data-bs-toggle="toggle" data-on="{{ __('Active') }}"
                                                                 data-off="{{ __('Inactive') }}" data-onstyle="success"
                                                                 data-offstyle="danger">
                                                         </a>
@@ -137,9 +137,9 @@
     <script>
         function deleteData(id) {
             let url = "{{ route('admin.languages.destroy', ':id') }}"
-                url = url.replace(':id', id);
-                $("#deleteForm").attr("action", url);
-                $('#deleteModal').modal('show');
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
         }
 
         function changeStatus(id, type) {
