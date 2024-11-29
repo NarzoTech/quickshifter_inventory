@@ -130,7 +130,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal fade">{{ __('Close') }}</button>
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="button" class="btn btn-success" id="update">{{ __('Update') }}</button>
                     </div>
                 </div>

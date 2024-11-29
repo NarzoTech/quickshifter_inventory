@@ -60,8 +60,7 @@
                 <div class="modal-footer bg-whitesmoke br">
                     <form action="{{ route('admin.cache-clear-confirm') }}" method="POST">
                         @csrf
-                        <button type="button" class="btn btn-danger"
-                            data-dismiss="modal fade">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Yes, Clear') }}</button>
 
                     </form>

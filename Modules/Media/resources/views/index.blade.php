@@ -146,7 +146,7 @@
 
                 </div>
                 <div class="modal-footer bg-whitesmoke br">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                     <a id="mediaEditBtn" href="" type="submit" class="btn btn-primary">{{ __('Edit') }}</a>
                 </div>
             </div>

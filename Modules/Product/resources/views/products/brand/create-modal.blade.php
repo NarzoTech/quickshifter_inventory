@@ -54,7 +54,7 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                 <button type="submit" class="btn btn-success" form="brandForm"><i class="fa fa-save"></i>
                     {{ __('Save') }}</button>
 

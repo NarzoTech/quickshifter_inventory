@@ -61,8 +61,7 @@
                     <form id="deleteForm" action="{{ route('admin.database-clear-success') }}" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-danger"
-                            data-dismiss="modal fade">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Yes, Delete') }}</button>
                     </form>
                 </div>

@@ -64,11 +64,10 @@
         </div>
     </div>
 
-
     <div class="card mt-3 mb-3">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> {{ __('Vehicles List') }}</h4>
+                <h4><i class="fas fa-list"></i> {{ __('Area List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addarea" class="btn btn-primary"><i
@@ -190,7 +189,7 @@
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger"
-                            data-dismiss="modal fade">{{ __('Close') }}</button>
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-area-form{{ $area->id }}">{{ __('Update') }}</button>
                     </div>

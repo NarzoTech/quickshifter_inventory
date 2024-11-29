@@ -259,7 +259,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-primary" form="add-bank-form">{{ __('Save') }}</button>
                 </div>
 
@@ -335,7 +335,7 @@
                     <!-- Modal footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger"
-                            data-dismiss="modal fade">{{ __('Close') }}</button>
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-type-form{{ $expense->id }}">{{ __('Update') }}</button>
                     </div>

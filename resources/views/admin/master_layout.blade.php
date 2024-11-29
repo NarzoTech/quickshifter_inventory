@@ -158,7 +158,7 @@
                         @method('DELETE')
 
                         <button type="button" class="btn btn-danger"
-                            data-dismiss="modal fade">{{ __('Close') }}</button>
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary">{{ __('Yes, Delete') }}</button>
 
                     </form>

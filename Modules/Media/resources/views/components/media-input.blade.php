@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-whitesmoke br">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal fade">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                     <button type="button" class="btn btn-primary add-media-button">{{ __('Add Media') }}</button>
                 </div>
             </div>

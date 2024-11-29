@@ -52,7 +52,7 @@
                 @method('DELETE')
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Clear Database Confirmation') }}</h5>
-                    <button type="button" class="btn-close btn" data-dismiss="modal fade">
+                    <button type="button" class="btn-close btn" data-bs-dismiss="modal">
                         <i class="fas fa-times fa-fw"></i>
                     </button>
                 </div>
@@ -63,7 +63,7 @@
 
                 </div>
                 <div class="modal-footer bg-whitesmoke br">
-                    <button type="button" class="btn btn-success" data-dismiss="modal fade">{{ __('Close') }}</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">{{ __('Close') }}</button>
                     <button type="submit" class="btn btn-danger">{{ __('Yes, Clear') }}</button>
                 </div>
             </form>
