@@ -56,63 +56,52 @@ class Supplier extends Model
 
     public function getAdvanceAttribute()
     {
-        $from_date = null;
-        $to_date = null;
-        if (request()->from_date) {
-            $from_date = now()->parse(request()->from_date);
-        }
-        if (request()->to_date) {
-            $to_date = now()->parse(request()->to_date);
-        }
+        $payments = $this->payments;
 
-        $advance = $this->payments()->where('payment_type', 'advance_pay');
+        $totals = $payments->reduce(function ($carry, $payment) {
+            if ($payment->payment_type === 'advance_pay') {
+                $carry['total_advance'] += $payment->amount;
+            } elseif ($payment->payment_type === 'advance_refund') {
+                $carry['total_refund'] += $payment->amount;
+            }
+            return $carry;
+        }, ['total_advance' => 0, 'total_refund' => 0]);
 
-        if ($from_date || $to_date) {
-            $advance = $advance->whereBetween('date', [$from_date, $to_date]);
-        }
-        $advance = $advance->sum('amount');
-        $advance_return = $this->payments()->where('payment_type', 'advance_refund')->sum('amount');
-        return $advance - $advance_return;
+        return $totals['total_advance'] - $totals['total_refund'];
     }
 
-    public function getTotalPurchaseAttribute()
-    {
-        $from_date = null;
-        $to_date = null;
-        if (request()->from_date) {
-            $from_date = now()->parse(request()->from_date);
-        }
-        if (request()->to_date) {
-            $to_date = now()->parse(request()->to_date);
-        }
+    // public function getTotalPurchaseAttribute()
+    // {
+    //     $query = $this->purchases();
 
-        $purchases = $this->purchases;
+    //     if (request()->from_date || request()->to_date) {
+    //         $from_date = request()->from_date ? now()->parse(request()->from_date) : null;
+    //         $to_date = request()->to_date ? now()->parse(request()->to_date) : null;
 
-        if ($from_date || $to_date) {
-            $purchases = $purchases->whereBetween('date', [$from_date, $to_date]);
-        }
+    //         $query->whereBetween('date', [$from_date, $to_date]);
+    //     }
 
-        return $purchases->sum('total_amount');
-    }
+    //     return $query->sum('total_amount');
+    // }
 
-    public function getTotalPaidAttribute()
-    {
-        $from_date = null;
-        $to_date = null;
-        if (request()->from_date) {
-            $from_date = now()->parse(request()->from_date);
-        }
-        if (request()->to_date) {
-            $to_date = now()->parse(request()->to_date);
-        }
+    // public function getTotalPaidAttribute()
+    // {
+    //     $from_date = null;
+    //     $to_date = null;
+    //     if (request()->from_date) {
+    //         $from_date = now()->parse(request()->from_date);
+    //     }
+    //     if (request()->to_date) {
+    //         $to_date = now()->parse(request()->to_date);
+    //     }
 
-        $payments = $this->payments->where('is_paid', 1);
-        if ($from_date || $to_date) {
-            $payments = $payments->whereBetween('date', [$from_date, $to_date]);
-        }
+    //     $payments = $this->payments->where('is_paid', 1);
+    //     if ($from_date || $to_date) {
+    //         $payments = $payments->whereBetween('date', [$from_date, $to_date]);
+    //     }
 
-        return $payments->sum('amount');
-    }
+    //     return $payments->sum('amount');
+    // }
 
     public function getTotalDueAttribute()
     {

@@ -25,7 +25,29 @@ class SupplierService
     public function allSupplier()
     {
         $suppliers = $this->supplier->query();
-        $suppliers = $suppliers->with('purchaseReturn');
+        $suppliers = $suppliers->with(['purchaseReturn', 'purchases' => function ($query) {
+            if (request()->from_date || request()->to_date) {
+                [$from_date, $to_date] = $this->getDateRangeFromRequest();
+                if ($from_date) {
+                    $query->where('date', '>=', $from_date);
+                }
+                if ($to_date) {
+                    $query->where('date', '<=', $to_date);
+                }
+            }
+        }, 'payments' => function ($query) {
+            $query->where('is_paid', 1);
+
+            [$from_date, $to_date] = $this->getDateRangeFromRequest();
+
+            if ($from_date) {
+                $query->where('date', '>=', $from_date);
+            }
+
+            if ($to_date) {
+                $query->where('date', '<=', $to_date);
+            }
+        }]);
 
 
         if (request()->keyword) {
@@ -47,7 +69,16 @@ class SupplierService
         }
 
 
+
+
         return $suppliers;
+    }
+    private function getDateRangeFromRequest()
+    {
+        $from_date = request()->from_date ? now()->parse(request()->from_date) : null;
+        $to_date = request()->to_date ? now()->parse(request()->to_date) : null;
+
+        return [$from_date, $to_date];
     }
 
     public function find($id)

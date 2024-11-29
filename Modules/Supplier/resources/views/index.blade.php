@@ -118,6 +118,9 @@
                     </thead>
                     <tbody>
                         @foreach ($suppliers as $index => $supplier)
+                            {{-- @if ($index == 17)
+                                @dd($supplier)
+                            @endif --}}
                             @php
                                 $totalReturn = $supplier->purchaseReturn->sum('return_amount');
                                 $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
@@ -127,8 +130,8 @@
                                 <td>{{ $supplier->name }}</td>
                                 <td>{{ $supplier->phone }}</td>
                                 <td>{{ $supplier->area->name }}</td>
-                                <td>{{ currency($supplier->total_purchase) }}</td>
-                                <td>{{ currency($supplier->total_paid) }}</td>
+                                <td>{{ currency($supplier->purchases->sum('total_amount')) }}</td>
+                                <td>{{ currency($supplier->payments->sum('amount')) }}</td>
                                 <td>{{ currency($totalReturn) }}</td>
                                 <td>{{ currency($totalReturnPaid) }}</td>
                                 <td>{{ currency($supplier->total_due - $totalReturn) }}</td>

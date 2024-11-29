@@ -43,9 +43,10 @@ class SupplierController extends Controller
         $data['total_due'] = 0;
         $data['total_advance'] = 0;
         $data['total_due_dismiss'] = 0;
+
         foreach ($suppliers->get() as $supplier) {
-            $data['totalPurchase'] += $supplier->total_purchase;
-            $data['pay'] += $supplier->total_paid;
+            $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
+            $data['pay'] += $supplier->payments->sum('amount');
 
             $totalReturn = $supplier->purchaseReturn->sum('return_amount');
             $data['total_return'] += $totalReturn;
