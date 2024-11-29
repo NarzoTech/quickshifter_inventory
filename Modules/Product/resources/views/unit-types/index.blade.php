@@ -1,130 +1,120 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 
 @section('title')
     <title>{{ __('Unit List') }}</title>
 @endsection
 
-@section('admin-content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Unit List') }}</h1>
-            </div>
-
-            <div class="section-body">
-                <div class="row mt-4">
-                    <div class="col-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="{{ route('admin.unit.store') }}" method="POST" enctype="multipart/form-data"
-                                    id="form">
-                                    @csrf
-                                    <div class="row">
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="name" class="form-control" name="name">
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="ShortName" class="form-control" name="ShortName">
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Base Unit') }}</label>
-                                            <select name="base_unit" id="base_unit" class="form-control">
-                                                <option value="">{{ __('Select Base Unit') }}</option>
-                                                @foreach ($parentUnits as $parentUnit)
-                                                    <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-12 operator d-none">
-                                            <label>{{ __('Operator') }}</label>
-                                            <select name="operator" id="operator" class="form-control">
-                                                <option value="*">{{ __('Multiply') }} (*)</option>
-                                                <option value="/">{{ __('Divide') }} (/)</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-12 operator_value d-none">
-                                            <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="operator_value" class="form-control"
-                                                name="operator_value" value="1">
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Status') }} </label>
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <input type="radio" name='status' value="1" checked />
-                                                    <label>{{ __('Active') }} </label>
-                                                </div>
-                                                <div>
-                                                    <input type="radio" name='status' value="0" />
-                                                    <label>{{ __('Inactive') }} </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <x-admin.save-button :text="__('Save')" />
-                                        </div>
-                                    </div>
-                                </form>
+@section('content')
+    <div class="row mt-4">
+        <div class="col-3">
+            <div class="card mt-3 mb-3">
+                <div class="card-body">
+                    <form action="{{ route('admin.unit.store') }}" method="POST" enctype="multipart/form-data" id="form">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label>{{ __('Name') }} <span class="text-danger">*</span></label>
+                                <input type="text" id="name" class="form-control" name="name">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-9">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="table-responsive table-invoice">
-                                    <table class="table table-striped" id="dataTable">
-                                        <thead>
-                                            <tr>
-                                                <th>{{ __('SN') }}</th>
-                                                <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Short Name') }}</th>
-                                                <th>{{ __('Base Unit') }}</th>
-                                                <th>{{ __('Operator') }}</th>
-                                                <th>{{ __('Operator Value') }}</th>
-                                                <th>{{ __('Status') }}</th>
-                                                <th>{{ __('Action') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($units as $index => $unit)
-                                                <tr>
-                                                    <td>{{ ++$index }}</td>
-                                                    <td>{{ $unit->name }}</td>
-                                                    <td>{{ $unit->ShortName }}</td>
-                                                    <td>{{ $unit->base_unit }}</td>
-                                                    <td>{{ $unit->operator }}</td>
-                                                    <td>{{ $unit->operator_value }}</td>
-                                                    <td>
-                                                        @if ($unit->status == 1)
-                                                            <span class="badge badge-success">{{ __('Active') }}</span>
-                                                        @else
-                                                            <span class="badge badge-danger">{{ __('Inactive') }}</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-group">
-                                                            <a href="{{ route('admin.unit.edit', $unit->id) }}"
-                                                                class="btn btn-primary btn-sm edit-btn mr-2"><i
-                                                                    class="fa fa-edit" aria-hidden="true"></i></a>
-                                                            <a href="javascript:;" class="btn btn-danger btn-sm"
-                                                                onclick="deleteData({{ $unit->id }})"><i
-                                                                    class="fa fa-trash" aria-hidden="true"></i></a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                            <div class="form-group col-12">
+                                <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
+                                <input type="text" id="ShortName" class="form-control" name="ShortName">
+                            </div>
+                            <div class="form-group col-12">
+                                <label>{{ __('Base Unit') }}</label>
+                                <select name="base_unit" id="base_unit" class="form-control">
+                                    <option value="">{{ __('Select Base Unit') }}</option>
+                                    @foreach ($parentUnits as $parentUnit)
+                                        <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-12 operator d-none">
+                                <label>{{ __('Operator') }}</label>
+                                <select name="operator" id="operator" class="form-control">
+                                    <option value="*">{{ __('Multiply') }} (*)</option>
+                                    <option value="/">{{ __('Divide') }} (/)</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-12 operator_value d-none">
+                                <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
+                                <input type="text" id="operator_value" class="form-control" name="operator_value"
+                                    value="1">
+                            </div>
+                            <div class="form-group col-12">
+                                <label>{{ __('Status') }} </label>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <input type="radio" name='status' value="1" checked />
+                                        <label>{{ __('Active') }} </label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" name='status' value="0" />
+                                        <label>{{ __('Inactive') }} </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <x-admin.save-button :text="__('Save')" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive table-invoice">
+                        <table class="table table-striped" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('SN') }}</th>
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Short Name') }}</th>
+                                    <th>{{ __('Base Unit') }}</th>
+                                    <th>{{ __('Operator') }}</th>
+                                    <th>{{ __('Operator Value') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                    <th>{{ __('Action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($units as $index => $unit)
+                                    <tr>
+                                        <td>{{ ++$index }}</td>
+                                        <td>{{ $unit->name }}</td>
+                                        <td>{{ $unit->ShortName }}</td>
+                                        <td>{{ $unit->base_unit }}</td>
+                                        <td>{{ $unit->operator }}</td>
+                                        <td>{{ $unit->operator_value }}</td>
+                                        <td>
+                                            @if ($unit->status == 1)
+                                                <span class="badge badge-success">{{ __('Active') }}</span>
+                                            @else
+                                                <span class="badge badge-danger">{{ __('Inactive') }}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{{ route('admin.unit.edit', $unit->id) }}"
+                                                    class="btn btn-primary btn-sm edit-btn mr-2"><i class="fa fa-edit"
+                                                        aria-hidden="true"></i></a>
+                                                <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                    onclick="deleteData({{ $unit->id }})"><i class="fa fa-trash"
+                                                        aria-hidden="true"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-        </section>
+            </div>
+        </div>
     </div>
 
     @include('components.admin.preloader')
