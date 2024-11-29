@@ -1,45 +1,11 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Print Barcode') }}</title>
 @endsection
 
-@push('css')
-    <style>
-        thead tr:nth-child(odd) {
-            background-color: lightskyblue;
-
-        }
-
-
-        thead tr:nth-child(even) {
-            background-color: lightpink;
-        }
-
-        thead>tr>th {
-            /* background-color: lightseagreen; */
-            color: white !important;
-        }
-    </style>
-    <style>
-        .custom-checkbox {
-            margin-right: 15px;
-        }
-    </style>
-@endpush
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Product List') }}</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item active"><a
-                            href="{{ route('admin.product.index') }}">{{ __('Product List') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Print Barcode') }}</div>
-                </div>
-            </div>
             <div class="section-body">
                 <div class="mt-4 row">
                     <div class="col-12">
@@ -81,7 +47,7 @@
                                                     class="table table-condensed table-bordered text-center table-striped"
                                                     id="purchase_entry_table">
                                                     <thead>
-                                                        <tr class="bg-success text-white">
+                                                        <tr>
                                                             <th>Product Name</th>
                                                             <th>Barcode</th>
                                                             <th>Quantity</th>
