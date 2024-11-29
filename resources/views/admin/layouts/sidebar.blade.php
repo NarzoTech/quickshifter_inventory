@@ -264,7 +264,7 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ Route::is('admin.stock.index') ? 'active' : '' }}">
-                    <a href="{{ route('admin.stock.index') }}" class="menu-link" target="_blank">
+                    <a href="{{ route('admin.stock.index') }}" class="menu-link">
                         <div class="text-truncate" data-i18n="{{ __('Stock') }}">{{ __('Stock') }}</div>
                     </a>
                 </li>
@@ -292,31 +292,31 @@
             <ul class="menu-sub">
                 <li class="menu-item">
                     <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/landing-page.html"
-                        class="menu-link" target="_blank">
+                        class="menu-link">
                         <div class="text-truncate" data-i18n="Landing">Landing</div>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/pricing-page.html"
-                        class="menu-link" target="_blank">
+                        class="menu-link">
                         <div class="text-truncate" data-i18n="Pricing">Pricing</div>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/payment-page.html"
-                        class="menu-link" target="_blank">
+                        class="menu-link">
                         <div class="text-truncate" data-i18n="Payment">Payment</div>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/checkout-page.html"
-                        class="menu-link" target="_blank">
+                        class="menu-link">
                         <div class="text-truncate" data-i18n="Checkout">Checkout</div>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/help-center-landing.html"
-                        class="menu-link" target="_blank">
+                        class="menu-link">
                         <div class="text-truncate" data-i18n="Help Center">Help Center</div>
                     </a>
                 </li>
@@ -330,7 +330,7 @@
         </li>
         <li class="menu-item">
             <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-email.html"
-                target="_blank" class="menu-link">
+                class="menu-link">
                 <i class="menu-icon tf-icons bx bx-envelope"></i>
                 <div class="text-truncate" data-i18n="Email">Email</div>
                 <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
@@ -338,7 +338,7 @@
         </li>
         <li class="menu-item">
             <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-chat.html"
-                target="_blank" class="menu-link">
+                class="menu-link">
                 <i class="menu-icon tf-icons bx bx-chat"></i>
                 <div class="text-truncate" data-i18n="Chat">Chat</div>
                 <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
@@ -346,7 +346,7 @@
         </li>
         <li class="menu-item">
             <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-calendar.html"
-                target="_blank" class="menu-link">
+                class="menu-link">
                 <i class="menu-icon tf-icons bx bx-calendar"></i>
                 <div class="text-truncate" data-i18n="Calendar">Calendar</div>
                 <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
@@ -354,7 +354,7 @@
         </li>
         <li class="menu-item">
             <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-kanban.html"
-                target="_blank" class="menu-link">
+                class="menu-link">
                 <i class="menu-icon tf-icons bx bx-grid"></i>
                 <div class="text-truncate" data-i18n="Kanban">Kanban</div>
                 <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
@@ -391,17 +391,17 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="auth-login-basic.html" class="menu-link" target="_blank">
+                    <a href="auth-login-basic.html" class="menu-link">
                         <div class="text-truncate" data-i18n="Basic">Login</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="auth-register-basic.html" class="menu-link" target="_blank">
+                    <a href="auth-register-basic.html" class="menu-link">
                         <div class="text-truncate" data-i18n="Basic">Register</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="auth-forgot-password-basic.html" class="menu-link" target="_blank">
+                    <a href="auth-forgot-password-basic.html" class="menu-link">
                         <div class="text-truncate" data-i18n="Basic">Forgot Password</div>
                     </a>
                 </li>
@@ -611,7 +611,7 @@
         <!-- Form Validation -->
         <li class="menu-item">
             <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/form-validation.html"
-                target="_blank" class="menu-link">
+                class="menu-link">
                 <i class="menu-icon tf-icons bx bx-list-check"></i>
                 <div class="text-truncate" data-i18n="Form Validation">Form Validation</div>
                 <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
@@ -627,7 +627,7 @@
         <!-- Data Tables -->
         <li class="menu-item">
             <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/tables-datatables-basic.html"
-                target="_blank" class="menu-link">
+                class="menu-link">
                 <i class="menu-icon tf-icons bx bx-grid"></i>
                 <div class="text-truncate" data-i18n="Datatables">Datatables</div>
                 <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
@@ -636,15 +636,14 @@
         <!-- Misc -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
         <li class="menu-item">
-            <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" target="_blank"
-                class="menu-link">
+            <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-support"></i>
                 <div class="text-truncate" data-i18n="Support">Support</div>
             </a>
         </li>
         <li class="menu-item">
             <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/"
-                target="_blank" class="menu-link">
+                class="menu-link">
                 <i class="menu-icon tf-icons bx bx-file"></i>
                 <div class="text-truncate" data-i18n="Documentation">Documentation</div>
             </a>

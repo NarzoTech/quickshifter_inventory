@@ -59,10 +59,6 @@
 
     <link rel="stylesheet" href="{{ asset('backend/css/dev.css') }}" />
 
-
-    <script>
-        console.log(window.TemplateCustomizer());
-    </script>
 </head>
 
 <body>
