@@ -3,102 +3,6 @@
     <title>{{ __('Category List') }}</title>
 @endsection
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Category') }}</h1>
-            </div>
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-12 col-md-12 col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="{{ route('admin.category.create') }}" class="btn btn-primary"><i
-                                            class="fa fa-plus"></i>
-                                        {{ __('Add Category') }}</a>
-                                </h4>
-                                <div class="card-header-form">
-                                    <form id="product_search_form">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="search"
-                                                placeholder="{{ __('Search here..') }}" autocomplete="off"
-                                                value="{{ request()->get('search') }}">
-                                            <div class="input-group-btn">
-                                                <button class="btn btn-primary" style="padding:9px"><i
-                                                        class="fas fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
-                                    <span><span class="number">0 </span> rows selected</span>
-                                    <button class="btn btn-danger delete-button">Delete</button>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <tr>
-                                            <th>
-                                                <div class="custom-checkbox custom-control">
-                                                    <input type="checkbox" data-checkboxes="checkgroup"
-                                                        data-checkbox-role="dad" class="custom-control-input"
-                                                        id="checkbox-all">
-                                                    <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
-                                                </div>
-                                            </th>
-                                            <th>{{ __('SL.') }}</th>
-                                            <th>{{ __('Name') }}</th>
-                                            <th>{{ __('Parent Name') }}</th>
-                                            <th>{{ __('Action') }}</th>
-                                        <tr>
-                                            @foreach ($categories as $index => $category)
-                                        <tr>
-                                            <td>
-                                                <div class="custom-checkbox custom-control">
-                                                    <input type="checkbox" data-checkboxes="checkgroup"
-                                                        class="custom-control-input" id="checkbox-{{ $category->id }}"
-                                                        name="select">
-                                                    <label for="checkbox-{{ $category->id }}"
-                                                        class="custom-control-label">&nbsp;</label>
-                                                </div>
-                                            </td>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $category->name }}</td>
-                                            <td>
-                                                @if ($category->parent_id)
-                                                    {{ $category->parent->name }}
-                                                @else
-                                                    {{ __('N/A') }}
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('admin.category.edit', $category->id) }}"
-                                                    class="btn btn-primary btn-sm mr-1" data-bs-toggle="tooltip"
-                                                    title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
-
-                                                <a href="javascript:void(0)"
-                                                    class="btn btn-danger trigger--fire-modal-1 deleteForm btn-sm"
-                                                    data-bs-toggle="tooltip" title="{{ __('Delete') }}"
-                                                    data-url="{{ route('admin.category.destroy', $category->id) }}"
-                                                    data-form="deleteForm"><i class="fas fa-trash"></i></a>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </table>
-                                </div>
-                                <div class="float-right">
-                                    {{ $categories->links() }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -156,6 +60,83 @@
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="card mt-3 mb-3">
+        <div class="card-header-tab card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4><i class="fas fa-list"></i> {{ __('Category List') }}</h4>
+            </div>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <a href="{{ route('admin.category.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                    {{ __('Add Category') }}</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
+                <span><span class="number">0 </span> rows selected</span>
+                <button class="btn btn-danger delete-button">Delete</button>
+            </div>
+            <div class="table-responsive">
+                <table style="width: 100%;" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="custom-checkbox custom-control">
+                                    <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
+                                        class="custom-control-input" id="checkbox-all">
+                                    <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                </div>
+                            </th>
+                            <th>{{ __('SL.') }}</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Parent Name') }}</th>
+                            <th>{{ __('Action') }}</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($categories as $index => $category)
+                            <tr>
+                                <td>
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
+                                            id="checkbox-{{ $category->id }}" name="select">
+                                        <label for="checkbox-{{ $category->id }}"
+                                            class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                </td>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $category->name }}</td>
+                                <td>
+                                    @if ($category->parent_id)
+                                        {{ $category->parent->name }}
+                                    @else
+                                        {{ __('N/A') }}
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.category.edit', $category->id) }}"
+                                        class="btn btn-primary btn-sm mr-1" data-bs-toggle="tooltip"
+                                        title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
+
+                                    <a href="javascript:void(0)"
+                                        class="btn btn-danger trigger--fire-modal-1 deleteForm btn-sm"
+                                        data-bs-toggle="tooltip" title="{{ __('Delete') }}"
+                                        data-url="{{ route('admin.category.destroy', $category->id) }}"
+                                        data-form="deleteForm"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $categories->onEachSide(0)->links() }}
+                </div>
+            @endif
         </div>
     </div>
 @endsection
