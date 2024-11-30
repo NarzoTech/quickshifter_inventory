@@ -4,75 +4,62 @@
 @endsection
 @section('content')
     <section class="section">
-        <div class="section-header">
-
-        </div>
-
         <div class="section-body">
             <div class="row">
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-primary">
-                            <i class="fas fa-money-bill-alt"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>{{ __('Customer Due') }}</h4>
+                    <div class="card dashboard_card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                <div class="avatar flex-shrink-0">
+                                    <i class='bx bx-user-plus'></i>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                {{ currency($data['customerDues']) }}
-                            </div>
+                            <h5 class="mb-1">{{ __('Customer Due') }}</h5>
+                            <h4 class="card-title text-primary fw-medium"> {{ currency($data['customerDues']) }}</h4>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-info">
-                            <i class="fas fa-money-bill-alt"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>{{ __('Supplier Due') }}</h4>
+                    <div class="card dashboard_card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                <div class="avatar flex-shrink-0">
+                                    <i class='bx bx-user-minus'></i>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                {{ currency($data['total_supplier_due']) }}
-                            </div>
+                            <h5 class="mb-1">{{ __('Supplier Due') }}</h5>
+                            <h4 class="card-title text-primary fw-medium"> {{ currency($data['total_supplier_due']) }}</h4>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-info">
-                            <i class="fas fa-shopping-bag"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>{{ __('Total Products') }}</h4>
+                    <div class="card dashboard_card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                <div class="avatar flex-shrink-0">
+                                    <i class='bx bx-list-ul'></i>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                {{ $data['totalProducts'] }}
-                            </div>
+                            <h5 class="mb-1">{{ __('Total Products') }}</h5>
+                            <h4 class="card-title text-primary fw-medium"> {{ $data['totalProducts'] }}</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-info">
-                            <i class="fas fa-money-bill-alt"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>{{ __('Today Sales') }}</h4>
+                    <div class="card dashboard_card">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                <div class="avatar flex-shrink-0">
+                                    <i class='bx bx-basket'></i>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                {{ currency($data['todaySales']) }}
-                            </div>
+                            <h5 class="mb-1">{{ __('Today Sales') }}</h5>
+                            <h4 class="card-title text-primary fw-medium"> {{ currency($data['todaySales']) }}</h4>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>

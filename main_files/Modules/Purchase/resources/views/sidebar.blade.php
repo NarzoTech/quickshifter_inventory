@@ -1,6 +1,6 @@
 <li class="menu-item {{ Route::is('admin.purchase.*') ? 'active open' : '' }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class='menu-icon tf-icons bx bx-store'></i>
+        <i class='menu-icon tf-icons bx bx-cart-add'></i>
         <div class="text-truncate" data-i18n="{{ __('Manage Purchase') }}">{{ __('Manage Purchase') }}</div>
     </a>
     <ul class="menu-sub">
