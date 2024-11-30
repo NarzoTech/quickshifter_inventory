@@ -30,7 +30,7 @@
 
         .table:not(.table-sm):not(.table-md):not(.dataTable) td,
         .table:not(.table-sm):not(.table-md):not(.dataTable) th {
-            padding: 0 5px !important;
+            /* padding: 0 5px !important; */
         }
 
         .main-content {
@@ -92,14 +92,12 @@
     <!-- Main Content -->
     <div class="main-content">
         <section class="section">
-
-
             <div class="section-body">
                 <div class="row mt-4">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="row">
                             <div class="col-md-12">
-                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <ul class="nav nav-tabs pos_tabs" id="myTab" role="tablist">
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="products-tab" data-bs-toggle="tab"
                                             data-bs-target="#products" type="button" role="tab"
@@ -119,57 +117,65 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="tab-content" id="myTabContent">
+                        <div class="tab-content p-0 mt-3" id="myTabContent">
                             <div class="tab-pane fade show active" id="products" role="tabpanel"
                                 aria-labelledby="products-tab">
                                 <div class="card">
                                     <div class="card-header">
                                         <form id="product_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
-                                                <div class="col-md-5 d-flex align-items-center">
-                                                    <select name="category_id" id="category_id"
-                                                        class="form-control select2">
-                                                        <option value="">{{ __('Select Category') }}</option>
-                                                        @if (request()->has('category_id'))
-                                                            @foreach ($categories as $category)
-                                                                <option
-                                                                    {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
-                                                                    value="{{ $category->id }}">{{ $category->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @else
-                                                            @foreach ($categories as $category)
-                                                                <option value="{{ $category->id }}">{{ $category->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-2">
+                                                        <select name="category_id" id="category_id"
+                                                            class="form-control select2">
+                                                            <option value="">{{ __('Select Category') }}</option>
+                                                            @if (request()->has('category_id'))
+                                                                @foreach ($categories as $category)
+                                                                    <option
+                                                                        {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
+                                                                        value="{{ $category->id }}">{{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @else
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-5 d-flex align-items-center">
-                                                    <select name="brand_id" id="brand_id" class="form-control select2">
-                                                        <option value="">{{ __('Select brand') }}</option>
-                                                        @if (request()->has('brand_id'))
-                                                            @foreach ($brands as $brand)
-                                                                <option
-                                                                    {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
-                                                                    value="{{ $brand->id }}">{{ $brand->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @else
-                                                            @foreach ($categories as $brand)
-                                                                <option value="{{ $brand->id }}">{{ $brand->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-2">
+                                                        <select name="brand_id" id="brand_id" class="form-control select2">
+                                                            <option value="">{{ __('Select brand') }}</option>
+                                                            @if (request()->has('brand_id'))
+                                                                @foreach ($brands as $brand)
+                                                                    <option
+                                                                        {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
+                                                                        value="{{ $brand->id }}">{{ $brand->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @else
+                                                                @foreach ($categories as $brand)
+                                                                    <option value="{{ $brand->id }}">
+                                                                        {{ $brand->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
                                                 </div>
-
-                                                <div class="col-md-12 d-flex align-items-center mt-2">
-                                                    <input type="text" class="form-control" name="name" id="name"
-                                                        placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
-                                                        autocomplete="off" value="{{ request()->get('name') }}">
-                                                    <ul class="dropdown-menu" id="itemList">
-                                                    </ul>
+                                                <div class="col-md-12">
+                                                    <div class="form-group mb-2">
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="name"
+                                                            placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
+                                                            autocomplete="off" value="{{ request()->get('name') }}">
+                                                        <ul class="dropdown-menu" id="itemList">
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -185,52 +191,60 @@
                                     <div class="card-header">
                                         <form id="favorite_product_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
-                                                <div class="col-md-5 d-flex align-items-center">
-                                                    <select name="category_id" id="category_id"
-                                                        class="form-control select2">
-                                                        <option value="">{{ __('Select Category') }}</option>
-                                                        @if (request()->has('category_id'))
-                                                            @foreach ($categories as $category)
-                                                                <option
-                                                                    {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
-                                                                    value="{{ $category->id }}">{{ $category->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @else
-                                                            @foreach ($categories as $category)
-                                                                <option value="{{ $category->id }}">{{ $category->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-2">
+                                                        <select name="category_id" id="category_id"
+                                                            class="form-control select2">
+                                                            <option value="">{{ __('Select Category') }}</option>
+                                                            @if (request()->has('category_id'))
+                                                                @foreach ($categories as $category)
+                                                                    <option
+                                                                        {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
+                                                                        value="{{ $category->id }}">{{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @else
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                                <div class="col-md-5 d-flex align-items-center">
-                                                    <select name="brand_id" id="brand_id" class="form-control select2">
-                                                        <option value="">{{ __('Select brand') }}</option>
-                                                        @if (request()->has('brand_id'))
-                                                            @foreach ($brands as $brand)
-                                                                <option
-                                                                    {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
-                                                                    value="{{ $brand->id }}">{{ $brand->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @else
-                                                            @foreach ($categories as $brand)
-                                                                <option value="{{ $brand->id }}">{{ $brand->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-2">
+                                                        <select name="brand_id" id="brand_id"
+                                                            class="form-control select2">
+                                                            <option value="">{{ __('Select brand') }}</option>
+                                                            @if (request()->has('brand_id'))
+                                                                @foreach ($brands as $brand)
+                                                                    <option
+                                                                        {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
+                                                                        value="{{ $brand->id }}">{{ $brand->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @else
+                                                                @foreach ($categories as $brand)
+                                                                    <option value="{{ $brand->id }}">
+                                                                        {{ $brand->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
                                                 </div>
+                                                <div class="col-md-12">
+                                                    <div class="form-group mb-2">
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="favoriteName"
+                                                            placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
+                                                            autocomplete="off" value="{{ request()->get('name') }}">
+                                                        <ul class="dropdown-menu" id="favoriteItemList">
 
-                                                <div class="col-md-12 d-flex align-items-center mt-2">
-                                                    <input type="text" class="form-control" name="name"
-                                                        id="favoriteName"
-                                                        placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
-                                                        autocomplete="off" value="{{ request()->get('name') }}">
-                                                    <ul class="dropdown-menu" id="favoriteItemList">
-
-                                                    </ul>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -245,30 +259,35 @@
                                     <div class="card-header">
                                         <form id="service_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
-                                                <div class="col-md-12 d-flex align-items-center">
-                                                    <select name="service_category_id" id="service_category_id"
-                                                        class="form-control select2">
-                                                        <option value="">{{ __('Select Category') }}</option>
-                                                        @if (request()->has('service_category_id'))
-                                                            @foreach ($serviceCategories as $category)
-                                                                <option
-                                                                    {{ request()->get('service_category_id') == $category->id ? 'selected' : '' }}
-                                                                    value="{{ $category->id }}">{{ $category->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        @else
-                                                            @foreach ($serviceCategories as $category)
-                                                                <option value="{{ $category->id }}">
-                                                                    {{ $category->name }}</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
+                                                <div class="col-md-4">
+                                                    <div class="form-group mb-2">
+                                                        <select name="service_category_id" id="service_category_id"
+                                                            class="form-control select2">
+                                                            <option value="">{{ __('Select Category') }}</option>
+                                                            @if (request()->has('service_category_id'))
+                                                                @foreach ($serviceCategories as $category)
+                                                                    <option
+                                                                        {{ request()->get('service_category_id') == $category->id ? 'selected' : '' }}
+                                                                        value="{{ $category->id }}">{{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @else
+                                                                @foreach ($serviceCategories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->name }}</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
                                                 </div>
 
-                                                <div class="col-md-12 d-flex align-items-center mt-2">
-                                                    <input type="text" class="form-control" name="name"
-                                                        id="service_name" placeholder="{{ __('Enter Service name') }}"
-                                                        autocomplete="off" value="{{ request()->get('name') }}">
+                                                <div class="col-md-8">
+                                                    <div class="form-group mb-2">
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="service_name"
+                                                            placeholder="{{ __('Enter Service name') }}"
+                                                            autocomplete="off" value="{{ request()->get('name') }}">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
@@ -279,25 +298,31 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
-                    <div class="col-md-7">
+
+                    <div class="col-md-6">
                         <div class="card">
                             <div class="card-header pos_sidebar_button">
                                 <div class="row w-100">
-                                    <div class="col-md-9">
-                                        <select name="customer_id" id="customer_id" class="form-control select2">
-                                            @include('pos::customer-drop-down')
-                                        </select>
+                                    <div class="col-md-9 col-lg-10">
+                                        <div class="form-group mb-2">
+                                            <select name="customer_id" id="customer_id" class="form-control select2">
+                                                @include('pos::customer-drop-down')
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <button type="button" class="btn btn-primary addCustomer"><i class="fa fa-plus"
-                                                aria-hidden="true"></i>{{ __('New') }}</button>
+                                    <div class="col-md-3 col-lg-2">
+                                        <div class="form-group mb-0">
+                                            <button type="button" class="btn bg-label-primary w-100 addCustomer">
+                                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                                {{ __('New') }}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="card-body">
+                            <div class="card-body pos_pro_table">
                                 <div class="row">
                                     @php
                                         $cumalitive_sub_total = 0;
@@ -315,26 +340,17 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td style="padding: 5px 10px;border-top: 1px solid #DDD;">Items</td>
-                                            <td class="text-right"
-                                                style="padding: 5px 10px;font-size: 14px; font-weight:bold;border-top: 1px solid #DDD;">
-                                                <span id="titems">{{ count($cart_contents) }}</span>
-                                            </td>
-                                            <td style="padding: 5px 10px;border-top: 1px solid #DDD;">Total</td>
-                                            <td class="text-right"
-                                                style="padding: 5px 10px;font-size: 14px; font-weight:bold;border-top: 1px solid #DDD;">
-                                                <span id="total">{{ currency($cumalitive_sub_total) }}</span>
-                                            </td>
+                                            <td>Items</td>
+                                            <td><span id="titems">{{ count($cart_contents) }}</span> </td>
+                                            <td>Total</td>
+                                            <td> <span id="total">{{ currency($cumalitive_sub_total) }}</span> </td>
                                         </tr>
                                         <tr>
-                                            <td style="padding: 5px 10px;">
-                                                Extra <small class="text-info"></small>
+                                            <td> Extra <small class="text-info"></small>
                                             </td>
-                                            <td class="text-right"
-                                                style="padding: 5px 10px;font-size: 14px; font-weight:bold;">
-                                                <span id="extra">{{ currency(0) }}</span>
+                                            <td> <span id="extra">{{ currency(0) }}</span>
                                             </td>
-                                            <td style="padding: 5px 10px;">{{ __('Discount') }}
+                                            <td>{{ __('Discount') }}
                                                 <i class="fa fa-edit dis-tgl" style="cursor: pointer;"></i>
                                                 <div class="dis-form">
                                                     <select name="discount_type" id="discount_type"
@@ -347,45 +363,32 @@
                                                         name="discount_total_amount" autocomplete="off" autofocus>
                                                 </div>
                                             </td>
-
-                                            <td class="text-right" style="padding: 5px 10px;font-weight:bold;">
+                                            <td>
                                                 <span id="tds">0</span>
                                             </td>
                                         </tr>
 
                                         <tr>
-                                            <td style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
-                                                colspan="2">
-                                                After Discount Price
-                                            </td>
-                                            <td class="text-right"
-                                                style="padding:5px 10px 5px 10px; font-size: 14px;border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
-                                                colspan="2">
+                                            <td> After Discount Price </td>
+                                            <td colspan="2">
                                                 <span id="gtotal">{{ currency($cumalitive_sub_total) }}</span>
                                                 <input type="hidden" value="0" id="business_vat">
                                             </td>
                                         </tr>
 
                                         <tr>
-                                            <td style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
-                                                colspan="2">
-                                                Total Vat
-                                            </td>
-                                            <td class="text-right"
-                                                style="padding:5px 10px 5px 10px; font-size: 14px;border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
-                                                colspan="2">
+                                            <td colspan="2"> Total Vat </td>
+                                            <td colspan="2">
                                                 <span id="totalVat">0</span>
                                                 <input type="hidden" value="0" id="business_vat">
                                             </td>
                                         </tr>
                                         <tr class="pay-row">
-                                            <td
-                                                style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;">
+                                            <td>
                                                 Total Payable
                                                 <span id="payable_amount"></span>
                                             </td>
-                                            <td class="text-right" id="totalAmountWithVat" colspan="3"
-                                                style="padding: 5px 10px; border-top: 1px solid #666; border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;">
+                                            <td>
                                                 {{ currency($cumalitive_sub_total) }}
                                             </td>
                                         </tr>
@@ -427,9 +430,7 @@
         </footer>
     </div>
 
-
     @include('components.admin.preloader')
-
 
     <!-- Product Modal -->
     <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
@@ -446,15 +447,12 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
-
     <!-- Create new user modal -->
     @include('customer::customer-modal')
-
 
     {{-- item details modal --}}
     <div class="modal fade" id="itemDetailsModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
@@ -672,7 +670,6 @@
     </div>
 
     {{-- hold modal --}}
-
     <div class="modal fade" id="hold-modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -760,8 +757,6 @@
             </div>
         </div>
     </div>
-
-
 
     <div class="modal fade" id="stockUpdateModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
@@ -1539,7 +1534,6 @@
             modalHide('#addCustomer')
         })
     </script>
-
 
     <script>
         function modalHide(id) {

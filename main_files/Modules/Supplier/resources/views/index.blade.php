@@ -11,14 +11,14 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-1">
-                    <form action="" method="GET">
+                    <form class="search_form" action="" method="GET">
                         <div class="row">
                             <div class="col-xxl-3 col-md-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search...">
                                     <button type="submit">
-                                        <i class="fa fa-search"></i>
+                                        <i class='bx bx-search'></i>
                                     </button>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                    <button type="submit" class="btn bg-label-primary w-100">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -79,23 +79,20 @@
     </div>
 
     <div class="card mt-3 mb-3">
-        <div class="card-header-tab card-header">
+        <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> Suppliers List</h4>
+                <h4 class="section_title"><i class="fas fa-list"></i> Suppliers List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"> <i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Supplier') }}</a>
-                <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn bg-label-primary"> <i
+                        class="fa fa-plus"></i> {{ __('Add Supplier') }}</a>
+                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i> Excel</button>
+                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i> PDF</button>
             </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table style="width: 100%;" class="table table-hover">
+                <table style="width: 100%;" class="table mb-3">
                     <thead>
                         <tr>
                             <th rowspan="2">{{ __('SN') }}</th>
@@ -137,7 +134,7 @@
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop{{ $supplier->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
                                             aria-haspopup="true" aria-expanded="false">
                                             Action
                                         </button>
