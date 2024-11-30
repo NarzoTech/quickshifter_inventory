@@ -199,6 +199,8 @@ class SupplierController extends Controller
             $fileName = 'supplier-due-pay-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
             return Excel::download(new SupplierDuePaidExport($payments->get()), $fileName);
         }
+        $data['total'] = $payments->sum('amount');
+
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
@@ -210,7 +212,7 @@ class SupplierController extends Controller
             $payments = $payments->paginate(20);
         }
 
-        return view('supplier::due-pay-history', compact('payments'));
+        return view('supplier::due-pay-history', compact('payments', 'data'));
     }
 
     public function dueReceiveDelete($id)

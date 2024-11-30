@@ -175,7 +175,7 @@
 
                         <tr>
                             <td colspan="4" class="text-right font-weight-bold">
-                                Total
+                                {{ __('Total') }}
                             </td>
                             <td colspan="1">
                                 {{ currency($data['totalPurchase']) }}

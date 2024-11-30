@@ -111,7 +111,7 @@
                                 </td>
                                 <td>{{ $payment->purchase?->invoice_number }}</td>
                                 <td>{{ $payment->supplier->name }}</td>
-                                <td>{{ $payment->amount }}</td>
+                                <td>{{ currency($payment->amount) }}</td>
                                 <td>{{ $payment->createdBy->name }}</td>
                                 <td>
                                     <div class="btn-group">
@@ -123,6 +123,16 @@
                                 </td>
                             </tr>
                         @endforeach
+                        @if ($payments->count() > 0)
+                            <tr>
+                                <td colspan="4" class="text-center fw-bold">
+                                    {{ __('Total') }}
+                                </td>
+                                <td colspan="3">
+                                    {{ currency($data['total']) }}
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
