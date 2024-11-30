@@ -1,21 +1,21 @@
-<li class="{{ isRoute(['admin.employee.*', 'admin.salary.*'], 'mm-active') }}">
-    <a href="javascript:;">
-        <i class="metismenu-icon pe-7s-display2"></i> {{ __('Employees') }}
-        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+<li class="{{ isRoute(['admin.employee.*', 'admin.salary.*'], 'active open') }} menu-item">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class='menu-icon tf-icons bx bx-store'></i>
+        <div class="text-truncate" data-i18n="{{ __('Employees') }}">{{ __('Employees') }}</div>
     </a>
-    <ul class="mm-collapse {{ isRoute(['admin.employee.*', 'admin.salary.*'], 'mm-show') }}">
-        <li>
-            <a href="{{ route('admin.employee.index') }}" class="{{ isRoute('admin.employee.index', 'mm-active') }}">
+    <ul class="menu-sub">
+        <li class="{{ isRoute('admin.employee.index', 'active') }} menu-item">
+            <a href="{{ route('admin.employee.index') }}" class="menu-link">
                 {{ __('Employee List') }}
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.employee.create') }}" class="{{ isRoute('admin.employee.create', 'mm-active') }}">
+        <li class="{{ isRoute('admin.employee.create', 'active') }} menu-item">
+            <a href="{{ route('admin.employee.create') }}" class="menu-link">
                 {{ __('Add New Employee') }}
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.salary.list') }}" class="{{ isRoute('admin.salary.list', 'mm-active') }}">
+        <li class="{{ isRoute('admin.salary.list', 'active') }} menu-item">
+            <a href="{{ route('admin.salary.list') }}" class="menu-link">
                 {{ __('All Paid Salary') }}
             </a>
         </li>

@@ -1,177 +1,3 @@
-{{-- <div class="app-sidebar__inner">
-    <ul class="vertical-nav-menu">
-        <li class="app-sidebar__heading">Menu</li>
-        <li class="{{ Route::is('admin.dashboard') ? 'mm-active' : '' }}">
-            <a href="{{ route('admin.dashboard') }}">
-                <i class="metismenu-icon pe-7s-graph">
-                </i>Dashboard
-            </a>
-        </li>
-
-
-        @if (Module::isEnabled('Supplier'))
-            @include('supplier::sidebar')
-        @endif
-
-        @if (Module::isEnabled('Customer'))
-            @include('customer::sidebar')
-        @endif
-
-        @if (Module::isEnabled('Product'))
-            @include('product::sidebar')
-        @endif
-
-        @if (Module::isEnabled('Purchase'))
-            @include('purchase::sidebar')
-        @endif
-
-        <li class="{{ Route::is('admin.stock.index') ? 'mm-active' : '' }}">
-            <a href="javascript:;">
-                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Inventory') }}
-                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
-            </a>
-
-            <ul class="mm-collapse {{ Route::is('admin.stock.index') ? 'mm-show' : '' }}">
-                <li>
-                    <a href="{{ route('admin.stock.index') }}"
-                        class="{{ Route::is('admin.stock.index') ? 'mm-active' : '' }}">
-                        {{ __('Stock') }}
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        @if (Module::isEnabled('Service'))
-            @include('service::sidebar')
-        @endif
-        @if (Module::isEnabled('Sales'))
-            @include('sales::sidebar')
-        @endif
-
-        @if (Module::isEnabled('Accounts'))
-            @include('accounts::sidebar')
-        @endif
-        <li class="{{ Route::is('admin.quotation*') ? 'mm-active' : '' }}">
-            <a href="javascript:;">
-                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Quotations') }}
-                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
-            </a>
-
-            <ul class="mm-collapse {{ Route::is('admin.quotation*') ? 'mm-show' : '' }}">
-                <li>
-                    <a href="{{ route('admin.quotation.create') }}"
-                        class="{{ Route::is('admin.quotation.create') ? 'active' : '' }}">
-                        {{ __('Add Quotation') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.quotation.index') }}"
-                        class="{{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'active' : '' }}">
-                        {{ __('Quotation Manage') }}
-                    </a>
-                </li>
-            </ul>
-        </li>
-        @if (Module::isEnabled('Report'))
-            @include('report::sidebar')
-        @endif
-
-        @if (Module::isEnabled('Expense'))
-            @include('expense::sidebar')
-        @endif
-
-        <li class="{{ Route::is('admin.asset-category*') || Route::is('admin.assets*') ? 'mm-active' : '' }}">
-            <a href="javascript:;">
-                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Assets') }}
-                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
-            </a>
-
-            <ul
-                class="mm-collapse {{ Route::is('admin.asset-category*') || Route::is('admin.assets*') ? 'mm-show' : '' }}">
-                <li>
-                    <a href="{{ route('admin.assets.index') }}"
-                        class="{{ Route::is('admin.assets*') ? 'mm-active' : '' }}">
-                        {{ __('Asset List') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.asset-category.index') }}"
-                        class="{{ Route::is('admin.asset-category*') ? 'mm-active' : '' }}">
-                        {{ __('Asset Type') }}
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        @if (Module::isEnabled('Employee'))
-            @include('employee::sidebar')
-        @endif
-
-        <li
-            class="{{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'mm-active') }}">
-
-            <a href="javascript:;">
-                <i class="metismenu-icon pe-7s-display2"></i> {{ __('Settings') }}
-                <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
-            </a>
-
-
-            <ul
-                class="mm-collapse isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'mm-show') }}">
-                <li>
-                    <a href="{{ route('admin.settings') }}" class="{{ isRoute('admin.settings', 'mm-active') }}">
-                        {{ __('Business Settings') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.print.settings') }}"
-                        class="{{ isRoute('admin.print.settings', 'mm-active') }}">
-                        {{ __('Print Settings') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.business.index') }}"
-                        class="{{ isRoute('admin.business*', 'mm-active') }}">
-                        {{ __('Business Branches') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.notice.create') }}"
-                        class="{{ isRoute('admin.notice.create', 'mm-active') }}">
-                        {{ __('Notice Send') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.courier.settings') }}"
-                        class="{{ isRoute('admin.courier.settings', 'mm-active') }}">
-                        {{ __('Courier Settings') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.reset.database') }}"
-                        class="{{ isRoute('admin.reset.database', 'mm-active') }}">
-                        {{ __('Reset Database') }}
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.cache.clear') }}"
-                        class="{{ isRoute('admin.cache.clear', 'mm-active') }}">
-                        {{ __('Clear Cache') }}
-                    </a>
-                </li>
-                @if (Module::isEnabled('Tax'))
-                    @include('tax::sidebar')
-                @endif
-            </ul>
-        </li>
-
-        <li class="mb-5"></li>
-    </ul>
-</div> --}}
-
-
-
-
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo ">
         <a href="{{ route('admin.dashboard') }}" class="app-brand-link">
@@ -282,371 +108,110 @@
             @include('accounts::sidebar')
         @endif
 
-        <!-- Front Pages -->
-        <li class="menu-item">
+        <li class="menu-item {{ Route::is('admin.quotation*') ? 'active open' : '' }}">
+
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class='menu-icon tf-icons bx bx-store'></i>
-                <div class="text-truncate" data-i18n="Front Pages">Front Pages</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
+                <div class="text-truncate" data-i18n="{{ __('Quotations') }}">{{ __('Quotations') }}</div>
             </a>
+
             <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/landing-page.html"
-                        class="menu-link">
-                        <div class="text-truncate" data-i18n="Landing">Landing</div>
+                <li class="menu-item {{ Route::is('admin.quotation.create') ? 'active' : '' }}">
+                    <a class="menu-link" href="{{ route('admin.quotation.create') }}">
+                        {{ __('Add Quotation') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/pricing-page.html"
-                        class="menu-link">
-                        <div class="text-truncate" data-i18n="Pricing">Pricing</div>
+                <li
+                    class="menu-item {{ Route::is('admin.quotation*') && !Route::is('admin.quotation.create') ? 'active' : '' }}">
+                    <a class="menu-link" href="{{ route('admin.quotation.index') }}">
+                        {{ __('Quotation Manage') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/payment-page.html"
-                        class="menu-link">
-                        <div class="text-truncate" data-i18n="Payment">Payment</div>
+            </ul>
+        </li>
+        @if (Module::isEnabled('Report'))
+            @include('report::sidebar')
+        @endif
+
+        @if (Module::isEnabled('Expense'))
+            @include('expense::sidebar')
+        @endif
+
+        <li
+            class="menu-item {{ Route::is('admin.asset-category*') || Route::is('admin.assets*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class='menu-icon tf-icons bx bx-store'></i>
+                <div class="text-truncate" data-i18n="{{ __('Assets') }}">{{ __('Assets') }}</div>
+            </a>
+
+            <ul class="menu-sub">
+                <li class="{{ Route::is('admin.assets*') ? 'active' : '' }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.assets.index') }}">
+                        {{ __('Asset List') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/checkout-page.html"
-                        class="menu-link">
-                        <div class="text-truncate" data-i18n="Checkout">Checkout</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/help-center-landing.html"
-                        class="menu-link">
-                        <div class="text-truncate" data-i18n="Help Center">Help Center</div>
+                <li class="{{ Route::is('admin.asset-category*') ? 'active' : '' }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.asset-category.index') }}">
+                        {{ __('Asset Type') }}
                     </a>
                 </li>
             </ul>
         </li>
 
+        @if (Module::isEnabled('Employee'))
+            @include('employee::sidebar')
+        @endif
 
-        <!-- Apps & Pages -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Apps &amp; Pages</span>
-        </li>
-        <li class="menu-item">
-            <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-email.html"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-envelope"></i>
-                <div class="text-truncate" data-i18n="Email">Email</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-chat.html"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-chat"></i>
-                <div class="text-truncate" data-i18n="Chat">Chat</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-calendar.html"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-calendar"></i>
-                <div class="text-truncate" data-i18n="Calendar">Calendar</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-kanban.html"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-grid"></i>
-                <div class="text-truncate" data-i18n="Kanban">Kanban</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-            </a>
-        </li>
-        <!-- Pages -->
-        <li class="menu-item">
+        <li
+            class="menu-item {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'active open') }}">
+
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                <div class="text-truncate" data-i18n="Account Settings">Account Settings</div>
+                <i class='menu-icon tf-icons bx bx-store'></i>
+                <div class="text-truncate" data-i18n="{{ __('Settings') }}">{{ __('Settings') }}</div>
             </a>
+
             <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="pages-account-settings-account.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Account">Account</div>
+                <li class="{{ isRoute('admin.settings', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.settings') }}">
+                        {{ __('Business Settings') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="pages-account-settings-notifications.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Notifications">Notifications</div>
+                <li class="{{ isRoute('admin.print.settings', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.print.settings') }}">
+                        {{ __('Print Settings') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="pages-account-settings-connections.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Connections">Connections</div>
+                <li class="{{ isRoute('admin.business*', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.business.index') }}">
+                        {{ __('Business Branches') }}
                     </a>
                 </li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                <div class="text-truncate" data-i18n="Authentications">Authentications</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="auth-login-basic.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Basic">Login</div>
+                <li class="{{ isRoute('admin.notice.create', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.notice.create') }}">
+                        {{ __('Notice Send') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="auth-register-basic.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Basic">Register</div>
+                <li class="{{ isRoute('admin.courier.settings', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.courier.settings') }}">
+                        {{ __('Courier Settings') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="auth-forgot-password-basic.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Basic">Forgot Password</div>
+                <li class="{{ isRoute('admin.reset.database', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.reset.database') }}">
+                        {{ __('Reset Database') }}
                     </a>
                 </li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div class="text-truncate" data-i18n="Misc">Misc</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="pages-misc-error.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Error">Error</div>
+                <li class="{{ isRoute('admin.cache.clear', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.cache.clear') }}">
+                        {{ __('Clear Cache') }}
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="pages-misc-under-maintenance.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Under Maintenance">Under Maintenance</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <!-- Components -->
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
-        <!-- Cards -->
-        <li class="menu-item">
-            <a href="cards-basic.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div class="text-truncate" data-i18n="Basic">Cards</div>
-            </a>
-        </li>
-        <!-- User interface -->
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-box"></i>
-                <div class="text-truncate" data-i18n="User interface">User interface</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="ui-accordion.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Accordion">Accordion</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-alerts.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Alerts">Alerts</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-badges.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Badges">Badges</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-buttons.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Buttons">Buttons</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-carousel.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Carousel">Carousel</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-collapse.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Collapse">Collapse</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-dropdowns.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Dropdowns">Dropdowns</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-footer.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Footer">Footer</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-list-groups.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="List Groups">List groups</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-modals.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Modals">Modals</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-navbar.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Navbar">Navbar</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-offcanvas.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Offcanvas">Offcanvas</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-pagination-breadcrumbs.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Pagination & Breadcrumbs">Pagination &amp;
-                            Breadcrumbs</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-progress.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Progress">Progress</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-spinners.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Spinners">Spinners</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-tabs-pills.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Tabs & Pills">Tabs &amp; Pills</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-toasts.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Toasts">Toasts</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-tooltips-popovers.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Tooltips & Popovers">Tooltips &amp; Popovers
-                        </div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="ui-typography.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Typography">Typography</div>
-                    </a>
-                </li>
+                @if (Module::isEnabled('Tax'))
+                    @include('tax::sidebar')
+                @endif
             </ul>
         </li>
 
-        <!-- Extended components -->
-        <li class="menu-item">
-            <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-copy"></i>
-                <div class="text-truncate" data-i18n="Extended UI">Extended UI</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Perfect Scrollbar">Perfect Scrollbar</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="extended-ui-text-divider.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Text Divider">Text Divider</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <li class="menu-item">
-            <a href="icons-boxicons.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-crown"></i>
-                <div class="text-truncate" data-i18n="Boxicons">Boxicons</div>
-            </a>
-        </li>
-
-        <!-- Forms & Tables -->
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Forms &amp;
-                Tables</span></li>
-        <!-- Forms -->
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div class="text-truncate" data-i18n="Form Elements">Form Elements</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="forms-basic-inputs.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Basic Inputs">Basic Inputs</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="forms-input-groups.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Input groups">Input groups</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div class="text-truncate" data-i18n="Form Layouts">Form Layouts</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="form-layouts-vertical.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Vertical Form">Vertical Form</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="form-layouts-horizontal.html" class="menu-link">
-                        <div class="text-truncate" data-i18n="Horizontal Form">Horizontal Form</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <!-- Form Validation -->
-        <li class="menu-item">
-            <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/form-validation.html"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-list-check"></i>
-                <div class="text-truncate" data-i18n="Form Validation">Form Validation</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-            </a>
-        </li>
-        <!-- Tables -->
-        <li class="menu-item">
-            <a href="tables-basic.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-table"></i>
-                <div class="text-truncate" data-i18n="Tables">Tables</div>
-            </a>
-        </li>
-        <!-- Data Tables -->
-        <li class="menu-item">
-            <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/tables-datatables-basic.html"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-grid"></i>
-                <div class="text-truncate" data-i18n="Datatables">Datatables</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-            </a>
-        </li>
-        <!-- Misc -->
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-        <li class="menu-item">
-            <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-support"></i>
-                <div class="text-truncate" data-i18n="Support">Support</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div class="text-truncate" data-i18n="Documentation">Documentation</div>
-            </a>
-        </li>
+        <li class="mb-5"></li>
     </ul>
 </aside>

@@ -1,24 +1,23 @@
-<li class="{{ isRoute(['admin.sales.index', 'admin.pos'], 'mm-active') }}">
-    <a href="javascript:;">
-        <i class="metismenu-icon pe-7s-display2"></i> {{ __('Sales') }}
-        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+<li class="menu-item {{ isRoute(['admin.sales.index', 'admin.pos'], 'active open') }}">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class='menu-icon tf-icons bx bx-store'></i>
+        <div class="text-truncate" data-i18n="{{ __('Sales') }}">{{ __('Sales') }}</div>
     </a>
-
-    <ul class="mm-collapse {{ isRoute(['admin.sales.*', 'admin.pos', 'admin.sales.return.list'], 'mm-show') }}">
-        <li>
-            <a href="{{ route('admin.pos') }}" class="{{ isRoute('admin.pos', 'mm-active') }}">
-                {{ __('Pos') }}
+    <ul class="menu-sub">
+        <li class="menu-item {{ isRoute('admin.pos', 'active') }}">
+            <a href="{{ route('admin.pos') }}" class="menu-link">
+                <div class="text-truncate" data-i18n="{{ __('POS') }}">{{ __('POS') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.sales.index') }}" class="{{ isRoute('admin.sales.*', 'mm-active') }}">
-                {{ __('Manage Sales') }}
+        <li class="menu-item {{ isRoute('admin.sales.*', 'active') }}">
+            <a href="{{ route('admin.sales.index') }}" class="menu-link">
+                <div class="text-truncate" data-i18n="{{ __('Manage Sales') }}">{{ __('Manage Sales') }}</div>
             </a>
         </li>
-        <li>
-            <a href="{{ route('admin.sales.return.list') }}"
-                class="{{ isRoute('admin.sales.return.list', 'mm-active') }}">
-                {{ __('Sales Return List') }}
+        <li class="menu-item {{ isRoute('admin.sales.return.list', 'active') }}">
+            <a href="{{ route('admin.sales.return.list') }}" class="menu-link">
+                <div class="text-truncate" data-i18n="{{ __('Sales Return List') }}">{{ __('Sales Return List') }}
+                </div>
             </a>
         </li>
     </ul>
