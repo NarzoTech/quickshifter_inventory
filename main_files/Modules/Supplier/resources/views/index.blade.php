@@ -118,9 +118,6 @@
                     </thead>
                     <tbody>
                         @foreach ($suppliers as $index => $supplier)
-                            {{-- @if ($index == 17)
-                                @dd($supplier)
-                            @endif --}}
                             @php
                                 $totalReturn = $supplier->purchaseReturn->sum('return_amount');
                                 $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
