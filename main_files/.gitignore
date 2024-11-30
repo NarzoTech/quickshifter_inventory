@@ -6,7 +6,6 @@
 /public/addons_files
 /public/uploads/custom-images
 /storage/*.key
-vendor
 
 .env.backup
 .env.production
