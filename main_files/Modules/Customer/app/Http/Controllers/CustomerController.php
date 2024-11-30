@@ -47,6 +47,8 @@ class CustomerController extends Controller
 
         $query = User::query();
 
+        $query->with('sales', 'payment', 'saleReturn');
+
         $query->when($request->filled('keyword'), function ($q) use ($request) {
             $q->where('name', 'like', '%' . $request->keyword . '%')
                 ->orWhere('email', 'like', '%' . $request->keyword . '%')
@@ -58,33 +60,34 @@ class CustomerController extends Controller
             $fileName = 'customers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
             return Excel::download(new CustomerExport($query->get()), $fileName);
         }
-        $orderBy = $request->filled('order_by') ? $request->order_by : '';
+        $orderBy = $request->filled('order_by') ? $request->order_by : 'asc';
 
         if ($orderBy) {
-            $users = $query->orderBy('id', $orderBy);
+            $users = $query->orderBy('name', $orderBy);
         }
 
         $data['totalSale'] = 0;
         $data['pay'] = 0;
         $data['total_return'] = 0;
         $data['total_return_pay'] = 0;
+        $data['total_return_due'] = 0;
         $data['total_due'] = 0;
         $data['total_advance'] = 0;
         $data['total_due_dismiss'] = 0;
 
-        foreach ($query->get() as $customer) {
+        foreach ($query->get() as $index => $customer) {
             $data['totalSale'] += $customer->sales->sum('grand_total');
-            // $data['pay'] += $customer->total_paid;
+            $data['pay'] += $customer->total_paid;
 
-            // $totalReturn = $customer->purchaseReturn->sum('return_amount');
-            // $data['total_return'] += $totalReturn;
+            $totalReturn = $customer->saleReturn->sum('return_amount');
+            $data['total_return'] += $totalReturn;
 
-            // $data['total_return_pay'] += $customer->purchaseReturn->sum(
-            //     'received_amount',
-            // );
+            $data['total_due'] += $customer->total_due - $totalReturn;
+            $data['total_return_pay'] += $totalReturn - $customer->saleReturn->sum('return_due');
+            $data['total_return_due'] += $customer->saleReturn->sum('return_due');
 
-            // $data['total_due'] += $customer->total_due - $totalReturn;
-            // $data['total_advance'] += $customer->advance;
+
+            $data['total_advance'] += $customer->advances();
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
         }
 

@@ -65,7 +65,7 @@ class User extends Model
         $prevDue = $this->wallet_balance;
         $totalSales = $this->sales->sum('grand_total');
 
-        $due = $totalSales - $this->payment->sum('amount');
+        $due = $totalSales - $this->payment->where('is_received', 1)->sum('amount') + $this->payment->where('is_paid', 1)->sum('amount');
         return $due + $prevDue;
     }
 
@@ -98,31 +98,7 @@ class User extends Model
 
         return $sales->with('saleReturns');
     }
-    public function payment()
-    {
-        $from_date = null;
-        $to_date = null;
-        if (request()->from_date) {
-            $from_date = now()->parse(request()->from_date);
-        }
-        if (request()->to_date) {
-            $to_date = now()->parse(request()->to_date);
-        }
 
-        // current route
-        $route = request()->route()->getName();
-        $payment = $this->hasMany(CustomerPayment::class, 'customer_id');
-
-        if ($from_date || $to_date) {
-            $payment = $payment->whereBetween('payment_date', [$from_date, $to_date]);
-        }
-
-        if ($route == 'admin.report.customers') {
-            return $payment->whereBetween('payment_date', [$from_date, $to_date]);
-        }
-
-        return $payment;
-    }
 
     public function saleReturn()
     {
@@ -132,14 +108,70 @@ class User extends Model
 
     public function getTotalPaidAttribute()
     {
-        $payment = $this->payment;
+        $payment = $this->payment->where('is_received', 1);
         return $payment->sum('amount');
+    }
+
+
+    // public function payment()
+    // {
+    //     $from_date = null;
+    //     $to_date = null;
+    //     if (request()->from_date) {
+    //         $from_date = now()->parse(request()->from_date);
+    //     }
+    //     if (request()->to_date) {
+    //         $to_date = now()->parse(request()->to_date);
+    //     }
+
+    //     // current route
+    //     $route = request()->route()->getName();
+    //     $payment = $this->hasMany(CustomerPayment::class, 'customer_id');
+
+    //     if ($from_date || $to_date) {
+    //         $payment = $payment->whereBetween('payment_date', [$from_date, $to_date]);
+    //     }
+
+    //     if ($route == 'admin.report.customers') {
+    //         return $payment->whereBetween('payment_date', [$from_date, $to_date]);
+    //     }
+
+    //     return $payment;
+    // }
+
+    public function payment()
+    {
+        // Parse date filters only once
+        $from_date = request()->from_date ? \Carbon\Carbon::parse(request()->from_date)->startOfDay() : null;
+        $to_date = request()->to_date ? \Carbon\Carbon::parse(request()->to_date)->endOfDay() : null;
+
+        // Initialize the relationship query
+        $payment = $this->hasMany(CustomerPayment::class, 'customer_id');
+
+        // Apply date range filter if dates are provided
+        if ($from_date && $to_date) {
+            $payment->whereBetween('payment_date', [$from_date, $to_date]);
+        }
+
+        // Apply additional filters for specific routes
+        if (request()->route()->getName() === 'admin.report.customers') {
+            $payment->whereBetween('payment_date', [$from_date, $to_date]);
+        }
+
+        return $payment;
     }
 
     public function advances()
     {
-        $advance = $this->payment()->where('payment_type', 'advance_receive')->sum('amount');
-        $advanceRefund = $this->payment()->where('payment_type', 'advance_refund')->sum('amount');
+        $paymentData = $this->payment()
+            ->whereIn('payment_type', ['advance_receive', 'advance_refund'])
+            ->selectRaw('payment_type, SUM(amount) as total_amount')
+            ->groupBy('payment_type')
+            ->pluck('total_amount', 'payment_type');
+
+        $advance = $paymentData->get('advance_receive', 0);
+        $advanceRefund = $paymentData->get('advance_refund', 0);
+
         return $advance - $advanceRefund;
     }
 

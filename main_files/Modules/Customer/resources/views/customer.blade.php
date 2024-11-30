@@ -104,7 +104,7 @@
                             <th rowspan="2">{{ __('Name') }}</th>
                             <th rowspan="2">{{ __('Phone') }}</th>
                             <th rowspan="2">{{ __('Area') }}</th>
-                            <th colspan="5">{{ __('Sale') }}</th>
+                            <th colspan="4">{{ __('Sale') }}</th>
                             <th colspan="3">{{ __('Sale Return') }}</th>
                             <th rowspan="2">{{ __('Total Due') }}</th>
                             <th rowspan="2">{{ __('Action') }}</th>
@@ -113,7 +113,7 @@
                             <th>{{ __('Total') }}</th>
                             <th>{{ __('Pay') }}</th>
                             <th>{{ __('Due') }}</th>
-                            <th>{{ __('Dismiss') }}</th>
+                            {{-- <th>{{ __('Dismiss') }}</th> --}}
                             <th>{{ __('Advance') }}</th>
                             <th>{{ __('Total') }}</th>
                             <th>{{ __('Pay') }}</th>
@@ -130,11 +130,11 @@
                                 <td>{{ currency($user->sales->sum('grand_total')) }}</td>
                                 <td>{{ currency($user->total_paid) }}</td>
                                 <td>{{ currency($user->total_due) }}</td>
-                                <td>{{ currency($user->total_sale_return) }}</td>
                                 <td>{{ currency($user->advances()) }}</td>
+                                <td>{{ currency($user->saleReturn->sum('return_amount')) }}</td>
                                 <td>{{ currency($user->total_sale_return_pay) }}</td>
                                 <td>{{ currency($user->total_sale_return_due) }}</td>
-                                <td>{{ currency($user->total_due) }}</td>
+                                <td>{{ currency($user->total_due - $user->total_sale_return_due) }}</td>
 
                                 <td>
                                     <div class="btn-group" role="group">
@@ -184,11 +184,32 @@
                         @endforeach
 
                         <tr>
-                            <td colspan="4" class="text-right">
-                                <strong>{{ __('Total') }}</strong>
+                            <td colspan="4" class="text-center fw-bold">
+                                {{ __('Total') }}
                             </td>
                             <td>
                                 {{ currency($data['totalSale']) }}
+                            </td>
+                            <td>
+                                {{ currency($data['pay']) }}
+                            </td>
+                            <td>
+                                {{ currency($data['total_due']) }}
+                            </td>
+                            <td>
+                                {{ currency($data['total_advance']) }}
+                            </td>
+                            <td>
+                                {{ currency($data['total_return']) }}
+                            </td>
+                            <td>
+                                {{ currency($data['total_return_pay']) }}
+                            </td>
+                            <td>
+                                {{ currency($data['total_return_due']) }}
+                            </td>
+                            <td colspan="2">
+                                {{ currency($data['total_due'] - $data['total_return_due']) }}
                             </td>
                         </tr>
                     </tbody>
