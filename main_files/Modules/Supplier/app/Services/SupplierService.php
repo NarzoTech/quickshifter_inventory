@@ -29,10 +29,10 @@ class SupplierService
             if (request()->from_date || request()->to_date) {
                 [$from_date, $to_date] = $this->getDateRangeFromRequest();
                 if ($from_date) {
-                    $query->where('date', '>=', $from_date);
+                    $query->where('purchase_date', '>=', $from_date);
                 }
                 if ($to_date) {
-                    $query->where('date', '<=', $to_date);
+                    $query->where('purchase_date', '<=', $to_date);
                 }
             }
         }, 'payments' => function ($query) {
@@ -41,11 +41,11 @@ class SupplierService
             [$from_date, $to_date] = $this->getDateRangeFromRequest();
 
             if ($from_date) {
-                $query->where('date', '>=', $from_date);
+                $query->where('payment_date', '>=', $from_date);
             }
 
             if ($to_date) {
-                $query->where('date', '<=', $to_date);
+                $query->where('payment_date', '<=', $to_date);
             }
         }]);
 
@@ -55,7 +55,11 @@ class SupplierService
                 $q->where('name', 'like', '%' . request()->keyword . '%')
                     ->orWhere('phone', 'like', '%' . request()->keyword . '%')
                     ->orWhere('address', 'like', '%' . request()->keyword . '%')
-                    ->orWhere('email', 'like', '%' . request()->keyword . '%');
+                    ->orWhere('email', 'like', '%' . request()->keyword . '%')
+                    ->orWhereHas('area', function ($q) {
+                        $q->where('name', 'like', '%' . request()->keyword . '%');
+                    })
+                ;
             });
         }
 
