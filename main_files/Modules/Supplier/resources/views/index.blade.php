@@ -303,7 +303,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" form="add-supplier-form">Save</button>
+                    <button type="submit" class="btn btn-primary" form="add-supplier-form">Save</button>
                 </div>
             </div>
         </div>
@@ -383,7 +383,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success"
+                        <button type="submit" class="btn btn-success"
                             form="edit-supplier-form{{ $supplier->id }}">{{ __('Update') }}</button>
                     </div>
                 </div>
