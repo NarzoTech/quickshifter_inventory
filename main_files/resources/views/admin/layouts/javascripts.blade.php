@@ -172,6 +172,14 @@
 
                 window.location.href = fullUrl;
             })
+
+
+            // get localstorage content layout
+            const contentLayout = localStorage.getItem('templateCustomizer-vertical-menu-template--contentLayout');
+
+            if (contentLayout == 'wide') {
+                $('.container-xxl').removeClass('container-xxl').addClass('container-fluid');
+            }
         })
     </script>
 
