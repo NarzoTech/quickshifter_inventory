@@ -123,11 +123,14 @@
                                 </td>
                             </tr>
                         @endforeach
-
-
                     </tbody>
                 </table>
             </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $payments->onEachSide(0)->links() }}
+                </div>
+            @endif
         </div>
     </div>
 @endsection

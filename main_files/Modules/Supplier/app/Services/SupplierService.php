@@ -214,7 +214,9 @@ class SupplierService
         }
 
         if (request()->order_by) {
-            $list = $list->orderBy('id', request()->order_by);
+            $list = $list->orderBy('payment_date', request()->order_by);
+        } else {
+            $list = $list->orderBy('payment_date', 'desc');
         }
 
         return $list;

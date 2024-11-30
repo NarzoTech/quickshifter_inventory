@@ -3,6 +3,7 @@
 namespace Modules\Supplier\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\SupplierDuePaidExport;
 use App\Exports\SupplierExport;
 use App\Http\Controllers\Controller;
 use App\Models\Ledger;
@@ -193,6 +194,11 @@ class SupplierController extends Controller
     public function duePayHistory()
     {
         $payments = $this->supplierService->duePayHistory();
+
+        if (request('export')) {
+            $fileName = 'supplier-due-pay-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new SupplierDuePaidExport($payments->get()), $fileName);
+        }
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
