@@ -70,42 +70,11 @@ class Supplier extends Model
         return $totals['total_advance'] - $totals['total_refund'];
     }
 
-    // public function getTotalPurchaseAttribute()
-    // {
-    //     $query = $this->purchases();
-
-    //     if (request()->from_date || request()->to_date) {
-    //         $from_date = request()->from_date ? now()->parse(request()->from_date) : null;
-    //         $to_date = request()->to_date ? now()->parse(request()->to_date) : null;
-
-    //         $query->whereBetween('date', [$from_date, $to_date]);
-    //     }
-
-    //     return $query->sum('total_amount');
-    // }
-
-    // public function getTotalPaidAttribute()
-    // {
-    //     $from_date = null;
-    //     $to_date = null;
-    //     if (request()->from_date) {
-    //         $from_date = now()->parse(request()->from_date);
-    //     }
-    //     if (request()->to_date) {
-    //         $to_date = now()->parse(request()->to_date);
-    //     }
-
-    //     $payments = $this->payments->where('is_paid', 1);
-    //     if ($from_date || $to_date) {
-    //         $payments = $payments->whereBetween('date', [$from_date, $to_date]);
-    //     }
-
-    //     return $payments->sum('amount');
-    // }
 
     public function getTotalDueAttribute()
     {
-        return $this->total_purchase - $this->total_paid;
+        // return $this->total_purchase - $this->total_paid;
+        return $this->purchases->sum('total_amount') - $this->payments->sum('amount');
     }
 
     public function duePurchase()
