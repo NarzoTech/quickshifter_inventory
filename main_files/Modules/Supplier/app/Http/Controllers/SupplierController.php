@@ -193,6 +193,17 @@ class SupplierController extends Controller
     public function duePayHistory()
     {
         $payments = $this->supplierService->duePayHistory();
+
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $payments = $payments->paginate();
+            } else {
+                $payments = $payments->paginate(request('par-page'));
+            }
+        } else {
+            $payments = $payments->paginate(20);
+        }
+
         return view('supplier::due-pay-history', compact('payments'));
     }
 

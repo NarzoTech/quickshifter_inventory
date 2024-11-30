@@ -73,7 +73,6 @@ class Supplier extends Model
 
     public function getTotalDueAttribute()
     {
-        // return $this->total_purchase - $this->total_paid;
         return $this->purchases->sum('total_amount') - $this->payments->sum('amount');
     }
 
