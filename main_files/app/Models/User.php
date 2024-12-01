@@ -163,15 +163,8 @@ class User extends Model
 
     public function advances()
     {
-        $paymentData = $this->payment()
-            ->whereIn('payment_type', ['advance_receive', 'advance_refund'])
-            ->selectRaw('payment_type, SUM(amount) as total_amount')
-            ->groupBy('payment_type')
-            ->pluck('total_amount', 'payment_type');
-
-        $advance = $paymentData->get('advance_receive', 0);
-        $advanceRefund = $paymentData->get('advance_refund', 0);
-
+        $advance = $this->payment->where('payment_type', 'advance_receive')->sum('amount');
+        $advanceRefund = $this->payment->where('payment_type', 'advance_refund')->sum('amount');
         return $advance - $advanceRefund;
     }
 

@@ -138,8 +138,6 @@
                                         -
                                     @endif
 
-
-
                                     @if ($ledger->invoice_type == 'purchase_return')
                                         @php
                                             $due -= $ledger->amount;
