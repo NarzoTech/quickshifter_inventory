@@ -1,6 +1,6 @@
 <tr data-counter="1">
     <td style="text-align: center; vertical-align: middle;">
-        <select name="payment_type[]" class="form-control form-control-sm pay_by" required>
+        <select name="payment_type[]" class="form-control pay_by" required>
             @foreach (accountList() as $key => $list)
                 <option value="{{ $key }}" @if ($key == 'cash') selected @endif
                     data-name="{{ $list }}">{{ $list }}
@@ -9,11 +9,15 @@
         </select>
     </td>
     <td style="text-align: center; vertical-align: middle;" class="account_info">
-        <input type="text" name="account_id[]" value="Cash" class="form-control form-control-sm" readonly>
+        <div class="form-group mb-0">
+            <input type="text" name="account_id[]" value="Cash" class="form-control" readonly>
+        </div>
     </td>
     <td style="text-align: center; vertical-align: middle;">
-        <input type="text" name="paying_amount[]" class="form-control form-control-sm text-center paying_amount"
-            id="payingAmount" placeholder="Amount" required autocomplete="off">
+        <div class="form-group mb-0">
+            <input type="text" name="paying_amount[]" class="form-control text-center paying_amount"
+                id="payingAmount" placeholder="Amount" required autocomplete="off">
+        </div>
     </td>
     <td style="text-align: center; vertical-align: middle;">
         <div class="btn-group btn-group-sm">

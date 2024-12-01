@@ -40,6 +40,18 @@
     $("#setLanguageHeader").on("change", function (e) {
         this.submit();
     });
+
+
+    //======NICE SELECT=======
+    $('select:not(.select2)').niceSelect();
+
+
+    //======STICKY SIDEBAR=======
+    $(".sticky_sidebar").stickit({
+        top: 90,
+    })
+
+
 })(jQuery);
 
 

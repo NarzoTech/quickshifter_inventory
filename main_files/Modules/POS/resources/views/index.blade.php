@@ -29,9 +29,7 @@
         }
 
         .table:not(.table-sm):not(.table-md):not(.dataTable) td,
-        .table:not(.table-sm):not(.table-md):not(.dataTable) th {
-            /* padding: 0 5px !important; */
-        }
+        .table:not(.table-sm):not(.table-md):not(.dataTable) th {}
 
         .main-content {
             padding-left: 0px !important;
@@ -48,16 +46,27 @@
             margin-left: -20px;
         }
 
+        .summary-table .current {
+            color: #384551 !important;
+        }
+
+        .pos_pro_table .nice-select {
+            width: 145px;
+        }
+
         .dis-form {
             display: none;
         }
 
         .dis-form input {
-            width: 70px;
+            width: 80px;
+            border-radius: 6px;
+            padding: 11px;
             text-align: center;
             border: 1px solid #E3E3E3;
-            margin-left: -16px;
             outline: none;
+            margin-left: 10px;
+            color: #384551;
         }
 
         .dis-form select {
@@ -301,7 +310,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card sticky_sidebar">
                             <div class="card-header pos_sidebar_button">
                                 <div class="row w-100">
                                     <div class="col-md-9 col-lg-10">
@@ -336,15 +345,13 @@
                                         <tr>
                                             <td>Items</td>
                                             <td><span id="titems">{{ count($cart_contents) }}</span> </td>
-                                            <td>Total</td>
+                                            <td class="custom_width">Total</td>
                                             <td> <span id="total">{{ currency($cumalitive_sub_total) }}</span> </td>
                                         </tr>
                                         <tr>
-                                            <td> Extra <small class="text-info"></small>
-                                            </td>
-                                            <td> <span id="extra">{{ currency(0) }}</span>
-                                            </td>
-                                            <td>{{ __('Discount') }}
+                                            <td> Extra <small class="text-info"></small> </td>
+                                            <td> <span id="extra">{{ currency(0) }}</span> </td>
+                                            <td class="custom_width">{{ __('Discount') }}
                                                 <i class="fa fa-edit dis-tgl" style="cursor: pointer;"></i>
                                                 <div class="dis-form">
                                                     <select name="discount_type" id="discount_type"
@@ -459,21 +466,21 @@
 
     <div class="modal fade bd-example-modal-lg" id="payment-modal" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <form method="POST" action="" id="checkoutForm" onSubmit="paymentSubmit(event)">
                     @csrf
                     <input type="hidden" name="order_customer_id" id="order_customer_id" value="">
                     <div class="row">
                         <!-- Left Column -->
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped table-condensed">
+                                <table class="table table-bordered table-condensed payment_det_table">
                                     <tbody>
                                         <tr>
-                                            <td class="text-center w-10"></td>
-                                            <td class="w-70">Payment Details</td>
-                                            <td class="text-right w-20"></td>
+                                            <td colspan="3" class="text-center">
+                                                <h5 class="m-0">Payment Details</h5>
+                                            </td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
@@ -501,13 +508,6 @@
                                                 id="total_amount_modal_input" autocomplete="off">
                                             <td class="text-right w-40" id="total_amountModal">0.00</td>
                                         </tr>
-
-                                        {{-- <tr class="vat-row">
-                                            <th class="text-right w-60" colspan="2">
-                                                VAT </th>
-                                            <input type="hidden" name="vat" value="0" autocomplete="off">
-                                            <td class="text-right w-40" id="vatModal">0.00</td>
-                                        </tr> --}}
                                         <tr>
                                             <th class="text-right w-60" colspan="2">
                                                 Paid Amount</th>
@@ -527,14 +527,6 @@
                                             </th>
                                             <td class="text-right w-40" id="due_amountModal">0</td>
                                         </tr>
-                                        {{-- <tr>
-                                            <th class="text-right w-60" colspan="2">
-                                                Total Advance
-                                            </th>
-                                            <td class="text-center w-40">
-                                                <span id="total_advance">0</span> TK
-                                            </td>
-                                        </tr> --}}
                                         <tr>
                                             <th class="text-right w-60" colspan="2">
                                                 Sale Date
@@ -542,28 +534,29 @@
                                             <td class="text-right w-40">
 
                                                 <input type="text" class="form-control datepicker" name="sale_date"
-                                                    value="{{ date('d-m-Y') }}" autocomplete="off">
+                                                    id="flatpickr-inline" value="{{ date('d-m-Y') }}"
+                                                    autocomplete="off">
                                             </td>
                                         </tr>
                                     </tfoot>
                                 </table>
                             </div>
                         </div>
+
                         <!-- Right Column -->
-                        <div class="col-md-9">
+                        <div class="col-md-8">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button type="button" class="btn btn-block"
-                                        style="background:#7a8882;color: #fff;font-weight: 900;font-size: 18px;">
+                                    <button type="button" class="btn btn-block btn-secondary w-100">
                                         Total Amount:
-                                        <span style="color: #ffd400;font-size: 22px;" id="total_amountModal2">0</span>
+                                        <span class="text-warning mx-2 fs-3 fw-bold" id="total_amountModal2">0</span>
                                         TK
                                     </button>
                                 </div>
                             </div>
 
                             <div>
-                                <table class="table payment mt-2">
+                                <table class="table payment payment_det_table_2 mt-2">
                                     <thead>
                                         <tr>
                                             <td style="vertical-align: middle; width: 30%; text-transform: capitalize">
@@ -591,8 +584,7 @@
                                                 <label>Due</label>
                                             </td>
                                             <td colspan="3">
-                                                <input type="text" class="form-control form-control-sm"
-                                                    name="total_due" readonly>
+                                                <input type="text" class="form-control" name="total_due" readonly>
                                             </td>
                                         </tr>
                                         <tr class="due-date d-none">
@@ -600,8 +592,7 @@
                                                 <label>Due Date</label>
                                             </td>
                                             <td colspan="3">
-                                                <input type="date" class="form-control form-control-sm"
-                                                    name="due_date">
+                                                <input type="date" class="form-control" name="due_date">
                                             </td>
                                         </tr>
 
@@ -610,9 +601,10 @@
                                                 <label>Receive Cash</label>
                                             </td>
                                             <td colspan="3">
-                                                <input type="number"
-                                                    class="form-control form-control-sm receive_cash removeZero"
-                                                    name="receive_amount" value="0" step="0.01">
+                                                <div class="form-group mb-0">
+                                                    <input type="number" class="form-control receive_cash removeZero"
+                                                        name="receive_amount" value="0" step="0.01">
+                                                </div>
                                             </td>
                                         </tr>
 
@@ -621,9 +613,10 @@
                                                 <label>Change</label>
                                             </td>
                                             <td colspan="3">
-                                                <input type="text"
-                                                    class="form-control form-control-sm change_amount removeZero"
-                                                    name="return_amount" value="0" readonly>
+                                                <div class="form-group mb-0">
+                                                    <input type="text" class="form-control change_amount removeZero"
+                                                        name="return_amount" value="0" readonly>
+                                                </div>
                                             </td>
                                         </tr>
 
@@ -632,8 +625,10 @@
                                                 <label>Remark</label>
                                             </td>
                                             <td colspan="3">
-                                                <input type="text" class="form-control form-control-sm" name="remark"
-                                                    value="" autocomplete="off" placeholder="Remark">
+                                                <div class="form-group mb-0">
+                                                    <input type="text" class="form-control" name="remark"
+                                                        value="" autocomplete="off" placeholder="Remark">
+                                                </div>
                                             </td>
                                         </tr>
                                     </tfoot>
@@ -641,17 +636,10 @@
                             </div>
                             <div class="mt-4">
                                 <div class="row">
-                                    <div class="col-md-6 mt-4">
-                                        <button type="button"
-                                            style="background: #f31250;font-size: 20px;font-weight: 600;color: #fff"
-                                            class="btn btn-block" onclick="modalHide('#payment-modal')">Cancel <span
-                                                style="font-size: 14px;color: #f7e5e5;">[Esc]</span></button>
-                                    </div>
-                                    <div class="col-md-6 mt-4">
-                                        <button type="submit" id="checkout" class="btn btn-block"
-                                            style="background: #00a65a;font-size: 20px;font-weight: 600;color: #fff">
-                                            Checkout
-                                        </button>
+                                    <div class="col-12 text-end">
+                                        <button type="button" class="btn btn-danger"
+                                            onclick="modalHide('#payment-modal')">Cancel [Esc]</button>
+                                        <button type="submit" id="checkout" class="btn btn-success"> Checkout </button>
                                     </div>
                                 </div>
                             </div>
@@ -667,29 +655,25 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content hold-modal">
-                <div class="modal-header">
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
+                <div class="modal-header p-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Hold Sale</h5>
-                        </div>
-                        <div class="card-body">
-                            <form action="javascript:;" id="hold-sale-form" method="post">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="">Note</label>
-                                    <input type="text" class="form-control hold-sale-note" name="note">
-                                    <input type="hidden" class="form-control" name="user_id">
-                                </div>
-                                <div class="text-center mt-1">
-                                    <button class="btn btn-primary" type="submit">Hold</button>
-                                </div>
-                            </form>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="section_title">Hold Sale</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="javascript:;" id="hold-sale-form" method="post">
+                            @csrf
+                            <div class="form-group">
+                                <label for="">Note</label>
+                                <input type="text" class="form-control hold-sale-note" name="note">
+                                <input type="hidden" class="form-control" name="user_id">
+                            </div>
+                            <div class="text-end mt-1">
+                                <button class="btn bg-label-primary" type="submit">Hold</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -698,51 +682,48 @@
 
     <div class="modal fade" id="hold-list-modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content hold-modal">
-                <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
+                <div class="modal-header p-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Hold Sale List</h5>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <thead>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="section_title">Hold Sale List</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sl.</th>
+                                    <th>Customer</th>
+                                    <th>Time</th>
+                                    <th>Note</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($cart_holds as $key => $hold_sale)
                                     <tr>
-                                        <th>Sl.</th>
-                                        <th>Customer</th>
-                                        <th>Time</th>
-                                        <th>Note</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($cart_holds as $key => $hold_sale)
-                                        <tr>
-                                            <td>{{ $key + 1 }}</td>
-                                            <td>{{ $hold_sale->user?->name }}</td>
-                                            <td>{{ $hold_sale->created_at->format('d-m-Y h:i a') }}</td>
-                                            <td>{{ $hold_sale->note }}</td>
-                                            <td>
-                                                <a href="javascript:;" class="btn btn-sm btn-danger"
-                                                    onclick="deleteFromHold({{ $hold_sale->id }},this)">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>{{ $hold_sale->user?->name }}</td>
+                                        <td>{{ $hold_sale->created_at->format('d-m-Y h:i a') }}</td>
+                                        <td>{{ $hold_sale->note }}</td>
+                                        <td>
+                                            <a href="javascript:;" class="btn btn-sm btn-danger"
+                                                onclick="deleteFromHold({{ $hold_sale->id }},this)">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
 
-                                                <a href="javascript:;" class="btn btn-sm btn-primary"
-                                                    onclick="editFromHold({{ $hold_sale->id }},this)">
-                                                    <i class="fas fa-check"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                            <a href="javascript:;" class="btn btn-sm btn-primary"
+                                                onclick="editFromHold({{ $hold_sale->id }},this)">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -846,7 +827,6 @@
                 })
 
                 // add new customer modal
-
                 $("#add-customer-form").on("submit", function(e) {
                     e.preventDefault();
                     const from = $('#add-customer-form')
