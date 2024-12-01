@@ -5,7 +5,7 @@
 @endsection
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/pos.css') }}">
-    <script src="{{ asset('backend/js/jquery-ui.min.js') }}"></script>
+
     <style>
         .ui-autocomplete {
             z-index: 215000000 !important;
@@ -332,12 +332,6 @@
                                     </div>
                                 </div>
                                 <table id="totalTable" class="summary-table">
-                                    <thead>
-                                        <th width="30%"></th>
-                                        <th width="20%"></th>
-                                        <th width="30%"></th>
-                                        <th width="20%"></th>
-                                    </thead>
                                     <tbody>
                                         <tr>
                                             <td>Items</td>
@@ -369,22 +363,22 @@
                                         </tr>
 
                                         <tr>
-                                            <td> After Discount Price </td>
-                                            <td colspan="2">
+                                            <td colspan="3"> After Discount Price </td>
+                                            <td>
                                                 <span id="gtotal">{{ currency($cumalitive_sub_total) }}</span>
                                                 <input type="hidden" value="0" id="business_vat">
                                             </td>
                                         </tr>
 
                                         <tr>
-                                            <td colspan="2"> Total Vat </td>
-                                            <td colspan="2">
+                                            <td colspan="3"> Total Vat </td>
+                                            <td>
                                                 <span id="totalVat">0</span>
                                                 <input type="hidden" value="0" id="business_vat">
                                             </td>
                                         </tr>
                                         <tr class="pay-row">
-                                            <td>
+                                            <td colspan="3">
                                                 Total Payable
                                                 <span id="payable_amount"></span>
                                             </td>
@@ -439,7 +433,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -677,7 +670,6 @@
                 <div class="modal-header">
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -710,7 +702,6 @@
             <div class="modal-content hold-modal">
                 <div class="modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -803,6 +794,7 @@
 @endsection
 
 @push('js')
+    <script src="{{ asset('backend/js/jquery-ui.min.js') }}"></script>
     <script>
         // load products
         (function($) {
@@ -873,8 +865,6 @@
                             if (response.status == 500) {
                                 toastr.error("{{ __('Server error occurred') }}")
                             }
-                            console.log(response);
-
                         }
                     });
                 })

@@ -180,7 +180,6 @@
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Banned request confirmation') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -217,7 +216,6 @@
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Send verify link to customer mail') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -247,7 +245,6 @@
                 <div class="modal-header">
                     <h5 class="modal-title">{{ __('Send mail to customer') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
