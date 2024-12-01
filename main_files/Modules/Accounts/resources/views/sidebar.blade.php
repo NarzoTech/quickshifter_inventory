@@ -1,7 +1,7 @@
 <li
     class="menu-item  {{ isRoute(['admin.accounts.*', 'admin.bank.index', 'admin.cashflow', 'admin.opening-balance', 'admin.balance.transfer'], 'active open') }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class='menu-icon tf-icons bx bx-store'></i>
+        <i class='menu-icon tf-icons bx bx-transfer-alt'></i>
         <div class="text-truncate" data-i18n="{{ __('Manage Accounts') }}">{{ __('Manage Accounts') }}</div>
     </a>
 

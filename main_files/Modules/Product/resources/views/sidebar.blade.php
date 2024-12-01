@@ -1,7 +1,7 @@
 <li
     class="menu-item {{ Route::is('admin.product.*') || Route::is('admin.unit.*') || Route::is('admin.category.*') || Route::is('admin.brand.*') ? 'active open' : '' }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class='menu-icon tf-icons bx bx-store'></i>
+        <i class='menu-icon tf-icons bx bx-grid'></i>
         <div class="text-truncate" data-i18n="Front Pages">{{ __('Manage Product') }}</div>
     </a>
     <ul class="menu-sub">

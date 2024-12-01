@@ -17,35 +17,35 @@
         <!-- /Search -->
 
 
-        <ul class="navbar-nav flex-row align-items-center ms-auto">
+        <ul class="navbar-nav flex-wrap flex-row align-items-center ms-auto">
 
-            <li class="dropdown dropdown-list-toggle">
+            <li class="nav-item">
                 <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
                     <i class="fa fa-money"></i> {{ __('Sale Report') }}</i>
                 </a>
             </li>
-            <li class="dropdown dropdown-list-toggle">
+            <li class="nav-item">
                 <a href="{{ route('admin.stock.index') }}" class="nav-link nav-link-lg">
                     <i class="fas fa-box"></i> {{ __('Stock') }}</i>
                 </a>
             </li>
-            <li class="dropdown dropdown-list-toggle">
+            <li class="nav-item">
                 <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
                     <i class="fas fa-chart-bar"></i> {{ __('Today\'s Summery') }}</i>
                 </a>
             </li>
-            <li class="dropdown dropdown-list-toggle">
+            <li class="nav-item">
                 <a href="{{ route('admin.sales.return.list') }}" class="nav-link nav-link-lg">
                     <i class="fas fa-shopping-bag"></i> {{ __('Return Orders') }}</i>
                 </a>
             </li>
-            <li class="dropdown dropdown-list-toggle">
+            <li class="nav-item">
                 <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
                     <i class="fas fa-cart-plus"></i> {{ __('POS') }}</i>
                 </a>
             </li>
             <!-- User -->
-            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+            <li class="nav-item navbar-dropdown dropdown-user dropdown ms-3">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
                         <img src="{{ asset($header_admin->image) }}" alt class="w-px-40 h-auto rounded-circle">

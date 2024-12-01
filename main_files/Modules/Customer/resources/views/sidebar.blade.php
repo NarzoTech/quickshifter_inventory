@@ -1,7 +1,7 @@
 <li
     class="menu-item {{ isRoute(['admin.customers.index', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list'], 'active open') }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class='menu-icon tf-icons bx bx-store'></i>
+        <i class='menu-icon tf-icons bx bx-user'></i>
         <div class="text-truncate" data-i18n="{{ __('Manage Customer') }}">{{ __('Manage Customer') }}</div>
     </a>
     <ul class="menu-sub">

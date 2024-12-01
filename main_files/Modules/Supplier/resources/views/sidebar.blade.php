@@ -1,6 +1,6 @@
 <li class="menu-item {{ isRoute(['admin.suppliers.*', 'admin.supplierGroup.index']) ? 'active open' : '' }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-layout"></i>
+        <i class="menu-icon tf-icons bx bx-file"></i>
         <div class="text-truncate" data-i18n="Layouts">{{ __('Manage Suppliers') }}</div>
     </a>
 

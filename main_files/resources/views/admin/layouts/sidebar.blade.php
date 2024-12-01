@@ -61,7 +61,7 @@
 
         <li class="menu-item {{ Route::is('admin.dashboard') ? 'active' : '' }}">
             <a href="{{ route('admin.dashboard') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
+                <i class='menu-icon tf-icons bx bx-home-smile'></i>
                 <div class="text-truncate" data-i18n="Basic">Dashboard</div>
             </a>
         </li>
@@ -85,7 +85,7 @@
 
         <li class="menu-item {{ Route::is('admin.stock.index') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons bx bx-store'></i>
+                <i class='menu-icon tf-icons bx bx-detail'></i>
                 <div class="text-truncate" data-i18n="{{ __('Inventory') }}">{{ __('Inventory') }}</div>
             </a>
             <ul class="menu-sub">
@@ -111,7 +111,7 @@
         <li class="menu-item {{ Route::is('admin.quotation*') ? 'active open' : '' }}">
 
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons bx bx-store'></i>
+                <i class='menu-icon tf-icons bx bx-list-ul'></i>
                 <div class="text-truncate" data-i18n="{{ __('Quotations') }}">{{ __('Quotations') }}</div>
             </a>
 
@@ -129,6 +129,7 @@
                 </li>
             </ul>
         </li>
+
         @if (Module::isEnabled('Report'))
             @include('report::sidebar')
         @endif
@@ -140,7 +141,7 @@
         <li
             class="menu-item {{ Route::is('admin.asset-category*') || Route::is('admin.assets*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons bx bx-store'></i>
+                <i class='menu-icon tf-icons bx bx-dollar-circle'></i>
                 <div class="text-truncate" data-i18n="{{ __('Assets') }}">{{ __('Assets') }}</div>
             </a>
 
@@ -166,7 +167,7 @@
             class="menu-item {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'active open') }}">
 
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons bx bx-store'></i>
+                <i class='menu-icon tf-icons bx bx-cog'></i>
                 <div class="text-truncate" data-i18n="{{ __('Settings') }}">{{ __('Settings') }}</div>
             </a>
 

@@ -1,6 +1,6 @@
 <li class="menu-item  {{ isRoute(['admin.report.other-income', 'admin.report.dts'], 'active open') }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class='menu-icon tf-icons bx bx-store'></i>
+        <i class='menu-icon tf-icons bx bx-list-check'></i>
         <div class="text-truncate" data-i18n="{{ __('DTS') }}">{{ __('DTS') }}</div>
     </a>
 
