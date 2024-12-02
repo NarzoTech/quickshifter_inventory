@@ -173,7 +173,7 @@
                                     <tr>
                                         <td colspan="5" style="border: none !important">
                                         </td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Subtotal :
                                         </td>
@@ -186,7 +186,7 @@
 
                                     <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Discount:</td>
                                         <td class="text-right pr-2"
@@ -197,7 +197,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             VAT:</td>
                                         <td class="text-right pr-2"
@@ -209,7 +209,7 @@
                                     <tr>
                                         <td colspan="5" style="border: none !important">
                                         </td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
                                         </td>
                                         <td class="text-right pr-2"
@@ -218,7 +218,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Total:
                                         </td>

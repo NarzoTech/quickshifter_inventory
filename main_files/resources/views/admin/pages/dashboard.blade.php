@@ -22,7 +22,7 @@
                     Performance
                 </div>
                 <div class="btn-actions-pane-right text-capitalize">
-                    <button class="btn-wide btn-outline-2x mr-md-2 btn btn-outline-focus btn-sm">View
+                    <button class="btn-wide btn-outline-2x me-md-2 btn btn-outline-focus btn-sm">View
                         All</button>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                             <div class="widget-subheading">Cash Deposits</div>
                             <div class="widget-numbers">1,7M</div>
                             <div class="widget-description opacity-8 text-focus">
-                                <div class="d-inline text-danger pr-1">
+                                <div class="d-inline text-danger pe-1">
                                     <i class="fa fa-angle-down"></i>
                                     <span class="pl-1">54.1%</span>
                                 </div>
@@ -89,10 +89,10 @@
             </div>
             <div class="text-center d-block p-3 card-footer">
                 <button class="btn-pill btn-shadow btn-wide fsize-1 btn btn-primary btn-lg">
-                    <span class="mr-2 opacity-7">
+                    <span class="me-2 opacity-7">
                         <i class="icon icon-anim-pulse ion-ios-analytics-outline"></i>
                     </span>
-                    <span class="mr-1">View Complete Report</span>
+                    <span class="me-1">View Complete Report</span>
                 </button>
             </div>
         </div>
@@ -124,9 +124,9 @@
                                         </i><span>Actions</span></button>
                                     <div tabindex="-1" class="dropdown-divider"></div>
                                     <div class="p-3 text-right">
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-link">View
+                                        <button class="me-2 btn-shadow btn-sm btn btn-link">View
                                             Details</button>
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-primary">Action</button>
+                                        <button class="me-2 btn-shadow btn-sm btn btn-primary">Action</button>
                                     </div>
                                 </div>
                             </div>
@@ -154,7 +154,7 @@
                                                         </div>
                                                         <div
                                                             class="widget-title ml-2 font-size-lg font-weight-normal text-muted">
-                                                            <span class="text-success pl-2">+14</span>
+                                                            <span class="text-success ps-2">+14</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -176,9 +176,9 @@
                                                 <div class="widget-numbers">
                                                     <div class="widget-chart-flex">
                                                         <div>
-                                                            <small class="opacity-3 pr-1">$</small>
+                                                            <small class="opacity-3 pe-1">$</small>
                                                             <span>629</span>
-                                                            <span class="text-primary pl-3">
+                                                            <span class="text-primary ps-3">
                                                                 <i class="fa fa-angle-down"></i>
                                                             </span>
                                                         </div>
@@ -206,7 +206,7 @@
                                                         </div>
                                                         <div
                                                             class="widget-title ml-2 font-size-lg font-weight-normal text-dark">
-                                                            <span class="opacity-5 text-muted pl-2 pr-1">5%</span>
+                                                            <span class="opacity-5 text-muted ps-2 pe-1">5%</span>
                                                             increase
                                                         </div>
                                                     </div>
@@ -220,7 +220,7 @@
                                 </div>
                             </div>
                         </div>
-                        <h6 class="text-muted text-uppercase font-size-md opacity-5 pl-3 pr-3 pb-1 font-weight-normal">
+                        <h6 class="text-muted text-uppercase font-size-md opacity-5 ps-3 pe-3 pb-1 font-weight-normal">
                             Sales Progress</h6>
                         <ul class="list-group list-group-flush">
                             <li class="p-3 bg-transparent list-group-item">
@@ -283,9 +283,9 @@
                                         </i><span>Actions</span></button>
                                     <div tabindex="-1" class="dropdown-divider"></div>
                                     <div class="p-3 text-right">
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-link">View
+                                        <button class="me-2 btn-shadow btn-sm btn btn-link">View
                                             Details</button>
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-primary">Action</button>
+                                        <button class="me-2 btn-shadow btn-sm btn btn-primary">Action</button>
                                     </div>
                                 </div>
                             </div>
@@ -614,7 +614,7 @@
                 <div
                     class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-success border-success">
                     <div class="widget-chat-wrapper-outer">
-                        <div class="widget-chart-content pt-3 pl-3 pb-1">
+                        <div class="widget-chart-content pt-3 ps-3 pb-1">
                             <div class="widget-chart-flex">
                                 <div class="widget-numbers">
                                     <div class="widget-chart-flex">
@@ -627,7 +627,7 @@
                             </div>
                             <h6 class="widget-subheading mb-0 opacity-5">sales last month</h6>
                         </div>
-                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 pl-2 he-auto row">
+                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 ps-2 he-auto row">
                             <div class="col-md-9">
                                 <div id="dashboard-sparklines-1"></div>
                             </div>
@@ -639,7 +639,7 @@
                 <div
                     class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-primary border-primary">
                     <div class="widget-chat-wrapper-outer">
-                        <div class="widget-chart-content pt-3 pl-3 pb-1">
+                        <div class="widget-chart-content pt-3 ps-3 pb-1">
                             <div class="widget-chart-flex">
                                 <div class="widget-numbers">
                                     <div class="widget-chart-flex">
@@ -652,7 +652,7 @@
                             </div>
                             <h6 class="widget-subheading mb-0 opacity-5">sales Income</h6>
                         </div>
-                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 pl-2 he-auto row">
+                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 ps-2 he-auto row">
                             <div class="col-md-9">
                                 <div id="dashboard-sparklines-2"></div>
                             </div>
@@ -664,7 +664,7 @@
                 <div
                     class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-warning border-warning">
                     <div class="widget-chat-wrapper-outer">
-                        <div class="widget-chart-content pt-3 pl-3 pb-1">
+                        <div class="widget-chart-content pt-3 ps-3 pb-1">
                             <div class="widget-chart-flex">
                                 <div class="widget-numbers">
                                     <div class="widget-chart-flex">
@@ -677,7 +677,7 @@
                             </div>
                             <h6 class="widget-subheading mb-0 opacity-5">last month sales</h6>
                         </div>
-                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 pl-2 he-auto row">
+                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 ps-2 he-auto row">
                             <div class="col-md-9">
                                 <div id="dashboard-sparklines-3"></div>
                             </div>
@@ -689,7 +689,7 @@
                 <div
                     class="card mb-3 widget-chart widget-chart2 text-left card-btm-border card-shadow-danger border-danger">
                     <div class="widget-chat-wrapper-outer">
-                        <div class="widget-chart-content pt-3 pl-3 pb-1">
+                        <div class="widget-chart-content pt-3 ps-3 pb-1">
                             <div class="widget-chart-flex">
                                 <div class="widget-numbers">
                                     <div class="widget-chart-flex">
@@ -702,7 +702,7 @@
                             </div>
                             <h6 class="widget-subheading mb-0 opacity-5">total revenue</h6>
                         </div>
-                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 pl-2 he-auto row">
+                        <div class="no-gutters widget-chart-wrapper mt-3 mb-3 ps-2 he-auto row">
                             <div class="col-md-9">
                                 <div id="dashboard-sparklines-4"></div>
                             </div>
@@ -714,7 +714,7 @@
         <div class="card mb-3">
             <div class="card-header-tab card-header">
                 <div class="card-header-title font-size-lg text-capitalize font-weight-normal"><i
-                        class="header-icon lnr-laptop-phone mr-3 text-muted opacity-6"> </i>Easy
+                        class="header-icon lnr-laptop-phone me-3 text-muted opacity-6"> </i>Easy
                     Dynamic Tables</div>
                 <div class="btn-actions-pane-right actions-icon-btn">
                     <div class="btn-group dropdown">
@@ -733,9 +733,9 @@
                                     class="dropdown-icon lnr-book"> </i><span>Actions</span></button>
                             <div tabindex="-1" class="dropdown-divider"></div>
                             <div class="p-3 text-right">
-                                <button class="mr-2 btn-shadow btn-sm btn btn-link">View
+                                <button class="me-2 btn-shadow btn-sm btn btn-link">View
                                     Details</button>
-                                <button class="mr-2 btn-shadow btn-sm btn btn-primary">Action</button>
+                                <button class="me-2 btn-shadow btn-sm btn btn-primary">Action</button>
                             </div>
                         </div>
                     </div>
@@ -1251,9 +1251,9 @@
                                         </i><span>Actions</span></button>
                                     <div tabindex="-1" class="dropdown-divider"></div>
                                     <div class="p-3 text-right">
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-link">View
+                                        <button class="me-2 btn-shadow btn-sm btn btn-link">View
                                             Details</button>
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-primary">Action</button>
+                                        <button class="me-2 btn-shadow btn-sm btn btn-primary">Action</button>
                                     </div>
                                 </div>
                             </div>
@@ -1267,7 +1267,7 @@
                                         <div class="todo-indicator bg-warning"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox12"
                                                             class="custom-control-input"><label
@@ -1298,7 +1298,7 @@
                                         <div class="todo-indicator bg-focus"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox1"
                                                             class="custom-control-input"><label
@@ -1346,7 +1346,7 @@
                                         <div class="todo-indicator bg-primary"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox4"
                                                             class="custom-control-input"><label
@@ -1365,7 +1365,7 @@
                                                         <i class="fa fa-check"></i>
                                                     </button>
                                                 </div>
-                                                <div class="widget-content-right ml-3">
+                                                <div class="widget-content-right ms-3">
                                                     <div class="badge badge-pill badge-success">Latest
                                                         Task</div>
                                                 </div>
@@ -1376,7 +1376,7 @@
                                         <div class="todo-indicator bg-info"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox2"
                                                             class="custom-control-input"><label
@@ -1384,7 +1384,7 @@
                                                             for="exampleCustomCheckbox2">&nbsp;</label>
                                                     </div>
                                                 </div>
-                                                <div class="widget-content-left mr-3">
+                                                <div class="widget-content-left me-3">
                                                     <div class="widget-content-left">
                                                         <img width="42" class="rounded"
                                                             src="../assets/images/avatars/1.jpg" alt="">
@@ -1411,7 +1411,7 @@
                                         <div class="todo-indicator bg-success"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox3"
                                                             class="custom-control-input"><label
@@ -1425,7 +1425,7 @@
                                                         List App</div>
                                                 </div>
                                                 <div class="widget-content-right">
-                                                    <div class="badge badge-warning mr-2">69</div>
+                                                    <div class="badge badge-warning me-2">69</div>
                                                 </div>
                                                 <div class="widget-content-right">
                                                     <button class="border-0 btn-transition btn btn-outline-success">
@@ -1442,7 +1442,7 @@
                                         <div class="todo-indicator bg-warning"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox12"
                                                             class="custom-control-input"><label
@@ -1473,7 +1473,7 @@
                                         <div class="todo-indicator bg-focus"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox1"
                                                             class="custom-control-input"><label
@@ -1521,7 +1521,7 @@
                                         <div class="todo-indicator bg-primary"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox4"
                                                             class="custom-control-input"><label
@@ -1540,7 +1540,7 @@
                                                         <i class="fa fa-check"></i>
                                                     </button>
                                                 </div>
-                                                <div class="widget-content-right ml-3">
+                                                <div class="widget-content-right ms-3">
                                                     <div class="badge badge-pill badge-success">Latest
                                                         Task</div>
                                                 </div>
@@ -1551,7 +1551,7 @@
                                         <div class="todo-indicator bg-info"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox2"
                                                             class="custom-control-input"><label
@@ -1559,7 +1559,7 @@
                                                             for="exampleCustomCheckbox2">&nbsp;</label>
                                                     </div>
                                                 </div>
-                                                <div class="widget-content-left mr-3">
+                                                <div class="widget-content-left me-3">
                                                     <div class="widget-content-left">
                                                         <img width="42" class="rounded"
                                                             src="../assets/images/avatars/1.jpg" alt="">
@@ -1586,7 +1586,7 @@
                                         <div class="todo-indicator bg-success"></div>
                                         <div class="widget-content p-0">
                                             <div class="widget-content-wrapper">
-                                                <div class="widget-content-left mr-2">
+                                                <div class="widget-content-left me-2">
                                                     <div class="custom-checkbox custom-control"><input type="checkbox"
                                                             id="exampleCustomCheckbox3"
                                                             class="custom-control-input"><label
@@ -1600,7 +1600,7 @@
                                                         List App</div>
                                                 </div>
                                                 <div class="widget-content-right">
-                                                    <div class="badge badge-warning mr-2">69</div>
+                                                    <div class="badge badge-warning me-2">69</div>
                                                 </div>
                                                 <div class="widget-content-right">
                                                     <button class="border-0 btn-transition btn btn-outline-success">
@@ -1618,7 +1618,7 @@
                         </div>
                     </div>
                     <div class="d-block text-right card-footer">
-                        <button class="mr-2 btn btn-link btn-sm">Cancel</button>
+                        <button class="me-2 btn btn-link btn-sm">Cancel</button>
                         <button class="btn btn-primary">Add Task</button>
                     </div>
                 </div>
@@ -1649,9 +1649,9 @@
                                         </i><span>Actions</span></button>
                                     <div tabindex="-1" class="dropdown-divider"></div>
                                     <div class="p-3 text-right">
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-link">View
+                                        <button class="me-2 btn-shadow btn-sm btn btn-link">View
                                             Details</button>
-                                        <button class="mr-2 btn-shadow btn-sm btn btn-primary">Action</button>
+                                        <button class="me-2 btn-shadow btn-sm btn btn-primary">Action</button>
                                     </div>
                                 </div>
                             </div>
@@ -1663,7 +1663,7 @@
                                 <div class="chat-wrapper p-1">
                                     <div class="chat-box-wrapper">
                                         <div>
-                                            <div class="avatar-icon-wrapper mr-1">
+                                            <div class="avatar-icon-wrapper me-1">
                                                 <div
                                                     class="badge badge-bottom btn-shine badge-success badge-dot badge-dot-lg">
                                                 </div>
@@ -1678,7 +1678,7 @@
                                                 pain was born and I will give you a complete account of
                                                 the system.</div>
                                             <small class="opacity-6">
-                                                <i class="fa fa-calendar-alt mr-1"></i>
+                                                <i class="fa fa-calendar-alt me-1"></i>
                                                 11:01 AM | Yesterday
                                             </small>
                                         </div>
@@ -1690,12 +1690,12 @@
                                                     the great explorer of the truth, the master-builder
                                                     of human happiness.</div>
                                                 <small class="opacity-6">
-                                                    <i class="fa fa-calendar-alt mr-1"></i>
+                                                    <i class="fa fa-calendar-alt me-1"></i>
                                                     11:01 AM | Yesterday
                                                 </small>
                                             </div>
                                             <div>
-                                                <div class="avatar-icon-wrapper ml-1">
+                                                <div class="avatar-icon-wrapper ms-1">
                                                     <div
                                                         class="badge badge-bottom btn-shine badge-success badge-dot badge-dot-lg">
                                                     </div>
@@ -1708,7 +1708,7 @@
                                     </div>
                                     <div class="chat-box-wrapper">
                                         <div>
-                                            <div class="avatar-icon-wrapper mr-1">
+                                            <div class="avatar-icon-wrapper me-1">
                                                 <div
                                                     class="badge badge-bottom btn-shine badge-success badge-dot badge-dot-lg">
                                                 </div>
@@ -1723,7 +1723,7 @@
                                                 pain was born and I will give you a complete account of
                                                 the system.</div>
                                             <small class="opacity-6">
-                                                <i class="fa fa-calendar-alt mr-1"></i>
+                                                <i class="fa fa-calendar-alt me-1"></i>
                                                 11:01 AM | Yesterday
                                             </small>
                                         </div>
@@ -1735,12 +1735,12 @@
                                                     pain was born and I will give you a complete
                                                     account.</div>
                                                 <small class="opacity-6">
-                                                    <i class="fa fa-calendar-alt mr-1"></i>
+                                                    <i class="fa fa-calendar-alt me-1"></i>
                                                     11:01 AM | Yesterday
                                                 </small>
                                             </div>
                                             <div>
-                                                <div class="avatar-icon-wrapper ml-1">
+                                                <div class="avatar-icon-wrapper ms-1">
                                                     <div
                                                         class="badge badge-bottom btn-shine badge-success badge-dot badge-dot-lg">
                                                     </div>
@@ -1757,12 +1757,12 @@
                                                 <div class="chat-box">The master-builder of human
                                                     happiness.</div>
                                                 <small class="opacity-6">
-                                                    <i class="fa fa-calendar-alt mr-1"></i>
+                                                    <i class="fa fa-calendar-alt me-1"></i>
                                                     11:01 AM | Yesterday
                                                 </small>
                                             </div>
                                             <div>
-                                                <div class="avatar-icon-wrapper ml-1">
+                                                <div class="avatar-icon-wrapper ms-1">
                                                     <div
                                                         class="badge badge-bottom btn-shine badge-success badge-dot badge-dot-lg">
                                                     </div>

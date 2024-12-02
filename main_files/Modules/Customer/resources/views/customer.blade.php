@@ -151,9 +151,11 @@
                                             <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
                                                 data-bs-target="#editCustomer{{ $user->id }}">Edit</a>
 
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
-                                                Receive</a>
+                                            @if ($user->total_due)
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
+                                                    Receive</a>
+                                            @endif
 
                                             <a class="dropdown-item"
                                                 href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Dismiss</a>

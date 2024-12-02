@@ -13,7 +13,7 @@
                 <div class="row mt-4">
                     <div class="col-12">
                         <div class="card card-info">
-                            <h2 class="section-title ml-3">{{ __('Pos Settings') }}</h2>
+                            <h2 class="section-title ms-3">{{ __('Pos Settings') }}</h2>
                             <div class="card-body">
                                 <form action="{{ route('admin.pos.settings.store') }}" method="POST" id="pos-form">
                                     @csrf

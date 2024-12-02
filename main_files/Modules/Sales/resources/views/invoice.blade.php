@@ -232,7 +232,7 @@
                                     <tr>
                                         <td colspan="5" style="border: none !important">
                                         </td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Subtotal :
                                         </td>
@@ -248,7 +248,7 @@
 
                                     <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Discount:</td>
                                         <td class="text-right pr-2"
@@ -259,7 +259,7 @@
                                     </tr>
                                     {{-- <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Previous Due:</td>
                                         <td class="text-right pr-2"
@@ -272,7 +272,7 @@
 
                                     <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Total:
                                         </td>
@@ -285,7 +285,7 @@
                                     </tr>
                                     <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pr-5" style="border:none !important; ">
+                                        <td class="text-right pe-5" style="border:none !important; ">
                                             Paid:
                                         </td>
                                         <td class="text-right pr-2" style="border:none !important;">
@@ -297,7 +297,7 @@
                                     <tr>
                                         <td colspan="5" style="border: none !important">
                                         </td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
                                         </td>
                                         <td class="text-right pr-2"
@@ -307,7 +307,7 @@
                                     <tr>
                                         <td colspan="5" style="border: none !important">
                                         </td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
 
                                             Due:
@@ -321,7 +321,7 @@
                                     <tr>
                                         <td colspan="5" style="border: none !important">
                                         </td>
-                                        <td class="text-right pr-5"
+                                        <td class="text-right pe-5"
                                             style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
                                         </td>
                                         <td class="text-right pr-2"
@@ -332,7 +332,7 @@
                                         <tr>
                                             <td colspan="5" style="border: none !important">
                                             </td>
-                                            <td class="text-right pr-5"
+                                            <td class="text-right pe-5"
                                                 style="border:none !important; border-bottom: 1px solid #fff !important">
                                                 Due Left/Due Remaining:
                                             </td>

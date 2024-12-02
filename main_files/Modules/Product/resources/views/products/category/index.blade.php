@@ -118,7 +118,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.category.edit', $category->id) }}"
-                                        class="btn btn-primary btn-sm mr-1" data-bs-toggle="tooltip"
+                                        class="btn btn-primary btn-sm me-1" data-bs-toggle="tooltip"
                                         title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
 
                                     <a href="javascript:void(0)"

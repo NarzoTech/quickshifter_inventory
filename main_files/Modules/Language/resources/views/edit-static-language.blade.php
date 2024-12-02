@@ -88,7 +88,7 @@
                                                     <span class="d-flex">
                                                         <button type="button"
                                                             onclick="AutoTrans('translation-{{ $loop->index + 1 }}', '{{ $index }}', '{{ request('code') }}')"
-                                                            class="ml-1 text-white btn btn-sm bg-success lang-btn">
+                                                            class="ms-1 text-white btn btn-sm bg-success lang-btn">
                                                             {{ __('Translate') }}
                                                         </button>
                                                     </span>

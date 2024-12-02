@@ -143,7 +143,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="from_account_type">{{ __('From Account Type') }}</label>
-                                <select name="from_account_type" id="from_account_type" class="form-control mr-2">
+                                <select name="from_account_type" id="from_account_type" class="form-control me-2">
                                     @foreach (accountList() as $key => $list)
                                         <option value="{{ $key }}"
                                             @if ($key == 'cash') selected @endif
@@ -155,7 +155,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="to_account_type">{{ __('To Account Type') }}</label>
-                                <select name="to_account_type" id="to_account_type" class="form-control mr-2">
+                                <select name="to_account_type" id="to_account_type" class="form-control me-2">
                                     @foreach (accountList() as $key => $list)
                                         <option value="{{ $key }}"
                                             @if ($key == 'cash') selected @endif
@@ -231,7 +231,7 @@
                                 <div class="form-group col-md-6">
                                     <label for="from_account_type">{{ __('From Account Type') }}</label>
                                     <select name="from_account_type" data-id="{{ $transfer->id }}"
-                                        class="form-control mr-2 from_account_type">
+                                        class="form-control me-2 from_account_type">
                                         @foreach (accountList() as $key => $list)
                                             <option value="{{ $key }}"
                                                 @if ($key == 'cash') selected @endif
@@ -244,7 +244,7 @@
                                 <div class="form-group col-md-6">
                                     <label for="to_account_type">{{ __('To Account Type') }}</label>
                                     <select name="to_account_type" data-id="{{ $transfer->id }}"
-                                        class="form-control mr-2 to_account_type">
+                                        class="form-control me-2 to_account_type">
                                         @foreach (accountList() as $key => $list)
                                             <option value="{{ $key }}"
                                                 @if ($key == 'cash') selected @endif

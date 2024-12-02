@@ -1,7 +1,7 @@
 <div class="row payment-row">
     <div class="col-md-12 mt-3">
         <div class="input-group">
-            <select name="payment_type[]" id="" class="form-control mr-2">
+            <select name="payment_type[]" id="" class="form-control me-2">
                 <option value="">
                     {{ __('Select Payment Type') }}
                 </option>

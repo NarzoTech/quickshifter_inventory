@@ -200,7 +200,7 @@
                                             <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <div class="form-check form-check-inline my-3 ml-4">
+                                                        <div class="form-check form-check-inline my-3 ms-4">
                                                             <input class="form-check-input" name="invoice_logo_print"
                                                                 type="checkbox" id="invoice_logo_print" value="1"
                                                                 checked>
@@ -208,7 +208,7 @@
                                                                 Show Logo in Invoice
                                                             </label>
                                                         </div>
-                                                        <div class="form-check form-check-inline my-3 ml-4">
+                                                        <div class="form-check form-check-inline my-3 ms-4">
                                                             <input class="form-check-input" name="invoice_name_print"
                                                                 type="checkbox" id="invoice_name_print" value="1"
                                                                 checked>
@@ -216,7 +216,7 @@
                                                                 Show Name in Invoice
                                                             </label>
                                                         </div>
-                                                        <div class="form-check form-check-inline mt-3 ml-4">
+                                                        <div class="form-check form-check-inline mt-3 ms-4">
                                                             <input class="form-check-input" name="show_signature_fields"
                                                                 type="checkbox" id="show_signature_fields" value="1"
                                                                 checked>
@@ -224,7 +224,7 @@
                                                                 Show Signature Fields
                                                             </label>
                                                         </div>
-                                                        <div class="form-check form-check-inline mt-1 ml-4">
+                                                        <div class="form-check form-check-inline mt-1 ms-4">
                                                             <input class="form-check-input" name="show_product_image"
                                                                 type="checkbox" id="show_product_image" value="1"
                                                                 checked>
@@ -232,7 +232,7 @@
                                                                 Show Product Image
                                                             </label>
                                                         </div>
-                                                        <div class="form-check form-check-inline my-3 ml-4">
+                                                        <div class="form-check form-check-inline my-3 ms-4">
                                                             <input class="form-check-input" name="invoice_barcode_enable"
                                                                 type="checkbox" id="invoice_barcode_enable"
                                                                 value="1" checked>
@@ -240,14 +240,14 @@
                                                                 Show Barcode in Invoice
                                                             </label>
                                                         </div>
-                                                        <div class="form-check form-check-inline my-3 ml-4">
+                                                        <div class="form-check form-check-inline my-3 ms-4">
                                                             <input class="form-check-input" name="show_sku"
                                                                 type="checkbox" id="show_sku" value="1">
                                                             <label class="form-check-label" for="show_sku">
                                                                 Show SKU in Invoice
                                                             </label>
                                                         </div>
-                                                        <div class="form-check form-check-inline my-3 ml-4">
+                                                        <div class="form-check form-check-inline my-3 ms-4">
                                                             <input class="form-check-input" name="show_shipping_address"
                                                                 type="checkbox" id="show_shipping_address" value="1"
                                                                 checked>

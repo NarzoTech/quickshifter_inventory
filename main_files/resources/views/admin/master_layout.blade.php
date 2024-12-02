@@ -22,8 +22,8 @@
             @if (!Route::is('admin.pos'))
                 <div class="navbar-bg"></div>
                 <nav class="navbar navbar-expand-lg main-navbar">
-                    <div class="mr-auto form-inline">
-                        <ul class="mr-3 navbar-nav d-flex align-items-center">
+                    <div class="me-auto form-inline">
+                        <ul class="me-3 navbar-nav d-flex align-items-center">
                             <li><a href="#" data-bs-toggle="sidebar" class="nav-link nav-link-lg"><i
                                         class="fas fa-bars"></i></a></li>
                             <li><a href="#" data-bs-toggle="search" class="nav-link nav-link-lg d-none"><i
@@ -78,9 +78,9 @@
                                 class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                                 @if ($header_admin->image)
                                     <img alt="image" src="{{ asset($header_admin->image) }}"
-                                        class="mr-1 rounded-circle">
+                                        class="me-1 rounded-circle">
                                 @else
-                                    <img alt="image" src="" class="mr-1 rounded-circle">
+                                    <img alt="image" src="" class="me-1 rounded-circle">
                                 @endif
 
                                 <div class="d-sm-none d-lg-inline-block">{{ $header_admin->name }}</div>

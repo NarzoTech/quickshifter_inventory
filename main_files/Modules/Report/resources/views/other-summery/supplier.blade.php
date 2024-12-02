@@ -123,7 +123,7 @@
                                                     <td>
                                                         <div class="btn-group">
                                                             <a href="javascript:void(0);"
-                                                                class="btn btn-primary mr-2 btn-sm" data-bs-toggle="modal"
+                                                                class="btn btn-primary me-2 btn-sm" data-bs-toggle="modal"
                                                                 data-bs-target="#editSupplier-{{ $summery->id }}">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>

@@ -38,7 +38,7 @@
         </div>
         <div class="page-title-actions">
             <button type="button" data-bs-toggle="tooltip" title="Example Tooltip" data-placement="bottom"
-                class="btn-shadow mr-3 btn btn-dark">
+                class="btn-shadow me-3 btn btn-dark">
                 <i class="fa fa-search"></i>
             </button>
 

@@ -73,14 +73,14 @@
                                                     </td>
                                                     <td class="d-flex justify-content-center align-items-center">
                                                         <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
-                                                            class="btn btn-primary btn-sm mr-2"><i class="fa fa-edit"
+                                                            class="btn btn-primary btn-sm me-2"><i class="fa fa-edit"
                                                                 aria-hidden="true"></i></a>
 
                                                         <button type="button" data-bs-toggle="modal"
                                                             @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
                                                                 @else
                                                                 onclick="deleteData({{ $product->id }})" @endif
-                                                            class="btn btn-danger btn-sm mr-2">
+                                                            class="btn btn-danger btn-sm me-2">
                                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </button>
                                                         <div class="dropdown d-inline">

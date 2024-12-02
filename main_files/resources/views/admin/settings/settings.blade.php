@@ -195,77 +195,77 @@
                                         {{-- <div class="col-md-12 mt-3">
                                             <h4>Options</h4>
                                             <div class="form-group permission-checkboxs">
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="deliverycharge" type="checkbox"
                                                         id="deliverycharge" value="1">
                                                     <label class="form-check-label" for="deliverycharge">
                                                         DeliveryCharge
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="pos_due_payment"
                                                         type="checkbox" id="due-payment" value="1" checked>
                                                     <label class="form-check-label" for="due-payment">
                                                         Due Payment
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_auto_print"
                                                         type="checkbox" id="enable-auto-print" value="1" checked>
                                                     <label class="form-check-label" for="enable-auto-print">
                                                         Enable Auto Print
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_exchange"
                                                         type="checkbox" id="exchange" value="1">
                                                     <label class="form-check-label" for="exchange">
                                                         Exchange
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_investment"
                                                         type="checkbox" id="investment" value="1">
                                                     <label class="form-check-label" for="investment">
                                                         Investment
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_minimum_sale_price"
                                                         type="checkbox" id="minimum-sale-price" value="1">
                                                     <label class="form-check-label" for="minimum-sale-price">
                                                         Minimum Sale Price
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_negative_sale"
                                                         type="checkbox" id="negative-sale" value="1" checked>
                                                     <label class="form-check-label" for="negative-sale">
                                                         Negative Sale
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_online_order"
                                                         type="checkbox" id="online-order" value="1">
                                                     <label class="form-check-label" for="online-order">
                                                         Online Order
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_product_model"
                                                         type="checkbox" id="product-model" value="1" checked>
                                                     <label class="form-check-label" for="product-model">
                                                         Product Model
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_product_variant"
                                                         type="checkbox" id="product-variant" value="1" checked>
                                                     <label class="form-check-label" for="product-variant">
                                                         Product Variant
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input"
                                                         name="enable_purchase_panel_profit_percent" type="checkbox"
                                                         id="profit-percent" value="1" checked>
@@ -273,21 +273,21 @@
                                                         Profit Percent
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="sale_and_print_confirmation"
                                                         type="checkbox" id="sale-print-confirmation" value="1">
                                                     <label class="form-check-label" for="sale-print-confirmation">
                                                         Sale &amp; Print Confirmation
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="enable_service" type="checkbox"
                                                         id="service" value="1" checked>
                                                     <label class="form-check-label" for="service">
                                                         Service
                                                     </label>
                                                 </div>
-                                                <div class="form-check ml-4">
+                                                <div class="form-check ms-4">
                                                     <input class="form-check-input" name="show_stock_in_pos"
                                                         type="checkbox" id="show-stock-in-pos" value="1" checked>
                                                     <label class="form-check-label" for="show-stock-in-pos">

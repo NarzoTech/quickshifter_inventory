@@ -521,7 +521,7 @@
                                     </tbody>
                                     <tfoot id="normalPayment">
                                         <tr class="due d-none {{ !$sale->due_amount ? 'd-none' : '' }}">
-                                            <td class="pl-2" style="vertical-align: middle">
+                                            <td class="ps-2" style="vertical-align: middle">
                                                 <label>Due</label>
                                             </td>
                                             <td colspan="3">
@@ -530,7 +530,7 @@
                                             </td>
                                         </tr>
                                         <tr class="due-date {{ !$sale->due_date ? 'd-none' : '' }}">
-                                            <td class="pl-2" style="vertical-align: middle">
+                                            <td class="ps-2" style="vertical-align: middle">
                                                 <label>Due Date</label>
                                             </td>
                                             <td colspan="3">
@@ -540,7 +540,7 @@
                                         </tr>
 
                                         <tr>
-                                            <td class="pl-2" style="vertical-align: middle">
+                                            <td class="ps-2" style="vertical-align: middle">
                                                 <label>Receive Cash</label>
                                             </td>
                                             <td colspan="3">
@@ -552,7 +552,7 @@
                                         </tr>
 
                                         <tr>
-                                            <td class="pl-2" style="vertical-align: middle">
+                                            <td class="ps-2" style="vertical-align: middle">
                                                 <label>Change</label>
                                             </td>
                                             <td colspan="3">
@@ -563,7 +563,7 @@
                                         </tr>
 
                                         <tr>
-                                            <td class="pl-2" style="vertical-align: middle">
+                                            <td class="ps-2" style="vertical-align: middle">
                                                 <label>Remark</label>
                                             </td>
                                             <td colspan="3">

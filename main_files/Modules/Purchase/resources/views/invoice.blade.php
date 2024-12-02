@@ -145,7 +145,7 @@
                         <tbody>
                             <tr>
                                 <td colspan="3" style="border: none !important"></td>
-                                <td class="text-right pr-5"
+                                <td class="text-right pe-5"
                                     style="border:none !important; border-bottom: 1px solid #fff !important">
                                     Subtotal:
                                 </td>
@@ -157,7 +157,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3" style="border: none !important"></td>
-                                <td class="text-right pr-5"
+                                <td class="text-right pe-5"
                                     style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important;">
                                     Other Cost:
                                 </td>
@@ -168,7 +168,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3" style="border: none !important"></td>
-                                <td class="text-right pr-5"
+                                <td class="text-right pe-5"
                                     style="border:none !important; border-bottom: 1px solid #fff !important">
                                     Total:
                                 </td>
@@ -179,7 +179,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3" style="border: none !important"></td>
-                                <td class="text-right pr-5"
+                                <td class="text-right pe-5"
                                     style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
                                     Paid:</td>
                                 <td class="text-right pr-2"
@@ -188,7 +188,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3" style="border: none !important"></td>
-                                <td class="text-right pr-5"
+                                <td class="text-right pe-5"
                                     style="border:none !important; border-bottom: 1px solid #fff !important">
                                     Due:
                                 </td>

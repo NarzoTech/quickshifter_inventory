@@ -100,7 +100,7 @@
                                         <td>
                                             <div class="btn-group">
                                                 <a href="{{ route('admin.unit.edit', $unit->id) }}"
-                                                    class="btn btn-primary btn-sm edit-btn mr-2"><i class="fa fa-edit"
+                                                    class="btn btn-primary btn-sm edit-btn me-2"><i class="fa fa-edit"
                                                         aria-hidden="true"></i></a>
                                                 <a href="javascript:;" class="btn btn-danger btn-sm"
                                                     onclick="deleteData({{ $unit->id }})"><i class="fa fa-trash"

@@ -103,7 +103,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.attribute.edit', $attribute->id) }}"
-                                        class="btn btn-primary btn-action mr-1" data-bs-toggle="tooltip"
+                                        class="btn btn-primary btn-action me-1" data-bs-toggle="tooltip"
                                         title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
                                     <a href="javascript:void(0)"
                                         class="btn btn-danger btn-action trigger--fire-modal-1 deleteForm"

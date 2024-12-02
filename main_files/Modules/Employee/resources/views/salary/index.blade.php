@@ -65,7 +65,7 @@
                                                 <td>
                                                     <div class="btn-group">
                                                         <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
-                                                            class="btn btn-primary btn-sm mr-2"><i
+                                                            class="btn btn-primary btn-sm me-2"><i
                                                                 class="fa fa-edit"></i></a>
                                                         <a href="javascript:;" class="btn btn-danger btn-sm"
                                                             onclick="deleteData({{ $payment->id }})">
