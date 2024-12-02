@@ -98,7 +98,7 @@ class POSController extends Controller
         $areaList = $this->areaService->getArea()->get();
         $vehicles = $this->vehicle->get();
 
-        $services = $this->services->all()->where('status', 1)->paginate(9);
+        $services = $this->services->all()->where('status', 1)->paginate(15);
         $serviceCategories = $this->services->getCategories();
 
         $cart_holds = CartHold::where('status', 'hold')->orderBy('id', 'desc')->get();
@@ -147,11 +147,11 @@ class POSController extends Controller
 
 
         // Paginate favorite products
-        $favoriteProducts = $products->where('is_favorite', 1)->paginate(9);
+        $favoriteProducts = $products->where('is_favorite', 1)->paginate(15);
         $favoriteProducts = $favoriteProducts->appends($request->all()); // Append request parameters
 
         // Paginate non-favorite products
-        $nonFavoriteProducts = $products->orWhere('is_favorite', 0)->paginate(9);
+        $nonFavoriteProducts = $products->orWhere('is_favorite', 0)->paginate(15);
         $nonFavoriteProducts = $nonFavoriteProducts->appends($request->all()); // Append request parameters
 
 
@@ -168,7 +168,7 @@ class POSController extends Controller
             $services = $services->where('category_id', $request->service_category_id);
         }
 
-        $services = $services->paginate(9);
+        $services = $services->paginate(15);
         $services = $services->appends($request->all());
         $serviceView = view('pos::ajax_service')->with([
             'services' => $services,
@@ -187,7 +187,7 @@ class POSController extends Controller
 
     public function favoriteProducts($products)
     {
-        $products = $products->where('is_favorite', 1)->paginate(9);
+        $products = $products->where('is_favorite', 1)->paginate(15);
         return $products;
     }
 

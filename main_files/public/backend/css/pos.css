@@ -365,6 +365,14 @@ input {
     padding: 0;
     border: none;
     text-align: center;
+    color: #646e78;
+    outline: none;
+}
+
+.pos_pro_table .price input {
+    width: 80px !important;
+    border: 1px solid #ddd;
+    padding: 5px 5pxpx;
 }
 
 .pos_pro_table .product-table {}
@@ -403,35 +411,16 @@ input {
     transform: none;
 }
 
-.produt_card {
-    margin-bottom: 25px;
+.pos_pro_table .summary-table tbody tr td svg {
+    margin-left: 5px;
 }
 
-.produt_card .produt_card_img {
-    height: 250px;
-    overflow: hidden;
+.dis-form {}
+
+.dis .current {
+    color: #000 !important;
 }
 
-.produt_card .produt_card_img img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-}
-
-.produt_card .wishlist_btn {}
-
-.produt_card .remove {}
-
-.produt_card .card-body {
-    padding: 15px;
-}
-
-.produt_card .card-title {
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.produt_card .price {
-    margin: 0;
-    color: #5f61e6;
+.summary-table .custom_width {
+    width: 270px;
 }

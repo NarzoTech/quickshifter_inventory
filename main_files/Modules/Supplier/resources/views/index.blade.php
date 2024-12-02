@@ -68,7 +68,10 @@
                             </div>
                             <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
-                                    <button type="submit" class="btn bg-label-primary w-100">{{ __('Search') }}</button>
+                                    <button type="submit" class="btn bg-label-danger"><i
+                                            class='bx bx-rotate-right'></i></button>
+                                    <button type="submit" class="btn bg-label-primary"><i
+                                            class='bx bx-search'></i></button>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +94,7 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive list_table">
                 <table style="width: 100%;" class="table mb-3">
                     <thead>
                         <tr>
@@ -99,8 +102,8 @@
                             <th rowspan="2">{{ __('Name') }}</th>
                             <th rowspan="2">{{ __('Phone') }}</th>
                             <th rowspan="2">{{ __('Area') }}</th>
-                            <th colspan="2">{{ __('Purchase') }}</th>
-                            <th colspan="2">{{ __('Purchase Return') }}</th>
+                            <th colspan="2" class="bg-label-success text-center">{{ __('Purchase') }}</th>
+                            <th colspan="2" class="bg-label-primary text-center">{{ __('Purchase Return') }}</th>
                             <th rowspan="2">{{ __('Total Due') }}</th>
                             <th rowspan="2">{{ __('Advance') }}</th>
                             <th rowspan="2">{{ __('Due Dismiss') }}</th>

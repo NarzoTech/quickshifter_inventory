@@ -20,6 +20,8 @@
     <script src="{{ asset('backend/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('backend/js/select2.min.js') }}"></script>
     <script src="{{ asset('backend/js/tagify.js') }}"></script>
+    <script src="{{ asset('backend/js/jquery.nice-select.min.js') }}"></script>
+    <script src="{{ asset('backend/js/sticky_sidebar.js') }}"></script>
     <script src="{{ asset('backend/clockpicker/dist/bootstrap-clockpicker.js') }}"></script>
     <script src="{{ asset('backend/tinymce/js/tinymce/tinymce.min.js') }}"></script>
     <script src="{{ asset('global/toastr/toastr.min.js') }}"></script>
