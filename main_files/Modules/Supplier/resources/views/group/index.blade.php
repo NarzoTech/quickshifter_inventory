@@ -151,24 +151,33 @@
                         @csrf
                         <div class="row">
                             <input type="hidden" class="form-control" id="type" name="type" value="supplier">
-                            <div class="form-group col-md-6">
-                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name" class="label">{{ __('Name') }}<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="discount">{{ __('Discount') }}(%)</label>
-                                <input type="number" class="form-control" id="discount" name="discount">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="discount">{{ __('Discount') }}(%)</label>
+                                    <input type="number" class="form-control" id="discount" name="discount">
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="status">{{ __('Status') }}</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">{{ __('Active') }}</option>
-                                    <option value="0">{{ __('Inactive') }}</option>
-                                </select>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status">{{ __('Status') }}</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1">{{ __('Active') }}</option>
+                                        <option value="0">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group col-md-8">
-                                <label for="description">{{ __('Description') }}</label>
-                                <input type="text" class="form-control" id="description" name="description">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="description">{{ __('Description') }}</label>
+                                    <input type="text" class="form-control" id="description" name="description">
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -200,29 +209,38 @@
                             <div class="row">
                                 <input type="hidden" class="form-control" id="type" name="type"
                                     value="supplier">
-                                <div class="form-group col-md-6">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $group->name }}">
+                                <div class="col-md-6">
+                                    <div class="form-group ">
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $group->name }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label for="discount">{{ __('Discount') }}(%)</label>
-                                    <input type="number" class="form-control" id="discount" name="discount"
-                                        value="{{ $group->discount }}">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="discount">{{ __('Discount') }}(%)</label>
+                                        <input type="number" class="form-control" id="discount" name="discount"
+                                            value="{{ $group->discount }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1" @if ($group->status == 1) selected @endif>
-                                            {{ __('Active') }}</option>
-                                        <option value="0" @if ($group->status == 0) selected @endif>
-                                            {{ __('Inactive') }}</option>
-                                    </select>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="status">{{ __('Status') }}</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="1" @if ($group->status == 1) selected @endif>
+                                                {{ __('Active') }}</option>
+                                            <option value="0" @if ($group->status == 0) selected @endif>
+                                                {{ __('Inactive') }}</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-8">
-                                    <label for="description">{{ __('Description') }}</label>
-                                    <input type="text" class="form-control" id="description" name="description"
-                                        value="{{ $group->description }}">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="description">{{ __('Description') }}</label>
+                                        <input type="text" class="form-control" id="description" name="description"
+                                            value="{{ $group->description }}">
+                                    </div>
                                 </div>
                             </div>
                         </form>

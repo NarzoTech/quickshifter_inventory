@@ -285,7 +285,7 @@ class SupplierController extends Controller
     {
         $supplier = $this->supplierService->find($id);
 
-        $ledgers = Ledger::where('supplier_id', $supplier->id)->orderBy('date', 'asc')->paginate(20);
+        $ledgers = Ledger::where('supplier_id', $supplier->id)->orderBy('date', 'desc')->paginate(20);
         $title = __('Supplier Ledger');
         return view('supplier::ledger', compact('ledgers', 'title'));
     }

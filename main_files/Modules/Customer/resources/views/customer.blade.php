@@ -250,96 +250,119 @@
                             @method('PUT')
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label for="name">{{ __('Customer Name') }}<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $user->name }}">
+                                    <div class="form-group">
+                                        <label for="name">{{ __('Customer Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $user->name }}">
 
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="group_id">{{ __('Customer Group') }}</label>
-                                    <select name="group_id" id="group_id" class="form-control">
-                                        <option value="">{{ __('Select Group') }}</option>
-                                        @foreach ($groups as $group)
-                                            <option value="{{ $group->id }}"
-                                                {{ $user->group_id == $group->id ? 'selected' : '' }}>
-                                                {{ $group->name }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="group_id">{{ __('Customer Group') }}</label>
+                                        <select name="group_id" id="group_id" class="form-control">
+                                            <option value="">{{ __('Select Group') }}</option>
+                                            @foreach ($groups as $group)
+                                                <option value="{{ $group->id }}"
+                                                    {{ $user->group_id == $group->id ? 'selected' : '' }}>
+                                                    {{ $group->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="phone">{{ __('Phone') }}</label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
-                                        value="{{ $user->phone }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="phone">{{ __('Phone') }}</label>
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                            value="{{ $user->phone }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4 ">
-                                    <label for="email">{{ __('Email') }}</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        value="{{ $user->email }}">
-                                </div>
-
-                                <div class="form-group col-md-4">
-                                    <label for="area_id">{{ __('Area') }}</label>
-                                    <select name="area_id" id="area_id" class="form-control">
-                                        <option value="">{{ __('Select Area') }}</option>
-                                        @foreach ($areaList as $list)
-                                            <option value="{{ $list->id }}"
-                                                {{ $user->area_id == $list->id ? 'selected' : '' }}>
-                                                {{ $list->name }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-md-4 ">
+                                    <div class="form-group">
+                                        <label for="email">{{ __('Email') }}</label>
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            value="{{ $user->email }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-4 ">
-                                    <label for="vehicle_id">{{ __('Vehicle') }}</label>
-                                    <select name="vehicle_id" id="vehicle_id" class="form-control"
-                                        data-dropdown-parent="#addCustomer" data-control="select2">
-                                        <option value="">{{ __('Select Vehicle') }}</option>
-                                        @foreach ($vehicles as $vehicle)
-                                            <option value="{{ $vehicle->id }}"
-                                                {{ $user->vehicle_id == $vehicle->id ? 'selected' : '' }}>
-                                                {{ $vehicle->name }} - {{ $vehicle->model }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="area_id">{{ __('Area') }}</label>
+                                        <select name="area_id" id="area_id" class="form-control">
+                                            <option value="">{{ __('Select Area') }}</option>
+                                            @foreach ($areaList as $list)
+                                                <option value="{{ $list->id }}"
+                                                    {{ $user->area_id == $list->id ? 'selected' : '' }}>
+                                                    {{ $list->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-4">
-                                    <label for="plate_number">{{ __('Plate Number') }}</label>
-                                    <input type="text" class="form-control" id="plate_number" name="plate_number"
-                                        value="{{ $user->plate_number }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="vehicle_id">{{ __('Vehicle') }}</label>
+                                        <select name="vehicle_id" id="vehicle_id" class="form-control"
+                                            data-dropdown-parent="#addCustomer" data-control="select2">
+                                            <option value="">{{ __('Select Vehicle') }}</option>
+                                            @foreach ($vehicles as $vehicle)
+                                                <option value="{{ $vehicle->id }}"
+                                                    {{ $user->vehicle_id == $vehicle->id ? 'selected' : '' }}>
+                                                    {{ $vehicle->name }} - {{ $vehicle->model }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-4">
-                                    <label for="membership">{{ __('Membership') }}</label>
-                                    <input type="text" class="form-control" id="membership" name="membership"
-                                        value="{{ $user->membership }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="plate_number">{{ __('Plate Number') }}</label>
+                                        <input type="text" class="form-control" id="plate_number" name="plate_number"
+                                            value="{{ $user->plate_number }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-4 ">
-                                    <label for="date">{{ __('Date') }}</label>
-                                    <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ $user->date }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="membership">{{ __('Membership') }}</label>
+                                        <input type="text" class="form-control" id="membership" name="membership"
+                                            value="{{ $user->membership }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-4">
-                                    <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1" {{ $user->status == 1 ? 'selected' : '' }}>
-                                            {{ __('Active') }}</option>
-                                        <option value="0" {{ $user->status == 0 ? 'selected' : '' }}>
-                                            {{ __('Inactive') }}</option>
-                                    </select>
+                                <div class="col-md-4 ">
+                                    <div class="form-group">
+                                        <label for="date">{{ __('Date') }}</label>
+                                        <input type="text" class="form-control datepicker" id="date"
+                                            name="date" value="{{ $user->date }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
-                                    <label class="custom-switch mt-2">
-                                        <input type="checkbox" name="guest" class="custom-switch-input" value="1"
-                                            @if ($user->guest) checked @endif>
-                                        <span class="custom-switch-indicator"></span>
-                                        <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
-                                    </label>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="status">{{ __('Status') }}</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="1" {{ $user->status == 1 ? 'selected' : '' }}>
+                                                {{ __('Active') }}</option>
+                                            <option value="0" {{ $user->status == 0 ? 'selected' : '' }}>
+                                                {{ __('Inactive') }}</option>
+                                        </select>
+                                    </div>
                                 </div>
 
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <div class=" d-flex justify-content-center align-items-center">
+                                        <label class="custom-switch mt-2">
+                                            <input type="checkbox" name="guest" class="custom-switch-input"
+                                                value="1" @if ($user->guest) checked @endif>
+                                            <span class="custom-switch-indicator"></span>
+                                            <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
+                                        </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>

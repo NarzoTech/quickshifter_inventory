@@ -16,7 +16,7 @@
                             <div class="col-xxl-3 col-md-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                        class="form-control" placeholder="Search...">
+                                        class="form-control" placeholder="Search..." autocomplete="off">
                                     <button type="submit">
                                         <i class='bx bx-search'></i>
                                     </button>
@@ -57,13 +57,15 @@
                             <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
                                     <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker">
+                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
                                     <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker">
+                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-xxl-1 col-md-4">
@@ -98,23 +100,19 @@
                 <table style="width: 100%;" class="table mb-3">
                     <thead>
                         <tr>
-                            <th rowspan="2">{{ __('SN') }}</th>
-                            <th rowspan="2">{{ __('Name') }}</th>
-                            <th rowspan="2">{{ __('Phone') }}</th>
-                            <th rowspan="2">{{ __('Area') }}</th>
-                            <th colspan="2" class="bg-label-success text-center">{{ __('Purchase') }}</th>
-                            <th colspan="2" class="bg-label-primary text-center">{{ __('Purchase Return') }}</th>
-                            <th rowspan="2">{{ __('Total Due') }}</th>
-                            <th rowspan="2">{{ __('Advance') }}</th>
-                            <th rowspan="2">{{ __('Due Dismiss') }}</th>
-                            <th rowspan="2">{{ __('Action') }}</th>
+                            <th>{{ __('SN') }}</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Phone') }}</th>
+                            <th>{{ __('Area') }}</th>
+                            <th>{{ __('Purchase Total') }}</th>
+                            <th>{{ __('Purchase Payment') }}</th>
+
+                            <th>{{ __('Total Due') }}</th>
+                            <th>{{ __('Advance') }}</th>
+                            <th>{{ __('Due Dismiss') }}</th>
+                            <th>{{ __('Action') }}</th>
                         </tr>
-                        <tr>
-                            <th>{{ __('Total') }}</th>
-                            <th>{{ __('Pay') }}</th>
-                            <th>{{ __('Total') }}</th>
-                            <th>{{ __('Pay') }}</th>
-                        </tr>
+
                     </thead>
                     <tbody>
                         @foreach ($suppliers as $index => $supplier)
@@ -129,8 +127,6 @@
                                 <td>{{ $supplier->area->name }}</td>
                                 <td>{{ currency($supplier->purchases->sum('total_amount')) }}</td>
                                 <td>{{ currency($supplier->payments->sum('amount')) }}</td>
-                                <td>{{ currency($totalReturn) }}</td>
-                                <td>{{ currency($totalReturnPaid) }}</td>
                                 <td>{{ currency($supplier->total_due - $totalReturn) }}</td>
                                 <td>{{ currency($supplier->advance) }}</td>
                                 <td>{{ currency($supplier->total_due_dismiss) }}</td>
@@ -183,12 +179,12 @@
                             <td colspan="1">
                                 {{ currency($data['pay']) }}
                             </td>
-                            <td colspan="1">
+                            {{-- <td colspan="1">
                                 {{ currency($data['total_return']) }}
                             </td>
                             <td colspan="1">
                                 {{ currency($data['total_return_pay']) }}
-                            </td>
+                            </td> --}}
                             <td colspan="1">
                                 {{ currency($data['total_due']) }}
                             </td>

@@ -124,15 +124,11 @@
                                 <td><a href="{{ $ledger->invoice_url }}">{{ $ledger->invoice_no }}</a>
                                 </td>
                                 <td>{{ $ledger->note }}</td>
+
                                 <td>
-                                    @if (
-                                        $ledger->supplier_id &&
-                                            ($ledger->invoice_type == 'purchase' ||
-                                                $ledger->invoice_type == 'Due Payment' ||
-                                                $ledger->invoice_type == 'Advance Payment' ||
-                                                $ledger->invoice_type == 'purchase_return'))
+                                    {{-- @if ($ledger->supplier_id && ($ledger->invoice_type == 'purchase' || $ledger->invoice_type == 'Due Payment' || $ledger->invoice_type == 'Advance Payment' || $ledger->invoice_type == 'purchase_return'))
                                         -
-                                    @endif
+                                    @endif --}}
 
                                     @if ($ledger->customer_id && $ledger->invoice_type == 'Sale Return')
                                         -

@@ -18,8 +18,10 @@
                                 <form action="" method="GET" onchange="this.submit()" class="card-body">
                                     <div class="row">
                                         <div class="col-md-4 form-group">
-                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="{{ __('Search') }}">
+                                            <div class="form-group">
+                                                <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                                    class="form-control" placeholder="{{ __('Search') }}">
+                                            </div>
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <select name="order_by" id="order_by" class="form-control">
@@ -133,56 +135,70 @@
                     <form action="{{ route('admin.balance.transfer.store') }}" method="POST" id="add-transfer-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="date">{{ __('Date') }}</label>
-                                <input type="text" class="form-control datepicker" id="date" name="date">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="date">{{ __('Date') }}</label>
+                                    <input type="text" class="form-control datepicker" id="date" name="date">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="amount">{{ __('Amount') }}</label>
-                                <input type="text" class="form-control" id="amount" name="amount">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="amount">{{ __('Amount') }}</label>
+                                    <input type="text" class="form-control" id="amount" name="amount">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="from_account_type">{{ __('From Account Type') }}</label>
-                                <select name="from_account_type" id="from_account_type" class="form-control me-2">
-                                    @foreach (accountList() as $key => $list)
-                                        <option value="{{ $key }}"
-                                            @if ($key == 'cash') selected @endif
-                                            data-name="{{ $list }}">
-                                            {{ $list }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="from_account_type">{{ __('From Account Type') }}</label>
+                                    <select name="from_account_type" id="from_account_type" class="form-control me-2">
+                                        @foreach (accountList() as $key => $list)
+                                            <option value="{{ $key }}"
+                                                @if ($key == 'cash') selected @endif
+                                                data-name="{{ $list }}">
+                                                {{ $list }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="to_account_type">{{ __('To Account Type') }}</label>
-                                <select name="to_account_type" id="to_account_type" class="form-control me-2">
-                                    @foreach (accountList() as $key => $list)
-                                        <option value="{{ $key }}"
-                                            @if ($key == 'cash') selected @endif
-                                            data-name="{{ $list }}">
-                                            {{ $list }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="from_account">{{ __('From Account') }}</label>
-                                <select name="from_account" id="from_account" class="form-control">
-                                    <option value="cash">{{ __('Cash') }}</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="to_account">{{ __('To Account') }}</label>
-                                <select name="to_account" id="to_account" class="form-control">
-                                    <option value="cash">{{ __('Cash') }}</option>
-                                </select>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="to_account_type">{{ __('To Account Type') }}</label>
+                                    <select name="to_account_type" id="to_account_type" class="form-control me-2">
+                                        @foreach (accountList() as $key => $list)
+                                            <option value="{{ $key }}"
+                                                @if ($key == 'cash') selected @endif
+                                                data-name="{{ $list }}">
+                                                {{ $list }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
-                            <div class="form-group col-md-12">
-                                <label for="remark">{{ __('Remark') }}</label>
-                                <textarea name="note" id="remark" class="form-control height-80px" rows="3"></textarea>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="from_account">{{ __('From Account') }}</label>
+                                    <select name="from_account" id="from_account" class="form-control">
+                                        <option value="cash">{{ __('Cash') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="to_account">{{ __('To Account') }}</label>
+                                    <select name="to_account" id="to_account" class="form-control">
+                                        <option value="cash">{{ __('Cash') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="remark">{{ __('Remark') }}</label>
+                                    <textarea name="note" id="remark" class="form-control height-80px" rows="3"></textarea>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -218,59 +234,73 @@
                             @csrf
                             @method('PATCH')
                             <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="date">{{ __('Date') }}</label>
-                                    <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ $transfer->date }}">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="date">{{ __('Date') }}</label>
+                                        <input type="text" class="form-control datepicker" id="date"
+                                            name="date" value="{{ $transfer->date }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label for="amount">{{ __('Amount') }}</label>
-                                    <input type="text" class="form-control" id="amount" name="amount"
-                                        value="{{ $transfer->amount }}">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="amount">{{ __('Amount') }}</label>
+                                        <input type="text" class="form-control" id="amount" name="amount"
+                                            value="{{ $transfer->amount }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label for="from_account_type">{{ __('From Account Type') }}</label>
-                                    <select name="from_account_type" data-id="{{ $transfer->id }}"
-                                        class="form-control me-2 from_account_type">
-                                        @foreach (accountList() as $key => $list)
-                                            <option value="{{ $key }}"
-                                                @if ($key == 'cash') selected @endif
-                                                data-name="{{ $list }}">
-                                                {{ $list }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="from_account_type">{{ __('From Account Type') }}</label>
+                                        <select name="from_account_type" data-id="{{ $transfer->id }}"
+                                            class="form-control me-2 from_account_type">
+                                            @foreach (accountList() as $key => $list)
+                                                <option value="{{ $key }}"
+                                                    @if ($key == 'cash') selected @endif
+                                                    data-name="{{ $list }}">
+                                                    {{ $list }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label for="to_account_type">{{ __('To Account Type') }}</label>
-                                    <select name="to_account_type" data-id="{{ $transfer->id }}"
-                                        class="form-control me-2 to_account_type">
-                                        @foreach (accountList() as $key => $list)
-                                            <option value="{{ $key }}"
-                                                @if ($key == 'cash') selected @endif
-                                                data-name="{{ $list }}">
-                                                {{ $list }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="to_account_type">{{ __('To Account Type') }}</label>
+                                        <select name="to_account_type" data-id="{{ $transfer->id }}"
+                                            class="form-control me-2 to_account_type">
+                                            @foreach (accountList() as $key => $list)
+                                                <option value="{{ $key }}"
+                                                    @if ($key == 'cash') selected @endif
+                                                    data-name="{{ $list }}">
+                                                    {{ $list }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-6">
-                                    <label for="from_account">{{ __('From Account') }}</label>
-                                    <select name="from_account" id="from_account" class="form-control">
-                                        <option value="{{ $transfer->from_account_id }}" selected></option>
-                                    </select>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="from_account">{{ __('From Account') }}</label>
+                                        <select name="from_account" id="from_account" class="form-control">
+                                            <option value="{{ $transfer->from_account_id }}" selected></option>
+                                        </select>
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-6">
-                                    <label for="to_account">{{ __('To Account') }}</label>
-                                    <select name="to_account" id="to_account" class="form-control">
-                                        <option value="{{ $transfer->to_account_id }}" selected></option>
-                                    </select>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="to_account">{{ __('To Account') }}</label>
+                                        <select name="to_account" id="to_account" class="form-control">
+                                            <option value="{{ $transfer->to_account_id }}" selected></option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-12">
-                                    <label for="remark">{{ __('Remark') }}</label>
-                                    <textarea name="note" id="remark" class="form-control height-80px" rows="3">{{ $transfer->note }}</textarea>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="remark">{{ __('Remark') }}</label>
+                                        <textarea name="note" id="remark" class="form-control height-80px" rows="3">{{ $transfer->note }}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </form>
