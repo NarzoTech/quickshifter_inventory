@@ -12,59 +12,54 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="card card-statistic-1">
-                            <div class="card-icon bg-primary">
-                                <i class="fas fa-money-bill-alt"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Current Balance</h4>
+                        <div class="card dashboard_card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                    <div class="avatar flex-shrink-0">
+                                        <i class="fas fa-money-bill-alt"></i>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    {{ currency($accountBalance) }}
-                                </div>
+                                <h5 class="mb-1">{{ __('Current Balance') }}</h5>
+                                <h4 class="card-title text-primary fw-medium"> {{ currency($accountBalance) }}</h4>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="card card-statistic-1">
-                            <div class="card-icon bg-primary">
-                                <i class="fas fa-money-bill-alt"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Total Deposit</h4>
+                        <div class="card dashboard_card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                    <div class="avatar flex-shrink-0">
+                                        <i class="fas fa-money-bill-alt"></i>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    {{ currency($totalDeposits) }}
-                                </div>
+                                <h5 class="mb-1">{{ __('Total Deposit') }}</h5>
+                                <h4 class="card-title text-primary fw-medium"> {{ currency($totalDeposits) }}</h4>
                             </div>
                         </div>
                     </div>
 
+
+
                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="card card-statistic-1">
-                            <div class="card-icon bg-primary">
-                                <i class="fas fa-money-bill-alt"></i>
-                            </div>
-                            <div class="card-wrap">
-                                <div class="card-header">
-                                    <h4>Total Withdraw</h4>
+                        <div class="card dashboard_card">
+                            <div class="card-body">
+                                <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                    <div class="avatar flex-shrink-0">
+                                        <i class="fas fa-money-bill-alt"></i>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    {{ currency($totalWithdraws) }}
-                                </div>
+                                <h5 class="mb-1">{{ __('Total Withdraw') }}</h5>
+                                <h4 class="card-title text-primary fw-medium"> {{ currency($totalWithdraws) }}</h4>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-5">
                     <div class="col-xl-5">
                         <div class="card-box">
                             <div class="card card-statistic-1">
                                 <div class="card-header">
-
                                     <h4 class="header-title m-t-0 m-b-30 mb-4">Balance</h4>
                                 </div>
 
@@ -168,17 +163,19 @@
                                                                 <td>{{ $deposit->note }}</td>
                                                                 <td>{{ currency($deposit->amount) }}</td>
                                                                 <td>
-                                                                    <a href="{{ route('admin.opening-balance.edit', $deposit->id) }}"
-                                                                        class="btn btn-primary btn-sm">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </a>
-                                                                    <a href="javascript:void(0)"
-                                                                        onclick="deleteData({{ $deposit->id }})"
-                                                                        class="btn btn-danger btn-sm"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#deleteModal">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </a>
+                                                                    <div class="btn-group">
+                                                                        <a href="{{ route('admin.opening-balance.edit', $deposit->id) }}"
+                                                                            class="btn btn-primary btn-sm">
+                                                                            <i class="fas fa-edit"></i>
+                                                                        </a>
+                                                                        <a href="javascript:void(0)"
+                                                                            onclick="deleteData({{ $deposit->id }})"
+                                                                            class="btn btn-danger btn-sm"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#deleteModal">
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </a>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -214,11 +211,13 @@
                                                                 <td>{{ $withdraw->note }}</td>
                                                                 <td>{{ $withdraw->amount }}</td>
                                                                 <td>
-                                                                    <a href="{{ route('admin.opening-balance.edit', $withdraw->id) }}"
-                                                                        class="btn btn-primary btn-sm">Edit</a>
-                                                                    <a href="javascript:void(0)"
-                                                                        onclick="deleteData({{ $withdraw->id }})"
-                                                                        class="btn btn-danger btn-sm">Delete</a>
+                                                                    <div class="btn-group">
+                                                                        <a href="{{ route('admin.opening-balance.edit', $withdraw->id) }}"
+                                                                            class="btn btn-primary btn-sm">Edit</a>
+                                                                        <a href="javascript:void(0)"
+                                                                            onclick="deleteData({{ $withdraw->id }})"
+                                                                            class="btn btn-danger btn-sm">Delete</a>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
