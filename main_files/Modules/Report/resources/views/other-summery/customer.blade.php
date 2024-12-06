@@ -1,171 +1,171 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Customer Other Due') }}</title>
+    <title>{{ __('Customer Other Due List') }}</title>
 @endsection
 
 
 @section('content')
-    <div class="main-content">
-        <section class="section">
-
-
-            <div class="section-body">
-                <div class="row">
-                    {{-- Search filter --}}
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="" method="GET" class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4 form-group search-wrapper">
-                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="Name, phone...">
-                                            <button type="submit">
-                                                <i class="far fa-arrow-alt-circle-right"></i>
-                                            </button>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="">{{ __('Order By') }}</option>
-                                                <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-                                                <option value="desc"
-                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="par-page" id="par-page" class="form-control">
-                                                <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('10') }}
-                                                </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('50') }}
-                                                </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('100') }}
-                                                </option>
-                                                <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('All') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="From Date" name="from_date"
-                                                value="{{ request()->get('from_date') }}" class="form-control datepicker">
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="To Date" name="to_date"
-                                                value="{{ request()->get('to_date') }}" class="form-control datepicker">
-                                        </div>
-                                    </div>
-                                    {{-- excel  buttons --}}
-                                    <div class="row">
-                                        <div class="col-md-4 form-group mx-auto">
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                <button type="button" class="btn btn-secondary export"><i
-                                                        class="far fa-file-excel"></i>
-                                                    Excel</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>
-                                    {{ __('Customer Other Due') }}
-                                </h4>
-                                <div>
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Customer') }}</a>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-1">
+                    <form class="search_form" action="" method="GET">
+                        <div class="row">
+                            <div class="col-xxl-3 col-md-4">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class='bx bx-search'></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <div class="table-responsive table-invoice">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>{{ __('Sl') }}</th>
-                                                <th>{{ __('Date') }}</th>
-                                                <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Company') }}</th>
-                                                <th>{{ __('Phone') }}</th>
-                                                <th>{{ __('Total') }}</th>
-                                                <th>{{ __('Paid') }}</th>
-                                                <th>{{ __('Due') }}</th>
-                                                <th>{{ __('Action') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($summeries as $summery)
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ now()->parse($summery->date)->format('d-m-Y') }}</td>
-                                                    <td>{{ $summery->customer->name }}</td>
-                                                    <td>{{ $summery->customer->company }}</td>
-                                                    <td>{{ $summery->customer->phone }}</td>
-                                                    <td>{{ $summery->amount }}</td>
-                                                    <td>{{ $summery->paid }}</td>
-                                                    <td>{{ $summery->due }}</td>
-                                                    <td>
-                                                        <div class="btn-group">
-                                                            <a href="javascript:void(0);"
-                                                                class="btn btn-primary me-2 btn-sm" data-bs-toggle="modal"
-                                                                data-bs-target="#editCustomer-{{ $summery->id }}">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm"
-                                                                onclick="deleteData({{ $summery->id }})">
-                                                                <i class="fas fa-trash"></i>
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-
-                                            @if ($summeries->count() > 0)
-                                                <tr>
-                                                    <td colspan="5" class="text-right">
-                                                        Total
-                                                    </td>
-                                                    <td>
-                                                        {{ $data['total_amount'] }}
-                                                    </td>
-                                                    <td>
-                                                        {{ currency($data['total_paid']) }}
-                                                    </td>
-                                                    <td>
-                                                        {{ currency($data['total_due']) }}
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
                                 </div>
-                                @if (request()->get('par-page') !== 'all')
-                                    <div class="float-right">
-                                        {{ $summeries->onEachSide(0)->links() }}
-                                    </div>
-                                @endif
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="From Date" name="from_date"
+                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="To Date" name="to_date"
+                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-1 col-md-4">
+                                <div class="form-group">
+                                    <button type="submit" class="btn bg-label-danger form-reset"><i
+                                            class='bx bx-rotate-right'></i></button>
+
+                                    <button type="submit" class="btn bg-label-primary"><i
+                                            class='bx bx-search'></i></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
+    <div class="card mt-3 mb-3">
+        <div class="card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4 class="section_title"><i class="fas fa-list"></i> Customer Other Due List</h4>
+            </div>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer" class="btn btn-primary"><i
+                        class="fa fa-plus"></i>
+                    {{ __('Add Customer Other Due') }}</a>
 
+                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                    Excel</button>
+                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                    PDF</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive list_table">
+                <table style="width: 100%;" class="table mb-3">
+                    <thead>
+                        <tr>
+                            <th>{{ __('Sl') }}</th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Company') }}</th>
+                            <th>{{ __('Phone') }}</th>
+                            <th>{{ __('Total') }}</th>
+                            <th>{{ __('Paid') }}</th>
+                            <th>{{ __('Due') }}</th>
+                            <th>{{ __('Action') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($summeries as $summery)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ now()->parse($summery->date)->format('d-m-Y') }}</td>
+                                <td>{{ $summery->customer->name }}</td>
+                                <td>{{ $summery->customer->company }}</td>
+                                <td>{{ $summery->customer->phone }}</td>
+                                <td>{{ $summery->amount }}</td>
+                                <td>{{ $summery->paid }}</td>
+                                <td>{{ $summery->due }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="javascript:void(0);" class="btn btn-primary me-2 btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#editCustomer-{{ $summery->id }}">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="javascript:void(0);" class="btn btn-danger btn-sm"
+                                            onclick="deleteData({{ $summery->id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+
+                        @if ($summeries->count() > 0)
+                            <tr>
+                                <td colspan="5" class="text-right">
+                                    Total
+                                </td>
+                                <td>
+                                    {{ $data['total_amount'] }}
+                                </td>
+                                <td>
+                                    {{ currency($data['total_paid']) }}
+                                </td>
+                                <td>
+                                    {{ currency($data['total_due']) }}
+                                </td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $summeries->onEachSide(0)->links() }}
+                </div>
+            @endif
+        </div>
+    </div>
 
 
     <div class="modal fade" id="addCustomer">
@@ -180,7 +180,8 @@
 
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <form action="{{ route('admin.other-summery.customer.store') }}" method="POST" id="add-customer-due">
+                    <form action="{{ route('admin.other-summery.customer.store') }}" method="POST"
+                        id="add-customer-due">
                         @csrf
                         <div class="row">
                             <div class="form-group col-md-6">
