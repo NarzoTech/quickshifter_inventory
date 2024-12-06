@@ -57,12 +57,12 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>
                                     @if ($details->product_id)
-                                        <a href="{{ asset($details->product->single_image) }}" target="_blank">
+                                        <a href="{{ asset($details->product->single_image) }}">
                                             <img style="height: 40px; width: 70px;"
                                                 src='{{ asset($details->product->single_image) }}' alt="Image">
                                         </a>
                                     @else
-                                        <a href="{{ asset($details->service->single_image) }}" target="_blank">
+                                        <a href="{{ asset($details->service->single_image) }}">
                                             <img style="height: 40px; width: 70px;"
                                                 src='{{ asset($details->service->single_image) }}' alt="Image">
                                     @endif

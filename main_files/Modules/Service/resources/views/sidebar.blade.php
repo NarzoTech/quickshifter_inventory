@@ -5,12 +5,12 @@
     </a>
     <ul class="menu-sub">
         <li class="menu-item {{ isRoute('admin.service.index', 'active') }}">
-            <a href="{{ route('admin.service.index') }}" class="menu-link" target="_blank">
+            <a href="{{ route('admin.service.index') }}" class="menu-link">
                 <div class="text-truncate" data-i18n="{{ __('Service List') }}">{{ __('Service List') }}</div>
             </a>
         </li>
         <li class="menu-item {{ isRoute('admin.serviceCategory.index', 'active') }}">
-            <a href="{{ route('admin.serviceCategory.index') }}" class="menu-link" target="_blank">
+            <a href="{{ route('admin.serviceCategory.index') }}" class="menu-link">
                 <div class="text-truncate" data-i18n="{{ __('Service Category') }}">{{ __('Service Category') }}</div>
             </a>
         </li>

@@ -76,7 +76,7 @@
                     <a onclick="window.print()" class="btn btn-primary waves-effect waves-light">
                         <i class="fa fa-print"></i> Print
                     </a>
-                    <a href="javascript:;" class="btn btn-info waves-effect waves-light" target="_blank">
+                    <a href="javascript:;" class="btn btn-info waves-effect waves-light">
                         <i class="fa fa-print"></i> Print POS
                     </a>
                 </div>
