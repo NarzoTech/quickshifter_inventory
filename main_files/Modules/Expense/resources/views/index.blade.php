@@ -5,184 +5,179 @@
 
 
 @section('content')
-    <div class="main-content">
-        <section class="section">
-
-
-            <div class="section-body">
-                <div class="row">
-                    {{-- Search filter --}}
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="" method="GET" class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6 form-group search-wrapper">
-                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="{{ __('Search') }}">
-                                            <button type="submit">
-                                                <i class="far fa-arrow-alt-circle-right"></i>
-                                            </button>
-                                        </div>
-
-                                        <div class="col-md-2 form-group">
-                                            <select name="order_type" id="order_type" class="form-control">
-                                                <option value="id"
-                                                    {{ request('order_type') == 'id' ? 'selected' : '' }}>
-                                                    {{ __('Serial') }}</option>
-
-                                                <option value="date"
-                                                    {{ request('order_type') == 'date' ? 'selected' : '' }}>
-                                                    {{ __('Date') }}</option>
-
-                                                <option value="amount"
-                                                    {{ request('order_type') == 'amount' ? 'selected' : '' }}>
-                                                    {{ __('Amount') }}</option>
-
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="desc"
-                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
-                                                <option value="asc"
-                                                    {{ request('order_by') == 'asc' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-2 form-group">
-                                            <select name="par_page" id="par-page" class="form-control">
-                                                <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('10') }}
-                                                </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('50') }}
-                                                </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('100') }}
-                                                </option>
-                                                <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('All') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 form-group">
-                                            <input type="text" placeholder="From Date" name="from_date"
-                                                value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                                autocomplete="off">
-                                        </div>
-                                        <div class="col-md-3 form-group">
-                                            <input type="text" placeholder="To Date" name="to_date"
-                                                value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                                autocomplete="off">
-                                        </div>
-                                        <div class="col-md-1 form-group">
-                                            <a href="{{ route('admin.expense.index') }}"
-                                                class="btn btn-danger">{{ __('Reset') }}</a>
-                                        </div>
-                                        <div class="col-md-1 form-group">
-                                            <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <button type="button" class="btn btn-secondary export"><i
-                                                    class="far fa-file-excel"></i>
-                                                {{ __('Excel') }}</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense"
-                                        class="btn btn-primary"><i class="fa fa-plus"></i>
-                                        {{ __('Add Expense') }}</a>
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive table-invoice">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 5%">{{ __('Sl') }}</th>
-                                                <th style="width: 15%">{{ __('Date') }}</th>
-                                                <th style="width: 25%">{{ __('Created By') }}</th>
-                                                <th style="width: 25%">{{ __('Type') }}</th>
-                                                <th style="width: 15%">{{ __('Amount') }}</th>
-                                                <th style="width: 15%">{{ __('Payment Type') }}</th>
-                                                <th style="width: 30%">{{ __('Note') }}</th>
-                                                <th>{{ __('Action') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($expenses as $index => $expense)
-                                                <tr>
-                                                    <td>{{ $expenses->firstItem() + $index }}</td>
-                                                    <td>{{ $expense->date }}</td>
-                                                    <td>{{ $expense->createdBy->name }}</td>
-                                                    <td>{{ $expense->expenseType->name }}</td>
-                                                    <td>{{ currency($expense->amount) }}</td>
-                                                    <td>{{ ucfirst($expense->payment_type) }}</td>
-                                                    <td>{{ $expense->note }}</td>
-                                                    <td>
-                                                        <div class="btn-group" role="group">
-                                                            <button id="btnGroupDrop{{ $expense->id }}" type="button"
-                                                                class="btn btn-primary dropdown-toggle"
-                                                                data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">{{ __('Action') }}</button>
-                                                            <div class="dropdown-menu"
-                                                                aria-labelledby="btnGroupDrop{{ $expense->id }}">
-                                                                <a class="dropdown-item" href="javascript:;"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
-                                                                <a href="javascript:;" class="dropdown-item"
-                                                                    onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <x-empty-table :name="__('Bank')" route="" create="no"
-                                                    :message="__('No data found!')" colspan="6"></x-empty-table>
-                                            @endforelse
-
-                                            @if ($expenses->count() > 0)
-                                                <tr>
-                                                    <td colspan="4" class="text-center font-weight-bold">
-                                                        {{ __('Total') }}
-                                                    </td>
-                                                    <td>
-                                                        {{ currency($totalAmount) }}
-                                                    </td>
-                                                    <td colspan="3"></td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-1">
+                    <form class="search_form" action="" method="GET">
+                        <div class="row">
+                            <div class="col-xxl-3 col-md-4">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class='bx bx-search'></i>
+                                    </button>
                                 </div>
-                                @if (request()->get('par-page') !== 'all')
-                                    <div class="float-right">
-                                        {{ $expenses->onEachSide(0)->links() }}
-                                    </div>
-                                @endif
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="order_type" id="order_type" class="form-control">
+                                        <option value="id" {{ request('order_type') == 'id' ? 'selected' : '' }}>
+                                            {{ __('Serial') }}</option>
+
+                                        <option value="date" {{ request('order_type') == 'date' ? 'selected' : '' }}>
+                                            {{ __('Date') }}</option>
+
+                                        <option value="amount" {{ request('order_type') == 'amount' ? 'selected' : '' }}>
+                                            {{ __('Amount') }}</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="From Date" name="from_date"
+                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="To Date" name="to_date"
+                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-1 col-md-4">
+                                <div class="form-group">
+                                    <button type="submit" class="btn bg-label-danger form-reset"><i
+                                            class='bx bx-rotate-right'></i></button>
+
+                                    <button type="submit" class="btn bg-label-primary"><i
+                                            class='bx bx-search'></i></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+
+    <div class="card mt-3 mb-3">
+        <div class="card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4 class="section_title"><i class="fas fa-list"></i> Expenses List</h4>
+            </div>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense" class="btn btn-primary"><i
+                        class="fa fa-plus"></i>
+                    {{ __('Add Expense') }}</a>
+
+                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                    Excel</button>
+                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                    PDF</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive list_table">
+                <table style="width: 100%;" class="table mb-3">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">{{ __('Sl') }}</th>
+                            <th style="width: 15%">{{ __('Date') }}</th>
+                            <th style="width: 25%">{{ __('Created By') }}</th>
+                            <th style="width: 25%">{{ __('Type') }}</th>
+                            <th style="width: 15%">{{ __('Amount') }}</th>
+                            <th style="width: 15%">{{ __('Payment Type') }}</th>
+                            <th style="width: 30%">{{ __('Note') }}</th>
+                            <th>{{ __('Action') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($expenses as $index => $expense)
+                            <tr>
+                                <td>{{ $expenses->firstItem() + $index }}</td>
+                                <td>{{ $expense->date }}</td>
+                                <td>{{ $expense->createdBy->name }}</td>
+                                <td>{{ $expense->expenseType->name }}</td>
+                                <td>{{ currency($expense->amount) }}</td>
+                                <td>{{ ucfirst($expense->payment_type) }}</td>
+                                <td>{{ $expense->note }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $expense->id }}" type="button"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">{{ __('Action') }}</button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $expense->id }}">
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                data-bs-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
+                                            <a href="javascript:;" class="dropdown-item"
+                                                onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                colspan="6"></x-empty-table>
+                        @endforelse
+
+                        @if ($expenses->count() > 0)
+                            <tr>
+                                <td colspan="4" class="text-center font-weight-bold">
+                                    {{ __('Total') }}
+                                </td>
+                                <td>
+                                    {{ currency($totalAmount) }}
+                                </td>
+                                <td colspan="3"></td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $expenses->onEachSide(0)->links() }}
+                </div>
+            @endif
+        </div>
     </div>
 
     {{-- add Expense type --}}
@@ -192,7 +187,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">{{ __('Add Expense') }}</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
@@ -257,7 +252,7 @@
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">{{ __('Edit Expense') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal">{{ __('×') }}</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
@@ -292,7 +287,8 @@
                                         <option value="">{{ __('Payment Type') }}</option>
                                         @foreach (accountList() as $key => $list)
                                             <option value="{{ $key }}"
-                                                {{ $key == $expense->payment_type ? 'selected' : '' }}>{{ $list }}
+                                                {{ $key == $expense->payment_type ? 'selected' : '' }}>
+                                                {{ $list }}
                                             </option>
                                         @endforeach
                                     </select>
