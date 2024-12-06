@@ -11,8 +11,8 @@
                 </i>
                 {{ __('Other Income') }}
             </a>
-        </li class="{{ Route::is('admin.report.dts') ? 'active' : '' }} menu-item">
-        <li>
+        </li>
+        <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }} menu-item">
             <a href="{{ route('admin.report.dts') }}" class="menu-link">
                 <i class="metismenu-icon">
                 </i>
