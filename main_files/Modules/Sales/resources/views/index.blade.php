@@ -3,129 +3,174 @@
     <title>{{ $title }}</title>
 @endsection
 @section('content')
-    <div class="main-content">
-        <section class="section">
-
-
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="" method="GET" class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6 form-group search-wrapper">
-                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="{{ __('Customer Name, Invoice No') }}">
-                                            <button type="submit">
-                                                <i class="far fa-arrow-alt-circle-right"></i>
-                                            </button>
-                                        </div>
-
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="From Date" name="from_date"
-                                                value="{{ request()->get('from_date') }}" class="form-control datepicker">
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="To Date" name="to_date"
-                                                value="{{ request()->get('to_date') }}" class="form-control datepicker">
-                                        </div>
-                                        <div class="col-md-1 form-group">
-                                            <a href="{{ route('admin.sales.index') }}"
-                                                class="btn btn-danger">{{ __('Reset') }}</a>
-                                        </div>
-                                        <div class="col-md-1 form-group">
-                                            <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-12 col-lg-12">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>{{ __('SN') }}</th>
-                                                <th>{{ __('Date') }}</th>
-                                                <th>{{ __('Invoice No') }}</th>
-                                                <th>{{ __('Customer') }}</th>
-                                                <th>{{ __('Remark') }}</th>
-                                                <th>{{ __('Sale Amount') }}</th>
-                                                <th>{{ __('Total Amount') }}</th>
-                                                <th>{{ __('Paid Amount') }}</th>
-                                                <th>{{ __('Due') }}</th>
-                                                <th>{{ __('Payment Status') }}</th>
-                                                <th>{{ __('Action') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($sales as $key => $sale)
-                                                <tr>
-                                                    <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $sale->order_date->format('d-m-y') }}</td>
-                                                    <td>{{ $sale->invoice }}</td>
-                                                    <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
-                                                    <td>{{ $sale->sale_note }}</td>
-                                                    <td>{{ $sale->total_price }}</td>
-                                                    <td>{{ $sale->grand_total }}</td>
-                                                    <td>{{ $sale->paid_amount }}</td>
-                                                    <td>{{ $sale->due_amount }}</td>
-                                                    <td>
-                                                        @if ($sale->paid_amount == $sale->grand_total)
-                                                            <span class="badge badge-success">{{ __('Paid') }}</span>
-                                                        @elseif ($sale->due_amount > 0 && $sale->paid_amount < $sale->total_price)
-                                                            <span class="badge badge-danger">{{ __('Partial Due') }}</span>
-                                                        @else
-                                                            <span class="badge badge-danger">{{ __('Due') }}</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-group mb-2">
-                                                            <button class="btn btn-info btn-sm dropdown-toggle"
-                                                                type="button" data-bs-toggle="dropdown"
-                                                                aria-haspopup="true"
-                                                                aria-expanded="false">{{ __('Action') }}</button>
-                                                            <div class="dropdown-menu">
-                                                                <a class="dropdown-item view-sale" href="javascript:;"
-                                                                    data-id="{{ $sale->id }}">{{ __('View') }}</a>
-
-
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.sales.invoice', $sale->id) }}">{{ __('Invoice') }}</a>
-
-
-                                                                @if ($sale->saleReturns->count() == 0)
-                                                                    <a class="dropdown-item"
-                                                                        href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>
-                                                                @endif
-
-
-                                                                <a class="dropdown-item" href="javascript:void(0)"
-                                                                    onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
-                                                                @if ($sale?->customer?->name)
-                                                                    <a class="dropdown-item"
-                                                                        href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-1">
+                    <form class="search_form" action="" method="GET">
+                        <div class="row">
+                            <div class="col-xxl-3 col-md-4">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class='bx bx-search'></i>
+                                    </button>
                                 </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="From Date" name="from_date"
+                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <input type="text" placeholder="To Date" name="to_date"
+                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-1 col-md-4">
+                                <div class="form-group">
+                                    <button type="submit" class="btn bg-label-danger reset-form"><i
+                                            class='bx bx-rotate-right'></i></button>
 
-                                {{ $sales->links() }}
+                                    <button type="submit" class="btn bg-label-primary"><i
+                                            class='bx bx-search'></i></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+
+    <div class="card mt-3 mb-3">
+        <div class="card-header">
+            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                <h4 class="section_title"><i class="fas fa-list"></i> Sales List</h4>
+            </div>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                    Excel</button>
+                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                    PDF</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive list_table">
+                <table style="width: 100%;" class="table mb-3">
+                    <thead>
+                        <tr>
+                            <th>{{ __('SN') }}</th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Invoice No') }}</th>
+                            <th>{{ __('Customer') }}</th>
+                            <th>{{ __('Remark') }}</th>
+                            <th>{{ __('Sale Amount') }}</th>
+                            <th>{{ __('Total Amount') }}</th>
+                            <th>{{ __('Paid Amount') }}</th>
+                            <th>{{ __('Due') }}</th>
+                            <th>{{ __('Payment Status') }}</th>
+                            <th>{{ __('Action') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($sales as $key => $sale)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $sale->order_date->format('d-m-y') }}</td>
+                                <td>{{ $sale->invoice }}</td>
+                                <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
+                                <td>{{ $sale->sale_note }}</td>
+                                <td>{{ $sale->total_price }}</td>
+                                <td>{{ $sale->grand_total }}</td>
+                                <td>{{ $sale->paid_amount }}</td>
+                                <td>{{ $sale->due_amount }}</td>
+                                <td>
+                                    @if ($sale->paid_amount == $sale->grand_total)
+                                        <span class="badge badge-success">{{ __('Paid') }}</span>
+                                    @elseif ($sale->due_amount > 0 && $sale->paid_amount < $sale->total_price)
+                                        <span class="badge badge-danger">{{ __('Partial Due') }}</span>
+                                    @else
+                                        <span class="badge badge-danger">{{ __('Due') }}</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="btn-group mb-2">
+                                        <button class="btn btn-info btn-sm dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">{{ __('Action') }}</button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item view-sale" href="javascript:;"
+                                                data-id="{{ $sale->id }}">{{ __('View') }}</a>
+
+
+                                            <a class="dropdown-item"
+                                                href="{{ route('admin.sales.invoice', $sale->id) }}">{{ __('Invoice') }}</a>
+
+
+                                            @if ($sale->saleReturns->count() == 0)
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>
+                                            @endif
+
+
+                                            <a class="dropdown-item" href="javascript:void(0)"
+                                                onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
+                                            @if ($sale?->customer?->name)
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $sales->onEachSide(0)->links() }}
+                </div>
+            @endif
+        </div>
     </div>
     @include('components.admin.preloader')
 
