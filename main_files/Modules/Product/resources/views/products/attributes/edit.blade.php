@@ -56,21 +56,23 @@
                                         </div>
                                         <div class="col-md-8 row offset-md-2 values-container">
                                             @foreach ($attribute->values as $val)
-                                                <div class="form-group col-12">
-                                                    <div class="d-flex justify-content-between">
-                                                        <input type="text" name="values[{{ $val->id }}]"
-                                                            class="form-control" id="values" required
-                                                            value="{{ old('values', $val->name) }}">
-                                                        @if (!$loop->first)
-                                                            <button type="button"
-                                                                class="btn btn-danger btn-sm remove-values ml-2"
-                                                                data-id="{{ $val->id }}"><i
-                                                                    class="fas fa-trash"></i></button>
-                                                        @endif
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <div class="d-flex justify-content-between">
+                                                            <input type="text" name="values[{{ $val->id }}]"
+                                                                class="form-control" id="values" required
+                                                                value="{{ old('values', $val->name) }}">
+                                                            @if (!$loop->first)
+                                                                <button type="button"
+                                                                    class="btn btn-danger btn-sm remove-values ml-2"
+                                                                    data-id="{{ $val->id }}"><i
+                                                                        class="fas fa-trash"></i></button>
+                                                            @endif
+                                                        </div>
+                                                        @error('values')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
                                                     </div>
-                                                    @error('values')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
                                                 </div>
                                             @endforeach
                                         </div>
@@ -104,16 +106,19 @@
                     let html = '';
                     // count of input fields
                     let count = $('.values-container').find('.form-group').length;
-                    html += `<div class="form-group col-12">
-                                <div class="d-flex justify-content-between">
-                                    <input type="text" name="values[]" class="form-control" id="values"
-                                    required placeholder="Value ${count + 1}">
-                                    <button type="button" class="btn btn-danger btn-sm remove-values ml-2"><i class="fas fa-trash"></i></button>
+                    html += `<div class="col-12">
+                                <div class="form-group">
+                                    <div class="d-flex justify-content-between">
+                                        <input type="text" name="values[]" class="form-control" id="values"
+                                        required placeholder="Value ${count + 1}">
+                                        <button type="button" class="btn btn-danger btn-sm remove-values ml-2"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                    @error('values')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
-                                @error('values')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>`;
+                            </div>
+                            `;
                     $('.values-container').append(html)
                 })
                 $('.values-container').on('click', '.remove-values', function() {

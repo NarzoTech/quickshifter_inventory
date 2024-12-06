@@ -41,7 +41,8 @@
                         <div class="col-md-8 offset-md-2">
                             <div class="form-group">
                                 <label for="parent">{{ __('Parent Id') }}</label>
-                                <select name="parent_id" id="parent" class="form-control select2">
+                                <select name="parent_id" id="parent" class="form-control select2"
+                                    data-dropdown-parent="#categoryModal" data-control="select2">
                                     <option value="">{{ __('Select One') }}</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">
@@ -60,9 +61,7 @@
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                <button type="submit" class="btn btn-success" form="categoryForm"><i class="fa fa-save"></i>
-                    {{ __('Save') }}</button>
-
+                <x-admin.save-button :text="__('Save')"></x-admin.save-button>
             </div>
 
         </div>

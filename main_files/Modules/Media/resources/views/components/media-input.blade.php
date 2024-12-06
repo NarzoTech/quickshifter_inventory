@@ -45,13 +45,15 @@
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade active show" id="uploadImage" role="tabpanel"
                             aria-labelledby="upload-tab">
-                            <form id="upload_new_media_form" class="form-group col-md-6">
-                                <div class="upload__box">
-                                    <label class="upload__btn">
-                                        <input type="file" {{ $multiple ?? 'no' == 'yes' ? 'multiple' : '' }}
-                                            data-max_length="20" class="upload__inputfile">
-                                    </label>
-                                    <div class="upload__img-wrap"></div>
+                            <form id="upload_new_media_form" class="col-md-6">
+                                <div class="form-group">
+                                    <div class="upload__box">
+                                        <label class="upload__btn">
+                                            <input type="file" {{ $multiple ?? 'no' == 'yes' ? 'multiple' : '' }}
+                                                data-max_length="20" class="upload__inputfile">
+                                        </label>
+                                        <div class="upload__img-wrap"></div>
+                                    </div>
                                 </div>
 
 
@@ -61,9 +63,11 @@
                         </div>
                         <div class="tab-pane fade" id="mediaLibary" role="tabpanel" aria-labelledby="media-tab">
                             <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <input type="text" name="keyword" class="form-control media-search-box"
-                                        placeholder="{{ __('Search') }}">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" name="keyword" class="form-control media-search-box"
+                                            placeholder="{{ __('Search') }}">
+                                    </div>
                                 </div>
                             </div>
                             <div class="row" id="mediaLibaryList"></div>

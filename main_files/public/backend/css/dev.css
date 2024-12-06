@@ -955,3 +955,11 @@ table tr td {
 .form-group label span {
     display: inline-block;
 }
+
+.tagify.form-control.tags {
+    height: auto;
+}
+
+.tag {
+    padding-top: 5px;
+}

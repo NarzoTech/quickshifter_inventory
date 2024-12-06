@@ -147,25 +147,35 @@
                     <form action="{{ route('admin.vehicle.store') }}" method="POST" id="add-Vehicle-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="col-md-6">
+                                <div class="form-group">
                                 <label for="name">{{ __('Vehicle Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
-                            <div class="form-group col-md-6">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                 <label for="model">{{ __('Model') }}</label>
                                 <input type="text" class="form-control" id="model" name="model">
                             </div>
-                            <div class="form-group col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                 <label for="plate_number">{{ __('Plate Number') }}</label>
                                 <input type="text" class="form-control" id="plate_number" name="plate_number">
                             </div>
-                            <div class="form-group col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                 <label for="color">{{ __('Color') }}</label>
                                 <input type="text" class="form-control" id="color" name="color">
                             </div>
-                            <div class="form-group col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                 <label for="year">{{ __('Year') }}</label>
                                 <input type="text" class="form-control" id="year" name="year">
+                            </div>
                             </div>
                         </div>
                     </form>
@@ -201,31 +211,41 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-md-6">
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                     <label for="name">{{ __('Vehicle Name') }}<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $vehicle->name }}">
                                 </div>
-                                <div class="form-group col-md-6">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                     <label for="model">{{ __('Model') }}</label>
                                     <input type="text" class="form-control" id="model" name="model"
                                         value="{{ $vehicle->model }}">
                                 </div>
-                                <div class="form-group col-md-4">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
                                     <label for="plate_number">{{ __('Plate Number') }}</label>
                                     <input type="text" class="form-control" id="plate_number" name="plate_number"
                                         value="{{ $vehicle->plate_number }}">
                                 </div>
-                                <div class="form-group col-md-4">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
                                     <label for="color">{{ __('Color') }}</label>
                                     <input type="text" class="form-control" id="color" name="color"
                                         value="{{ $vehicle->color }}">
                                 </div>
-                                <div class="form-group col-md-4">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
                                     <label for="year">{{ __('Year') }}</label>
                                     <input type="text" class="form-control" id="year" name="year"
                                         value="{{ $vehicle->year }}">
+                                </div>
                                 </div>
                             </div>
                         </form>

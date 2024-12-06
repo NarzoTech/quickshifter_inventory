@@ -31,32 +31,40 @@
                                     @method('PUT')
 
                                     <div class="row">
-                                        <div class="form-group col-md-8 offset-md-2">
-                                            <label>{{ __('Thumbnail Image') }}<span class="text-danger">*</span></label>
-                                            <div id="image-preview" class="image-preview"
-                                                @if ($media->path ?? false) style="background-image: url('{{ asset($media->path) }}'); background-size: cover; background-position: center center;" @endif>
-                                                <label for="image-upload" id="image-label">{{ __('Image') }}</label>
-                                                <input type="file" name="image" id="image-upload">
+                                        <div class="col-md-8 offset-md-2">
+                                            <div class="form-group">
+                                                <label>{{ __('Thumbnail Image') }}<span class="text-danger">*</span></label>
+                                                <div id="image-preview" class="image-preview"
+                                                    @if ($media->path ?? false) style="background-image: url('{{ asset($media->path) }}'); background-size: cover; background-position: center center;" @endif>
+                                                    <label for="image-upload" id="image-label">{{ __('Image') }}</label>
+                                                    <input type="file" name="image" id="image-upload">
+                                                </div>
+                                                @error('image')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
-                                            @error('image')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
                                         </div>
-                                        <div class="form-group col-md-8 offset-md-2">
-                                            <label>{{ __('Title') }}</label>
-                                            <input data-translate="true" type="text" id="title" class="form-control"
-                                                name="title" value="{{ $media->title }}" disabled>
+                                        <div class="col-md-8 offset-md-2">
+                                            <div class="form-group">
+                                                <label>{{ __('Title') }}</label>
+                                                <input data-translate="true" type="text" id="title"
+                                                    class="form-control" name="title" value="{{ $media->title }}"
+                                                    disabled>
+                                            </div>
                                         </div>
-                                        <div class="form-group col-md-8 offset-md-2">
-                                            <label>{{ __('Description') }}</label>
-                                            <textarea name="description" class="form-control">{{ $media->description }}</textarea>
+                                        <div class="col-md-8 offset-md-2">
+                                            <div class="form-group">
+                                                <label>{{ __('Description') }}</label>
+                                                <textarea name="description" class="form-control">{{ $media->description }}</textarea>
+                                            </div>
                                         </div>
-                                        <div class="form-group col-md-8 offset-md-2">
-                                            <label>{{ __('Alt Text') }}</label>
-                                            <input data-translate="true" type="text" id="alt_text" class="form-control"
-                                                name="alt_text" value="{{ $media->alt_text }}">
+                                        <div class="col-md-8 offset-md-2">
+                                            <div class="form-group">
+                                                <label>{{ __('Alt Text') }}</label>
+                                                <input data-translate="true" type="text" id="alt_text"
+                                                    class="form-control" name="alt_text" value="{{ $media->alt_text }}">
+                                            </div>
                                         </div>
-
                                     </div>
                                     <div class="row">
                                         <div class="text-center col-md-8 offset-md-2">

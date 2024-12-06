@@ -58,8 +58,10 @@
                                 </div>
 
                                 @if (Module::isEnabled('Media'))
-                                    <div class="form-group col-md-8 offset-md-2">
-                                        <x-media::media-input name="image" label_text="Image" requ />
+                                    <div class="col-md-8 offset-md-2">
+                                        <div class="form-group">
+                                            <x-media::media-input name="image" label_text="Image" requ />
+                                        </div>
                                     </div>
                                 @endif
                                 <div class="text-center offset-md-2 col-md-8">

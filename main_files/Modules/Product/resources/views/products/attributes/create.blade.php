@@ -54,12 +54,14 @@
                                             </div>
                                         </div>
                                         <div class="col-md-8 row offset-md-2 values-container">
-                                            <div class="form-group col-12">
+                                            <div class="col-12">
+                                                <div class="form-group">
                                                 <input type="text" name="values[]" class="form-control" id="values"
                                                     required placeholder="Value 1">
                                                 @error('values')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
+                                            </div>
                                             </div>
                                         </div>
 
@@ -92,7 +94,8 @@
                     let html = '';
                     // count of input fields
                     let count = $('.values-container').find('.form-group').length;
-                    html += `<div class="form-group col-12">
+                    html += `<div class="col-12">
+                                <div class="form-group">
                                 <div class="d-flex justify-content-between">
                                     <input type="text" name="values[]" class="form-control" id="values"
                                     required placeholder="Value ${count + 1}">
@@ -101,7 +104,9 @@
                                 @error('values')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
-                            </div>`;
+                            </div>
+                            </div>
+                            `;
                     $('.values-container').append(html)
                 })
                 $('.values-container').on('click', '.remove-values', function() {

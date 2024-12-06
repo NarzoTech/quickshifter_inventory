@@ -88,7 +88,7 @@
                     data-bs-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer" class="btn btn-primary"> <i
                         class="fa fa-plus"></i>
-                    {{ __('Add Supplier Group') }}</a>
+                    {{ __('Add Customer') }}</a>
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
                     Excel</button>
                 <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
@@ -249,7 +249,7 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-md-6">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="name">{{ __('Customer Name') }}<span
                                                 class="text-danger">*</span></label>
@@ -258,7 +258,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="group_id">{{ __('Customer Group') }}</label>
                                         <select name="group_id" id="group_id" class="form-control">
@@ -335,7 +335,7 @@
                                     <div class="form-group">
                                         <label for="date">{{ __('Date') }}</label>
                                         <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ $user->date }}">
+                                            name="date" value="{{ $user->date }}" autocomplete="off">
                                     </div>
                                 </div>
 
@@ -352,14 +352,18 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                    <div class="form-group">
-                                        <div class=" d-flex justify-content-center align-items-center">
-                                        <label class="custom-switch mt-2">
-                                            <input type="checkbox" name="guest" class="custom-switch-input"
-                                                value="1" @if ($user->guest) checked @endif>
-                                            <span class="custom-switch-indicator"></span>
-                                            <label for="guest" class="ml-2">{{ __('Guest Customer') }}</label>
-                                        </label>
+
+                                    <div class="form-group mb-0">
+                                        <div class="guest_customer_check">
+                                            <label class="switch switch-square">
+                                                <input type="checkbox" name="guest" class="switch-input"
+                                                    value="1" @if ($user->guest) checked @endif />
+                                                <span class="switch-toggle-slider">
+                                                    <span class="switch-on"><i class="bx bx-check"></i></span>
+                                                    <span class="switch-off"><i class="bx bx-x"></i></span>
+                                                </span>
+                                                <span class="switch-label">{{ __('Guest Customer') }}</span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
@@ -458,8 +462,10 @@
                         @method('DELETE')
                         <div class="row">
                             <div class="col-12">
-                                <input type="text" class="form-control" name="password" id="password"
-                                    placeholder="Enter Password *">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="password" id="password"
+                                        placeholder="Enter Password *">
+                                </div>
                             </div>
                         </div>
                     </form>

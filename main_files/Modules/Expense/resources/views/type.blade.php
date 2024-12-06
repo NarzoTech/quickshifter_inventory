@@ -151,10 +151,12 @@
                     <form action="{{ route('admin.expense.type.store') }}" method="POST" id="add-bank-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-12">
+                            <div class="col-12">
+                                <div class="form-group">
                                 <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
+                        </div>
                         </div>
                     </form>
                 </div>
@@ -187,10 +189,12 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-12">
+                                <div class="col-12">
+                                    <div class="form-group">
                                     <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $type->name }}">
+                                </div>
                                 </div>
                             </div>
                         </form>

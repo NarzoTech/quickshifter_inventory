@@ -25,22 +25,28 @@
                                     @csrf
                                     @method('PUT')
                                     <div class="row">
-                                        <div class="form-group col-12">
-                                            <label>{{ __('New Image') }}</label>
-                                            <input id="profileImgInput" type="file" class="form-control-file"
-                                                name="image">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('New Image') }}</label>
+                                                <input id="profileImgInput" type="file" class="form-control-file"
+                                                    name="image">
+                                            </div>
                                         </div>
 
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" value="{{ $admin->name }}"
-                                                name="name">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Name') }} <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" value="{{ $admin->name }}"
+                                                    name="name">
+                                            </div>
                                         </div>
 
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Email') }} <span class="text-danger">*</span></label>
-                                            <input type="email" class="form-control" value="{{ $admin->email }}"
-                                                name="email">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Email') }} <span class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" value="{{ $admin->email }}"
+                                                    name="email">
+                                            </div>
                                         </div>
                                     </div>
                                     @adminCan('admin.profile.edit')
@@ -72,19 +78,27 @@
                                     @method('PUT')
                                     <div class="row">
 
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Current Password') }} <span class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" name="current_password">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Current Password') }} <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" name="current_password">
+                                            </div>
                                         </div>
 
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Password') }} <span class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" name="password">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Password') }} <span class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" name="password">
+                                            </div>
                                         </div>
 
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Confirm Password') }} <span class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" name="password_confirmation">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Confirm Password') }} <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" name="password_confirmation">
+                                            </div>
                                         </div>
 
                                     </div>

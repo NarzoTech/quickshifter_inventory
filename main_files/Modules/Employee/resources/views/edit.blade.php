@@ -3,17 +3,7 @@
     <title>{{ __('Create Employee') }}</title>
 @endsection
 
-@push('css')
-    <style>
-        .tagify.form-control.tags {
-            height: auto;
-        }
 
-        tag {
-            padding-top: 5px;
-        }
-    </style>
-@endpush
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -35,72 +25,94 @@
                                     @method('PUT')
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label for="">{{ __('Employee Name') }}<span
-                                                    class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" name="name"
-                                                placeholder="Employee Name" value="{{ $employee->name }}">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Employee Name') }}<span
+                                                        class="text-danger">*</span>
+                                                </label>
+                                                <input type="text" class="form-control" name="name"
+                                                    placeholder="Employee Name" value="{{ $employee->name }}">
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="">{{ __('Designation') }}</label>
-                                            <input type="text" class="form-control" name="designation"
-                                                placeholder="Designation" value="{{ $employee->designation }}">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Designation') }}</label>
+                                                <input type="text" class="form-control" name="designation"
+                                                    placeholder="Designation" value="{{ $employee->designation }}">
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="form-group row">
+                                    <div class="row">
 
                                         <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('Email') }}</label>
-                                            <input type="email" class="form-control" name="email" placeholder="Email"
-                                                id="email" value="{{ $employee->email }}">
-                                        </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('Mobile') }}</label>
-                                            <input type="text" class="form-control" name="mobile" placeholder="Mobile"
-                                                id="mobile" value="{{ $employee->mobile }}">
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('NID Number') }}</label>
-                                            <input type="text" class="form-control" name="nid"
-                                                placeholder="NID Number" id="nid" value="{{ $employee->nid }}">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Email') }}</label>
+                                                <input type="email" class="form-control" name="email"
+                                                    placeholder="Email" id="email" value="{{ $employee->email }}">
+                                            </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('Image') }}</label>
-                                            <input type="file" class="form-control" name="image" placeholder="Image"
-                                                id="image">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Mobile') }}</label>
+                                                <input type="text" class="form-control" name="mobile"
+                                                    placeholder="Mobile" id="mobile" value="{{ $employee->mobile }}">
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('Address') }}
-                                            </label>
-                                            <input type="text" class="form-control" name="address" placeholder="Address"
-                                                id="address" value="{{ $employee->address }}">
-                                        </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('Joining Date') }}
-                                            </label>
-                                            <input type="text" class="form-control datepicker" name="join_date"
-                                                value="{{ $employee->join_date }}">
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('Salary') }}
-                                            </label>
-                                            <input type="text" class="form-control" name="salary" placeholder="Salary"
-                                                id="salary" value="{{ $employee->salary }}">
+                                            <div class="form-group">
+                                                <label for="">{{ __('NID Number') }}</label>
+                                                <input type="text" class="form-control" name="nid"
+                                                    placeholder="NID Number" id="nid" value="{{ $employee->nid }}">
+                                            </div>
                                         </div>
 
                                         <div class="col-md-6 mb-3">
-                                            <label for="">{{ __('Status') }}
-                                            </label>
-                                            <select name="status" id="status" class="form-control">
-                                                <option value="1" @if ($employee->status == 1) selected @endif>
-                                                    {{ __('Active') }}</option>
-                                                <option value="0" @if ($employee->status == 0) selected @endif>
-                                                    {{ __('Inactive') }}</option>
-                                            </select>
+                                            <div class="form-group">
+                                                <label for="">{{ __('Image') }}</label>
+                                                <input type="file" class="form-control" name="image"
+                                                    placeholder="Image" id="image">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Address') }}
+                                                </label>
+                                                <input type="text" class="form-control" name="address"
+                                                    placeholder="Address" id="address" value="{{ $employee->address }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Joining Date') }}
+                                                </label>
+                                                <input type="text" class="form-control datepicker" name="join_date"
+                                                    value="{{ $employee->join_date }}" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Salary') }}
+                                                </label>
+                                                <input type="text" class="form-control" name="salary"
+                                                    placeholder="Salary" id="salary" value="{{ $employee->salary }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Status') }}
+                                                </label>
+                                                <select name="status" id="status" class="form-control">
+                                                    <option value="1"
+                                                        @if ($employee->status == 1) selected @endif>
+                                                        {{ __('Active') }}</option>
+                                                    <option value="0"
+                                                        @if ($employee->status == 0) selected @endif>
+                                                        {{ __('Inactive') }}</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">

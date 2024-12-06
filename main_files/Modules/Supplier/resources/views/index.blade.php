@@ -220,27 +220,35 @@
                     <form action="{{ route('admin.suppliers.store') }}" method="POST" id="add-supplier-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="name">{{ __('Supplier Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="company">{{ __('Company') }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" id="basic-addon11"><i
-                                            class="fa fa-briefcase"></i></span>
-                                    <input type="text" class="form-control" id="company" name="company">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Supplier Name') }}<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="phone">{{ __('Phone') }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" id="basic-addon11"><i
-                                            class="fas fa-phone-alt"></i></span>
-                                    <input type="text" class="form-control" id="phone" name="phone">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="company">{{ __('Company') }}</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon11"><i
+                                                class="fa fa-briefcase"></i></span>
+                                        <input type="text" class="form-control" id="company" name="company">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="phone">{{ __('Phone') }}</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon11"><i
+                                                class="fas fa-phone-alt"></i></span>
+                                        <input type="text" class="form-control" id="phone" name="phone">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                 <label for="email">{{ __('Email') }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon11"><i
@@ -248,7 +256,9 @@
                                     <input type="email" class="form-control" id="email" name="email">
                                 </div>
                             </div>
-                            <div class="form-group col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                 <label for="group_id">{{ __('Supplier Group') }}</label>
                                 <select name="group_id" id="group_id" class="form-select">
                                     <option value="">{{ __('Select Group') }}</option>
@@ -257,7 +267,9 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                 <label for="area_id">{{ __('Area') }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text" id="basic-addon11"><i
@@ -271,28 +283,37 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group col-md-4 ">
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="form-group">
                                 <label for="date">{{ __('Date') }}</label>
                                 <input type="text" class="form-control datepicker" id="date" name="date">
                             </div>
+                            </div>
 
-                            <div class="form-group col-md-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
                                 <label for="status">{{ __('Status') }}</label>
                                 <select name="status" id="status" class="form-control">
                                     <option value="1">{{ __('Active') }}</option>
                                     <option value="0">{{ __('Inactive') }}</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-4 d-flex justify-content-center align-items-center">
+                            </div>
+                            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                <div class="form-group">
                                 <label class="custom-switch mt-2">
                                     <input type="checkbox" name="guest" class="custom-switch-input" value="1">
                                     <span class="custom-switch-indicator"></span>
                                     <label for="guest" class="ml-2">{{ __('Guest Supplier') }}</label>
                                 </label>
                             </div>
-                            <div class="form-group col-md-12">
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
                                 <label for="address">{{ __('Address') }}</label>
                                 <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
+                            </div>
                             </div>
                         </div>
                     </form>
@@ -320,48 +341,65 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-md-6">
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                     <label for="name">{{ __('Supplier Name') }}<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $supplier->name }}">
                                 </div>
-                                <div class="form-group col-md-6">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                     <label for="company">{{ __('Company') }}</label>
                                     <input type="text" class="form-control" id="company" name="company"
                                         value="{{ $supplier->company }}">
                                 </div>
-                                <div class="form-group col-md-6">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                     <label for="phone">{{ __('Phone') }}</label>
                                     <input type="text" class="form-control" id="phone" name="phone"
                                         value="{{ $supplier->phone }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
                                     <label for="email">{{ __('Email') }}</label>
                                     <input type="email" class="form-control" id="email" name="email"
                                         value="{{ $supplier->email }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
                                     <label for="city">{{ __('City') }}</label>
                                     <input type="text" class="form-control" id="city" name="city"
                                         value="{{ $supplier->city }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
                                     <label for="state">{{ __('State') }}</label>
                                     <input type="text" class="form-control" id="state" name="state"
                                         value="{{ $supplier->state }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
                                     <label for="country">{{ __('Country') }}</label>
                                     <input type="text" class="form-control" id="country" name="country"
                                         value="{{ $supplier->country }}">
                                 </div>
-                                <div class="form-group col-md-6 ">
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
                                     <label for="tax_number">{{ __('Tax Number') }}</label>
                                     <input type="text" class="form-control" id="tax_number" name="tax_number"
                                         value="{{ $supplier->tax_number }}">
                                 </div>
-                                <div class="form-group col-md-6">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                     <label for="status">{{ __('Status') }}</label>
                                     <select name="status" id="status" class="form-control">
                                         <option value="1" @if ($supplier->status == 1) selected @endif>
@@ -370,9 +408,12 @@
                                             {{ __('Inactive') }}</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-12">
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
                                     <label for="address">{{ __('Address') }}</label>
                                     <textarea name="address" id="address" class="form-control height-80px" rows="3">{{ $supplier->address }}</textarea>
+                                </div>
                                 </div>
                             </div>
                         </form>

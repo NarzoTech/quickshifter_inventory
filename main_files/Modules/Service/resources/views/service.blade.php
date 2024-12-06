@@ -150,39 +150,52 @@
                         enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-12">
-                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
-                            <div class="form-group col-12">
-                                <label for="category_id">{{ __('Category') }}<span class="text-danger">*</span></label>
-                                <select name="category_id" id="status" class="form-control select2">
-                                    <option value="">{{ __('Select Category') }}</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="category_id">{{ __('Category') }}<span
+                                            class="text-danger">*</span></label>
+                                    <select name="category_id" id="status" class="form-control select2">
+                                        <option value="">{{ __('Select Category') }}</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group col-12">
-                                <label for="price">{{ __('Price') }} <span class="text-danger">*</span> </label>
-                                <input type="number" class="form-control" id="price" name="price"
-                                    value="0">
-                                <small class="form-text text-danger">Leave 0 for blank</small>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="price">{{ __('Price') }} <span class="text-danger">*</span> </label>
+                                    <input type="number" class="form-control" id="price" name="price"
+                                        value="0">
+                                    <small class="form-text text-danger">Leave 0 for blank</small>
+                                </div>
                             </div>
-                            <div class="form-group col-12">
-                                <label for="image">{{ __('Image') }}</label>
-                                <input type="file" class="form-control" id="image" name="image">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="image">{{ __('Image') }}</label>
+                                    <input type="file" class="form-control" id="image" name="image">
+                                </div>
                             </div>
-                            <div class="form-group col-12">
-                                <label for="description">{{ __('Description') }}</label>
-                                <textarea name="description" class="form-control height-80px" id="description" cols="30" rows="10"></textarea>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="description">{{ __('Description') }}</label>
+                                    <textarea name="description" class="form-control height-80px" id="description" cols="30" rows="10"></textarea>
+                                </div>
                             </div>
-                            <div class="form-group col-12">
-                                <label for="name">{{ __('Status') }}<span class="text-danger">*</span></label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">{{ __('Active') }}</option>
-                                    <option value="0">{{ __('Inactive') }}</option>
-                                </select>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Status') }}<span class="text-danger">*</span></label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1">{{ __('Active') }}</option>
+                                        <option value="0">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -218,48 +231,62 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-12">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $service->name }}">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $service->name }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-12">
-                                    <label for="category_id">{{ __('Category') }}<span
-                                            class="text-danger">*</span></label>
-                                    <select name="category_id" id="status" class="form-control select2">
-                                        <option value="">{{ __('Select Category') }}</option>
-                                        @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}"
-                                                {{ $service->category_id == $category->id ? 'selected' : '' }}>
-                                                {{ $category->name }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="category_id">{{ __('Category') }}<span
+                                                class="text-danger">*</span></label>
+                                        <select name="category_id" id="status" class="form-control select2">
+                                            <option value="">{{ __('Select Category') }}</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}"
+                                                    {{ $service->category_id == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-12">
-                                    <label for="price">{{ __('Price') }}</label>
-                                    <input type="number" class="form-control" id="price" name="price"
-                                        value="{{ $service->price }}">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="price">{{ __('Price') }}</label>
+                                        <input type="number" class="form-control" id="price" name="price"
+                                            value="{{ $service->price }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-12">
-                                    <label for="image">{{ __('Image') }}</label>
-                                    <input type="file" class="form-control" id="image" name="image">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="image">{{ __('Image') }}</label>
+                                        <input type="file" class="form-control" id="image" name="image">
+                                    </div>
                                 </div>
-                                <div class="form-group col-12">
-                                    <label for="description">{{ __('Description') }}</label>
-                                    <textarea name="description" class="form-control height-80px" id="description" cols="30" rows="10">{{ $service->description }}</textarea>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="description">{{ __('Description') }}</label>
+                                        <textarea name="description" class="form-control height-80px" id="description" cols="30" rows="10">{{ $service->description }}</textarea>
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-12">
-                                    <label for="status">{{ __('Status') }}<span class="text-danger">*</span></label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1" {{ $service->status == 1 ? 'selected' : '' }}>
-                                            {{ __('Active') }}
-                                        </option>
-                                        <option value="0" {{ $service->status == 0 ? 'selected' : '' }}>
-                                            {{ __('Inactive') }}
-                                        </option>
-                                    </select>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="status">{{ __('Status') }}<span
+                                                class="text-danger">*</span></label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="1" {{ $service->status == 1 ? 'selected' : '' }}>
+                                                {{ __('Active') }}
+                                            </option>
+                                            <option value="0" {{ $service->status == 0 ? 'selected' : '' }}>
+                                                {{ __('Inactive') }}
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
 
                             </div>

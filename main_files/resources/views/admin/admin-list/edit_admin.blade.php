@@ -35,44 +35,55 @@
                                     @csrf
                                     @method('PUT')
                                     <div class="row">
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="name" class="form-control" name="name"
-                                                value="{{ $admin->name }}">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Name') }} <span class="text-danger">*</span></label>
+                                                <input type="text" id="name" class="form-control" name="name"
+                                                    value="{{ $admin->name }}">
+                                            </div>
                                         </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Email') }} <span class="text-danger">*</span></label>
-                                            <input type="email" id="slug" class="form-control" name="email"
-                                                value="{{ $admin->email }}">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Email') }} <span class="text-danger">*</span></label>
+                                                <input type="email" id="slug" class="form-control" name="email"
+                                                    value="{{ $admin->email }}">
+                                            </div>
                                         </div>
-                                        <div class="form-group col-12">
-                                            <label
-                                                title="Leave it blank if you don't want to change password">{{ __('Password') }}
-                                                <span class="text-success">*</span></label>
-                                            <input type="password" id="password" class="form-control" name="password">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label
+                                                    title="Leave it blank if you don't want to change password">{{ __('Password') }}
+                                                    <span class="text-success">*</span></label>
+                                                <input type="password" id="password" class="form-control" name="password">
+                                            </div>
                                         </div>
 
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Status') }} <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
-                                                <option value="active" @selected($admin->status == 'active')>
-                                                    {{ __('Active') }}</option>
-                                                <option value="inactive" @selected($admin->status == 'inactive')>
-                                                    {{ __('Inactive') }}</option>
-                                            </select>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Status') }} <span class="text-danger">*</span></label>
+                                                <select name="status" class="form-control">
+                                                    <option value="active" @selected($admin->status == 'active')>
+                                                        {{ __('Active') }}</option>
+                                                    <option value="inactive" @selected($admin->status == 'inactive')>
+                                                        {{ __('Inactive') }}</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="form-group col-12">
-                                            <label for="role">{{ __('Assign Role') }} <span
-                                                    class="text-danger">*</span></label>
-                                            <select name="role[]" id="role"
-                                                class="form-control select2 @error('role') is-invalid @enderror" multiple>
-                                                <option value="" disabled>{{ __('Select Role') }}</option>
-                                                @foreach ($roles as $role)
-                                                    <option value="{{ $role->name }}" @selected($admin->hasRole($role->name))>
-                                                        {{ $role->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="role">{{ __('Assign Role') }} <span
+                                                        class="text-danger">*</span></label>
+                                                <select name="role[]" id="role"
+                                                    class="form-control select2 @error('role') is-invalid @enderror"
+                                                    multiple>
+                                                    <option value="" disabled>{{ __('Select Role') }}</option>
+                                                    @foreach ($roles as $role)
+                                                        <option value="{{ $role->name }}" @selected($admin->hasRole($role->name))>
+                                                            {{ $role->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">

@@ -13,45 +13,57 @@
                 <form action="javascript:;" method="post" enctype="multipart/form-data" id="unitForm">
                     @csrf
                     <div class="row">
-                        <div class="form-group col-12">
-                            <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                            <input type="text" id="unitName" class="form-control" name="name" required>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>{{ __('Name') }} <span class="text-danger">*</span></label>
+                                <input type="text" id="unitName" class="form-control" name="name" required>
+                            </div>
                         </div>
-                        <div class="form-group col-12">
-                            <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
-                            <input type="text" id="ShortName" class="form-control" name="ShortName" required>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
+                                <input type="text" id="ShortName" class="form-control" name="ShortName" required>
+                            </div>
                         </div>
-                        <div class="form-group col-12">
-                            <label>{{ __('Base Unit') }}</label>
-                            <select name="base_unit" id="base_unit" class="form-control">
-                                <option value="">{{ __('Select Base Unit') }}</option>
-                                @foreach ($parentUnits as $parentUnit)
-                                    <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>{{ __('Base Unit') }}</label>
+                                <select name="base_unit" id="base_unit" class="form-control">
+                                    <option value="">{{ __('Select Base Unit') }}</option>
+                                    @foreach ($parentUnits as $parentUnit)
+                                        <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group col-12 operator d-none">
-                            <label>{{ __('Operator') }}</label>
-                            <select name="operator" id="operator" class="form-control">
-                                <option value="*">{{ __('Multiply') }} (*)</option>
-                                <option value="/">{{ __('Divide') }} (/)</option>
-                            </select>
+                        <div class="col-12 operator d-none">
+                            <div class="form-group">
+                                <label>{{ __('Operator') }}</label>
+                                <select name="operator" id="operator" class="form-control">
+                                    <option value="*">{{ __('Multiply') }} (*)</option>
+                                    <option value="/">{{ __('Divide') }} (/)</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group col-12 operator_value d-none">
-                            <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
-                            <input type="text" id="operator_value" class="form-control" name="operator_value"
-                                value="1">
+                        <div class="col-12 operator_value d-none">
+                            <div class="form-group">
+                                <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
+                                <input type="text" id="operator_value" class="form-control" name="operator_value"
+                                    value="1">
+                            </div>
                         </div>
-                        <div class="form-group col-12">
-                            <label>{{ __('Status') }} </label>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <input type="radio" name='status' value="1" checked />
-                                    <label>{{ __('Active') }} </label>
-                                </div>
-                                <div>
-                                    <input type="radio" name='status' value="0" />
-                                    <label>{{ __('Inactive') }} </label>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>{{ __('Status') }} </label>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <input type="radio" name='status' value="1" checked />
+                                        <label>{{ __('Active') }} </label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" name='status' value="0" />
+                                        <label>{{ __('Inactive') }} </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

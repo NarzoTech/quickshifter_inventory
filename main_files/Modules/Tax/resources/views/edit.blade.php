@@ -28,27 +28,33 @@
                                     @csrf
                                     @method('PUT')
                                     <div class="row">
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                            <input type="text" id="name" class="form-control" name="name"
-                                                value="{{ $tax->name }}">
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Rate') }} <span class="text-danger">*</span></label>
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text">%</span>
-                                                <input type="text" class="form-control" name="rate"
-                                                    value="{{ $tax->rate }}">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Name') }} <span class="text-danger">*</span></label>
+                                                <input type="text" id="name" class="form-control" name="name"
+                                                    value="{{ $tax->name }}">
                                             </div>
                                         </div>
-                                        <div class="form-group col-12">
-                                            <label>{{ __('Status') }} <span class="text-danger">*</span></label>
-                                            <select name="status" class="form-control">
-                                                <option {{ $tax->status == 1 ? 'selected' : '' }} value="1">
-                                                    {{ __('Active') }}</option>
-                                                <option {{ $tax->status == 0 ? 'selected' : '' }} value="0">
-                                                    {{ __('Inactive') }}</option>
-                                            </select>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Rate') }} <span class="text-danger">*</span></label>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">%</span>
+                                                    <input type="text" class="form-control" name="rate"
+                                                        value="{{ $tax->rate }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label>{{ __('Status') }} <span class="text-danger">*</span></label>
+                                                <select name="status" class="form-control">
+                                                    <option {{ $tax->status == 1 ? 'selected' : '' }} value="1">
+                                                        {{ __('Active') }}</option>
+                                                    <option {{ $tax->status == 0 ? 'selected' : '' }} value="0">
+                                                        {{ __('Inactive') }}</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">

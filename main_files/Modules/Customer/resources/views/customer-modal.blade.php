@@ -97,7 +97,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="date">{{ __('Date') }}</label>
-                                <input type="text" class="form-control datepicker" id="date" name="date">
+                                <input type="text" class="form-control datepicker" id="date" name="date"
+                                    autocomplete="off">
                             </div>
                         </div>
 

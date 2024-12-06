@@ -163,61 +163,77 @@
                     <form action="{{ route('admin.assets.store') }}" method="POST" id="add-asset-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-12">
-                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
-                            </div>
-
-                            <div class="form-group col-12">
-                                <label for="">{{ __('Date') }}</label>
-                                <input type="text" name="date" value="{{ now()->format('d-m-Y') }}"
-                                    class="form-control datepicker" required>
-                            </div>
-
-                            <div class="form-group col-12">
-                                <label for="">{{ __('Asset Category') }}</label>
-                                <select name="type_id" class="form-control" required>
-                                    <option value="">{{ __('select') }}</option>
-                                    @foreach ($types as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group col-12" style="display: none;">
-                                <label for="">{{ __('Branch') }}</label>
-                                <select name="branch_id" class="form-control" id="branch_id">
-                                </select>
-                            </div>
-
-                            <div class="form-group col-12">
-                                <div>
-                                    <label for="" class="mt-2">{{ __('Payment Type') }}</label>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
                                 </div>
-                                <div>
-                                    <select name="payment_type" id="" class="form-control">
-                                        <option value="">{{ __('Payment Type') }}</option>
-                                        @foreach (accountList() as $key => $list)
-                                            <option value="{{ $key }}">
-                                                {{ $list }}
-                                            </option>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="">{{ __('Date') }}</label>
+                                    <input type="text" name="date" value="{{ now()->format('d-m-Y') }}"
+                                        class="form-control datepicker" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="">{{ __('Asset Category') }}</label>
+                                    <select name="type_id" class="form-control" required>
+                                        <option value="">{{ __('select') }}</option>
+                                        @foreach ($types as $type)
+                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="form-group col-12 accounts">
-
+                            <div class="col-12" style="display: none;">
+                                <div class="form-group">
+                                    <label for="">{{ __('Branch') }}</label>
+                                    <select name="branch_id" class="form-control" id="branch_id">
+                                    </select>
+                                </div>
                             </div>
 
-                            <div class="form-group col-12">
-                                <label for="">{{ __('Amount') }}</label>
-                                <input type="number" name="amount" class="form-control" required>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <div>
+                                        <label for="" class="mt-2">{{ __('Payment Type') }}</label>
+                                    </div>
+                                    <div>
+                                        <select name="payment_type" id="" class="form-control">
+                                            <option value="">{{ __('Payment Type') }}</option>
+                                            @foreach (accountList() as $key => $list)
+                                                <option value="{{ $key }}">
+                                                    {{ $list }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group col-12">
-                                <label for="">{{ __('Note') }}</label>
-                                <textarea name="note" rows="3" class="form-control"></textarea>
+                            <div class="col-12">
+                                <div class="form-group accounts">
+
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="">{{ __('Amount') }}</label>
+                                    <input type="number" name="amount" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="">{{ __('Note') }}</label>
+                                    <textarea name="note" rows="3" class="form-control"></textarea>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -250,53 +266,69 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-12">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $type->name }}">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $type->name }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-12">
-                                    <label for="">{{ __('Date') }}</label>
-                                    <input type="text" name="date" value="{{ $type->date }}"
-                                        class="form-control datepicker" required>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="">{{ __('Date') }}</label>
+                                        <input type="text" name="date" value="{{ $type->date }}"
+                                            class="form-control datepicker" required>
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-12">
-                                    <label for="">{{ __('Asset Category') }}</label>
-                                    <select name="type_id" class="form-control" required>
-                                        <option value="">{{ __('select') }}</option>
-                                        @foreach ($types as $cat)
-                                            <option value="{{ $cat->id }}"
-                                                {{ $cat->id == $cat->id ? 'selected' : '' }}>{{ $cat->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="">{{ __('Asset Category') }}</label>
+                                        <select name="type_id" class="form-control" required>
+                                            <option value="">{{ __('select') }}</option>
+                                            @foreach ($types as $cat)
+                                                <option value="{{ $cat->id }}"
+                                                    {{ $cat->id == $cat->id ? 'selected' : '' }}>{{ $cat->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-12">
-                                    <label for="name">{{ __('Payment Type') }}<span
-                                            class="text-danger">*</span></label>
-                                    <select name="payment_type" id="" class="form-control">
-                                        <option value="">{{ __('Payment Type') }}</option>
-                                        @foreach (accountList() as $key => $list)
-                                            <option value="{{ $key }}"
-                                                {{ $key == $type->payment_type ? 'selected' : '' }}>{{ $list }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="name">{{ __('Payment Type') }}<span
+                                                class="text-danger">*</span></label>
+                                        <select name="payment_type" id="" class="form-control">
+                                            <option value="">{{ __('Payment Type') }}</option>
+                                            @foreach (accountList() as $key => $list)
+                                                <option value="{{ $key }}"
+                                                    {{ $key == $type->payment_type ? 'selected' : '' }}>
+                                                    {{ $list }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-12 accounts">
-                                    <input type="hidden" name="account_id" value="{{ $type->account_id }}">
+                                <div class="col-12">
+                                    <div class="form-group accounts">
+                                        <input type="hidden" name="account_id" value="{{ $type->account_id }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-12">
-                                    <label for="">{{ __('Amount') }}</label>
-                                    <input type="number" name="amount" class="form-control" required
-                                        value="{{ $type->amount }}">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="">{{ __('Amount') }}</label>
+                                        <input type="number" name="amount" class="form-control" required
+                                            value="{{ $type->amount }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-12">
-                                    <label for="">{{ __('Note') }}</label>
-                                    <textarea name="note" rows="3" class="form-control">{{ $type->note }}</textarea>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="">{{ __('Note') }}</label>
+                                        <textarea name="note" rows="3" class="form-control">{{ $type->note }}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -322,7 +354,6 @@
             let accounts = @json($accounts);
             $('select[name="payment_type"]').on('change', function() {
                 const paymentType = $(this).val();
-                console.log(paymentType);
                 let html = `<label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
                     <select name="account_id" id="" class="form-control">`;
                 const filterAccount = accounts.filter(account => account.account_type === paymentType);

@@ -65,8 +65,10 @@
                                     @php
                                         $image = [$brand->image ?? $brand->image];
                                     @endphp
-                                    <div class="form-group col-md-8 offset-md-2">
+                                    <div class="col-md-8 offset-md-2">
+                                        <div class="form-group">
                                         <x-media::media-input name="image" label_text="Image" :dataImages="$image" />
+                                        </div>
                                     </div>
                                 @endif
                                 <div class="text-center offset-md-2 col-md-8">

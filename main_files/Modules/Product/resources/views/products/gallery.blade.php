@@ -3,17 +3,7 @@
     <title>{{ __('Product Gallery Images') }}</title>
 @endsection
 
-@push('css')
-    <style>
-        .tagify.form-control.tags {
-            height: auto;
-        }
 
-        tag {
-            padding-top: 5px;
-        }
-    </style>
-@endpush
 @section('content')
     <div class="main-content">
         <section class="section">

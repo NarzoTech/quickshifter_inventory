@@ -187,42 +187,56 @@
                         id="add-supplier-due">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-md-4">
-                                <label for="supplier_id">{{ __('Supplier Name') }}</label>
-                                <select name="supplier_id" id="supplier_id" class="form-control select2"
-                                    data-control="select2" data-dropdown-parent="#addSupplier">
-                                    <option value="">{{ __('Select Group') }}</option>
-                                    @foreach ($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}">{{ $supplier->name }} -
-                                            {{ $supplier->phone }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="supplier_id">{{ __('Supplier Name') }}</label>
+                                    <select name="supplier_id" id="supplier_id" class="form-control select2"
+                                        data-control="select2" data-dropdown-parent="#addSupplier">
+                                        <option value="">{{ __('Select Group') }}</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}">{{ $supplier->name }} -
+                                                {{ $supplier->phone }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="date">{{ __('Date') }}</label>
-                                <input type="text" class="form-control datepicker" id="date" name="date"
-                                    value="{{ date('d-m-Y') }}">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="date">{{ __('Date') }}</label>
+                                    <input type="text" class="form-control datepicker" id="date" name="date"
+                                        value="{{ date('d-m-Y') }}">
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="memo_number">{{ __('Memo No') }}</label>
-                                <input type="text" class="form-control" id="memo_number" name="memo_number">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="memo_number">{{ __('Memo No') }}</label>
+                                    <input type="text" class="form-control" id="memo_number" name="memo_number">
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="amount">{{ __('Total Amount') }}</label>
-                                <input type="text" class="form-control" id="amount" name="amount">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="amount">{{ __('Total Amount') }}</label>
+                                    <input type="text" class="form-control" id="amount" name="amount">
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="paid">{{ __('Paid') }}</label>
-                                <input type="text" class="form-control" id="paid" name="paid">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="paid">{{ __('Paid') }}</label>
+                                    <input type="text" class="form-control" id="paid" name="paid">
+                                </div>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label for="due">{{ __('Due') }}</label>
-                                <input type="text" class="form-control" id="due" name="due">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="due">{{ __('Due') }}</label>
+                                    <input type="text" class="form-control" id="due" name="due">
+                                </div>
                             </div>
 
-                            <div class="form-group col-md-12">
-                                <label for="description">{{ __('Description') }}</label>
-                                <textarea name="description" id="description" class="form-control height-80px" rows="3"></textarea>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="description">{{ __('Description') }}</label>
+                                    <textarea name="description" id="description" class="form-control height-80px" rows="3"></textarea>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -257,48 +271,63 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-md-4">
-                                    <label for="supplier_id">{{ __('supplier Name') }}</label>
-                                    <select name="supplier_id" id="supplier_id" class="form-control select2"
-                                        data-control="select2" data-dropdown-parent="#editsupplier-{{ $summery->id }}">
-                                        <option value="">{{ __('Select Group') }}</option>
-                                        @foreach ($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}"
-                                                {{ $supplier->id == $summery->supplier_id ? 'selected' : '' }}>
-                                                {{ $supplier->name }} -
-                                                {{ $supplier->phone }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="supplier_id">{{ __('supplier Name') }}</label>
+                                        <select name="supplier_id" id="supplier_id" class="form-control select2"
+                                            data-control="select2"
+                                            data-dropdown-parent="#editsupplier-{{ $summery->id }}">
+                                            <option value="">{{ __('Select Group') }}</option>
+                                            @foreach ($suppliers as $supplier)
+                                                <option value="{{ $supplier->id }}"
+                                                    {{ $supplier->id == $summery->supplier_id ? 'selected' : '' }}>
+                                                    {{ $supplier->name }} -
+                                                    {{ $supplier->phone }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="date">{{ __('Date') }}</label>
-                                    <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ now()->parse($summery->date)->format('d-m-Y') }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="date">{{ __('Date') }}</label>
+                                        <input type="text" class="form-control datepicker" id="date"
+                                            name="date" value="{{ now()->parse($summery->date)->format('d-m-Y') }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="memo_number">{{ __('Memo No') }}</label>
-                                    <input type="text" class="form-control" id="memo_number" name="memo_number"
-                                        value="{{ $summery->memo_number }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="memo_number">{{ __('Memo No') }}</label>
+                                        <input type="text" class="form-control" id="memo_number" name="memo_number"
+                                            value="{{ $summery->memo_number }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="amount">{{ __('Total Amount') }}</label>
-                                    <input type="text" class="form-control" id="amount" name="amount"
-                                        value="{{ $summery->amount }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="amount">{{ __('Total Amount') }}</label>
+                                        <input type="text" class="form-control" id="amount" name="amount"
+                                            value="{{ $summery->amount }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="paid">{{ __('Paid') }}</label>
-                                    <input type="text" class="form-control" id="paid" name="paid"
-                                        value="{{ $summery->paid }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="paid">{{ __('Paid') }}</label>
+                                        <input type="text" class="form-control" id="paid" name="paid"
+                                            value="{{ $summery->paid }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label for="due">{{ __('Due') }}</label>
-                                    <input type="text" class="form-control" id="due" name="due"
-                                        value="{{ $summery->due }}">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="due">{{ __('Due') }}</label>
+                                        <input type="text" class="form-control" id="due" name="due"
+                                            value="{{ $summery->due }}">
+                                    </div>
                                 </div>
 
-                                <div class="form-group col-md-12">
-                                    <label for="description">{{ __('Description') }}</label>
-                                    <textarea name="description" id="description" class="form-control height-80px" rows="3">{{ $summery->description }}</textarea>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="description">{{ __('Description') }}</label>
+                                        <textarea name="description" id="description" class="form-control height-80px" rows="3">{{ $summery->description }}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </form>

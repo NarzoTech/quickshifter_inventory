@@ -99,28 +99,38 @@
                     <form action="{{ route('admin.warehouse.store') }}" method="POST" id="add-warehouse-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="phone">{{ __('Phone') }}</label>
-                                <input type="text" class="form-control" id="phone" name="phone">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">{{ __('Phone') }}</label>
+                                    <input type="text" class="form-control" id="phone" name="phone">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="email">{{ __('Email') }}</label>
-                                <input type="email" class="form-control" id="email" name="email">
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <label for="email">{{ __('Email') }}</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="city">{{ __('City') }}</label>
-                                <input type="text" class="form-control" id="city" name="city">
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <label for="city">{{ __('City') }}</label>
+                                    <input type="text" class="form-control" id="city" name="city">
+                                </div>
                             </div>
-                            <div class="form-group col-md-6 ">
-                                <label for="status">{{ __('Status') }}</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">{{ __('Active') }}</option>
-                                    <option value="0">{{ __('Inactive') }}</option>
-                                </select>
+                            <div class="col-md-6 ">
+                                <div class="form-group">
+                                    <label for="status">{{ __('Status') }}</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1">{{ __('Active') }}</option>
+                                        <option value="0">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -157,34 +167,45 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $house->name }}">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $house->name }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label for="phone">{{ __('Phone') }}</label>
-                                    <input type="text" class="form-control" id="phone"
-                                        value="{{ $house->phone }}" name="phone">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone">{{ __('Phone') }}</label>
+                                        <input type="text" class="form-control" id="phone"
+                                            value="{{ $house->phone }}" name="phone">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="email">{{ __('Email') }}</label>
-                                    <input type="email" class="form-control" id="email"
-                                        value="{{ $house->email }}" name="email">
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <label for="email">{{ __('Email') }}</label>
+                                        <input type="email" class="form-control" id="email"
+                                            value="{{ $house->email }}" name="email">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="city">{{ __('City') }}</label>
-                                    <input type="text" class="form-control" id="city"
-                                        value="{{ $house->city }}" name="city">
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <label for="city">{{ __('City') }}</label>
+                                        <input type="text" class="form-control" id="city"
+                                            value="{{ $house->city }}" name="city">
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6 ">
-                                    <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1" @if ($house->status == 1) selected @endif>
-                                            {{ __('Active') }}</option>
-                                        <option value="0" @if ($house->status == 0) selected @endif>
-                                            {{ __('Inactive') }}</option>
-                                    </select>
+                                <div class="col-md-6 ">
+                                    <div class="form-group">
+                                        <label for="status">{{ __('Status') }}</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="1" @if ($house->status == 1) selected @endif>
+                                                {{ __('Active') }}</option>
+                                            <option value="0" @if ($house->status == 0) selected @endif>
+                                                {{ __('Inactive') }}</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </form>

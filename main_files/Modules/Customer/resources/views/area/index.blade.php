@@ -139,9 +139,11 @@
                     <form action="{{ route('admin.area.store') }}" method="POST" id="add-area-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-12">
+                            <div class="col-12">
+                                <div class="form-group">
                                 <label for="name">{{ __('Area Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name">
+                            </div>
                             </div>
                         </div>
                     </form>
@@ -177,10 +179,12 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-12">
+                                <div class="col-12">
+                                    <div class="form-group">
                                     <label for="name">{{ __('area Name') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ $area->name }}">
+                                </div>
                                 </div>
                             </div>
                         </form>

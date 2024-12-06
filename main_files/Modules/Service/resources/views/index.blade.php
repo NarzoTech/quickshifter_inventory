@@ -139,16 +139,20 @@
                     <form action="{{ route('admin.serviceCategory.store') }}" method="POST" id="add-category-form">
                         @csrf
                         <div class="row">
-                            <div class="form-group col-12">
-                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
-                            <div class="form-group col-12">
-                                <label for="name">{{ __('Status') }}<span class="text-danger">*</span></label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="1">{{ __('Active') }}</option>
-                                    <option value="0">{{ __('Inactive') }}</option>
-                                </select>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="name">{{ __('Status') }}<span class="text-danger">*</span></label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="1">{{ __('Active') }}</option>
+                                        <option value="0">{{ __('Inactive') }}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -184,23 +188,28 @@
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="form-group col-12">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $category->name }}">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $category->name }}">
+                                    </div>
                                 </div>
-                                <div class="form-group col-12">
-                                    <label for="status">{{ __('Status') }}<span class="text-danger">*</span></label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="1" {{ $category->status == 1 ? 'selected' : '' }}>
-                                            {{ __('Active') }}
-                                        </option>
-                                        <option value="0" {{ $category->status == 0 ? 'selected' : '' }}>
-                                            {{ __('Inactive') }}
-                                        </option>
-                                    </select>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="status">{{ __('Status') }}<span
+                                                class="text-danger">*</span></label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="1" {{ $category->status == 1 ? 'selected' : '' }}>
+                                                {{ __('Active') }}
+                                            </option>
+                                            <option value="0" {{ $category->status == 0 ? 'selected' : '' }}>
+                                                {{ __('Inactive') }}
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
-
                             </div>
                         </form>
                     </div>
