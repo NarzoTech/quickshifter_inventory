@@ -71,8 +71,8 @@
     </a>
 
     <ul class="menu-sub">
-        <li>
-            <a href="javascript:;">
+        <li class="menu-item">
+            <a href="javascript:;" class="menu-link">
                 {{ __('All Reports') }}
             </a>
         </li>
