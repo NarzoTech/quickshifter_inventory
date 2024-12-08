@@ -273,6 +273,34 @@ class SupplierService
 
         $account = $request->account_id;
 
+        // create ledger
+
+        $ledger = new Ledger();
+        $ledger->supplier_id = $id;
+        $ledger->amount = $request->paying_amount ?? $request->refund_amount;
+        $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
+        $ledger->is_paid = $request->refund_amount != null ? 0 : 1;
+        $ledger->is_received = $request->refund_amount != null ? 1 : 0;
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->note = $request->note;
+
+        if ($request->refund_amount != null) {
+            $ledger->due_amount += $request->refund_amount;
+        } else {
+            $ledger->due_amount = -$request->paying_amount;
+            $ledger->amount = -$request->paying_amount;
+        }
+        $ledger->date = now()->parse($request->date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
+        $ledger->invoice_url = route('admin.suppliers.ledger-details', $ledger->id);
+        $ledger->save();
+
+        // create ledger details
+        $ledger->details()->create([
+            'amount' => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount
+        ]);
+
         if ($account == 'cash' || $account == 'advance') {
             $account = Account::where('account_type', $account)?->first();
         } else {
@@ -290,27 +318,9 @@ class SupplierService
             'note' => $request->note,
             'created_by' => auth('admin')->user()->id,
             'payment_date' => now()->parse($request->date),
-            'invoice' => $this->genInvoiceNumber()
+            'invoice' => $this->genInvoiceNumber(),
+            'ledger_id' => $ledger->id
         ]);
-
-        // create ledger
-
-        $ledger = new Ledger();
-        $ledger->supplier_id = $id;
-        $ledger->amount = $request->paying_amount ?? $request->refund_amount;
-        $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
-        $ledger->is_paid = $request->refund_amount != null ? 0 : 1;
-        $ledger->is_received = $request->refund_amount != null ? 1 : 0;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
-        $ledger->note = $request->note;
-        if ($request->refund_amount != null) {
-            $ledger->due_amount += $request->refund_amount;
-        } else {
-            $ledger->due_amount -= $request->paying_amount;
-        }
-        $ledger->date = now()->parse($request->date);
-        $ledger->created_by = auth('admin')->user()->id;
-        $ledger->save();
     }
 
 

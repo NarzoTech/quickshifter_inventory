@@ -30,6 +30,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('purchase/return/{id}', [PurchaseReturnController::class, 'create'])->name('purchase.return');
     Route::post('purchase/return/{id}', [PurchaseReturnController::class, 'store'])->name('purchase.return.store');
 
+    Route::get('purchase/return/{id}/invoice', [PurchaseReturnController::class, 'invoice'])->name('purchase.return.invoice');
+
     Route::get('purchase/return/{id}/edit', [PurchaseReturnController::class, 'edit'])->name('purchase.return.edit');
     Route::put('purchase/return/{id}/update', [PurchaseReturnController::class, 'update'])->name('purchase.return.update');
     Route::delete('purchase/return/{id}/destroy', [PurchaseReturnController::class, 'destroy'])->name('purchase.return.destroy');

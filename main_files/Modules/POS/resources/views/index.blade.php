@@ -360,7 +360,7 @@
                                                         <option value="1" selected>{{ __('Amount') }} (TK )</option>
                                                         <option value="2">{{ __('Percentage') }} (%)</option>
                                                     </select>
-                                                    <input type="text" onchange="discountExist()"
+                                                    <input type="number" onchange="discountExist()"
                                                         id="discount_total_amount" value="0" step="0.1"
                                                         name="discount_total_amount" autocomplete="off" autofocus>
                                                 </div>

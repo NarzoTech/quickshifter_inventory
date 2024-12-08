@@ -440,6 +440,8 @@ class PurchaseService
         }
 
         if ($request->received_amount) {
+            // create ledger
+            $ledger = $this->purchaseReturnLedger($request, $purchase->id, $request->received_amount, 'purchase return', 0);
             SupplierPayment::create([
                 'payment_type' => 'purchase_receive',
                 'purchase_return_id' => $request->purchase_id,
@@ -450,12 +452,11 @@ class PurchaseService
                 'amount' => $request->received_amount,
                 'payment_date' => now(),
                 'created_by' => auth()->user()->id,
+                'ledger_id' => $ledger->id
             ]);
         }
 
-        // create ledger
 
-        $this->updateLedger($request, $request->purchase_id, $request->received_amount, 'purchase_return', 0);
 
         return $purchase;
     }
@@ -516,6 +517,24 @@ class PurchaseService
         $ledger->save();
     }
 
+    public function purchaseReturnLedger($request, $id, $paid, $type = 'purchase_return', $isPaid = 0, $dueAmount = 0, $ledger = null)
+    {
+        if ($ledger == null) $ledger = new Ledger();
+        $ledger->supplier_id = $request->supplier_id;
+        $ledger->amount = $paid;
+        $ledger->invoice_type = $type;
+        $ledger->is_paid = $isPaid;
+        $ledger->is_received = 1;
+        $ledger->invoice_url = route('admin.purchase.return.invoice', $id);
+        $ledger->invoice_no = $request->invoice_number;
+        $ledger->note = $request->note;
+        $ledger->due_amount = $dueAmount;
+        $ledger->date = now()->parse($request->return_date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
+
+        return $ledger;
+    }
     public function getLedger($request, $id, $isPaid = 1, $type)
     {
         $purchase = $this->purchase->find($id);
