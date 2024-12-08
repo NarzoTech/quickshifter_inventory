@@ -95,7 +95,8 @@ class PurchaseService
         $purchase->created_by = Auth::id();
         $purchase->save();
 
-        $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
+        $this->purchaseLedger($request, $purchase->id, $request->total_amount, 'purchase', 1, $request->total_amount);
+        // $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
 
         foreach ($request->product_id as $index => $id) {
             $purchaseDetails = new PurchaseDetails();
@@ -131,6 +132,10 @@ class PurchaseService
                 'profit' => 0,
                 'created_by' => auth('admin')->user()->id,
             ]);
+        }
+
+        if ($paidAmount) {
+            $this->purchaseLedger($request, $purchase->id, -$paidAmount, 'purchase payment', 1, $request->due_amount);
         }
 
 
@@ -190,8 +195,11 @@ class PurchaseService
         $purchase->updated_by = Auth::id();
         $purchase->save();
 
+        $ledger = $this->getLedger($request, $id, 1, 'purchase');
 
-        $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
+        $this->purchaseLedger($request, $purchase->id, $request->total_amount, 'purchase', 1, $request->total_amount, $ledger);
+
+        // $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
 
         // restore product stock
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
@@ -266,7 +274,12 @@ class PurchaseService
         }
 
         // update ledger
-        // $this->updateLedger($request, $purchase->id, $paidAmount);
+        $ledger = $this->getLedger($request, $purchase->id, 1, 'purchase payment');
+
+
+        if ($paidAmount) {
+            $this->purchaseLedger($request, $purchase->id, -$paidAmount, 'purchase payment', 1, $request->due_amount, $ledger);
+        }
 
         return $purchase;
     }
@@ -474,6 +487,33 @@ class PurchaseService
     }
 
 
+    public function purchaseLedger($request, $id, $paid, $type = 'purchase', $isPaid = 1, $dueAmount = 0, $ledger = null)
+    {
+        if ($ledger == null) $ledger = new Ledger();
+        $ledger->supplier_id = $request->supplier_id;
+        $ledger->amount = $paid;
+        $ledger->invoice_type = $type;
+        $ledger->is_paid = $isPaid;
+        $ledger->invoice_url = route('admin.purchase.invoice', $id);
+        $ledger->invoice_no = $request->invoice_number;
+        $ledger->note = $request->note;
+        $ledger->due_amount = $dueAmount;
+        $ledger->date = now()->parse($request->purchase_date);
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
+    }
+
+    public function getLedger($request, $id, $isPaid = 1, $type)
+    {
+        $purchase = $this->purchase->find($id);
+        $ledger = Ledger::where('supplier_id', $request->supplier_id)
+            ->where('invoice_type', $type)
+            ->where('invoice_no', $purchase->invoice_number)
+            ->where('is_paid', $isPaid)
+            ->first();
+
+        return $ledger;
+    }
     public function updateLedger($request, $id, $paidAmount, $type = 'purchase', $isPaid = 1)
     {
         $purchase = $this->purchase->find($id);

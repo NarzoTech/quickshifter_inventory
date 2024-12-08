@@ -108,10 +108,11 @@
                         @php
                             $due = 0;
                         @endphp
-                        @foreach ($ledgers as $ledger)
+                        @foreach ($ledgers as $index => $ledger)
                             @php
-                                $due += $ledger->due_amount;
+                                $due += $ledger->amount;
                             @endphp
+
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $ledger->date }}</td>
@@ -130,15 +131,15 @@
                                         -
                                     @endif --}}
 
-                                    @if ($ledger->customer_id && $ledger->invoice_type == 'Sale Return')
+                                    {{-- @if ($ledger->customer_id && $ledger->invoice_type == 'Sale Return')
                                         -
-                                    @endif
+                                    @endif --}}
 
-                                    @if ($ledger->invoice_type == 'purchase_return')
+                                    {{-- @if ($ledger->invoice_type == 'purchase_return')
                                         @php
                                             $due -= $ledger->amount;
                                         @endphp
-                                    @endif
+                                    @endif --}}
                                     {{ currency($ledger->amount) }}
                                 </td>
                                 <td>{{ currency($due) }}</td>
