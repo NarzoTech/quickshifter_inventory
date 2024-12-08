@@ -286,6 +286,8 @@ class PurchaseService
 
     public function destroy($id)
     {
+        $purchase = $this->purchase->find($id);
+
         // restore product stock
         foreach ($this->purchase->find($id)->purchaseDetails as $purchaseDetail) {
             $product = Product::find($purchaseDetail->product_id);
@@ -298,8 +300,19 @@ class PurchaseService
         SupplierPayment::where('purchase_id', $id)?->delete();
 
         // delete ledger
-        Ledger::where('invoice_no', $this->purchase->find($id)->invoice_number)->delete();
-        $this->purchase->find($id)->delete();
+        $ledger = Ledger::where('invoice_type', 'purchase')->orWhere('invoice_type', 'purchase payment')
+            ->where('invoice_no', $purchase->invoice_number)
+            ->get();
+
+
+        $ledger = Ledger::where('invoice_type', 'purchase')->orWhere('invoice_type', 'purchase payment')
+            ->where('invoice_no', $purchase->invoice_number)
+            ->get();
+        foreach ($ledger as $item) {
+            $item->delete();
+        }
+
+        return $purchase->delete();
     }
 
     public function genInvoiceNumber()

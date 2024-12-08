@@ -145,6 +145,15 @@
                                 <td>{{ currency($due) }}</td>
                             </tr>
                         @endforeach
+
+                        <tr>
+                            <td colspan="8" class="text-center fw-bold">
+                                {{ __('Total') }}
+                            </td>
+                            <td colspan="2" class="fw-bold">
+                                {{ currency($due) }}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
