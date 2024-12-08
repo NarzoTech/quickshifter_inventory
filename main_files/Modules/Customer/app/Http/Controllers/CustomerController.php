@@ -316,7 +316,7 @@ class CustomerController extends Controller
 
 
             DB::commit();
-            return to_route('admin.customer.due-receive.list')->with([
+            return to_route('admin.customers.index')->with([
                 'messege' => 'Customer due receive successfully.',
                 'alert-type' => 'success'
             ]);
