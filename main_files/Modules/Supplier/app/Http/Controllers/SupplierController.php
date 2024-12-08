@@ -63,33 +63,38 @@ class SupplierController extends Controller
             $data['total_due_dismiss'] += $supplier->total_due_dismiss;
         }
 
-        // Convert sorted collection to paginate manually
-        $page = request('page', 1); // Default to page 1
-        $perPage = 20; // Items per page
-        $paginatedSuppliers = $suppliers->slice(($page - 1) * $perPage, $perPage)->values();
+        if (request()->order_type) {
+            // Convert sorted collection to paginate manually
+            $page = request('page', 1); // Default to page 1
+            $perPage = 20; // Items per page
+            $paginatedSuppliers = $suppliers->slice(($page - 1) * $perPage, $perPage)->values();
+        }
+
 
         // Create LengthAwarePaginator
 
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
-                $suppliers = $suppliers->paginate();
+                $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate();
                 $perPage = $suppliers->count();
             } else {
-                $suppliers = $suppliers->paginate(request('par-page'));
+                $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate(request('par-page'));
                 $perPage = request('par-page');
             }
         } else {
-            // $suppliers = $suppliers->paginate(20);
+            $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate(20);
         }
 
-        $suppliers = new LengthAwarePaginator(
-            $paginatedSuppliers,
-            $suppliers->count(),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+        if (request()->order_type) {
+            $suppliers = new LengthAwarePaginator(
+                $paginatedSuppliers,
+                $suppliers->count(),
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+        }
 
         // $suppliers->appends(request()->query());
 

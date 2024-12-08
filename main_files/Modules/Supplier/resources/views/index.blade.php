@@ -84,7 +84,7 @@
                             </div>
                             <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger"><i
+                                    <button type="button" class="btn bg-label-danger form-reset"><i
                                             class='bx bx-rotate-right'></i></button>
                                     <button type="submit" class="btn bg-label-primary"><i
                                             class='bx bx-search'></i></button>

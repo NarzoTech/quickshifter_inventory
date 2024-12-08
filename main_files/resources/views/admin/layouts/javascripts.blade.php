@@ -157,6 +157,15 @@
 
                 window.location.href = fullUrl;
             })
+            $('.form-reset').on('click', function() {
+                // get full url without query string
+                var fullUrl = window.location.href;
+                if (fullUrl.includes('?')) {
+                    fullUrl = fullUrl.split('?')[0];
+                }
+
+                window.location.href = fullUrl;
+            })
 
 
             // get localstorage content layout

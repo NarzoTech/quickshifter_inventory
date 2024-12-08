@@ -279,7 +279,7 @@ class SupplierService
             $ledger->delete();
         }
 
-        $payment->delete();
+        return $payment->delete();
     }
 
     public function genInvoiceNumber()

@@ -54,7 +54,7 @@
                             </div>
                             <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger"><i
+                                    <button type="button" class="btn bg-label-danger form-reset"><i
                                             class='bx bx-rotate-right'></i></button>
 
                                     <button type="submit" class="btn bg-label-primary"><i
@@ -141,9 +141,9 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
-                            </div>
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -180,10 +180,11 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $bank->name }}">
-                                </div>
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $bank->name }}">
+                                    </div>
                                 </div>
                             </div>
                         </form>
