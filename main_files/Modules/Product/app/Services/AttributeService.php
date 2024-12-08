@@ -22,7 +22,9 @@ class AttributeService
 
     public function getAllAttributes()
     {
-        return $this->attribute->with('values')->paginate(20);
+        $att =  $this->attribute->with('values')->paginate(20);
+        $att->appends(request()->query());
+        return $att;
     }
 
     // get all attributes for select
@@ -83,7 +85,6 @@ class AttributeService
                         'name' => $value,
                     ]);
                 }
-
             }
         }
     }

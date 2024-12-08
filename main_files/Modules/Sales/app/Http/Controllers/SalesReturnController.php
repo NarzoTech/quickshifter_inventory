@@ -31,6 +31,7 @@ class SalesReturnController extends Controller
     public function returnList()
     {
         $lists = SalesReturn::orderBy('id', 'desc')->paginate(20);
+        $lists->appends(request()->query());
 
         return view('sales::return.index', compact('lists'));
     }

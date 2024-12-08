@@ -107,6 +107,8 @@ class SalesController extends Controller
         $vehicles = $this->vehicle->get();
 
         $services = $this->services->all()->where('status', 1)->paginate(20);
+        $services->appends(request()->query());
+
         $serviceCategories = $this->services->getCategories();
 
         $cart_holds = CartHold::where('status', 'hold')->orderBy('id', 'desc')->get();

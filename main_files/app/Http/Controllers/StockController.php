@@ -46,6 +46,8 @@ class StockController extends Controller
             $products = $query->paginate(20);
         }
 
+        $products->appends(request()->query());
+
         $brands = $this->brandService->getActiveBrands();
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         return view('admin.pages.stock.stock', compact('products', 'brands', 'categories'));
@@ -55,6 +57,8 @@ class StockController extends Controller
     {
         $product = $this->product->getProduct($id);
         $stocks = Stock::where('product_id', $id)->orderBy('date', 'asc')->paginate(20);
+
+        $stocks->appends(request()->query());
         return view('admin.pages.stock.ledger', compact('product', 'stocks'));
     }
 

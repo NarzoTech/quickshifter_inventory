@@ -1452,7 +1452,7 @@
             if ($(this).val() == 'cash' || $(this).val() == 'advance') {
                 $(this).parents('td').siblings('.account_info').html('');
                 const cash =
-                    `<input type="hidden" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;
+                    `<input type="text" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;
 
                 $(this).parents('td').siblings('.account_info').html(cash);
             }

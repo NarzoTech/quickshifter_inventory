@@ -26,7 +26,10 @@ class BalanceController extends Controller
     {
         $accounts = $this->account->all()->get();
         $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
+        $deposits->appends(request()->query());
+
         $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
+        $withdraws->appends(request()->query());
 
         $totalDeposits = Balance::where('balance_type', 'deposit')->sum('amount');
         $totalWithdraws = Balance::where('balance_type', 'withdraw')->sum('amount');
@@ -89,7 +92,11 @@ class BalanceController extends Controller
     {
         $accounts = $this->account->all()->orderBy('id', 'desc')->get();
         $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
+        $deposits->appends(request()->query());
+
         $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
+        $withdraws->appends(request()->query());
+
         $totalDeposits = Balance::where('balance_type', 'deposit')->sum('amount');
         $totalWithdraws = Balance::where('balance_type', 'withdraw')->sum('amount');
         $balance = Balance::find($id);

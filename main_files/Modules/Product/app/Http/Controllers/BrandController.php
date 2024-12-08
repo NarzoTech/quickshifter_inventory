@@ -27,6 +27,7 @@ class BrandController extends Controller
     public function index()
     {
         $brands = $this->brandService->getPaginateBrands()->paginate(2);
+        $brands->appends(request()->query());
 
         return view('product::products.brand.index', compact('brands'));
     }

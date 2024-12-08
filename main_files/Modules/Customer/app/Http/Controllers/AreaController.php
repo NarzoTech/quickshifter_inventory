@@ -24,6 +24,8 @@ class AreaController extends Controller
     public function index()
     {
         $areas = $this->areaService->getArea()->paginate(20);
+        $areas->appends(request()->query());
+
         return view('customer::area.index', compact('areas'));
     }
 

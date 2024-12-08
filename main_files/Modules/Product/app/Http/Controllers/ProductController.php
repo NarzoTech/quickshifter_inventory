@@ -58,6 +58,8 @@ class ProductController extends Controller
                 $products = $products->paginate(20);
             }
 
+            $products->appends(request()->query());
+
             $brands = $this->brandService->getActiveBrands();
             $categories = $this->categoryService->getAllProductCategoriesForSelect();
             return view('product::products.index', compact('products', 'brands', 'categories'));

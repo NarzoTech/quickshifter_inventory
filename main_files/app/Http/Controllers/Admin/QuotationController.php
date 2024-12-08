@@ -36,6 +36,8 @@ class QuotationController extends Controller
 
         $quotations = $quotations->orderBy('id', 'desc')->paginate(20);
 
+        $quotations->appends(request()->query());
+
         return view('admin.pages.quotation.index', compact('quotations'));
     }
 

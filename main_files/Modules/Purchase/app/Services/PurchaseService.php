@@ -382,7 +382,7 @@ class PurchaseService
     {
         return PurchaseReturnType::all();
     }
-    public function storeReturn(Request $request)
+    public function storeReturn(Request $request, $id)
     {
         // store purchase return
         $purchase = $this->purchaseReturn->create([

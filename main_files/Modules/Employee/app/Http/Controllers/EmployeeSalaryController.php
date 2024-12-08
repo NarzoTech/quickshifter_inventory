@@ -118,6 +118,8 @@ class EmployeeSalaryController extends Controller
     public function salaryList()
     {
         $payments = EmployeeSalary::with('employee')->paginate(20);
+        $payments->appends(request()->query());
+
         return view('employee::salary.salary-list', compact('payments'));
     }
 }

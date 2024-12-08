@@ -101,6 +101,8 @@ class CustomerController extends Controller
             $users = $query->paginate();
         }
 
+        $users->appends(request()->query());
+
         $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
         $vehicles = $this->vehicle->get();

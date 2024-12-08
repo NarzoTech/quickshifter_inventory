@@ -66,6 +66,8 @@ class ReportController extends Controller
             })
             ->paginate(20);
 
+        $reports->appends(request()->query());
+
         return view('report::other-income', compact('reports'));
     }
 
@@ -314,6 +316,8 @@ class ReportController extends Controller
         $products = $products->where('status', 1);
 
         $products = $products->paginate(20);
+        $products->appends(request()->query());
+
         return view('report::barcode-wise-product', compact('products'));
     }
 
@@ -342,7 +346,7 @@ class ReportController extends Controller
         });
 
         $products = $products->paginate(20);
-
+        $products = $products->appends(request()->query());
 
         return view('report::barcode-sale', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
     }
@@ -354,6 +358,7 @@ class ReportController extends Controller
 
 
         $categories = $categories->paginate(20);
+        $categories->appends(request()->query());
 
         return view('report::categories', compact('categories'));
     }
@@ -384,6 +389,7 @@ class ReportController extends Controller
         }
 
         $customers = $query->paginate(20);
+        $customers->appends(request()->query());
 
         return view('report::customer', compact('customers', 'totalSales', 'totalAmount', 'totalPaid', 'totalDue'));
     }
@@ -399,6 +405,7 @@ class ReportController extends Controller
 
         $totalDues = $sales->sum('due_amount');
         $sales = $sales->paginate(20);
+        $sales->appends(request()->query());
 
         return view('report::receiveable', compact('sales', 'totalDues'));
     }
@@ -411,6 +418,7 @@ class ReportController extends Controller
         // ->whereBetween('order_date', [$fromDate, $toDate])
         $sales = Sale::with('customer');
         $sales = $sales->paginate(20);
+        $sales->appends(request()->query());
         return view('report::details-sale', compact('sales'));
     }
 
@@ -421,6 +429,7 @@ class ReportController extends Controller
         // ->whereBetween('order_date', [$fromDate, $toDate])
         $sales = Sale::with('customer')->where('due_amount', '>', 0);
         $sales = $sales->paginate(20);
+        $sales->appends(request()->query());
         return view('report::due-date-sale', compact('sales'));
     }
 
@@ -436,6 +445,7 @@ class ReportController extends Controller
         }
         $totalAmount = $expenses->sum('amount');
         $expenses = $expenses->paginate(20);
+        $exprenses->appends(request()->query());
         return view('report::expense', compact('expenses', 'totalAmount'));
     }
 
@@ -452,6 +462,7 @@ class ReportController extends Controller
 
         $totalAmount = $sales->sum('grand_total');
         $sales = $sales->paginate(20);
+        $sales->appends(request()->query());
         return view('report::master-sale', compact('sales', 'totalAmount'));
     }
 
@@ -462,6 +473,7 @@ class ReportController extends Controller
         $sales = Sale::with('customer')->whereMonth('order_date', $month);
         $totalAmount = $sales->sum('grand_total');
         $sales = $sales->paginate(20);
+        $sales->appends(request()->query());
         return view('report::monthly-sale', compact('sales', 'totalAmount'));
     }
 
@@ -501,6 +513,7 @@ class ReportController extends Controller
         });
 
         $products = $products->paginate(20);
+        $products = $products->appends(request()->query());
         return view('report::product-sale-report', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
     }
 
@@ -512,6 +525,7 @@ class ReportController extends Controller
             $totalReceive = $totalReceive->whereBetween('created_at', [request('from_date'), request('to_date')]);
         }
         $totalReceive = $totalReceive->paginate(20);
+        $totalReceive->appends(request()->query());
 
         return view('report::received-report', compact('totalReceive'));
     }
@@ -527,6 +541,7 @@ class ReportController extends Controller
         }
         $totalAmount = $purchases->sum('total_amount');
         $purchases = $purchases->paginate(20);
+        $purchases->appends(request()->query());
         return view('report::purchase', compact('purchases', 'totalAmount'));
     }
 
@@ -535,6 +550,8 @@ class ReportController extends Controller
 
         $suppliers = $this->supplierService->allSupplier();
         $suppliers = $suppliers->paginate(20);
+        $suppliers->appends(request()->query());
+
         return view('report::supplier', compact('suppliers'));
     }
 
@@ -560,6 +577,8 @@ class ReportController extends Controller
         }
         $totalAmount = $supplierPayments->sum('total_amount');
         $supplierPayments = $supplierPayments->paginate(20);
+        $supplierPayments->appends(request()->query());
+
         return view('report::supplier-payment', compact('supplierPayments', 'totalAmount'));
     }
 }

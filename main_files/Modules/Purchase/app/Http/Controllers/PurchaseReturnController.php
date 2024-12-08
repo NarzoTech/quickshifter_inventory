@@ -27,6 +27,8 @@ class PurchaseReturnController extends Controller
     public function index()
     {
         $returns = $this->purchaseService->allReturn()->paginate(20);
+        $returns->appends(request()->query());
+
         return view('purchase::return.index', compact('returns'));
     }
 

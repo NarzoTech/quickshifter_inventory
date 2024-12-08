@@ -26,6 +26,7 @@ class ServiceController extends Controller
     {
         $categories = $this->category->all()->get();
         $services = $this->service->all()->paginate(20);
+        $services->appends(request()->query());
         return view('service::service', compact('categories', 'services'));
     }
 

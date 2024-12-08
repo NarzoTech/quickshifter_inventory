@@ -38,6 +38,8 @@ class ExpenseTypeController extends Controller
             $types = $types->paginate(20);
         }
 
+        $types->appends(request()->query());
+
         return view('expense::type', compact('types'));
     }
 

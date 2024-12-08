@@ -25,6 +25,9 @@ class SupplierGroupController extends Controller
     public function index()
     {
         $supplierGroups = $this->userGroup->getUserGroup()->where('type', 'supplier')->paginate(request()->get('par-page') ? request()->get('par-page') : 20);
+
+        $supplierGroups->appends(request()->query());
+
         return view('supplier::group.index', compact('supplierGroups'));
     }
 

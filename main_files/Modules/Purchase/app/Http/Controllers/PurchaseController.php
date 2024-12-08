@@ -28,6 +28,7 @@ class PurchaseController extends Controller
     public function index()
     {
         $purchases = $this->purchaseService->all()->paginate(20);
+        $purchases->appends(request()->all());
         $products = $this->purchaseService->getProducts(request());
         return view('purchase::index', compact('purchases', 'products'));
     }

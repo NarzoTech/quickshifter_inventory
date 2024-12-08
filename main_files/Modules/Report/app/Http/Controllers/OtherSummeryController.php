@@ -40,6 +40,7 @@ class OtherSummeryController extends Controller
 
 
         $summeries = $summeries->paginate(20);
+        $summeries->appends(request()->all());
         return view('report::other-summery.customer', compact('customers', 'summeries', 'data'));
     }
 
@@ -122,6 +123,7 @@ class OtherSummeryController extends Controller
 
 
         $summeries = $summeries->paginate(20);
+        $summeries->appends(request()->all());
         return view('report::other-summery.supplier', compact('suppliers', 'summeries', 'data'));
     }
 

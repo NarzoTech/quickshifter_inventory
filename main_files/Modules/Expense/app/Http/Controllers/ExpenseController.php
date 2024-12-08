@@ -71,6 +71,8 @@ class ExpenseController extends Controller
             $expenses = $expenses->paginate(20);
         }
 
+        $expenses->appends(request()->query());
+
         $types = ExpenseType::all();
         $accounts = Account::all();
         return view('expense::index', compact('expenses', 'types', 'accounts', 'totalAmount'));

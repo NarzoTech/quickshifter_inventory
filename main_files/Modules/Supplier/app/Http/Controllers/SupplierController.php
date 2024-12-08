@@ -70,10 +70,13 @@ class SupplierController extends Controller
         } else {
             $suppliers = $suppliers->paginate(20);
         }
+
+        $suppliers->appends(request()->query());
+
         $groups = $this->userGroup->getUserGroup()->where('type', 'supplier')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
 
-
+        $suppliers->appends(request()->query());
 
         return view('supplier::index', compact('suppliers', 'groups', 'areaList', 'data'));
     }
@@ -212,6 +215,8 @@ class SupplierController extends Controller
             $payments = $payments->paginate(20);
         }
 
+        $payments->appends(request()->query());
+
         return view('supplier::due-pay-history', compact('payments', 'data'));
     }
 
@@ -286,6 +291,8 @@ class SupplierController extends Controller
         $supplier = $this->supplierService->find($id);
 
         $ledgers = Ledger::where('supplier_id', $supplier->id)->orderBy('date', 'desc')->paginate(20);
+        $ledgers->appends(request()->query());
+
         $title = __('Supplier Ledger');
         return view('supplier::ledger', compact('ledgers', 'title'));
     }

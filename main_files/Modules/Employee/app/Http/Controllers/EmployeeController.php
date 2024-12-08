@@ -15,15 +15,15 @@ use Modules\Employee\app\Services\EmployeeService;
 class EmployeeController extends Controller
 {
     use RedirectHelperTrait;
-    public function __construct(private EmployeeService $employee)
-    {
-    }
+    public function __construct(private EmployeeService $employee) {}
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $employees = $this->employee->all()->paginate(20);
+        $employees->appends(request()->query());
+
         return view('employee::index', compact('employees'));
     }
 

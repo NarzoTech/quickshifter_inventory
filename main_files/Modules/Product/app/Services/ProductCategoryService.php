@@ -25,7 +25,10 @@ class ProductCategoryService
         if (request()->search) {
             $category = $category->where('name', 'like', '%' . request()->search . '%');
         }
-        return $category->paginate(20);
+        $category = $category->paginate(20);
+        $category->appends(request()->query());
+
+        return $category;
     }
 
     // Get all active product categories

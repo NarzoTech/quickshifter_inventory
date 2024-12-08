@@ -86,7 +86,7 @@ class POSController extends Controller
 
         $products = $products->paginate(5);
 
-        $products = $products->appends($request->all());
+        $products->appends(request()->query());
 
         $categories = Category::where('status', 1)->get();
         $brands = $this->brandService->getActiveBrands();
@@ -99,6 +99,9 @@ class POSController extends Controller
         $vehicles = $this->vehicle->get();
 
         $services = $this->services->all()->where('status', 1)->paginate(15);
+
+        $services->appends(request()->query());
+
         $serviceCategories = $this->services->getCategories();
 
         $cart_holds = CartHold::where('status', 'hold')->orderBy('id', 'desc')->get();
@@ -148,11 +151,11 @@ class POSController extends Controller
 
         // Paginate favorite products
         $favoriteProducts = $products->where('is_favorite', 1)->paginate(15);
-        $favoriteProducts = $favoriteProducts->appends($request->all()); // Append request parameters
+        $favoriteProducts->appends(request()->query());  // Append request parameters
 
         // Paginate non-favorite products
         $nonFavoriteProducts = $products->orWhere('is_favorite', 0)->paginate(15);
-        $nonFavoriteProducts = $nonFavoriteProducts->appends($request->all()); // Append request parameters
+        $nonFavoriteProducts->appends(request()->query()); // Append request parameters
 
 
 
@@ -169,7 +172,7 @@ class POSController extends Controller
         }
 
         $services = $services->paginate(15);
-        $services = $services->appends($request->all());
+        $services->appends(request()->query());
         $serviceView = view('pos::ajax_service')->with([
             'services' => $services,
         ])->render();
@@ -188,6 +191,8 @@ class POSController extends Controller
     public function favoriteProducts($products)
     {
         $products = $products->where('is_favorite', 1)->paginate(15);
+
+        $products->appends(request()->query());
         return $products;
     }
 

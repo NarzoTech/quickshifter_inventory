@@ -25,6 +25,8 @@ class OrderController extends Controller
     {
         $orders = $this->orderService->getOrders()->latest()->paginate(20);
 
+        $orders->appends(request()->query());
+
         $title = __('Order History');
 
         return view('order::index', ['orders' => $orders, 'title' => $title]);
@@ -34,6 +36,8 @@ class OrderController extends Controller
     {
         $orders = $this->orderService->getOrders()->where('delivery_status', 1)->latest()->paginate(20);
 
+        $orders->appends(request()->query());
+
         $title = __('Pending Order');
 
         return view('order::index', ['orders' => $orders, 'title' => $title]);
@@ -42,17 +46,24 @@ class OrderController extends Controller
     public function progressOrder()
     {
         $orders = $this->orderService->getOrders()->where('delivery_status', 3)->latest()->paginate(20);
+        $orders->appends(request()->query());
+
         $title = __('Progress Orders');
         return view('order::index', compact('orders', 'title'));
     }
-    public function onTheWay(){
-        $orders = $this->orderService->getOrders()->where('delivery_status',4)->latest()->paginate(20);
+    public function onTheWay()
+    {
+        $orders = $this->orderService->getOrders()->where('delivery_status', 4)->latest()->paginate(20);
+        $orders->appends(request()->query());
+
         $title = __('On The Way');
         return view('order::index', compact('orders', 'title'));
     }
     public function deliveredOrder()
     {
-        $orders = $this->orderService->getOrders()->where('delivery_status',5)->latest()->paginate(20);
+        $orders = $this->orderService->getOrders()->where('delivery_status', 5)->latest()->paginate(20);
+        $orders->appends(request()->query());
+
         $title = __('Delivered Orders');
         return view('order::index', compact('orders', 'title'));
     }
@@ -60,6 +71,8 @@ class OrderController extends Controller
     public function declinedOrder()
     {
         $orders = $this->orderService->getOrders()->where('delivery_status', 6)->latest()->paginate(20);
+        $orders->appends(request()->query());
+
         $title = __('Rejected Orders');
         return view('order::index', compact('orders', 'title'));
     }
@@ -67,6 +80,8 @@ class OrderController extends Controller
     public function cashOnDelivery()
     {
         $orders = $this->orderService->getOrders()->where('payment_method', 'cod')->latest()->paginate(20);
+        $orders->appends(request()->query());
+
         $title = __('Cash On Delivery');
         return view('order::index', compact('orders', 'title'));
     }
@@ -159,14 +174,20 @@ class OrderController extends Controller
             return back()->with(array('messege' => __('Something Went Wrong'), 'alert-type' => 'error'));
         }
     }
-    public function pending_payment(){
+    public function pending_payment()
+    {
         $orders = $this->orderService->getOrders()->where('payment_status', 'pending')->latest()->paginate(20);
+        $orders->appends(request()->query());
+
         $title = __('Pending Payment');
         return view('order::index', compact('orders', 'title'));
     }
 
-    public function rejected_payment(){
+    public function rejected_payment()
+    {
         $orders = $this->orderService->getOrders()->where('payment_status', 'rejected')->latest()->paginate(20);
+        $orders->appends(request()->query());
+
         $title = __('Rejected Payment');
         return view('order::index', compact('orders', 'title'));
     }

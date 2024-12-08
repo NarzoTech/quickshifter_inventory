@@ -24,6 +24,9 @@ class CustomerGroupController extends Controller
     public function index()
     {
         $customerGroups = $this->userGroup->getUserGroup()->where('type', 'customer')->paginate(request()->get('par-page') ? request()->get('par-page') : 20);
+
+        $customerGroups->appends(request()->query());
+
         return view('customer::group.index', compact('customerGroups'));
     }
 

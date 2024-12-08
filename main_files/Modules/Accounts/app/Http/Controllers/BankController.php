@@ -24,6 +24,8 @@ class BankController extends Controller
     public function index()
     {
         $banks = $this->bankService->all()->paginate(20);
+        $banks->appends(request()->query());
+
         return view('accounts::bank.index', compact('banks'));
     }
 
