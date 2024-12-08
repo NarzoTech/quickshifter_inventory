@@ -127,19 +127,6 @@
                                 <td>{{ $ledger->note }}</td>
 
                                 <td>
-                                    {{-- @if ($ledger->supplier_id && ($ledger->invoice_type == 'purchase' || $ledger->invoice_type == 'Due Payment' || $ledger->invoice_type == 'Advance Payment' || $ledger->invoice_type == 'purchase_return'))
-                                        -
-                                    @endif --}}
-
-                                    {{-- @if ($ledger->customer_id && $ledger->invoice_type == 'Sale Return')
-                                        -
-                                    @endif --}}
-
-                                    {{-- @if ($ledger->invoice_type == 'purchase_return')
-                                        @php
-                                            $due -= $ledger->amount;
-                                        @endphp
-                                    @endif --}}
                                     {{ currency($ledger->amount) }}
                                 </td>
                                 <td>{{ currency($due) }}</td>

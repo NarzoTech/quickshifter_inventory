@@ -115,7 +115,6 @@ class SupplierService
 
     public function duePay(Request $request, $id)
     {
-
         $supplier = $this->supplier->find($id);
 
         $supplier->balance = $supplier->balance - $request->paying_amount;
@@ -135,12 +134,12 @@ class SupplierService
         // create Ledger
         $ledger = new Ledger();
         $ledger->supplier_id = $id;
-        $ledger->amount = $request->paying_amount;
+        $ledger->amount = -$request->paying_amount;
         $ledger->invoice_type = 'Due Payment';
         $ledger->is_paid = 1;
         $ledger->invoice_no = $this->genLedgerInvoiceNumber();
         $ledger->note = $request->note;
-        $ledger->due_amount -= $request->paying_amount;
+        $ledger->due_amount = -$request->paying_amount;
         $ledger->date = now()->parse($request->payment_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
@@ -171,6 +170,7 @@ class SupplierService
                 'amount' => $request->amount[$index],
                 'payment_date' => now()->parse($request->payment_date),
                 'note' => $request->note,
+                'ledger_id' => $ledger->id,
                 'created_by' => auth('admin')->user()->id,
             ]);
 
@@ -226,10 +226,21 @@ class SupplierService
     {
         $payment = SupplierPayment::find($id);
 
+
         $payment->purchase->paid_amount = $payment->purchase->paid_amount - $payment->amount;
         $payment->purchase->due_amount = $payment->purchase->due_amount + $payment->amount;
         $payment->purchase->payment_status = $payment->purchase->due_amount == 0 ? 'paid' : 'due';
         $payment->purchase->save();
+
+        $ledger = $payment->ledger;
+
+        if ($ledger) {
+            // delete ledger details
+            $ledger->details()->delete();
+
+            // delete ledger
+            $ledger->delete();
+        }
 
         $payment->delete();
     }

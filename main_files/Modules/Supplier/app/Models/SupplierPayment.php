@@ -3,6 +3,7 @@
 namespace Modules\Supplier\app\Models;
 
 use App\Models\Admin;
+use App\Models\Ledger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Accounts\app\Models\Account;
@@ -30,6 +31,7 @@ class SupplierPayment extends Model
         'amount',
         'payment_date',
         'note',
+        'ledger_id',
         'created_by',
         'updated_by',
     ];
@@ -48,6 +50,11 @@ class SupplierPayment extends Model
     public function account()
     {
         return $this->belongsTo(Account::class, 'account_id', 'id')->withDefault();
+    }
+
+    public function ledger()
+    {
+        return $this->belongsTo(Ledger::class, 'ledger_id', 'id')->withDefault();
     }
 
     public function createdBy()
