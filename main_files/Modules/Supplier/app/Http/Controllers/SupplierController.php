@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ledger;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -32,6 +33,7 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = $this->supplierService->allSupplier();
+
         if (request('export')) {
             $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
             return Excel::download(new SupplierExport($this->supplierService), $fileName);
@@ -45,7 +47,7 @@ class SupplierController extends Controller
         $data['total_advance'] = 0;
         $data['total_due_dismiss'] = 0;
 
-        foreach ($suppliers->get() as $supplier) {
+        foreach ($suppliers as $supplier) {
             $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
             $data['pay'] += $supplier->payments->sum('amount');
 
@@ -61,22 +63,39 @@ class SupplierController extends Controller
             $data['total_due_dismiss'] += $supplier->total_due_dismiss;
         }
 
+        // Convert sorted collection to paginate manually
+        $page = request('page', 1); // Default to page 1
+        $perPage = 20; // Items per page
+        $paginatedSuppliers = $suppliers->slice(($page - 1) * $perPage, $perPage)->values();
+
+        // Create LengthAwarePaginator
+
+
         if (request('par-page')) {
             if (request('par-page') == 'all') {
                 $suppliers = $suppliers->paginate();
+                $perPage = $suppliers->count();
             } else {
                 $suppliers = $suppliers->paginate(request('par-page'));
+                $perPage = request('par-page');
             }
         } else {
-            $suppliers = $suppliers->paginate(20);
+            // $suppliers = $suppliers->paginate(20);
         }
 
-        $suppliers->appends(request()->query());
+        $suppliers = new LengthAwarePaginator(
+            $paginatedSuppliers,
+            $suppliers->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        // $suppliers->appends(request()->query());
 
         $groups = $this->userGroup->getUserGroup()->where('type', 'supplier')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
 
-        $suppliers->appends(request()->query());
 
         return view('supplier::index', compact('suppliers', 'groups', 'areaList', 'data'));
     }

@@ -12,6 +12,7 @@ use Modules\Accounts\app\Models\Account;
 use Modules\Purchase\app\Models\Purchase;
 use Modules\Supplier\app\Models\Supplier;
 use Modules\Supplier\app\Models\SupplierPayment;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SupplierService
 {
@@ -72,7 +73,43 @@ class SupplierService
             $suppliers = $suppliers->whereBetween('date', [now()->parse(request()->from_date), now()->parse(request()->to_date)]);
         }
 
+        if (request()->order_type) {
+            $orderBy = request()->order_by;
+            $orderBy = $orderBy == 'asc' ? 'sortBy' : 'sortByDesc';
+            switch (request()->order_type) {
+                case 'due':
+                    $suppliers = $suppliers->with(['purchases', 'payments', 'purchaseReturn'])
+                        ->get()
+                        ->$orderBy(function ($supplier) {
+                            $totalPurchase = $supplier->purchases->sum('total_amount');
+                            $totalPaid = $supplier->payments->sum('amount');
+                            $totalReturn = $supplier->purchaseReturn->sum('return_amount');
+                            $totalDue = $totalPurchase - $totalPaid - $totalReturn;
+                            return $totalDue;
+                        });
+                    break;
 
+                case 'paid':
+                    $suppliers = $suppliers->with(['payments'])
+                        ->get()
+                        ->$orderBy(function ($supplier) {
+                            return $supplier->payments->sum('amount');
+                        });
+                    break;
+
+                case 'total':
+                    $suppliers = $suppliers->with(['purchases'])
+                        ->get()
+                        ->$orderBy(function ($supplier) {
+                            return $supplier->purchases->sum('total_amount');
+                        });
+                    break;
+
+                default:
+                    // Default sorting logic
+                    break;
+            }
+        }
 
 
         return $suppliers;
