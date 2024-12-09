@@ -13,6 +13,7 @@ use App\Services\MailSenderService;
 use App\Traits\GetGlobalInformationTrait;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -65,6 +66,45 @@ class CustomerController extends Controller
         if ($orderBy) {
             $users = $query->orderBy('name', $orderBy);
         }
+        $customers = null;
+        if (request()->order_type) {
+            $orderBy = request()->order_by;
+            $orderBy = $orderBy == 'asc' ? 'sortBy' : 'sortByDesc';
+            switch (request()->order_type) {
+                case 'due':
+                    $customers = $query->with(['sales', 'payment', 'saleReturn'])
+                        ->get()
+                        ->$orderBy(function ($customer) {
+                            $totalPurchase = $customer->sales->sum('grand_total');
+                            $totalPaid = $customer->payment->sum('amount');
+                            $totalReturn = $customer->saleReturn->sum('return_amount');
+                            $totalDue = $totalPurchase - $totalPaid - $totalReturn;
+                            return $totalDue;
+                        });
+                    break;
+
+                case 'paid':
+                    $customers = $query->with(['payment'])
+                        ->get()
+                        ->$orderBy(function ($customer) {
+                            return $customer->payment->sum('amount');
+                        });
+                    break;
+
+                case 'total':
+                    $customers = $query->with(['sales'])
+                        ->get()
+                        ->$orderBy(function ($customer) {
+                            return $customer->sales->sum('grand_total');
+                        });
+                    break;
+
+                default:
+                    // Default sorting logic
+                    break;
+            }
+        }
+
 
         $data['totalSale'] = 0;
         $data['pay'] = 0;
@@ -91,14 +131,43 @@ class CustomerController extends Controller
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
         }
 
-        if ($request->filled('par-page')) {
-            if ($request->get('par-page') == 'all') {
-                $users = $query->get();
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $perPage = $customers->count();
             } else {
-                $users = $query->paginate($request->get('par-page'));
+
+                $perPage = request('par-page');
             }
         } else {
-            $users = $query->paginate();
+            $perPage = 20;
+        }
+
+        if (request()->order_type) {
+            // Convert sorted collection to paginate manually
+            $page = request('page', 1); // Default to page 1
+            $paginatedCustomers = $customers->slice(($page - 1) * $perPage, $perPage)->values();
+        }
+
+
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $users = request()->order_type ? $paginatedCustomers : $query->paginate();
+            } else {
+                $users = request()->order_type ? $paginatedCustomers : $query->paginate(request('par-page'));
+            }
+        } else {
+            $users = request()->order_type ? $paginatedCustomers : $query->paginate(20);
+        }
+
+
+        if (request()->order_type) {
+            $users = new LengthAwarePaginator(
+                $paginatedCustomers,
+                $customers->count(),
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
         }
 
         $users->appends(request()->query());

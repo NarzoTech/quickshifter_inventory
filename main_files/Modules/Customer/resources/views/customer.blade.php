@@ -20,6 +20,20 @@
                             </div>
                             <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
+                                    <select name="order_type" id="order_type" class="form-control">
+                                        <option value="">{{ __('Order Type') }}</option>
+                                        <option value="due" {{ request('order_type') == 'due' ? 'selected' : '' }}>
+                                            {{ __('Due') }}</option>
+
+                                        <option value="total" {{ request('order_type') == 'total' ? 'selected' : '' }}>
+                                            {{ __('Total') }}</option>
+                                        <option value="paid" {{ request('order_type') == 'paid' ? 'selected' : '' }}>
+                                            {{ __('Paid') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
                                         <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
@@ -66,6 +80,8 @@
                             </div>
                             <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
+                                    <button type="button" class="btn bg-label-danger form-reset"><i
+                                            class='bx bx-rotate-right'></i> Reset</button>
                                     <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
                                 </div>
                             </div>
@@ -100,30 +116,22 @@
                 <table style="width: 100%;" class="table table-hover">
                     <thead>
                         <tr>
-                            <th rowspan="2">{{ __('SN') }}</th>
-                            <th rowspan="2">{{ __('Name') }}</th>
-                            <th rowspan="2">{{ __('Phone') }}</th>
-                            <th rowspan="2">{{ __('Area') }}</th>
-                            <th colspan="4">{{ __('Sale') }}</th>
-                            <th colspan="3">{{ __('Sale Return') }}</th>
-                            <th rowspan="2">{{ __('Total Due') }}</th>
-                            <th rowspan="2">{{ __('Action') }}</th>
-                        </tr>
-                        <tr>
-                            <th>{{ __('Total') }}</th>
-                            <th>{{ __('Pay') }}</th>
-                            <th>{{ __('Due') }}</th>
-                            {{-- <th>{{ __('Dismiss') }}</th> --}}
+                            <th>{{ __('SN') }}</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Phone') }}</th>
+                            <th>{{ __('Area') }}</th>
+                            <th>{{ __('Total Sale') }}</th>
+                            <th>{{ __('Sale Payment') }}</th>
+                            <th>{{ __('Sale Due') }}</th>
                             <th>{{ __('Advance') }}</th>
-                            <th>{{ __('Total') }}</th>
-                            <th>{{ __('Pay') }}</th>
-                            <th>{{ __('Due') }}</th>
+                            <th>{{ __('Total Due') }}</th>
+                            <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($users as $index => $user)
                             <tr>
-                                <td>{{ ++$index }}</td>
+                                <td>{{ $users->firstItem() + $index }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->area->name }}</td>
@@ -131,9 +139,6 @@
                                 <td>{{ currency($user->total_paid) }}</td>
                                 <td>{{ currency($user->total_due) }}</td>
                                 <td>{{ currency($user->advances()) }}</td>
-                                <td>{{ currency($user->saleReturn->sum('return_amount')) }}</td>
-                                <td>{{ currency($user->total_sale_return_pay) }}</td>
-                                <td>{{ currency($user->total_sale_return_due) }}</td>
                                 <td>{{ currency($user->total_due - $user->total_sale_return_due) }}</td>
 
                                 <td>
@@ -201,15 +206,6 @@
                             <td>
                                 {{ currency($data['total_advance']) }}
                             </td>
-                            <td>
-                                {{ currency($data['total_return']) }}
-                            </td>
-                            <td>
-                                {{ currency($data['total_return_pay']) }}
-                            </td>
-                            <td>
-                                {{ currency($data['total_return_due']) }}
-                            </td>
                             <td colspan="2">
                                 {{ currency($data['total_due'] - $data['total_return_due']) }}
                             </td>
@@ -255,7 +251,6 @@
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
                                             value="{{ $user->name }}">
-
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -482,17 +477,6 @@
 
     @push('js')
         <script>
-            $('.export').on('click', function() {
-                // get full url including query string
-                var fullUrl = window.location.href;
-                if (fullUrl.includes('?')) {
-                    fullUrl += '&export=true';
-                } else {
-                    fullUrl += '?export=true';
-                }
-                window.location.href = fullUrl;
-            })
-
             function deleteData(id) {
                 let url = '{{ route('admin.customers.destroy', ':id') }}';
                 url = url.replace(':id', id);

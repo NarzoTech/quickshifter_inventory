@@ -63,24 +63,31 @@ class SupplierController extends Controller
             $data['total_due_dismiss'] += $supplier->total_due_dismiss;
         }
 
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $perPage = $suppliers->count();
+            } else {
+
+                $perPage = request('par-page');
+            }
+        } else {
+            $perPage = 20;
+        }
+
         if (request()->order_type) {
             // Convert sorted collection to paginate manually
             $page = request('page', 1); // Default to page 1
-            $perPage = 20; // Items per page
             $paginatedSuppliers = $suppliers->slice(($page - 1) * $perPage, $perPage)->values();
         }
 
 
         // Create LengthAwarePaginator
 
-
         if (request('par-page')) {
             if (request('par-page') == 'all') {
                 $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate();
-                $perPage = $suppliers->count();
             } else {
                 $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate(request('par-page'));
-                $perPage = request('par-page');
             }
         } else {
             $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate(20);
@@ -96,7 +103,7 @@ class SupplierController extends Controller
             );
         }
 
-        // $suppliers->appends(request()->query());
+        $suppliers->appends(request()->query());
 
         $groups = $this->userGroup->getUserGroup()->where('type', 'supplier')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
