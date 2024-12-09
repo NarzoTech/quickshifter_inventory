@@ -30,10 +30,47 @@ class SalesReturnController extends Controller
      */
     public function returnList()
     {
-        $lists = SalesReturn::orderBy('id', 'desc')->paginate(20);
+        $lists = SalesReturn::query();
+
+
+        $lists = $lists->orderBy('id', request()->order_by ? request()->order_by : 'desc');
+
+
+        if (request()->from_date && request()->to_date) {
+
+            $lists = $lists->whereBetween('return_date', [now()->parse(request()->from_date), now()->parse(request()->to_date)]);
+        }
+
+        if (request()->customer) {
+
+            $lists = $lists->where('customer_id', request()->customer);
+        }
+
+        $data = [];
+
+        $data['totalAmount'] = 0;
+        $data['paidAmount'] = 0;
+        $data['totalDue'] = 0;
+        foreach ($lists->get() as $list) {
+            $data['totalAmount'] += $list->return_amount;
+            $data['paidAmount'] += $list->return_amount - $list->return_due;
+            $data['totalDue'] += $list->return_due;
+        }
+
+
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $lists = $lists->paginate();
+            } else {
+                $lists = $lists->paginate(request('par-page'));
+            }
+        } else {
+            $lists = $lists->paginate(20);
+        }
+
         $lists->appends(request()->query());
 
-        return view('sales::return.index', compact('lists'));
+        return view('sales::return.index', compact('lists', 'data'));
     }
 
     /**
@@ -61,9 +98,7 @@ class SalesReturnController extends Controller
             'paying_amount' => 'required',
             'payment_type' => 'required',
             'return_subtotal' => 'required|array',
-            'return_subtotal.*' => 'required',
             'return_quantity' => 'required|array',
-            'return_quantity.*' => 'required',
             'price' => 'required|array',
             'price.*' => 'required',
         ]);
@@ -76,10 +111,10 @@ class SalesReturnController extends Controller
             $return = SalesReturn::create([
                 'sale_id' => $request->sale_id,
                 'customer_id' => $request->customer_id,
-                'order_date' => $request->order_date,
-                'return_date' => date($request->return_date),
+                'order_date' => now()->parse($request->order_date),
+                'return_date' => now()->parse($request->return_date),
                 'return_amount' => $request->return_amount,
-                'return_due' => $due > 0 ? $due : 0,
+                'return_due' => $due,
                 'note'  => $request->note,
                 'status' => 1,
             ]);
@@ -87,6 +122,7 @@ class SalesReturnController extends Controller
             // create a return details
 
             foreach ($request->product_id as $key => $prod_id) {
+                if ($request->return_quantity[$key] == 0) continue;
                 $details = SalesReturnDetails::create(
                     [
                         'sale_return_id' => $return->id,
@@ -194,7 +230,32 @@ class SalesReturnController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $return = SalesReturn::find($id);
+
+        // delete return details
+        $return->details()->delete();
+
+        // delete ledger
+        $return->ledger->delete();
+
+        // delete payments
+        $return->payments()->delete();
+
+
+        // update stock
+        foreach ($return->details as $detail) {
+            $product = $detail->product;
+            $product->stock = $product->stock - $detail->quantity;
+            $product->save();
+        }
+
+        // delete stock
+        $return->stock()->delete();
+
+        // delete return
+        $return->delete();
+
+        return $this->redirectWithMessage(RedirectType::DELETE->value, '', [], ['messege' => 'Sales return deleted successfully', 'alert-type' => 'success']);
     }
 
     public function genLedgerInvoiceNumber($type = 'Sale Payment')

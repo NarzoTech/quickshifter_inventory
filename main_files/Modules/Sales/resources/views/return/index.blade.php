@@ -119,33 +119,38 @@
                                 <td>{{ $sale->return_amount }}</td>
                                 <td>{{ $sale->return_amount - $sale->return_due }}</td>
                                 <td>
-                                    @if ($sale->return_due == 0)
-                                        <span class="badge badge-success">{{ __('Paid') }}</span>
+                                    @if (!$sale->return_due)
+                                        <span class="badge bg-success">{{ __('Paid') }}</span>
                                     @else
-                                        <span class="badge badge-danger">{{ __('Due') }}</span>
+                                        <span class="badge bg-danger">{{ __('Due') }}</span>
                                     @endif
                                 </td>
                                 <td>{{ $sale->return_due }}</td>
                                 <td>
                                     <div class="btn-group mb-2">
-                                        <button class="btn btn-info btn-sm dropdown-toggle" type="button"
-                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">{{ __('Action') }}</button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item view-sale" href="javascript:;"
-                                                data-id="{{ $sale->id }}">{{ __('View') }}</a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>
-
-
-                                            <a class="dropdown-item" href="javascript:void(0)"
-                                                onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
-                                        </div>
+                                        <a class="btn bg-label-danger" href="javascript:void(0)"
+                                            onclick="deleteData({{ $sale->id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
                         @endforeach
+                        <tr>
+                            <td colspan="4" class="text-center fw-bold">
+                                {{ __('Total') }}
+                            </td>
+                            <td>
+                                {{ currency($data['totalAmount']) }}
+                            </td>
+                            <td>
+                                {{ currency($data['paidAmount']) }}
+                            </td>
+                            <td></td>
+                            <td colspan="1" class="text-center">
+                                {{ currency($data['totalDue']) }}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -187,7 +192,7 @@
 
         function deleteData(id) {
             const modal = $('#deleteModal');
-            $('#deleteForm').attr('action', "{{ route('admin.sales.destroy', '') }}/" + id);
+            $('#deleteForm').attr('action', "{{ route('admin.sales.return.destroy', '') }}/" + id);
             modal.modal('show');
         }
     </script>

@@ -2,7 +2,9 @@
 
 namespace Modules\Sales\app\Models;
 
+use App\Models\Ledger;
 use App\Models\Payment;
+use App\Models\Stock;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +25,7 @@ class SalesReturn extends Model
         'order_date',
         'return_date',
         'return_amount',
+        'return_due',
         'note',
         'status',
     ];
@@ -32,6 +35,11 @@ class SalesReturn extends Model
         return $this->belongsTo(Sale::class, 'sale_id');
     }
 
+    public function ledger()
+    {
+        return $this->hasOne(Ledger::class, 'sale_return_id');
+    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class, 'sale_return_id');
@@ -39,5 +47,15 @@ class SalesReturn extends Model
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id')->withDefault();
+    }
+
+    public function details()
+    {
+        return $this->hasMany(SalesReturnDetails::class, 'sale_return_id');
+    }
+
+    public function stock()
+    {
+        return $this->hasMany(Stock::class, 'sale_return_id');
     }
 }
