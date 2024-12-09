@@ -346,10 +346,18 @@
                     success: function(response) {
                         if (response.status) {
                             let html = '';
+
                             response.data.forEach(product => {
-                                products.push(product);
-                                html +=
-                                    `<option value="${product.id}">${product.name}</option>`;
+                                const filteredProducts = products.filter(p => p.name
+                                    .toLowerCase().includes(input.toLowerCase()) || p
+                                    .barcode.toLowerCase().includes(input.toLowerCase()));
+
+                                if (!filteredProducts.length) {
+                                    products.push(product);
+                                    html +=
+                                        `<option value="${product.id}">${product.name}</option>`;
+                                }
+
                             });
                             $('#product_id').append(html);
                         }
