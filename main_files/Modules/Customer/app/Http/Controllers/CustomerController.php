@@ -398,7 +398,16 @@ class CustomerController extends Controller
 
     public function dueReceiveList()
     {
-        $payments  = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->paginate(20);
+        $payments  = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->where('amount', '>', 0);
+
+        if (request('customer')) {
+            $payments = $payments->where('customer_id', request('customer'));
+        }
+
+        $payments = $payments->paginate(20);
+
+        $payments->appends(request()->query());
+
         return view('customer::due-list', compact('payments'));
     }
 
