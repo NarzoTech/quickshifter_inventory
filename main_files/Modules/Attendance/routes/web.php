@@ -19,4 +19,8 @@ Route::middleware(['auth:admin', 'translation'])
     ->prefix('admin')
     ->group(function () {
         Route::resource('attendance', AttendanceController::class)->only('index', 'create', 'store')->names('attendance');
+
+        Route::get('attendance/settings/weekdays', [AttendanceController::class, 'weekDays'])->name('attendance.settings.weekdays');
+
+        Route::put('attendance/settings/weekdays/{id}', [AttendanceController::class, 'weekDaysUpdate'])->name('attendance.settings.weekdays.update');
     });

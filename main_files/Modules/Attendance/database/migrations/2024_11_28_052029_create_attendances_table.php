@@ -17,11 +17,13 @@ return new class extends Migration
 
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('member_id')->nullable();
+            $table->unsignedBigInteger('employee_id')->nullable();
             $table->time('in_time')->nullable();
             $table->time('out_time')->nullable();
             $table->date('date');
             $table->enum('status', ['present', 'absent', 'late']);
+            $table->boolean('is_leave')->default(false);
+            $table->text('reason')->nullable();
             $table->timestamps();
         });
     }

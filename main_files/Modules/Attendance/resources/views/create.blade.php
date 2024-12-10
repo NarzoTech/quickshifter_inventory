@@ -1,18 +1,11 @@
-@extends('admin.master_layout')
+@extends('admin.layouts.master')
 @section('title')
     <title>{{ __('Attendance') }}</title>
 @endsection
-@section('admin-content')
+@section('content')
     <div class="main-content">
         <section class="section">
-            <div class="section-header">
-                <h1>{{ __('Attendance') }}</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">{{ __('Dashboard') }}</a>
-                    </div>
-                    <div class="breadcrumb-item">{{ __('Attendance') }}</div>
-                </div>
-            </div>
+
             <div class="section-body">
                 <div class="mt-4 row">
                     <div class="col-12">

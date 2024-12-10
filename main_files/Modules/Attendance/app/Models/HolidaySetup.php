@@ -4,20 +4,22 @@ namespace Modules\Attendance\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Attendance\Database\factories\AttendanceFactory;
+use Modules\Attendance\Database\factories\HolidaySetupFactory;
 
-class Attendance extends Model
+class HolidaySetup extends Model
 {
     use HasFactory;
 
     /**
      * The attributes that are mass assignable.
      */
+    protected $table = 'holiday_setup';
     protected $fillable = [
-        'employee_id',
-        'in_time',
-        'out_time',
-        'date',
+
+        'name',
+        'start_date',
+        'end_date',
+        'description',
         'status',
     ];
 }

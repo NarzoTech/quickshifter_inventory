@@ -163,6 +163,9 @@
             @include('employee::sidebar')
         @endif
 
+        @if (Module::isEnabled('Attendance'))
+            @include('attendance::sidebar')
+        @endif
         <li
             class="menu-item {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'active open') }}">
 

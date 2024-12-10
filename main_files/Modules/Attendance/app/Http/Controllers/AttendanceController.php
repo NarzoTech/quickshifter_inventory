@@ -2,19 +2,22 @@
 
 namespace Modules\Attendance\app\Http\Controllers;
 
+use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
 
-use App\Models\Member;
-use App\Services\MemberService;
+
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Modules\Attendance\app\Models\Attendance;
+use Modules\Attendance\app\Models\WeekendSetup;
+use Modules\Employee\app\Services\EmployeeService;
 
 class AttendanceController extends Controller
 {
-    public function __construct(protected MemberService $memberService)
+    public function __construct(private EmployeeService $employee)
     {
         $this->middleware('auth:admin');
     }
@@ -25,64 +28,9 @@ class AttendanceController extends Controller
     {
         checkAdminHasPermissionAndThrowException('attendance.list');
 
+        $employees = $this->employee->all()->paginate(20);
 
-        $appMode = env('APP_MODE');
-        if ($appMode == 'DEMO') {
-            $todayDate = date('d');
-            if ($todayDate % 2 == 0) {
-                $currentMonth = date('m');
-                $currentYear = date('Y');
-                $today = date('Y-m-d');
-
-                $currentMembers = $this->memberService->filteredMembers()->get();
-
-                // Get the number of days in the current month
-                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
-
-                // Collect all dates in the current month before today
-                $availableDates = [];
-                for ($day = 1; $day <= $daysInMonth; $day++) {
-                    $date = sprintf('%04d-%02d-%02d', $currentYear, $currentMonth, $day);
-                    if ($date < $today) {
-                        $availableDates[] = $date;
-                    }
-                }
-
-
-                if (!empty($availableDates)) {
-                    // Calculate 50% of available dates (rounded down)
-                    $numberOfDates = floor(count($availableDates) / 2);
-
-                    // Randomly shuffle and select 50% of the dates
-                    shuffle($availableDates);
-                    $randomDates = array_slice($availableDates, 0, $numberOfDates);
-                } else {
-                    $randomDates = [];
-                }
-
-                // Loop through the selected dates and members
-                foreach ($randomDates as $date) {
-                    foreach ($currentMembers as $member) {
-                        $attendance = $member->attendance->where('date', $date)->where('member_id', $member->id)->first();
-
-                        $options = [
-                            'present',
-                            'absent',
-                        ];
-                        if (!$attendance) {
-                            Attendance::create([
-                                'date' => $date,
-                                'member_id' => $member->id,
-                                'status' => $options[array_rand($options, 1)],
-                            ]);
-                        }
-                    }
-                }
-            }
-        }
-
-        $members = $this->memberService->getAllMembers();
-        return view('attendance::index', compact('members'));
+        return view('attendance::index', compact('employees'));
     }
 
     /**
@@ -93,8 +41,8 @@ class AttendanceController extends Controller
         checkAdminHasPermissionAndThrowException('attendance.create');
 
 
-        $members = $this->memberService->getAllMembers();
-        return view('attendance::create', compact('members'));
+        $employees = $this->employee->all()->paginate(20);
+        return view('attendance::create', compact('employees'));
     }
 
     /**
@@ -106,30 +54,30 @@ class AttendanceController extends Controller
 
         $request->validate([
             'date' => 'required',
-            'member_id' => 'required',
-            'member_id.*' => 'required|numeric',
+            'employee_id' => 'required',
+            'employee_id.*' => 'required|numeric',
             'attendance' => 'required',
             'attendance.*' => 'required|in:absent,present',
         ], [
             'date.required' => __('Date is required'),
-            'member_id.required' => __('Member is required'),
+            'employee_id.required' => __('Member is required'),
             'attendance.required' => __('Attendance is required'),
         ]);
         $date = $request->date;
-        $members = $request->member_id;
+        $employees = $request->employee_id;
         $attendances = $request->attendance;
 
         // get all attendances for the date
-        $attendancesList = Attendance::where('date', now()->parse($date))->pluck('member_id')->toArray();
+        $attendancesList = Attendance::where('date', now()->parse($date))->pluck('employee_id')->toArray();
 
 
 
-        foreach ($members as $key => $member) {
+        foreach ($employees as $key => $employee) {
             // check if member has already taken attendance for the date
-            if (in_array($member, $attendancesList)) {
+            if (in_array($employee, $attendancesList)) {
 
                 // update attendance
-                $attendance = Attendance::where('date', now()->parse($date))->where('member_id', $member)->first();
+                $attendance = Attendance::where('date', now()->parse($date))->where('employee_id', $employee)->first();
                 $attendance->update(['status' => $attendances[$key]]);
                 continue;
             }
@@ -137,10 +85,26 @@ class AttendanceController extends Controller
             Attendance::create([
                 'date' => now()->parse($date),
                 'attendance' => $attendances[$key],
-                'member_id' => $member
+                'employee_id' => $employee
             ]);
         }
 
         return response()->json(['message' => __('Attendance Taken'), 'success' => true]);
+    }
+
+    public function weekDays()
+    {
+        $days = WeekendSetup::all();
+        return view('attendance::weekdays', compact('days'));
+    }
+    public function weekDaysUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required',
+            'status' => 'required|boolean',
+            'is_weekend' => 'required|boolean'
+        ]);
+        WeekendSetup::updateOrCreate(['id' => $id], $request->except('_token'));
+        return back()->with(['messege' => 'Weekend days updated successfully', 'alert-type' => 'success']);
     }
 }
