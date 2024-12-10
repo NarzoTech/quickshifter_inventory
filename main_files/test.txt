@@ -1,0 +1,7 @@
+1. roles permissions
+2. location wise order
+3. pre-order
+4. wholesale order
+5. partial payment
+6. messenger chatbot
+7. courier service integration
