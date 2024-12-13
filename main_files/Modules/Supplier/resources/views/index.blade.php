@@ -13,7 +13,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xl-3 col-md-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -22,7 +22,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-3 col-md-4">
                                 <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="">{{ __('Order Type') }}</option>
@@ -36,7 +36,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-3 col-md-4">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -49,7 +49,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-3 col-md-4">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -68,26 +68,24 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-3 col-md-4">
                                 <div class="form-group">
                                     <input type="text" placeholder="From Date" name="from_date"
                                         value="{{ request()->get('from_date') }}" class="form-control datepicker"
                                         autocomplete="off">
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-3 col-md-4">
                                 <div class="form-group">
                                     <input type="text" placeholder="To Date" name="to_date"
                                         value="{{ request()->get('to_date') }}" class="form-control datepicker"
                                         autocomplete="off">
                                 </div>
                             </div>
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-label-primary">Search</button>
                                 </div>
                             </div>
                         </div>
