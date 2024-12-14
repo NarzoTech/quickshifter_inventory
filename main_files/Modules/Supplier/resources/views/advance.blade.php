@@ -11,134 +11,140 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <div class="card-body">
-
-
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h4 class="m-t-0 header-title mb-4">
-                                            <b>{{ __('Suppliers Pay Advance') }}</b>
-                                        </h4>
-                                    </div>
+                            <div class="card-header">
+                                <div class="card-header-title">
+                                    <h4 class="section_title">
+                                        {{ __('Suppliers Pay Advance') }} </h4>
                                 </div>
-
+                            </div>
+                            <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6 mb-2">
                                         <div class="well">
-                                            <strong>{{ __('Name:') }}</strong>{{ $supplier->name }}<br>
-                                            <strong>{{ __('Mobile:') }}</strong>{{ $supplier->phone }}<br>
-                                            <strong>{{ __('Email:') }}</strong>{{ $supplier->email }}<br>
+                                            <strong class="me-2">{{ __('Name:') }}</strong>{{ $supplier->name }}<br>
+                                            <strong class="me-2">{{ __('Mobile:') }}</strong>{{ $supplier->phone }}<br>
+                                            <strong class="me-2">{{ __('Email:') }}</strong>{{ $supplier->email }}<br>
                                         </div>
                                     </div>
                                 </div>
 
-                                <form action="{{ route('admin.supplier.advance.pay', $supplier->id) }}" method="POST">
+                                <form class="suppliers_adv_form"
+                                    action="{{ route('admin.supplier.advance.pay', $supplier->id) }}" method="POST">
                                     @csrf
                                     <div class="row mt-4">
-                                        <div class="col-md-6">
+                                        <div class="col-lg-6">
                                             <label for="note" class="">{{ __('Note') }}</label>
-                                            <textarea name="note" class="form-control" placeholder="Note" id="note"></textarea>
+                                            <textarea name="note" class="form-control" placeholder="Note" id="note" rows="5"></textarea>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>{{ __('Previous Advance') }}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="fas fa-money-check-alt"></i>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-xl-6">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Previous Advance') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">
+                                                                <i class="fas fa-money-check-alt"></i>
+                                                            </div>
+                                                            <input class="form-control input_number valid" placeholder="0"
+                                                                type="text" id="advance"
+                                                                value="{{ $supplier->advance }}" aria-required="true"
+                                                                aria-invalid="false" autocomplete="off" disabled
+                                                                name="advance">
                                                         </div>
                                                     </div>
-                                                    <input class="form-control input_number valid" placeholder="0"
-                                                        type="text" id="advance" value="{{ $supplier->advance }}"
-                                                        aria-required="true" aria-invalid="false" autocomplete="off"
-                                                        disabled name="advance">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>{{ __('Paying Advance') }}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="far fa-money-bill-alt"></i>
+                                                <div class="col-xl-6">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Paying Advance') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">
+                                                                <i class="far fa-money-bill-alt"></i>
+                                                            </div>
+                                                            <input class="form-control input_number valid"
+                                                                placeholder="Paying Advance" type="number"
+                                                                id="paying_amount" aria-required="true" aria-invalid="false"
+                                                                autocomplete="off" name="paying_amount" step="0.01">
                                                         </div>
                                                     </div>
-                                                    <input class="form-control input_number valid"
-                                                        placeholder="Paying Advance" type="number" id="paying_amount"
-                                                        aria-required="true" aria-invalid="false" autocomplete="off"
-                                                        name="paying_amount" step="0.01">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>{{ __('Refund Advance') }}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="far fa-money-bill-alt"></i>
+                                                <div class="col-xl-6">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Refund Advance') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">
+                                                                <i class="far fa-money-bill-alt"></i>
+                                                            </div>
+                                                            <input class="form-control input_number valid"
+                                                                placeholder="Refund Advance" type="number"
+                                                                id="refund_amount" aria-required="true" aria-invalid="false"
+                                                                autocomplete="off" name="refund_amount" min="0"
+                                                                step="0.01">
                                                         </div>
                                                     </div>
-                                                    <input class="form-control input_number valid"
-                                                        placeholder="Refund Advance" type="number" id="refund_amount"
-                                                        aria-required="true" aria-invalid="false" autocomplete="off"
-                                                        name="refund_amount" min="0" step="0.01">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>{{ __('Total Advance') }}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="far fa-money-bill-alt"></i>
+                                                <div class="col-xl-6">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Total Advance') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">
+                                                                <i class="far fa-money-bill-alt"></i>
+                                                            </div>
+                                                            <input class="form-control input_number valid" readonly
+                                                                placeholder="Total Advance" type="number" id="total_amount"
+                                                                aria-required="true" aria-invalid="false" required
+                                                                autocomplete="off" name="total_amount" step="0.01"
+                                                                value="{{ $supplier->advance }}">
                                                         </div>
                                                     </div>
-                                                    <input class="form-control input_number valid" readonly
-                                                        placeholder="Total Advance" type="number" id="total_amount"
-                                                        aria-required="true" aria-invalid="false" required
-                                                        autocomplete="off" name="total_amount" step="0.01"
-                                                        value="{{ $supplier->advance }}">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>{{ __('Date') }}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="far fa-calendar-check"></i>
+                                                <div class="col-xl-6">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Date') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">
+                                                                <i class="far fa-calendar-check"></i>
+                                                            </div>
+                                                            <input class="form-control input_number datepicker"
+                                                                name="date" type="text" value="{{ date('d-m-Y') }}"
+                                                                id="date" aria-required="true" aria-invalid="false">
                                                         </div>
                                                     </div>
-                                                    <input class="form-control input_number datepicker" name="date"
-                                                        type="text" value="{{ date('d-m-Y') }}" id="date"
-                                                        aria-required="true" aria-invalid="false">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>{{ __('Paying With') }}</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">
-                                                            <i class="far fa-credit-card"></i>
-                                                        </div>
-                                                    </div>
-                                                    <select name="payment_type" id="" class="form-control">
-                                                        <option value="">{{ __('Select Payment Type') }}
-                                                        </option>
-                                                        @foreach (accountList() as $key => $list)
-                                                            <option value="{{ $key }}"
-                                                                @if ($key == 'cash') selected @endif
-                                                                data-name="{{ $list }}">{{ $list }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                <div class="col-xl-6">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Paying With') }}</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text">
+                                                                <i class="far fa-credit-card"></i>
+                                                            </div>
+                                                            <select name="payment_type" id=""
+                                                                class="form-control">
+                                                                <option value="">{{ __('Select Payment Type') }}
+                                                                </option>
+                                                                @foreach (accountList() as $key => $list)
+                                                                    <option value="{{ $key }}"
+                                                                        @if ($key == 'cash') selected @endif
+                                                                        data-name="{{ $list }}">
+                                                                        {{ $list }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
 
+                                                        </div>
+                                                        <div class="account">
+                                                            <input type="hidden" name="account_id" class="form-control"
+                                                                value="cash" readonly>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="mt-2 account">
-                                                    <input type="hidden" name="account_id" class="form-control"
-                                                        value="cash" readonly>
+                                                <div class="col-12">
+                                                    <div class="">
+                                                        <button class="btn btn-primary"
+                                                            type="submit">{{ __('Pay') }}</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="text-right mt-4">
-                                        <button class="btn btn-info" type="submit">{{ __('Pay') }}</button>
                                     </div>
                                 </form>
                             </div>

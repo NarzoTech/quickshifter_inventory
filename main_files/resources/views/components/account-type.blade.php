@@ -1,26 +1,22 @@
-<div class="form-group row">
-    <div class="col-4">
-        <label>
-            @if (isset($text))
-                {{ $text . 'With' }}
-            @else
-                {{ __('Paying With') }}
-            @endif
-        </label>
-    </div>
-    <div class="col-8">
-        <select name="payment_type" id="" class="form-control">
-            <option value="">{{ __('Select Payment Type') }}
+<div class="form-group">
+    <label>
+        @if (isset($text))
+            {{ $text . 'With' }}
+        @else
+            {{ __('Paying With') }}
+        @endif
+    </label>
+    <select name="payment_type" id="" class="form-control">
+        <option value="">{{ __('Select Payment Type') }}
+        </option>
+        @foreach (accountList() as $key => $list)
+            <option value="{{ $key }}" @if ($key == 'cash') selected @endif
+                data-name="{{ $list }}">{{ $list }}
             </option>
-            @foreach (accountList() as $key => $list)
-                <option value="{{ $key }}" @if ($key == 'cash') selected @endif
-                    data-name="{{ $list }}">{{ $list }}
-                </option>
-            @endforeach
-        </select>
-        <div class="mt-2 account">
-            <input type="hidden" name="account_id" class="form-control" value="cash" readonly>
-        </div>
+        @endforeach
+    </select>
+    <div class="mt-2 account">
+        <input type="hidden" name="account_id" class="form-control" value="cash" readonly>
     </div>
 </div>
 

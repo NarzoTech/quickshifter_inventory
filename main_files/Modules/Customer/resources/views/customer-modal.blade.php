@@ -13,14 +13,14 @@
                 <form action="{{ route('admin.customers.store') }}" method="POST" id="add-customer-form">
                     @csrf
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">{{ __('Customer Name') }}<b class="text-danger">*</b></label>
                                 <input type="text" class="form-control" id="name" name="name">
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="group_id">{{ __('Customer Group') }}</label>
                                 <select name="group_id" id="group_id" class="form-control">
@@ -32,28 +32,28 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="due">{{ __('Due') }}</label>
                                 <input type="text" class="form-control" id="due" name="due">
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="phone">{{ __('Phone') }}</label>
                                 <input type="text" class="form-control" id="phone" name="phone">
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="email">{{ __('Email') }}</label>
                                 <input type="email" class="form-control" id="email" name="email">
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="area_id">{{ __('Area') }}</label>
                                 <select name="area_id" id="area_id" class="form-control">
@@ -65,7 +65,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="vehicle_id">{{ __('Vehicle') }}</label>
                                 <select name="vehicle_id" id="vehicle_id" class="form-control select2"
@@ -80,21 +80,21 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="plate_number">{{ __('Plate Number') }}</label>
                                 <input type="text" class="form-control" id="plate_number" name="plate_number">
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="membership">{{ __('Membership') }}</label>
                                 <input type="text" class="form-control" id="membership" name="membership">
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="date">{{ __('Date') }}</label>
                                 <input type="text" class="form-control datepicker" id="date" name="date"
@@ -102,7 +102,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="status">{{ __('Status') }}</label>
                                 <select name="status" id="status" class="form-control">
@@ -112,7 +112,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group mb-0">
                                 <div class="guest_customer_check">
                                     <label class="switch switch-square">
@@ -130,7 +130,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="address">{{ __('Address') }}</label>
-                                <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
+                                <textarea name="address" id="address" class="form-control" rows="4"></textarea>
                             </div>
                         </div>
                     </div>

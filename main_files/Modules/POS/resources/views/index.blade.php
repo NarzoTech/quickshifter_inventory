@@ -656,26 +656,22 @@
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content hold-modal">
-                <div class="modal-header p-0">
+                <div class="modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h4 class="section_title">Hold Sale</h4>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="section_title">Hold Sale</h4>
-                    </div>
-                    <div class="card-body">
-                        <form action="javascript:;" id="hold-sale-form" method="post">
-                            @csrf
-                            <div class="form-group">
-                                <label for="">Note</label>
-                                <input type="text" class="form-control hold-sale-note" name="note">
-                                <input type="hidden" class="form-control" name="user_id">
-                            </div>
-                            <div class="text-end mt-1">
-                                <button class="btn bg-label-primary" type="submit">Hold</button>
-                            </div>
-                        </form>
-                    </div>
+                <div class="modal-body pt-0">
+                    <form action="javascript:;" id="hold-sale-form" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <label for="">Note</label>
+                            <input type="text" class="form-control hold-sale-note" name="note">
+                            <input type="hidden" class="form-control" name="user_id">
+                        </div>
+                        <div class="text-end mt-1">
+                            <button class="btn bg-label-primary" type="submit">Hold</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -685,15 +681,13 @@
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content hold-modal">
-                <div class="modal-header p-0">
+                <div class="modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h4 class="section_title">Hold Sale List</h4>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="section_title">Hold Sale List</h4>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
+                <div class="modal-body pt-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered m-0">
                             <thead>
                                 <tr>
                                     <th>Sl.</th>

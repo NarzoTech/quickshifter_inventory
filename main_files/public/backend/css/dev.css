@@ -529,7 +529,7 @@ img.mr-3.ml-3.rounded-circle {
 }
 
 textarea {
-    height: 65px !important;
+    /* height: 65px !important; */
 }
 
 .table-invoice {
@@ -589,11 +589,15 @@ textarea {
 .search-wrapper button {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 5px;
     background: #fff;
     border: none;
     outline: none;
     cursor: pointer;
+}
+
+.search-wrapper button i {
+    color: #696cff;
 }
 
 .card-header-tab {
@@ -628,7 +632,8 @@ textarea {
     color: #fff;
 }
 
-.card-header {
+.card-header,
+.modal-header {
     border-bottom: 1px solid #ddd !important;
     padding-bottom: 15px;
     margin-bottom: 25px;
@@ -638,7 +643,10 @@ textarea {
     justify-content: space-between;
 }
 
-.form-group {
+.modal-header {}
+
+.form-group,
+.form-group .nice-select {
     margin-bottom: 20px;
 }
 
@@ -653,7 +661,8 @@ textarea {
 .form-group textarea {
     border-radius: 6px;
     border: 1px solid #ddd !important;
-    padding: 10px 20px !important;
+    padding: 10px 13px !important;
+    font-size: 14px;
 }
 
 .tox-tinymce {
@@ -669,24 +678,31 @@ textarea {
     display: none !important;
 }
 
-.bg-label-success {
+.bg-label-success,
+.btn-success {
     color: #fff !important;
     background-color: #47c363 !important;
+    box-shadow: none !important;
 }
 
 .bg-label-warning {
     color: #fff !important;
     background-color: #ffc107 !important;
+    box-shadow: none !important;
 }
 
-.bg-label-primary {
+.bg-label-primary,
+.btn-primary {
     background-color: #696cff !important;
     color: #fff !important;
+    box-shadow: none !important;
 }
 
-.bg-label-danger {
+.bg-label-danger,
+.btn-danger {
     background-color: #ef4c43 !important;
     color: #fff !important;
+    box-shadow: none !important;
 }
 
 .product_card tr td .btn-sm,
@@ -715,16 +731,18 @@ table tr td {
 .form-group button.btn {
     padding: 12px 20px !important;
     color: #fff;
+    width: 49%;
 }
 
-.section_title {
+.section_title,
+.modal-title {
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
+    color: #5f61e6;
+    font-weight: 600;
 }
 
-.section_title svg {
-    margin-right: 5px;
-}
+.section_title svg {}
 
 .form-control:focus,
 .form-select:focus {
@@ -739,6 +757,10 @@ table tr td {
 .navbar-nav .nav-item {}
 
 .navbar-nav .nav-item .nav-link {}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: #696cff !important;
+}
 
 .pos_tabs {
     background: #fff;
@@ -859,7 +881,7 @@ table tr td {
 .guest_customer_check {
     border-radius: 6px;
     border: 1px solid #ddd !important;
-    padding: 10px 20px !important;
+    padding: 10px 12px !important;
     margin-top: 23px;
     padding-bottom: 6px !important;
 }
@@ -889,7 +911,8 @@ table tr td {
 }
 
 #paymentRow .btn,
-#hold-list-modal .btn {
+#hold-list-modal .btn,
+.common_table .btn {
     width: 42px;
     height: 42px;
     line-height: 42px;
@@ -927,6 +950,7 @@ table tr td {
 
 .form-group label span {
     display: inline-block;
+    margin: 0;
 }
 
 .tagify.form-control.tags {
@@ -935,4 +959,168 @@ table tr td {
 
 .tag {
     padding-top: 5px;
+}
+
+.input-daterange input {
+    text-align: left;
+}
+
+.input-daterange input:first-child {
+    border-radius: 6px 0 0 6px;
+    -webkit-border-radius: 6px 0 0 6px;
+    -moz-border-radius: 6px 0 0 6px;
+    -ms-border-radius: 6px 0 0 6px;
+    -o-border-radius: 6px 0 0 6px;
+}
+
+.input-daterange input:last-child {
+    border-radius: 0 6px 6px 0;
+    -ms-border-radius: 0 6px 6px 0;
+    -o-border-radius: 0 6px 6px 0;
+    -webkit-border-radius: 0 6px 6px 0;
+    -moz-border-radius: 0 6px 6px 0;
+}
+
+.input-group:focus-within .form-control,
+.input-group:focus-within .input-group-text {
+    border-color: #ddd !important;
+    box-shadow: none !important;
+}
+
+.search_form .input-group-text {
+    margin: 0 !important;
+    border: none;
+    border-top: 1px solid #ddd !important;
+    border-bottom: 1px solid #ddd !important;
+    width: 30px !important;
+    height: 43px !important;
+    line-height: 43px !important;
+    padding: 0 !important;
+    text-align: center;
+}
+
+.input-group:focus-within {
+    box-shadow: none;
+}
+
+.datepicker td,
+.datepicker th {
+    width: 30px;
+    height: 30px;
+}
+
+.navbar_search {
+    border-radius: 6px;
+    background: #696cff29;
+    padding-left: 10px;
+}
+
+.navbar_search i {}
+
+.navbar_search input {
+    color: #384551;
+}
+
+.modal-body form .input-group .input-group-text {
+    border: 1px solid #ddd !important;
+    margin: 0;
+    height: 43px;
+    padding: 0;
+    width: 42px;
+    line-height: 42px;
+}
+
+.modal-body .guest_customer_check {}
+
+.suppliers_adv_form textarea {
+    margin-bottom: 25px;
+}
+
+.suppliers_adv_form .nice-select {
+    margin-bottom: 0;
+}
+
+.input-group-text {
+    border: 1px solid #ddd;
+    width: 45px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.layout-navbar {
+    /* height: auto; */
+}
+
+@media (min-width: 1400px) and (max-width: 1600px) {}
+
+.form-group button.btn {
+    width: 48%;
+}
+
+
+@media (min-width: 1200px) and (max-width: 1399.99px) {
+    .navbar-nav .nav-item .nav-link {
+        font-size: 13px;
+    }
+
+    .navbar_search {
+        max-width: 200px;
+    }
+}
+
+
+@media (min-width: 992px) and (max-width: 1199.99px) {
+    .navbar-nav .nav-item .nav-link {
+        font-size: 14px;
+    }
+
+    .navbar-nav {
+        gap: 15px;
+    }
+}
+
+
+@media (min-width: 768px) and (max-width: 991.99px) {
+    .navbar-nav .nav-item {
+        display: none;
+    }
+
+
+
+}
+
+
+@media (min-width: 576px) and (max-width: 767.99px) {
+    .navbar-nav .nav-item {
+        display: none;
+    }
+
+
+
+
+}
+
+
+@media (max-width: 575.99px) {
+
+    .navbar_search {
+        max-width: 200px;
+    }
+
+    .navbar-nav .nav-item {
+        display: none;
+    }
+
+
+
+
 }

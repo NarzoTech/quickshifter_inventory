@@ -13,7 +13,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -22,7 +22,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="">{{ __('Order Type') }}</option>
@@ -36,7 +36,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -49,7 +49,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -68,21 +68,19 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date"
+                                            value="{{ request()->get('from_date') }}" autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-4">
-                                <div class="form-group">
-                                    <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <button type="button" class="btn bg-danger form-reset">Reset</button>
                                     <button type="submit" class="btn bg-label-primary">Search</button>
@@ -95,10 +93,10 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> Suppliers List</h4>
+                <h4 class="section_title">Suppliers List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn bg-label-primary"> <i
@@ -191,12 +189,6 @@
                             <td colspan="1">
                                 {{ currency($data['pay']) }}
                             </td>
-                            {{-- <td colspan="1">
-                                {{ currency($data['total_return']) }}
-                            </td>
-                            <td colspan="1">
-                                {{ currency($data['total_return_pay']) }}
-                            </td> --}}
                             <td colspan="1">
                                 {{ currency($data['total_due']) }}
                             </td>
@@ -228,7 +220,7 @@
                     <h5 class="modal-title" id="exampleModalLabel1">{{ __('Add Supplier') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body pt-0">
                     <form action="{{ route('admin.suppliers.store') }}" method="POST" id="add-supplier-form">
                         @csrf
                         <div class="row">
@@ -236,7 +228,8 @@
                                 <div class="form-group">
                                     <label for="name">{{ __('Supplier Name') }}<span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        placeholder="Name">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -245,32 +238,35 @@
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon11"><i
                                                 class="fa fa-briefcase"></i></span>
-                                        <input type="text" class="form-control" id="company" name="company">
+                                        <input type="text" class="form-control" id="company" name="company"
+                                            placeholder="Company">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="phone">{{ __('Phone') }}</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon11"><i
                                                 class="fas fa-phone-alt"></i></span>
-                                        <input type="text" class="form-control" id="phone" name="phone">
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                            placeholder="Phone">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="email">{{ __('Email') }}</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon11"><i
                                                 class="fas fa-envelope"></i></span>
-                                        <input type="email" class="form-control" id="email" name="email">
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            placeholder="Email">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
+                            <div class="col-md-6">
+                                <div class="form-group mb-0">
                                     <label for="group_id">{{ __('Supplier Group') }}</label>
                                     <select name="group_id" id="group_id" class="form-select">
                                         <option value="">{{ __('Select Group') }}</option>
@@ -280,8 +276,8 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
+                            <div class="col-md-6">
+                                <div class="form-group mb-0">
                                     <label for="area_id">{{ __('Area') }}</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon11"><i
@@ -296,14 +292,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4 ">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}</label>
-                                    <input type="text" class="form-control datepicker" id="date" name="date">
+                                    <input type="text" class="form-control datepicker" id="date" name="date"
+                                        placeholder="MM/DD/YY">
                                 </div>
                             </div>
-
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status">{{ __('Status') }}</label>
                                     <select name="status" id="status" class="form-control">
@@ -312,27 +308,29 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4 d-flex justify-content-center align-items-center">
-                                <div class="form-group">
-                                    <label class="custom-switch mt-2">
-                                        <input type="checkbox" name="guest" class="custom-switch-input"
-                                            value="1">
-                                        <span class="custom-switch-indicator"></span>
-                                        <label for="guest" class="ml-2">{{ __('Guest Supplier') }}</label>
+                            <div class="col-md-12">
+                                <div class="guest_customer_check mt-0">
+                                    <label class="switch switch-square">
+                                        <input type="checkbox" name="guest" class="switch-input">
+                                        <span class="switch-toggle-slider">
+                                            <span class="switch-on"><i class="bx bx-check"></i></span>
+                                            <span class="switch-off"><i class="bx bx-x"></i></span>
+                                        </span>
+                                        <span class="switch-label">{{ __('Guest Supplier') }}</span>
                                     </label>
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <div class="form-group">
+                                <div class="form-group mt-4 mb-0">
                                     <label for="address">{{ __('Address') }}</label>
-                                    <textarea name="address" id="address" class="form-control height-80px" rows="3"></textarea>
+                                    <textarea name="address" id="address" class="form-control" rows="4"></textarea>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-supplier-form">Save</button>
                 </div>
             </div>
@@ -348,7 +346,7 @@
                         <h5 class="modal-title" id="exampleModalLabel1">{{ __('Edit Supplier') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body pt-0">
                         <form action="{{ route('admin.suppliers.update', $supplier->id) }}" method="POST"
                             id="edit-supplier-form{{ $supplier->id }}">
                             @csrf
@@ -411,7 +409,7 @@
                                             value="{{ $supplier->tax_number }}">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="status">{{ __('Status') }}</label>
                                         <select name="status" id="status" class="form-control">
@@ -423,17 +421,17 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="form-group">
+                                    <div class="form-group mb-0">
                                         <label for="address">{{ __('Address') }}</label>
-                                        <textarea name="address" id="address" class="form-control height-80px" rows="3">{{ $supplier->address }}</textarea>
+                                        <textarea name="address" id="address" class="form-control" rows="4">{{ $supplier->address }}</textarea>
                                     </div>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success"
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary"
                             form="edit-supplier-form{{ $supplier->id }}">{{ __('Update') }}</button>
                     </div>
                 </div>
@@ -451,54 +449,56 @@
                         <h5 class="modal-title" id="exampleModalLabel1">{{ __('Supplier') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body pt-0">
                         <div class="row">
                             {{-- table --}}
-                            <div class="col-md-6">
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <th>{{ __('Name') }}</th>
-                                        <td>{{ $supplier->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Company') }}</th>
-                                        <td>{{ $supplier->company }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Phone') }}</th>
-                                        <td>{{ $supplier->phone }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Email') }}</th>
-                                        <td>{{ $supplier->email }}</td>
-                                    </tr>
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <tr>
+                                            <th>{{ __('Name') }}</th>
+                                            <td>{{ $supplier->name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Company') }}</th>
+                                            <td>{{ $supplier->company }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Phone') }}</th>
+                                            <td>{{ $supplier->phone }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Email') }}</th>
+                                            <td>{{ $supplier->email }}</td>
+                                        </tr>
 
-                                    <tr>
-                                        <th>{{ __('City') }}</th>
-                                        <td>{{ $supplier->city }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('State') }}</th>
-                                        <td>{{ $supplier->state }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Country') }}</th>
-                                        <td>{{ $supplier->country }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Status') }}</th>
-                                        <td>{{ $supplier->status == 1 ? 'Active' : 'Inactive' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Address') }}</th>
-                                        <td>{{ $supplier->address }}</td>
-                                    </tr>
-                                </table>
+                                        <tr>
+                                            <th>{{ __('City') }}</th>
+                                            <td>{{ $supplier->city }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('State') }}</th>
+                                            <td>{{ $supplier->state }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Country') }}</th>
+                                            <td>{{ $supplier->country }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Status') }}</th>
+                                            <td>{{ $supplier->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Address') }}</th>
+                                            <td>{{ $supplier->address }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
 
                     </div>
                 </div>

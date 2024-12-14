@@ -20,7 +20,7 @@
                             </div>
                             <div class="card-body text-center">
                                 <div class="table-responsive">
-                                    <table class="table table-striped">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>{{ __('SN') }}</th>

@@ -7,18 +7,18 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-1">
-                    <form action="" method="GET">
+                    <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
                                     <button type="submit">
-                                        <i class="fa fa-search"></i>
+                                        <i class='bx bx-search'></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="">{{ __('Order Type') }}</option>
@@ -32,7 +32,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -45,7 +45,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -64,25 +64,22 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date"
+                                            value="{{ request()->get('from_date') }}" autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-xxl-1 col-md-4">
-                                <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i> Reset</button>
-                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -92,10 +89,10 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> {{ __('Customers List') }}</h4>
+                <h4 class="section_title"> {{ __('Customers List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
@@ -113,7 +110,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table style="width: 100%;" class="table table-hover">
+                <table style="width: 100%;" class="table mb-5">
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>
@@ -203,19 +200,19 @@
                             <td colspan="4" class="text-center fw-bold">
                                 {{ __('Total') }}
                             </td>
-                            <td>
+                            <td class="fw-bold">
                                 {{ currency($data['totalSale']) }}
                             </td>
-                            <td>
+                            <td class="fw-bold">
                                 {{ currency($data['pay']) }}
                             </td>
-                            <td>
+                            <td class="fw-bold">
                                 {{ currency($data['total_due']) }}
                             </td>
-                            <td>
+                            <td class="fw-bold">
                                 {{ currency($data['total_advance']) }}
                             </td>
-                            <td colspan="2">
+                            <td class="fw-bold" colspan="2">
                                 {{ currency($data['total_due'] - $data['total_return_due']) }}
                             </td>
                         </tr>
@@ -243,14 +240,14 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Add Customer') }}</h4>
+                        <h4 class="modal-title">{{ __('Edit Customer') }}</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
-                        <form action="{{ route('admin.customers.update', $user->id) }}" method="POST"
-                            id="edit-customer-form{{ $user->id }}">
+                    <div class="modal-body pt-0">
+                        <form class="edit_customer_form" action="{{ route('admin.customers.update', $user->id) }}"
+                            method="POST" id="edit-customer-form{{ $user->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
@@ -275,22 +272,21 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="phone">{{ __('Phone') }}</label>
                                         <input type="text" class="form-control" id="phone" name="phone"
                                             value="{{ $user->phone }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4 ">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="email">{{ __('Email') }}</label>
                                         <input type="email" class="form-control" id="email" name="email"
                                             value="{{ $user->email }}">
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="area_id">{{ __('Area') }}</label>
                                         <select name="area_id" id="area_id" class="form-control">
@@ -303,8 +299,7 @@
                                         </select>
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="vehicle_id">{{ __('Vehicle') }}</label>
                                         <select name="vehicle_id" id="vehicle_id" class="form-control"
@@ -318,32 +313,28 @@
                                         </select>
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="plate_number">{{ __('Plate Number') }}</label>
                                         <input type="text" class="form-control" id="plate_number" name="plate_number"
                                             value="{{ $user->plate_number }}">
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="membership">{{ __('Membership') }}</label>
                                         <input type="text" class="form-control" id="membership" name="membership"
                                             value="{{ $user->membership }}">
                                     </div>
                                 </div>
-
-                                <div class="col-md-4 ">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="date">{{ __('Date') }}</label>
                                         <input type="text" class="form-control datepicker" id="date"
                                             name="date" value="{{ $user->date }}" autocomplete="off">
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="status">{{ __('Status') }}</label>
                                         <select name="status" id="status" class="form-control">
@@ -354,11 +345,10 @@
                                         </select>
                                     </div>
                                 </div>
-
-                                <div class="col-md-4">
+                                <div class="col-md-12">
 
                                     <div class="form-group mb-0">
-                                        <div class="guest_customer_check">
+                                        <div class="guest_customer_check mt-0">
                                             <label class="switch switch-square">
                                                 <input type="checkbox" name="guest" class="switch-input"
                                                     value="1" @if ($user->guest) checked @endif />
@@ -377,7 +367,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-customer-form{{ $user->id }}">{{ __('Update') }}</button>
                     </div>
@@ -400,10 +390,10 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body py-0">
                         <div class="row">
                             {{-- table --}}
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <table class="table table-bordered">
                                     <tr>
                                         <th>{{ __('Name') }}</th>
@@ -440,7 +430,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
 
                 </div>

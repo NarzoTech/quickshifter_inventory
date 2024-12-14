@@ -9,8 +9,8 @@
     height: 43px;
     line-height: 27px;
     outline: none;
-    padding-left: 20px !important;
-    padding-right: 20px;
+    padding-left: 13px !important;
+    padding-right: 13px;
     position: relative;
     text-align: left !important;
     -webkit-transition: all 0.2s ease-in-out;
@@ -46,7 +46,7 @@
     margin-top: -4px;
     pointer-events: none;
     position: absolute;
-    right: 20px;
+    right: 15px;
     top: 50%;
     -webkit-transform-origin: 66% 66%;
     -ms-transform-origin: 66% 66%;
@@ -159,6 +159,7 @@
     transition: all 0.2s;
     text-transform: capitalize;
     color: #384551;
+    font-size: 14px;
 }
 
 .nice-select .option:hover,
@@ -188,4 +189,5 @@
 
 .current {
     text-transform: capitalize;
+    font-size: 14px;
 }

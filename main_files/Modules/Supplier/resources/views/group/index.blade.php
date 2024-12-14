@@ -10,16 +10,16 @@
                 <div class="card-body pb-1">
                     <form action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search...">
                                     <button type="submit">
-                                        <i class="fa fa-search"></i>
+                                        <i class="bx bx-search"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -32,7 +32,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -51,10 +51,10 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-xxl-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -64,10 +64,10 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> Suppliers List</h4>
+                <h4 class="section_title">Suppliers List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addgroup" class="btn btn-primary"> <i
@@ -80,8 +80,8 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table style="width: 100%;" class="table table-hover">
+            <div class="table-responsive pb-12">
+                <table style="width: 100%;" class="table mb-12">
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>
@@ -146,7 +146,7 @@
                     <h5 class="modal-title" id="exampleModalLabel1">{{ __('Add Supplier Group') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <form action="{{ route('admin.supplierGroup.store') }}" method="POST" id="add-group-form">
                         @csrf
                         <div class="row">
@@ -164,7 +164,7 @@
                                     <input type="number" class="form-control" id="discount" name="discount">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status">{{ __('Status') }}</label>
                                     <select name="status" id="status" class="form-control">
@@ -173,7 +173,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="description">{{ __('Description') }}</label>
                                     <input type="text" class="form-control" id="description" name="description">
@@ -183,7 +183,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-group-form">Save</button>
                 </div>
             </div>

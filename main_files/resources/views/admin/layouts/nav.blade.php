@@ -1,14 +1,14 @@
 <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
     id="layout-navbar">
     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0">
-        <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+        <a class="nav_toggler_btn nav-link px-0 me-xl-6" href="javascript:void(0)">
             <i class="bx bx-menu bx-md"></i>
         </a>
     </div>
-    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+    <div class="navbar-nav-right d-flex flex-wrap align-items-center" id="navbar-collapse">
         <!-- Search -->
         <div class="navbar-nav align-items-center">
-            <div class="nav-item d-flex align-items-center">
+            <div class="nav-item d-flex align-items-center navbar_search">
                 <i class="bx bx-search bx-md"></i>
                 <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Search..."
                     aria-label="Search...">
@@ -45,7 +45,7 @@
                 </a>
             </li>
             <!-- User -->
-            <li class="nav-item navbar-dropdown dropdown-user dropdown ms-3">
+            <li class="navbar-dropdown dropdown-user dropdown ms-3">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
                         <img src="{{ asset($header_admin->image) }}" alt class="w-px-40 h-auto rounded-circle">
