@@ -95,7 +95,6 @@
                             <th>{{ __('Sl') }}</th>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Invoice No') }}</th>
-                            {{-- <th style="display: none;">Business Branch</th> --}}
                             <th>{{ __('Customer') }}</th>
                             <th>{{ __('Total Amount') }}</th>
                             <th>{{ __('Paying Amount') }}</th>
@@ -142,7 +141,7 @@
                                 {{ currency($data['paidAmount']) }}
                             </td>
                             <td class="fw-bold"></td>
-                            <td colspan="1" class="text-center fw-bold">
+                            <td colspan="1" class="fw-bold">
                                 {{ currency($data['totalDue']) }}
                             </td>
                         </tr>

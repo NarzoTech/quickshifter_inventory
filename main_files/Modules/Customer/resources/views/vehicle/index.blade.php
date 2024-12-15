@@ -10,16 +10,16 @@
                 <div class="card-body pb-1">
                     <form action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
                                     <button type="submit">
-                                        <i class="fa fa-search"></i>
+                                        <i class='bx bx-search'></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -32,7 +32,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -51,10 +51,10 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xxl-1 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -64,10 +64,10 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> {{ __('Vehicles List') }}</h4>
+                <h4 class="section_title"> {{ __('Vehicles List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addVehicle" class="btn btn-primary"><i
@@ -77,7 +77,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table style="width: 100%;" class="table table-hover">
+                <table style="width: 100%;" class="table">
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>
@@ -143,39 +143,40 @@
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body pt-0 pb-0">
                     <form action="{{ route('admin.vehicle.store') }}" method="POST" id="add-Vehicle-form">
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
-                                <label for="name">{{ __('Vehicle Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
+                                    <label for="name">{{ __('Vehicle Name') }}<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
-                                <label for="model">{{ __('Model') }}</label>
-                                <input type="text" class="form-control" id="model" name="model">
+                                    <label for="model">{{ __('Model') }}</label>
+                                    <input type="text" class="form-control" id="model" name="model">
+                                </div>
                             </div>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
-                                <label for="plate_number">{{ __('Plate Number') }}</label>
-                                <input type="text" class="form-control" id="plate_number" name="plate_number">
+                                    <label for="plate_number">{{ __('Plate Number') }}</label>
+                                    <input type="text" class="form-control" id="plate_number" name="plate_number">
+                                </div>
                             </div>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
-                                <label for="color">{{ __('Color') }}</label>
-                                <input type="text" class="form-control" id="color" name="color">
+                                    <label for="color">{{ __('Color') }}</label>
+                                    <input type="text" class="form-control" id="color" name="color">
+                                </div>
                             </div>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-6">
                                 <div class="form-group">
-                                <label for="year">{{ __('Year') }}</label>
-                                <input type="text" class="form-control" id="year" name="year">
-                            </div>
+                                    <label for="year">{{ __('Year') }}</label>
+                                    <input type="text" class="form-control" id="year" name="year">
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -183,7 +184,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-Vehicle-form">Save</button>
                 </div>
 
@@ -200,52 +201,52 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Add Vehicle') }}</h4>
+                        <h4 class="modal-title">{{ __('Edit Vehicle') }}</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body pt-0 pb-0">
                         <form action="{{ route('admin.vehicle.update', $vehicle->id) }}" method="POST"
                             id="edit-Vehicle-form{{ $vehicle->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-lg-6 col-md-6">
                                     <div class="form-group">
-                                    <label for="name">{{ __('Vehicle Name') }}<span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $vehicle->name }}">
+                                        <label for="name">{{ __('Vehicle Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $vehicle->name }}">
+                                    </div>
                                 </div>
-                                </div>
-                                <div class="col-md-6">
+                                <div class="col-lg-6 col-md-6">
                                     <div class="form-group">
-                                    <label for="model">{{ __('Model') }}</label>
-                                    <input type="text" class="form-control" id="model" name="model"
-                                        value="{{ $vehicle->model }}">
+                                        <label for="model">{{ __('Model') }}</label>
+                                        <input type="text" class="form-control" id="model" name="model"
+                                            value="{{ $vehicle->model }}">
+                                    </div>
                                 </div>
-                                </div>
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                     <div class="form-group">
-                                    <label for="plate_number">{{ __('Plate Number') }}</label>
-                                    <input type="text" class="form-control" id="plate_number" name="plate_number"
-                                        value="{{ $vehicle->plate_number }}">
+                                        <label for="plate_number">{{ __('Plate Number') }}</label>
+                                        <input type="text" class="form-control" id="plate_number" name="plate_number"
+                                            value="{{ $vehicle->plate_number }}">
+                                    </div>
                                 </div>
-                                </div>
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                     <div class="form-group">
-                                    <label for="color">{{ __('Color') }}</label>
-                                    <input type="text" class="form-control" id="color" name="color"
-                                        value="{{ $vehicle->color }}">
+                                        <label for="color">{{ __('Color') }}</label>
+                                        <input type="text" class="form-control" id="color" name="color"
+                                            value="{{ $vehicle->color }}">
+                                    </div>
                                 </div>
-                                </div>
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6">
                                     <div class="form-group">
-                                    <label for="year">{{ __('Year') }}</label>
-                                    <input type="text" class="form-control" id="year" name="year"
-                                        value="{{ $vehicle->year }}">
-                                </div>
+                                        <label for="year">{{ __('Year') }}</label>
+                                        <input type="text" class="form-control" id="year" name="year"
+                                            value="{{ $vehicle->year }}">
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -253,7 +254,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-Vehicle-form{{ $vehicle->id }}">{{ __('Update') }}</button>
                     </div>

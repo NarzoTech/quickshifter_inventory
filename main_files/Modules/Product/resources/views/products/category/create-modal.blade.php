@@ -9,11 +9,11 @@
             </div>
 
             <!-- Modal body -->
-            <div class="modal-body">
+            <div class="modal-body pt-0 pb-0">
                 <form action="{{ route('admin.category.store') }}" method="post" id="categoryForm">
                     @csrf
                     <div class="row">
-                        <div class="col-md-8 offset-md-2">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
                                 <input type="text" name="name" class="form-control" id="name" required
@@ -23,8 +23,7 @@
                                 @enderror
                             </div>
                         </div>
-
-                        <div class="col-md-8 offset-md-2">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="slug">{{ __('Status') }}<span class="text-danger">*</span></label>
                                 <select name="status" id="status" class="form-control">
@@ -38,7 +37,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-8 offset-md-2">
+                        <div class="col-12">
                             <div class="form-group">
                                 <label for="parent">{{ __('Parent Id') }}</label>
                                 <select name="parent_id" id="parent" class="form-control select2"

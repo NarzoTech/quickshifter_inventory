@@ -153,6 +153,7 @@ table .rounded-circle {
     width: 80px !important;
     height: 80px !important;
     object-fit: cover !important;
+    border: 1px solid #eee;
 }
 
 .profile-widget .profile-widget-picture {
@@ -1046,25 +1047,106 @@ table tr td {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-.layout-navbar {
-    /* height: auto; */
+.badge-success {
+    background: #47c363;
 }
 
-@media (min-width: 1400px) and (max-width: 1600px) {}
+.badge-danger {
+    background: #e6381a;
+}
+
+.product_list_table td .dropdown button {
+    width: 65px;
+}
+
+.generate_sku {
+    line-height: 39px;
+    padding: 0 !important;
+}
+
+.create_product_table .input-group .select2-container {
+    width: 89% !important;
+}
+
+.create_product_table .input-group .select2-container span {
+    margin-bottom: 0;
+}
+
+.create_product_table .nput-group-text a.btn-primary {
+    height: 42px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.create_product_table .input-group .select2-container .select2-selection--single {
+    border-radius: 5px 0px 0px 5px;
+    -webkit-border-radius: 5px 0px 0px 5px;
+    -moz-border-radius: 5px 0px 0px 5px;
+    -ms-border-radius: 5px 0px 0px 5px;
+    -o-border-radius: 5px 0px 0px 5px;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.create_product_table .mediaLibaryOpen {
+    width: 127px !important;
+    height: 127px !important;
+}
+
+.create_product_table .mediaLibaryOpen svg {
+    font-size: 50px;
+}
+
+#mediaLibaryList {}
+
+#mediaLibaryList img {
+    height: 250px;
+    width: 100% !important;
+    object-fit: cover !important;
+    border: none;
+}
+
+#mediaLibaryList h6 {
+    color: #384551 !important;
+    margin-bottom: 25px;
+    margin-top: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
 
 .form-group button.btn {
     width: 48%;
 }
+
+#mediaPagination ul li:first-child a,
+#mediaPagination ul li:last-child a {
+    border-radius: 6px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 1400px) and (max-width: 1600px) {}
 
 
 @media (min-width: 1200px) and (max-width: 1399.99px) {
@@ -1074,6 +1156,10 @@ table tr td {
 
     .navbar_search {
         max-width: 200px;
+    }
+
+    #mediaLibaryList img {
+        height: 250px;
     }
 }
 
@@ -1086,6 +1172,12 @@ table tr td {
     .navbar-nav {
         gap: 15px;
     }
+
+    #mediaLibaryList img {
+        height: 170px;
+    }
+
+
 }
 
 
@@ -1094,7 +1186,9 @@ table tr td {
         display: none;
     }
 
-
+    #mediaLibaryList img {
+        height: 110px;
+    }
 
 }
 
@@ -1104,7 +1198,9 @@ table tr td {
         display: none;
     }
 
-
+    #mediaLibaryList img {
+        height: 490px;
+    }
 
 
 }
@@ -1120,7 +1216,9 @@ table tr td {
         display: none;
     }
 
-
+    #mediaLibaryList img {
+        height: auto;
+    }
 
 
 }

@@ -11,13 +11,12 @@
         <section class="section">
 
             <div class="section-body">
-                <div class="mt-4 row">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4>
-                                    <a href="{{ asset('backend/product.xlsx') }}" download>{{ __('Sample Download') }}</a>
-                                </h4>
+                                <a class="section_title" href="{{ asset('backend/product.xlsx') }}"
+                                    download>{{ __('Sample Download') }}</a>
                                 <div>
                                     <a href="{{ route('admin.customers.index') }}" class="btn btn-primary"><i
                                             class="fa fa-arrow-left"></i>{{ __('Back') }}</a>
@@ -31,8 +30,8 @@
                                         <input name="file" type="file" accept=".csv,.xls,.xlsx" />
                                     </div>
                                 </form>
-                                <div class="row">
-                                    <div class="text-center offset-md-2 col-md-8">
+                                <div class="row mt-3">
+                                    <div class="col-12">
                                         <x-admin.save-button :text="__('Save')" id="submitForm">
                                         </x-admin.save-button>
                                     </div>

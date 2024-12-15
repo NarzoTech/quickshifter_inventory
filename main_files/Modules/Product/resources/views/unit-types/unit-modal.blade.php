@@ -9,7 +9,7 @@
             </div>
 
             <!-- Modal body -->
-            <div class="modal-body">
+            <div class="modal-body pt-0 pb-0">
                 <form action="javascript:;" method="post" enctype="multipart/form-data" id="unitForm">
                     @csrf
                     <div class="row">
@@ -55,14 +55,14 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label>{{ __('Status') }} </label>
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <input type="radio" name='status' value="1" checked />
-                                        <label>{{ __('Active') }} </label>
+                                <div class="d-flex flex-wrap gap-5 border rounded py-2 px-4">
+                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                        <input id="active" type="radio" name='status' value="1" checked />
+                                        <label for="active" class="mb-0">{{ __('Active') }} </label>
                                     </div>
-                                    <div>
-                                        <input type="radio" name='status' value="0" />
-                                        <label>{{ __('Inactive') }} </label>
+                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                        <input id="inactive" type="radio" name='status' value="0" />
+                                        <label for="inactive" class="mb-0">{{ __('Inactive') }} </label>
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +74,7 @@
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                <button type="submit" class="btn btn-success" form="unitForm"><i class="fa fa-save"></i>
+                <button type="submit" class="btn btn-primary" form="unitForm"><i class="fa fa-save me-2"></i>
                     {{ __('Save') }}</button>
 
             </div>

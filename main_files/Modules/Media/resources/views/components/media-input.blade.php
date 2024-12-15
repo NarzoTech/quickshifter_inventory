@@ -28,29 +28,29 @@
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
+                    <h4 class="section_title"> {{ __('Gallery Images') }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="mediaList">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <div class="modal-body pt-0 pb-0" id="mediaList">
+                    <ul class="nav nav-tabs gap-4" id="myTab" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="upload-tab" data-bs-toggle="tab" href="#uploadImage"
+                            <a class="nav-link p-0 pb-2 active" id="upload-tab" data-bs-toggle="tab" href="#uploadImage"
                                 role="tab" aria-controls="upload" aria-selected="false">{{ __('Upload image') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="media-tab" data-bs-toggle="tab" href="#mediaLibary" role="tab"
-                                aria-controls="media" aria-selected="false">{{ __('Media Libary') }}</a>
+                            <a class="nav-link p-0 pb-2" id="media-tab" data-bs-toggle="tab" href="#mediaLibary"
+                                role="tab" aria-controls="media" aria-selected="false">{{ __('Media Libary') }}</a>
                         </li>
                     </ul>
-                    <div class="tab-content" id="myTabContent">
+                    <div class="tab-content px-0" id="myTabContent">
                         <div class="tab-pane fade active show" id="uploadImage" role="tabpanel"
                             aria-labelledby="upload-tab">
                             <form id="upload_new_media_form" class="col-md-6">
-                                <div class="form-group">
+                                <div class="form-group m-0 mb-3">
                                     <div class="upload__box">
-                                        <label class="upload__btn">
+                                        <label class="upload__btn mb-0">
                                             <input type="file" {{ $multiple ?? 'no' == 'yes' ? 'multiple' : '' }}
-                                                data-max_length="20" class="upload__inputfile">
+                                                data-max_length="20" class="upload__inputfile w-100">
                                         </label>
                                         <div class="upload__img-wrap"></div>
                                     </div>

@@ -10,16 +10,16 @@
                 <div class="card-body pb-1">
                     <form action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
                                     <button type="submit">
-                                        <i class="fa fa-search"></i>
+                                        <i class='bx bx-search'></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -32,7 +32,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -51,10 +51,10 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xxl-1 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
     <div class="card mt-3 mb-3">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> {{ __('Area List') }}</h4>
+                <h4 class="section_title"> {{ __('Area List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addarea" class="btn btn-primary"><i
@@ -77,43 +77,44 @@
         </div>
         <div class="card-body">
 
-            <table style="width: 100%;" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>{{ __('SN') }}</th>
-                        <th>{{ __('Name') }}</th>
-                        <th>{{ __('Action') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($areas as $index => $area)
+            <div class="table-responsive">
+                <table style="width: 100%;" class="table">
+                    <thead>
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $area->name }}</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button id="btnGroupDrop{{ $area->id }}" type="button"
-                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                        Action
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $area->id }}">
-                                        <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                            data-bs-target="#editarea{{ $area->id }}">Edit</a>
-                                        <a href="javascript:;" class="dropdown-item"
-                                            onclick="deleteData({{ $area->id }})">
-                                            Delete</a>
-                                    </div>
-                                </div>
-                            </td>
+                            <th>{{ __('SN') }}</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Action') }}</th>
                         </tr>
-                    @empty
-                        <x-empty-table :name="__('area')" route="" create="no" :message="__('No data found!')"
-                            colspan="3"></x-empty-table>
-                    @endforelse
-                </tbody>
-            </table>
-
+                    </thead>
+                    <tbody>
+                        @forelse ($areas as $index => $area)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $area->name }}</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $area->id }}" type="button"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $area->id }}">
+                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                data-bs-target="#editarea{{ $area->id }}">Edit</a>
+                                            <a href="javascript:;" class="dropdown-item"
+                                                onclick="deleteData({{ $area->id }})">
+                                                Delete</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <x-empty-table :name="__('area')" route="" create="no" :message="__('No data found!')"
+                                colspan="3"></x-empty-table>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
             @if (request()->get('par-page') !== 'all')
                 <div class="float-right">
                     {{ $areas->onEachSide(0)->links() }}
@@ -135,15 +136,15 @@
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body pt-0 pb-0">
                     <form action="{{ route('admin.area.store') }}" method="POST" id="add-area-form">
                         @csrf
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                <label for="name">{{ __('Area Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
-                            </div>
+                                    <label for="name">{{ __('Area Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -151,7 +152,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-area-form">Save</button>
                 </div>
 
@@ -181,10 +182,11 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                    <label for="name">{{ __('area Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $area->name }}">
-                                </div>
+                                        <label for="name">{{ __('area Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $area->name }}">
+                                    </div>
                                 </div>
                             </div>
                         </form>

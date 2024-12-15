@@ -9,12 +9,12 @@
                 <div class="card-body pb-1">
                     <form action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-3">
+                            <div class="col-xxl-2 col-md-3">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
                                     <button type="submit">
-                                        <i class="fa fa-search"></i>
+                                        <i class='bx bx-search'></i>
                                     </button>
                                 </div>
                             </div>
@@ -75,10 +75,10 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xxl-1 col-md-3">
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -89,10 +89,10 @@
     </div>
 
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> {{ __('Product List') }}</h4>
+                <h4 class="section_title"> {{ __('Product List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.product.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
@@ -101,9 +101,9 @@
                     {{ __('Import Products') }}</a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body common_table">
             <div class="table-responsive">
-                <table style="width: 100%;" class="table table-hover">
+                <table style="width: 100%;" class="table product_list_table">
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>
@@ -150,15 +150,14 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="btn-group">
-
+                                    <div class="d-flex gap-2">
                                         <button type="button" data-bs-toggle="modal"
                                             @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
                                             @else onclick="deleteData({{ $product->id }})" @endif
                                             class="btn btn-danger btn-sm me-2">
                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                         </button>
-                                        <div class="dropdown d-inline">
+                                        <div class="dropdown">
                                             <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
                                                 id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true"
                                                 aria-expanded="false">
@@ -190,6 +189,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </td>
                             </tr>
                         @endforeach
