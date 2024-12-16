@@ -47,11 +47,11 @@ class EmployeeController extends Controller
                 $data['image'] = file_upload($request->file('image'));
             }
             $this->employee->store($data);
-
+            saveLog('Employee added successfully');
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => 'Employee added successfully', 'alert-type' => 'success']);
         } catch (\Exception $e) {
 
-            Log::error($e->getMessage());
+            saveLog($e->getMessage(), 'error');
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => $e->getMessage(), 'alert-type' => 'danger']);
         }
     }
@@ -85,10 +85,11 @@ class EmployeeController extends Controller
                 $data['image'] = file_upload($request->file('image'), oldFile: $this->employee->find($id)->image);
             }
             $this->employee->update($id, $data);
+            saveLog('Employee updated successfully');
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee updated successfully', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
 
-            Log::error($th->getMessage());
+            saveLog($th->getMessage(), 'error');
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => $th->getMessage(), 'alert-type' => 'danger']);
         }
     }

@@ -20,6 +20,7 @@ class EmployeeRequest extends FormRequest
             'address' => 'nullable',
             'join_date' => 'nullable|date',
             'salary' => 'nullable|numeric',
+            'yearly_leaves' => 'nullable|numeric',
             'image' => 'nullable|image',
             'status' => 'nullable'
         ];

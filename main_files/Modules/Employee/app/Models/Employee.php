@@ -23,6 +23,7 @@ class Employee extends Model
         'address',
         'join_date',
         'salary',
+        'yearly_leaves',
         'image',
         'status',
     ];

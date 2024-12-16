@@ -11,6 +11,9 @@
         </div>
         <div class="card-body">
             <p>Salary: {{ currency($employee->salary) }}</p>
+            <p>Payable Salary: {{ currency($payableSalary) }}</p>
+            <p>Total Working Day: {{ $totalAttendance }} Days</p>
+            <p>Total Weekend & Holiday: {{ $totalDayOff }} Days</p>
             <p>Phone: {{ $employee->phone }}</p>
             <p>Paid Amount: {{ currency($payments->sum('amount')) }}</p>
             <p>Payment Month: <b>{{ $month }}</b></p>

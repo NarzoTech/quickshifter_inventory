@@ -44,7 +44,7 @@
 
                                     <div class="row">
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('Email') }}</label>
                                                 <input type="email" class="form-control" name="email"
@@ -52,14 +52,14 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('Mobile') }}</label>
                                                 <input type="text" class="form-control" name="mobile"
                                                     placeholder="Mobile" id="mobile" value="{{ $employee->mobile }}">
                                             </div>
                                         </div>
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('NID Number') }}</label>
                                                 <input type="text" class="form-control" name="nid"
@@ -67,14 +67,14 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('Image') }}</label>
                                                 <input type="file" class="form-control" name="image"
                                                     placeholder="Image" id="image">
                                             </div>
                                         </div>
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('Address') }}
                                                 </label>
@@ -83,7 +83,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('Joining Date') }}
                                                 </label>
@@ -91,7 +91,7 @@
                                                     value="{{ $employee->join_date }}" autocomplete="off">
                                             </div>
                                         </div>
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('Salary') }}
                                                 </label>
@@ -99,8 +99,17 @@
                                                     placeholder="Salary" id="salary" value="{{ $employee->salary }}">
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group">
+                                                <label for="yearly_leaves">{{ __('Yearly Leaves') }}
+                                                </label>
+                                                <input type="text" class="form-control" name="yearly_leaves"
+                                                    placeholder="Yearly Leaves" id="yearly_leaves"
+                                                    value="{{ $employee->yearly_leaves }}">
+                                            </div>
+                                        </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <label for="">{{ __('Status') }}
                                                 </label>
