@@ -5,26 +5,32 @@
 @endsection
 
 @section('content')
-    <div class="row mt-4">
-        <div class="col-3">
-            <div class="card mt-3 mb-3">
-                <div class="card-body">
-                    <form action="{{ route('admin.unit.store') }}" method="POST" enctype="multipart/form-data" id="form">
+    <div class="row">
+        <div class="col-xxl-3 col-lg-4">
+            <div class="card mb-5">
+                <div class="card-header d-flex justify-content-between">
+                    <h4 class="section_title">{{ __('Create Unit Type') }}</h4>
+                    <div>
+                    </div>
+                </div>
+                <div class="card-body pb-0">
+                    <form class="search_form" action="{{ route('admin.unit.store') }}" method="POST"
+                        enctype="multipart/form-data" id="form">
                         @csrf
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-xl-12">
                                 <div class="form-group">
                                     <label>{{ __('Name') }} <span class="text-danger">*</span></label>
                                     <input type="text" id="name" class="form-control" name="name">
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-xl-12">
                                 <div class="form-group">
                                     <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
                                     <input type="text" id="ShortName" class="form-control" name="ShortName">
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-xl-12">
                                 <div class="form-group">
                                     <label>{{ __('Base Unit') }}</label>
                                     <select name="base_unit" id="base_unit" class="form-control">
@@ -35,7 +41,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-12 operator d-none">
+                            <div class="col-xl-12 operator d-none">
                                 <div class="form-group">
                                     <label>{{ __('Operator') }}</label>
                                     <select name="operator" id="operator" class="form-control">
@@ -44,43 +50,44 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-12 operator_value d-none">
+                            <div class="col-xl-12 operator_value d-none">
                                 <div class="form-group">
                                     <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
                                     <input type="text" id="operator_value" class="form-control" name="operator_value"
                                         value="1">
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-group">
+                            <div class="col-xl-12">
+                                <div class="form-group mb-1">
                                     <label>{{ __('Status') }} </label>
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <input type="radio" name='status' value="1" checked />
-                                            <label>{{ __('Active') }} </label>
+                                    <div class="d-flex flex-wrap gap-3 border rounded py-2 px-4">
+                                        <div class="d-flex gap-2 align-items-center py-1">
+                                            <input id="active" type="radio" name='status' value="1" checked />
+                                            <label for="active" class="mb-0">{{ __('Active') }} </label>
                                         </div>
-                                        <div>
-                                            <input type="radio" name='status' value="0" />
-                                            <label>{{ __('Inactive') }} </label>
+                                        <div class="d-flex gap-2 align-items-center py-1">
+                                            <input id="inactive" type="radio" name='status' value="0" />
+                                            <label for="inactive" class="mb-0">{{ __('Inactive') }} </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <x-admin.save-button :text="__('Save')" />
+                            <div class="col-xl-12 mt-5">
+                                <div class="form-group mt-1">
+                                    <x-admin.save-button :text="__('Save')" />
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-        <div class="col-9">
-            <div class="card">
+
+        <div class="col-xxl-9 col-lg-8">
+            <div class="card common_table">
                 <div class="card-body">
-                    <div class="table-responsive table-invoice">
-                        <table class="table table-striped" id="dataTable">
+                    <div class="table-responsive">
+                        <table class="table table-invoice" id="dataTable">
                             <thead>
                                 <tr>
                                     <th>{{ __('SN') }}</th>
@@ -110,9 +117,9 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <div class="btn-group">
+                                            <div class="d-flex gap-1">
                                                 <a href="{{ route('admin.unit.edit', $unit->id) }}"
-                                                    class="btn btn-primary btn-sm edit-btn me-2"><i class="fa fa-edit"
+                                                    class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
                                                         aria-hidden="true"></i></a>
                                                 <a href="javascript:;" class="btn btn-danger btn-sm"
                                                     onclick="deleteData({{ $unit->id }})"><i class="fa fa-trash"

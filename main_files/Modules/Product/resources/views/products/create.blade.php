@@ -19,7 +19,7 @@
                     <form class="create_product_table" action="{{ route('admin.product.store') }}" method="post">
                         @csrf
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-lg-8">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -160,22 +160,18 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="short_description">{{ __('Short Description') }}</label>
-                                            <textarea name="short_description" id="" cols="30" rows="10" class="form-control height-80px">{!! old('short_description') !!}</textarea>
+                                            <textarea name="short_description" id="" cols="30" rows="5" class="form-control">{!! old('short_description') !!}</textarea>
                                             @error('short_description')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-12 text-end">
-                                        <x-admin.save-button :text="__('Save')">
-                                        </x-admin.save-button>
-                                    </div>
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-lg-4">
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-md-12">
                                         @if (Module::isEnabled('Media'))
                                             <div class="col-md-12">
                                                 <div class="form-group">
@@ -185,7 +181,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6 col-lg-12">
                                         <div class="form-group">
                                             <label for="status">{{ __('Status') }}<span
                                                     class="text-danger">*</span></label>
@@ -200,7 +196,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6 col-lg-12">
                                         <div class="form-group">
                                             <label for="unit_id">{{ __('Unit') }}<span
                                                     class="text-danger">*</span></label>
@@ -225,7 +221,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6 col-lg-12">
                                         <div class="form-group">
                                             <label for="unit_sale_id">{{ __('Sale Unit') }}<span
                                                     class="text-danger">*</span></label>
@@ -238,7 +234,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-6 col-lg-12">
                                         <div class="form-group">
                                             <label for="unit_purchase_id">{{ __('Purchase Unit') }}<span
                                                     class="text-danger">*</span></label>
@@ -251,6 +247,10 @@
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <x-admin.save-button :text="__('Save')">
+                                        </x-admin.save-button>
                                     </div>
                                 </div>
                             </div>

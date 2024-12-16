@@ -1012,8 +1012,12 @@ table tr td {
 
 .navbar_search {
     border-radius: 6px;
-    background: #696cff29;
+    background: #f1f2ff;
     padding-left: 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -o-border-radius: 6px;
 }
 
 .navbar_search i {}
@@ -1062,6 +1066,10 @@ table tr td {
 .generate_sku {
     line-height: 39px;
     padding: 0 !important;
+}
+
+.edit_sku {
+    padding: 0px 14px !important;
 }
 
 .create_product_table .input-group .select2-container {
@@ -1127,6 +1135,18 @@ body {
     border-radius: 6px;
 }
 
+.table thead tr {
+    background: #f1f2ff;
+}
+
+.table thead tr th {}
+
+.product_det_img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover !important;
+    border: 1px solid #ddd;
+}
 
 
 
@@ -1143,10 +1163,17 @@ body {
 
 
 
+@media (min-width: 1600px) and (max-width: 1800px) {
+    .create_product_table .input-group .select2-container {
+        width: 86% !important;
+    }
+}
 
-
-
-@media (min-width: 1400px) and (max-width: 1600px) {}
+@media (min-width: 1400px) and (max-width: 1599.99px) {
+    .create_product_table .input-group .select2-container {
+        width: 84% !important;
+    }
+}
 
 
 @media (min-width: 1200px) and (max-width: 1399.99px) {
@@ -1161,6 +1188,17 @@ body {
     #mediaLibaryList img {
         height: 250px;
     }
+
+    .product_det_img {
+        height: 190px;
+    }
+
+    .create_product_table .input-group .select2-container {
+        width: 80% !important;
+    }
+
+
+
 }
 
 
@@ -1177,6 +1215,17 @@ body {
         height: 170px;
     }
 
+    .product_det_img {
+        height: 205px;
+    }
+
+    .create_product_table .input-group .select2-container {
+        width: 81% !important;
+    }
+
+
+
+
 
 }
 
@@ -1190,6 +1239,14 @@ body {
         height: 110px;
     }
 
+    .product_det_img {
+        height: 210px;
+    }
+
+    .create_product_table .input-group .select2-container {
+        width: 84% !important;
+    }
+
 }
 
 
@@ -1201,6 +1258,17 @@ body {
     #mediaLibaryList img {
         height: 490px;
     }
+
+    .product_det_img {
+        width: 300px;
+        height: 300px;
+        margin-bottom: 25px;
+    }
+
+
+
+
+
 
 
 }
@@ -1219,6 +1287,21 @@ body {
     #mediaLibaryList img {
         height: auto;
     }
+
+    .product_det_img {
+        height: auto;
+        margin-bottom: 25px;
+    }
+
+    .create_product_table .input-group .select2-container {
+        width: 82% !important;
+    }
+
+
+
+
+
+
 
 
 }
