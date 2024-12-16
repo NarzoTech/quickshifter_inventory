@@ -17,6 +17,7 @@
 
     <!-- Page JS -->
     <script src="{{ asset('backend/assets/js/dashboards-analytics.js') }}"></script>
+    <script src="{{ asset('backend/js/bootstrap-toggle.jquery.min.js') }}"></script>
     <script src="{{ asset('backend/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('backend/js/select2.min.js') }}"></script>
     <script src="{{ asset('backend/js/tagify.js') }}"></script>
@@ -66,9 +67,15 @@
         function handleError(error) {
             console.log(error);
             if (error.responseJSON) {
-                $.each(error.responseJSON.errors, function(index, data) {
-                    toastr.error(data);
-                })
+                if (error.responseJSON.message) {
+                    toastr.error(error.responseJSON.message, '', options);
+                }
+                if (error.responseJSON.errors) {
+                    $.each(error.responseJSON.errors, function(index, data) {
+                        toastr.error(data, '', options);
+                    })
+                }
+
             }
         }
 

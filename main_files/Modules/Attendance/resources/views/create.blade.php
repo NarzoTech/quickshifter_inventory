@@ -3,180 +3,179 @@
     <title>{{ __('Attendance') }}</title>
 @endsection
 @section('content')
-    <div class="main-content">
-        <section class="section">
-
-            <div class="section-body">
-                <div class="mt-4 row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body pb-0">
-                                <form action="" method="GET" id="search-form" onchange="this.submit();">
-                                    <div class="row">
-                                        <div class="col-md-3 form-group">
-                                            <div class="search_wrapper">
-                                                <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                    class="form-control" placeholder="{{ __('Search by name or ID') }}">
-                                                <button class="search_button" type="submit">
-                                                    <i class="fas fa-search"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-3 form-group">
-                                            <select name="subscription_status" id="subscription_status" class="form-select">
-                                                <option value="">{{ __('Subscription Status') }}</option>
-                                                <option value="all">{{ __('All') }}</option>
-                                                <option value="1"
-                                                    {{ request('subscription_status') == '1' ? 'selected' : '' }}>
-                                                    {{ __('Active') }}
-                                                </option>
-                                                <option value="expired"
-                                                    {{ request('subscription_status') == 'expired' ? 'selected' : '' }}>
-                                                    {{ __('Expired') }}
-                                                </option>
-                                                <option value="no_plan"
-                                                    {{ request('subscription_status') == 'no_plan' ? 'selected' : '' }}>
-                                                    {{ __('No Plan') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 form-group">
-                                            <select name="par-page" id="par-page" class="form-select">
-                                                <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('10') }}
-                                                </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('50') }}
-                                                </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('100') }}
-                                                </option>
-                                                <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('All') }}
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-3 form-group">
-                                            <input type="text" name="date" class="form-control datepicker"
-                                                value="{{ request()->get('date') ?? now()->format('Y-m-d') }}"
-                                                placeholder="{{ __('Date') }}" data-date-end-date="0d"
-                                                autocomplete="off">
-                                        </div>
-                                    </div>
-                                </form>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body pb-1">
+                    <form class="search_form" action="" method="GET">
+                        <div class="row">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class='bx bx-search'></i>
+                                    </button>
+                                </div>
                             </div>
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <select name="order_type" id="order_type" class="form-control">
+                                        <option value="">{{ __('Order Type') }}</option>
+                                        <option value="id" {{ request('order_type') == 'id' ? 'selected' : '' }}>
+                                            {{ __('ID') }}</option>
+
+                                        <option value="name" {{ request('order_type') == 'name' ? 'selected' : '' }}>
+                                            {{ __('Name') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <input type="text" name="date" class="form-control datepicker"
+                                        value="{{ request()->get('date') ?? now()->format('Y-m-d') }}"
+                                        placeholder="{{ __('Date') }}" data-date-end-date="0d" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-label-primary">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 row">
+        @php
+            $currentDate = request()->get('date') ?? now()->format('Y-m-d');
+        @endphp
+        <div class="col-12">
+            <div class="card  {{ !$currentDate ? 'd-none' : '' }}">
+                <div class="card-header d-flex justify-content-between">
+                    <h4 class="section_title">{{ __('Member List') }}</h4>
+                    <div class="attendance_type d-none d-flex justify-content-center align-items-center">
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="attendance_type" value="present" class="selectgroup-input">
+                                <span class="selectgroup-button selectgroup-button-icon">{{ __('Present') }}</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="attendance_type" value="absent" class="selectgroup-input">
+                                <span class="selectgroup-button selectgroup-button-icon">{{ __('Absent') }}</span>
+                            </label>
+                        </div>
+                        <div class="button-container d-none">
+                            <button class="btn btn-success ms-2 submit-button" type="submit">{{ __('Apply') }}</button>
                         </div>
                     </div>
-                    @php
-                        $currentDate = request()->get('date') ?? now()->format('Y-m-d');
-                    @endphp
-                    <div class="col-12">
-                        <div class="card  {{ !$currentDate ? 'd-none' : '' }}">
-                            <div class="card-header d-flex justify-content-between">
-                                <h4>{{ __('Member List') }}</h4>
-                                <div class="attendance_type d-none d-flex justify-content-center align-items-center">
-                                    <div class="selectgroup w-100">
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="attendance_type" value="present"
-                                                class="selectgroup-input">
-                                            <span
-                                                class="selectgroup-button selectgroup-button-icon">{{ __('Present') }}</span>
-                                        </label>
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="attendance_type" value="absent"
-                                                class="selectgroup-input">
-                                            <span
-                                                class="selectgroup-button selectgroup-button-icon">{{ __('Absent') }}</span>
-                                        </label>
-                                    </div>
-                                    <div class="button-container d-none">
-                                        <button class="btn btn-success ms-2 submit-button"
-                                            type="submit">{{ __('Apply') }}</button>
-                                    </div>
-                                </div>
 
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive max-h-400">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    <div class="custom-checkbox custom-control">
-                                                        <input type="checkbox" data-checkbox-role="dad"
-                                                            class="custom-control-input" id="checkbox-all">
-                                                        <label for="checkbox-all"
-                                                            class="custom-control-label">&nbsp;</label>
-                                                    </div>
-                                                </th>
-                                                <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Member ID') }}</th>
-                                                <th>{{ __('Status') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if ($currentDate)
-                                                @foreach ($members as $key => $member)
-                                                    @php
-                                                        $atten = $member->attendance
-                                                            ->where('date', $currentDate)
-                                                            ->first();
-                                                    @endphp
-                                                    <tr>
-                                                        <td>
-                                                            <div class="custom-checkbox custom-control">
-                                                                <input type="checkbox" data-checkboxes="mygroup"
-                                                                    class="custom-control-input"
-                                                                    id="checkbox-{{ $key }}"
-                                                                    {{ $atten ? 'checked' : '' }}>
-                                                                <label for="checkbox-{{ $key }}"
-                                                                    class="custom-control-label">&nbsp;</label>
-                                                            </div>
-                                                        </td>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive max-h-400">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="custom-checkbox custom-control">
+                                            <input type="checkbox" data-checkbox-role="dad" class="custom-control-input"
+                                                id="checkbox-all">
+                                            <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                        </div>
+                                    </th>
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Designation') }}</th>
+                                    <th>{{ __('Mobile') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if ($currentDate)
+                                    @foreach ($employees as $key => $employee)
+                                        @php
+                                            $atten = $employee->attendance->where('date', $currentDate)->first();
+                                        @endphp
+                                        <tr>
+                                            <td>
+                                                <div class="custom-checkbox custom-control">
+                                                    <input type="checkbox" data-checkboxes="mygroup"
+                                                        class="custom-control-input" id="checkbox-{{ $key }}"
+                                                        {{ $atten ? 'checked' : '' }}>
+                                                    <label for="checkbox-{{ $key }}"
+                                                        class="custom-control-label">&nbsp;</label>
+                                                </div>
+                                            </td>
 
-                                                        <td>{{ $member->user?->name }}</td>
-                                                        <td>{{ $member->member_id }}</td>
-                                                        <td>
-                                                            <div class="selectgroup w-100" data-id="{{ $member->id }}">
-                                                                <label class="selectgroup-item">
-                                                                    <input type="radio"
-                                                                        name="attendance[{{ $key }}]"
-                                                                        value="present" class="selectgroup-input"
-                                                                        {{ $atten?->status == 'present' ? 'checked' : '' }}>
-                                                                    <span
-                                                                        class="selectgroup-button selectgroup-button-icon">{{ __('Present') }}</span>
-                                                                </label>
-                                                                <label class="selectgroup-item">
-                                                                    <input type="radio"
-                                                                        name="attendance[{{ $key }}]"
-                                                                        value="absent" class="selectgroup-input"
-                                                                        {{ $atten?->status == 'absent' ? 'checked' : '' }}>
-                                                                    <span
-                                                                        class="selectgroup-button selectgroup-button-icon">{{ __('Absent') }}</span>
-                                                                </label>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="float-right">
-                                    @if (request()->get('date'))
-                                        {{ $members->onEachSide(3)->links() }}
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
+                                            <td>{{ $employee->name }}</td>
+                                            <td>{{ $employee->designation }}</td>
+                                            <td>{{ $employee->mobile }}</td>
+                                            <td>
+                                                <div class="selectgroup w-100" data-id="{{ $employee->id }}">
+                                                    <label class="selectgroup-item">
+                                                        <input type="radio" name="attendance[{{ $key }}]"
+                                                            value="present" class="selectgroup-input"
+                                                            {{ $atten?->status == 'present' ? 'checked' : '' }}>
+                                                        <span
+                                                            class="selectgroup-button selectgroup-button-icon">{{ __('Present') }}</span>
+                                                    </label>
+                                                    <label class="selectgroup-item">
+                                                        <input type="radio" name="attendance[{{ $key }}]"
+                                                            value="absent" class="selectgroup-input"
+                                                            {{ $atten?->status == 'absent' ? 'checked' : '' }}>
+                                                        <span
+                                                            class="selectgroup-button selectgroup-button-icon">{{ __('Absent') }}</span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="float-right">
+                        @if (request()->get('date'))
+                            {{ $employees->onEachSide(3)->links() }}
+                        @endif
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 @endsection
 
@@ -195,7 +194,7 @@
                     return;
                 }
                 const data = {
-                    member_id: [id],
+                    employee_id: [id],
                     attendance: [value],
                 }
 
@@ -232,14 +231,14 @@
 
             $('.submit-button').on('click', function(e) {
                 const data = {
-                    member_id: [],
+                    employee_id: [],
                     attendance: [],
                 }
                 $('[class="selectgroup-input"]:checked').each(function() {
                     const input = $(this).parents('tr').find('[data-checkboxes="mygroup"]:checked');
                     if (input.length && $(this).closest('.selectgroup').data('id')) {
 
-                        data.member_id.push($(this).closest('.selectgroup').data('id'));
+                        data.employee_id.push($(this).closest('.selectgroup').data('id'));
                         data.attendance.push($(this).val());
                     }
                 })
@@ -251,7 +250,7 @@
 
                 // check if date is selected
                 if ($('.datepicker').val() == '') {
-                    toastr.warning("{{ __('Please select date') }}");
+                    toastr.warning("{{ __('Please select date') }}", '', options);
                 } else {
                     $('#search-form').submit();
                 }
@@ -271,17 +270,17 @@
                     url: "{{ route('admin.attendance.store') }}",
                     success: function(response) {
                         if (response.success) {
-                            toastr.success(response.message);
+                            toastr.success(response.message, '', options);
                         } else {
-                            toastr.warning(response.message);
+                            toastr.warning(response.message, '', options);
                         }
                     },
                     error: function(error) {
-                        handleFetchError(error);
+                        handleError(error);
                     }
                 })
             } else {
-                toastr.warning("Please mark attendance");
+                toastr.warning("Please mark attendance", '', options);
             }
         }
 
