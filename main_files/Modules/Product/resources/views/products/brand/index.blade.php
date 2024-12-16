@@ -9,16 +9,16 @@
                 <div class="card-body pb-1">
                     <form action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
                                     <button type="submit">
-                                        <i class="fa fa-search"></i>
+                                        <i class='bx bx-search'></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -31,7 +31,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -50,10 +50,10 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xxl-1 col-md-3">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary w-100">{{ __('Search') }}</button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -63,10 +63,10 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4><i class="fas fa-list"></i> {{ __('Brand List') }}</h4>
+                <h4 class="section_title"> {{ __('Brand List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.brand.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
@@ -79,7 +79,7 @@
                 <button class="btn btn-danger delete-button">Delete</button>
             </div>
             <div class="table-responsive">
-                <table style="width: 100%;" class="table table-hover">
+                <table style="width: 100%;" class="table common_table mb-5">
                     <thead>
                         <tr>
                             <th>
@@ -111,13 +111,15 @@
                                         style="width: 80px"></td>
                                 <td class="text-left">{{ $brand->name }}</td>
                                 <td>
-                                    <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
-                                        class="btn btn-primary me-1 btn-sm" data-bs-toggle="tooltip" title="Edit"><i
-                                            class="fas fa-pencil-alt"></i></a>
+                                    <div class="d-flex" gap-1>
+                                        <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
+                                            class="btn btn-primary me-1 btn-sm" data-bs-toggle="tooltip" title="Edit"><i
+                                                class="fas fa-pencil-alt"></i></a>
 
-                                    <a href="javascript:;" data-bs-target="#deleteModal" data-bs-toggle="modal"
-                                        class="btn btn-danger btn-sm" onclick="deleteData({{ $brand->id }})"><i
-                                            class="fas fa-trash"></i></a>
+                                        <a href="javascript:;" data-bs-target="#deleteModal" data-bs-toggle="modal"
+                                            class="btn btn-danger btn-sm" onclick="deleteData({{ $brand->id }})"><i
+                                                class="fas fa-trash"></i></a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

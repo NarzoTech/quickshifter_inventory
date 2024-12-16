@@ -15,12 +15,12 @@
                             @csrf
                             <div class="card">
                                 <div class="card-header">
-                                    <div class="card-title">{{ __('Create Purchase') }}</div>
+                                    <div class="section_title">{{ __('Create Purchase') }}</div>
                                 </div>
 
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Supplier') }}</label>
                                                 <select class="form-control select2" name="supplier_id">
@@ -34,7 +34,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Invoice Number') }}</label>
                                                 <input type="text" class="form-control" name="invoice_number"
@@ -44,7 +44,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Memo No') }}</label>
                                                 <input type="text" class="form-control" name="memo_no"
@@ -54,7 +54,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Purchase Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="purchase_date"
@@ -64,7 +64,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Reference No') }}</label>
                                                 <input type="text" class="form-control" name="reference_no"
@@ -74,7 +74,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Attachment') }}</label>
                                                 <input type="file" class="form-control" name="attachment"
@@ -84,10 +84,8 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         {{-- product search box --}}
-                                        <div class="col-md-12">
+                                        <div class="col-12">
                                             <div class="form-group">
                                                 <label>{{ __('Product') }}</label>
                                                 <select class="form-control select2" id="product_id">
@@ -100,107 +98,76 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{{ __('Product Name') }}</th>
-                                                        <th>{{ __('Product Stock') }}</th>
-                                                        <th>{{ __('Quantity') }}</th>
-                                                        <th>{{ __('Purchase Price') }}</th>
-                                                        <th>{{ __('Sub Total') }}</th>
-                                                        <th>{{ __('Profit') }}%</th>
-                                                        <th>{{ __('Selling Price') }}</th>
-                                                        <th>
-                                                            <i class="fas fa-trash text-danger"></i>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="purchase_table">
-                                                </tbody>
-                                            </table>
+                                    </div>
+                                    <div class="row mt-5">
+                                        <div class="col-12">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{{ __('Product Name') }}</th>
+                                                            <th>{{ __('Product Stock') }}</th>
+                                                            <th>{{ __('Quantity') }}</th>
+                                                            <th>{{ __('Purchase Price') }}</th>
+                                                            <th>{{ __('Sub Total') }}</th>
+                                                            <th>{{ __('Profit') }}%</th>
+                                                            <th>{{ __('Selling Price') }}</th>
+                                                            <th class="text-center">
+                                                                <i class="fas fa-trash text-danger"></i>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="purchase_table"> </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
-
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
                                     {{-- summery --}}
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="row d-flex justify-content-end">
-                                                <div class="col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('Item Count') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="number" class="form-control" name="items"
-                                                                value="0" readonly>
+                                    <div class="row justify-content-end mt-5">
+                                        <div class="col-xxl-5 col-xl-6 col-lg-7">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Item Count') }}</label>
+                                                        <input type="number" class="form-control" name="items"
+                                                            value="0" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Total Amount') }}</label>
+                                                        <input type="total_amount" class="form-control" name="total_amount"
+                                                            value="0" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Payment Type') }}</label>
+                                                        <div class="paymentsystem">
+                                                            @include('purchase::add-payment-method')
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row d-flex justify-content-end">
-                                                <div class="col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('Total Amount') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="total_amount" class="form-control"
-                                                                name="total_amount" value="0" readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row d-flex justify-content-end">
-
-                                                <div class="col-md-10">
-                                                    <div class="">
-                                                        <div class="form-group row">
-                                                            <div class="col-md-4"></div>
-                                                            <div class="col-md-3 text-md-right">
-                                                                <label for=""
-                                                                    class="mt-2">{{ __('Payment Type') }}</label>
-                                                            </div>
-                                                            <div class="col-md-5 paymentsystem">
-                                                                @include('purchase::add-payment-method')
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="offset-md-10 col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('Due') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="text" class="form-control" name="due_amount"
-                                                                readonly>
-                                                        </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Due') }}</label>
+                                                        <input type="text" class="form-control" name="due_amount"
+                                                            readonly>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-action d-flex justify-content-end">
-                                        <a href="{{ route('admin.purchase.index') }}"
-                                            class="btn btn-danger me-2">{{ __('Cancel') }}</a>
-                                        <button type="submit" class="btn btn-success">{{ __('Submit') }}</button>
-
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card-action d-flex justify-content-end">
+                                                <a href="{{ route('admin.purchase.index') }}"
+                                                    class="btn btn-danger me-2">{{ __('Cancel') }}</a>
+                                                <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </form>
 

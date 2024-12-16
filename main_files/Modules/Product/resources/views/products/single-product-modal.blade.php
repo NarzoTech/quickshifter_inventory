@@ -4,41 +4,38 @@
 </div>
 <div class="modal-body">
     <div class="row">
-        <div class="col-sm-9 col-md-9">
+        <div class="col-xl-9 col-lg-8">
             <div class="row">
-                <div class="col-sm-6 invoice-col">
-                    <p class="mb-2"><b>Product Name: </b> {{ $product->name }}</p>
-                    <p class="mb-2"><b>Barcode:</b>{{ $product->barcode }}</p>
-                    <p class="mb-2"><b>Brand: </b>{{ $product->brand->name }}</p>
-                    <p class="mb-2"><b>Unit: </b>{{ $product->unit->name }}</p>
-                    <p class="mb-2"> <b class="d-none">Available in locations: </b> Quick Shifter</p>
-                    <p class="mb-2"><b>Created At: </b>{{ $product->created_at->format('d F, Y') }}</p>
+                <div class="col-lg-6 invoice-col">
+                    <p class="mb-2"><b class="me-2">Product Name: </b> {{ $product->name }}</p>
+                    <p class="mb-2"><b class="me-2">Barcode:</b>{{ $product->barcode }}</p>
+                    <p class="mb-2"><b class="me-2">Brand: </b>{{ $product->brand->name }}</p>
+                    <p class="mb-2"><b class="me-2">Unit: </b>{{ $product->unit->name }}</p>
+                    <p class="mb-2 d-none"><b class="me-2">Available in locations: </b> Quick Shifter</p>
+                    <p class="mb-2"><b class="me-2">Created At: </b>{{ $product->created_at->format('d F, Y') }}</p>
                 </div>
-
-                <div class="col-sm-6 invoice-col">
-                    <p class="mb-2"><b>Category: </b>{{ $product->category->name }}</p>
-                    <p class="mb-2"><b>Manage Stock: </b>{{ $product->stock_alert ? 'Yes' : 'No' }}</p>
-                    <p class="mb-2"><b>Alert quantity: </b>{{ $product->stock_alert }} </p>
-                    <p class="mb-2"><b>Has IMEI/Model No: </b>{{ $product->hasVariant ? 'Yes' : 'No' }} </p>
-                    <p class="mb-2"><b>Updated At: </b>{{ $product->updated_at->format('d F, Y') }}</p>
+                <div class="col-lg-6 invoice-col">
+                    <p class="mb-2"><b class="me-2">Category: </b>{{ $product->category->name }}</p>
+                    <p class="mb-2"><b class="me-2">Manage Stock: </b>{{ $product->stock_alert ? 'Yes' : 'No' }}</p>
+                    <p class="mb-2"><b class="me-2">Alert quantity: </b>{{ $product->stock_alert }} </p>
+                    <p class="mb-2"><b class="me-2">Has IMEI/Model No: </b>{{ $product->hasVariant ? 'Yes' : 'No' }}
+                    </p>
+                    <p class="mb-2"><b class="me-2">Updated At: </b>{{ $product->updated_at->format('d F, Y') }}</p>
                 </div>
-                <div class="clearfix"></div>
                 <br>
-                <div class="col-sm-12"> </div>
             </div>
         </div>
 
-        <div class="col-sm-3 col-md-3">
+        <div class="col-xl-3 col-lg-4">
             <div class="thumbnail view_product">
                 <img src="{{ $product->singleImage }}" class="img-fluid" alt="Product image">
             </div>
         </div>
     </div>
-    <br>
-    <br>
-    <div class="row">
+
+    <div class="row mt-2">
         <div class="col-md-12">
-            <strong>Product Stock Details</strong>
+            <h6 class="mb-1"><strong>Product Stock Details</strong></h6>
         </div>
         <div class="col-md-12" id="view_product_stock_details" data-product_id="82">
             <div class="row">

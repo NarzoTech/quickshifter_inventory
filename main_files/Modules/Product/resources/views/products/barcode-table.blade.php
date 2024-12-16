@@ -7,15 +7,13 @@
     <div class="main-content">
         <section class="section">
             <div class="section-body">
-                <div class="mt-4 row">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4>{{ __('Print Barcode') }}</h4>
-                                <div>
-                                    <a href="{{ route('admin.product.index') }}" class="btn btn-primary"><i
-                                            class="fa fa-arrow-left"></i>{{ __('Back') }}</a>
-                                </div>
+                                <h4 class="section_title">{{ __('Print Barcode') }}</h4>
+                                <a href="{{ route('admin.product.index') }}" class="btn btn-primary"><i
+                                        class="fa fa-arrow-left"></i>{{ __('Back') }}</a>
                             </div>
 
                             <div class="card-body">
@@ -23,10 +21,8 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text">
-                                                        <i class="fas fa-search"></i>
-                                                    </div>
+                                                <div class="input-group-text">
+                                                    <i class='bx bx-search'></i>
                                                 </div>
                                                 <input type="text" class="form-control"
                                                     placeholder="Enter Product Name/Sku/scan barcode" id="searchProduct">
@@ -37,14 +33,13 @@
                                 </div>
                             </div>
 
-                            <div class="card-body">
+                            <div class="card-body pt-0">
                                 <form action="{{ route('admin.product.barcode.print') }}" method="POST">
                                     @csrf
                                     <div class="row">
                                         <div class="col-sm-12">
                                             <div class="table-responsive">
-                                                <table
-                                                    class="table table-condensed table-bordered text-center table-striped"
+                                                <table class="table table-condensed common_table mb-3"
                                                     id="purchase_entry_table">
                                                     <thead>
                                                         <tr>
@@ -63,64 +58,67 @@
                                         </div>
 
 
-                                        <div class="col-sm-12">
+                                        <div class="col-12">
                                             <div class="form-group">
-                                                <div class="mt-3 d-flex align-items-center ">
-                                                    <label class="custom-control pl-0">
-                                                        <span class=""><b>Print : </b></span>
+                                                <div class="mt-3 d-flex flex-wrap align-items-center ">
+                                                    <label class="custom-control pl-0 mb-0">
+                                                        <span><b>Print : </b></span>
                                                     </label>
 
-                                                    <div class="custom-control custom-checkbox">
+                                                    <div
+                                                        class="custom-control custom-checkbox d-flex flex-wrap align-items-center gap-2 ms-3">
                                                         <input type="checkbox" id="shopname" name="action[]"
                                                             class="custom-control-input" value="shopname" checked>
-                                                        <label class="custom-control-label" for="shopname">Shop Name</label>
+                                                        <span class="custom-control-label mb-0" for="shopname">Shop
+                                                            Name</span>
                                                     </div>
 
-                                                    <div class="custom-control custom-checkbox">
+                                                    <div
+                                                        class="custom-control custom-checkbox d-flex flex-wrap align-items-center gap-2 ms-3">
                                                         <input type="checkbox" id="productname" name="action[]"
                                                             class="custom-control-input" value="productname" checked>
-                                                        <label class="custom-control-label" for="productname">Product
-                                                            Name</label>
+                                                        <span class="custom-control-label mb-0" for="productname">Product
+                                                            Name</span>
                                                     </div>
 
-                                                    <label class="custom-control custom-checkbox">
+                                                    <div
+                                                        class="custom-control custom-checkbox d-flex flex-wrap align-items-center gap-2 ms-3">
                                                         <input type="checkbox" class="custom-control-input" name="action[]"
                                                             value="size_color" checked>
-                                                        <span class="custom-control-label">Size Color</span>
-                                                    </label>
-                                                    <label class="custom-control custom-checkbox">
+                                                        <span class="custom-control-label mb-0">Size Color</span>
+                                                    </div>
+                                                    <div
+                                                        class="custom-control custom-checkbox d-flex flex-wrap align-items-center gap-2 ms-3">
                                                         <input type="checkbox" class="custom-control-input" name="action[]"
                                                             value="category">
-
-                                                        <span class="custom-control-label">Category Name</span>
-                                                    </label>
-                                                    <label class="custom-control custom-checkbox">
+                                                        <span class="custom-control-label mb-0">Category Name</span>
+                                                    </div>
+                                                    <div
+                                                        class="custom-control custom-checkbox d-flex flex-wrap align-items-center gap-2 ms-3">
                                                         <input type="checkbox" class="custom-control-input" name="action[]"
                                                             value="selling_price">
+                                                        <span class="custom-control-label mb-0">Selling Price</span>
+                                                    </div>
 
-                                                        <span class="custom-control-label">Selling Price</span>
-                                                    </label>
-
-                                                    <label class="custom-control custom-checkbox">
+                                                    <div
+                                                        class="custom-control custom-checkbox d-flex flex-wrap align-items-center gap-2 ms-3">
                                                         <input type="checkbox" class="custom-control-input" name="action[]"
                                                             value="sku">
-
-                                                        <span class="custom-control-label">Sku</span>
-                                                    </label>
-                                                    <label class="custom-control custom-checkbox">
+                                                        <span class="custom-control-label mb-0">Sku</span>
+                                                    </div>
+                                                    <div
+                                                        class="custom-control custom-checkbox d-flex flex-wrap align-items-center gap-2 ms-3">
                                                         <input type="checkbox" class="custom-control-input" name="action[]"
                                                             value="include_vat">
-
-                                                        <span class="custom-control-label">Include Vat</span>
-                                                    </label>
+                                                        <span class="custom-control-label mb-0">Include Vat</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <button type="submit" class="btn btn-primary">
-                                            <div class="fas fa-print"></div> Save
-                                        </button>
+                                        <button type="submit" class="btn btn-primary"> <i class="fas fa-print me-2"></i>
+                                            Save </button>
                                     </div>
                                 </form>
                             </div>

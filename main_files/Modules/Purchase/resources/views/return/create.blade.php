@@ -17,12 +17,12 @@
                             <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
                             <div class="card">
                                 <div class="card-header">
-                                    <div class="card-title">{{ __('Purchase Return') }}</div>
+                                    <div class="section_title">{{ __('Purchase Return') }}</div>
                                 </div>
 
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Supplier Name') }}</label>
                                                 <input type="text" class="form-control" name=""
@@ -34,7 +34,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Return Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="return_date"
@@ -44,7 +44,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Shipping Cost') }}</label>
                                                 <input type="text" class="form-control" name="shipping_cost"
@@ -54,7 +54,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Return Type') }}</label>
                                                 <select name="return_type_id" id="" class="form-control">
@@ -69,7 +69,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label>{{ __('Attachment') }}</label>
                                                 <input type="file" class="form-control" name="attachment"
@@ -79,7 +79,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>{{ __('Note') }}</label>
@@ -90,138 +89,126 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row mt-5">
                                         <div class="col-md-12">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{{ __('Product Name') }}</th>
-                                                        <th>{{ __('Purchase Price') }}</th>
-                                                        <th>{{ __('Purchase Quantity') }}</th>
-                                                        <th>{{ __('Returned, Sale') }}</th>
-                                                        <th>{{ __('Stock Quantity') }}</th>
-                                                        <th>{{ __('Return Quantity') }}</th>
-                                                        <th>{{ __('Return Subtotal') }}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="purchase_table">
-                                                    @foreach ($purchase->purchaseDetails as $purchaseDetail)
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
                                                         <tr>
-                                                            <td>
-                                                                {{ $purchaseDetail->product?->name }}
-                                                                <input type="hidden" name="product_id[]"
-                                                                    value="{{ $purchaseDetail->product_id }}">
-                                                            </td>
-                                                            <td>
-                                                                {{ $purchaseDetail->purchase_price }}
-                                                            </td>
-                                                            <td>
-                                                                {{ $purchaseDetail->quantity }}
-                                                            </td>
-                                                            <td>
-                                                                {{ $purchaseDetail->returned_sale }}
-                                                            </td>
-                                                            <td>
-                                                                {{ $purchaseDetail->product?->total_stock }}
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" class="form-control"
-                                                                    name="return_quantity[]" value="0" min="0">
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" class="form-control"
-                                                                    name="return_subtotal[]" value="0" readonly>
-                                                            </td>
+                                                            <th>{{ __('Product Name') }}</th>
+                                                            <th>{{ __('Purchase Price') }}</th>
+                                                            <th>{{ __('Purchase Quantity') }}</th>
+                                                            <th>{{ __('Returned, Sale') }}</th>
+                                                            <th>{{ __('Stock Quantity') }}</th>
+                                                            <th>{{ __('Return Quantity') }}</th>
+                                                            <th>{{ __('Return Subtotal') }}</th>
                                                         </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody id="purchase_table">
+                                                        @foreach ($purchase->purchaseDetails as $purchaseDetail)
+                                                            <tr>
+                                                                <td>
+                                                                    {{ $purchaseDetail->product?->name }}
+                                                                    <input type="hidden" name="product_id[]"
+                                                                        value="{{ $purchaseDetail->product_id }}">
+                                                                </td>
+                                                                <td>
+                                                                    {{ $purchaseDetail->purchase_price }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ $purchaseDetail->quantity }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ $purchaseDetail->returned_sale }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ $purchaseDetail->product?->total_stock }}
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" class="form-control"
+                                                                        name="return_quantity[]" value="0"
+                                                                        min="0">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" class="form-control"
+                                                                        name="return_subtotal[]" value="0" readonly>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
-
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
                                     {{-- summery --}}
-                                    <div class="row">
-                                        <div class="col-7"></div>
-                                        <div class="col-5 row">
-                                            <div class="col-12">
-                                                <div class="form-group d-flex">
-                                                    <div class="col-4">
+                                    <div class="row justify-content-end mt-5">
+                                        <div class="col-xxl-5 col-xl-6 col-lg-7">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
                                                         <label>{{ __('Paid Amount') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
                                                         <input type="number" class="form-control" name="paid_amount"
                                                             value="{{ $purchase->paid_amount }}" readonly>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group d-flex">
-                                                    <div class="col-4">
+                                                <div class="col-12">
+                                                    <div class="form-group">
                                                         <label>{{ __('Invoice Amount') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
                                                         <input type="invoice_amount" class="form-control"
                                                             name="invoice_amount" value="0" readonly>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group d-flex">
-                                                    <div class="col-4">
+                                                <div class="col-12">
+                                                    <div class="form-group">
                                                         <label>{{ __('Received Amount') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
                                                         <input type="received_amount" class="form-control"
                                                             name="received_amount" value="0">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group row">
-                                                    <div class="col-4">
+                                                <div class="col-12">
+                                                    <div class="form-group">
                                                         <label>{{ __('Payment Type') }}</label>
-                                                    </div>
-                                                    <div class="col-8">
                                                         <select name="payment_type" id="" class="form-control">
                                                             <option value="">{{ __('Select Payment Type') }}
                                                             </option>
                                                             @foreach (accountList() as $key => $list)
                                                                 <option value="{{ $key }}"
                                                                     @if ($key == 'cash') selected @endif
-                                                                    data-name="{{ $list }}">{{ $list }}
+                                                                    data-name="{{ $list }}">
+                                                                    {{ $list }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group row">
-                                                    <div class="col-4">
-                                                        <input type="text" class="form-control" name="payment_method"
-                                                            value="cash" readonly>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <input type="text" class="form-control" name="paid_amount">
+                                                <div class="col-12">
+                                                    <div class="form-group row">
+                                                        <div class="col-4">
+                                                            <input type="text" class="form-control"
+                                                                name="payment_method" value="cash" readonly>
+                                                        </div>
+                                                        <div class="col-8">
+                                                            <input type="text" class="form-control"
+                                                                name="paid_amount">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-action d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-success me-2">{{ __('Submit') }}</button>
-                                        <a href="{{ route('admin.purchase.index') }}"
-                                            class="btn btn-danger">{{ __('Cancel') }}</a>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="card-action d-flex justify-content-end">
+                                                <a href="{{ route('admin.purchase.index') }}"
+                                                    class="btn me-2 btn-danger">{{ __('Cancel') }}</a>
+                                                <button type="submit"
+                                                    class="btn btn-primary">{{ __('Submit') }}</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>

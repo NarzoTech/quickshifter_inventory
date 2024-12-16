@@ -1,8 +1,8 @@
 @foreach ($purchase->payments as $index => $payment)
-    <div class="row payment-row">
-        <div class="col-md-12 mt-3">
+    <div class="row payment-row mb-5">
+        <div class="col-md-12">
             <div class="input-group">
-                <select name="payment_type[]" id="" class="form-control me-2">
+                <select name="payment_type[]" id="" class="form-control rounded me-2">
                     <option value="">
                         {{ __('Select Payment Type') }}
                     </option>
@@ -14,11 +14,10 @@
                 </select>
                 <div class="input-group-append">
                     @if ($index > 0)
-                        <button class="btn btn-outline-danger removePayment" type="button"><i
+                        <button class="btn btn-danger removePayment" type="button"><i
                                 class="fas fa-trash"></i></button>
                     @elseif ($index == 0)
-                        <button class="btn btn-outline-success addPayment" type="button"><i
-                                class="fa fa-plus"></i></button>
+                        <button class="btn btn-success addPayment" type="button"><i class="fa fa-plus"></i></button>
                     @endif
                 </div>
             </div>

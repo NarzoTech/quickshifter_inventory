@@ -1,7 +1,7 @@
-<div class="row payment-row">
-    <div class="col-md-12 mt-3">
+<div class="row payment-row mb-5">
+    <div class="col-md-12 mt-0">
         <div class="input-group">
-            <select name="payment_type[]" id="" class="form-control me-2">
+            <select name="payment_type[]" id="" class="form-control nice-select rounded me-2">
                 <option value="">
                     {{ __('Select Payment Type') }}
                 </option>
@@ -14,16 +14,14 @@
             </select>
             <div class="input-group-append">
                 @if (isset($add))
-                    <button class="btn btn-outline-danger removePayment" type="button"><i
-                            class="fas fa-trash"></i></button>
+                    <button class="btn btn-danger removePayment" type="button"><i class="fas fa-trash"></i></button>
                 @else
-                    <button class="btn btn-outline-success addPayment" type="button"><i
-                            class="fa fa-plus"></i></button>
+                    <button class="btn btn-success addPayment" type="button"><i class="fa fa-plus"></i></button>
                 @endif
             </div>
         </div>
     </div>
-    <div class="col-md-12 ml-auto mt-2">
+    <div class="col-md-12 ml-auto">
         <div class="row">
             <div class="col-5 account">
                 <input type="text" class="form-control" name="account_id[]" value="cash" readonly>

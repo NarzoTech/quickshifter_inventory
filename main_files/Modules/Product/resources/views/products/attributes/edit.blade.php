@@ -7,79 +7,81 @@
         <section class="section">
 
             <div class="section-body">
-                <div class="mt-4 row">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4>{{ __('Edit Attribute') }}</h4>
-                                <div>
-                                    <a href="{{ route('admin.attribute.index') }}" class="btn btn-primary"><i
-                                            class="fa fa-arrow-left"></i>{{ __('Back') }}</a>
-                                </div>
+                                <h4 class="section_title">{{ __('Edit Attribute') }}</h4>
+                                <a href="{{ route('admin.attribute.index') }}" class="btn btn-primary"><i
+                                        class="fa fa-arrow-left"></i>{{ __('Back') }}</a>
                             </div>
                             <div class="card-body">
                                 <form action="{{ route('admin.attribute.update', $attribute->id) }}" method="post">
                                     @csrf
                                     @method('PUT')
-                                    <div class="row">
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="name">{{ __('Name') }}<span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" name="name" class="form-control" id="name"
-                                                    required value="{{ old('name', $attribute->name) }}">
-                                                @error('name')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8 offset-md-2">
-                                            <div class="form-group">
-                                                <label for="slug">{{ __('Slug') }}<span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" id="slug" name="slug"
-                                                    value="{{ old('slug', $attribute->slug) }}" class="form-control">
-                                                @error('slug')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-8 row d-flex justify-content-center align-items-center">
-                                            <div class="col-8">
-                                                <h2 class="section-title">{{ __('Attribute Values') }}</h2>
-                                            </div>
-                                            <div class="col-4">
-                                                <button type="button"
-                                                    class="btn btn-primary btn-sm add-values">{{ __('Add Values') }}</button>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8 row offset-md-2 values-container">
-                                            @foreach ($attribute->values as $val)
+                                    <div class="row justify-content-center">
+                                        <div class="col-lg-8">
+                                            <div class="row">
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <div class="d-flex justify-content-between">
-                                                            <input type="text" name="values[{{ $val->id }}]"
-                                                                class="form-control" id="values" required
-                                                                value="{{ old('values', $val->name) }}">
-                                                            @if (!$loop->first)
-                                                                <button type="button"
-                                                                    class="btn btn-danger btn-sm remove-values ml-2"
-                                                                    data-id="{{ $val->id }}"><i
-                                                                        class="fas fa-trash"></i></button>
-                                                            @endif
-                                                        </div>
-                                                        @error('values')
+                                                        <label for="name">{{ __('Name') }}<span
+                                                                class="text-danger">*</span></label>
+                                                        <input type="text" name="name" class="form-control"
+                                                            id="name" required
+                                                            value="{{ old('name', $attribute->name) }}">
+                                                        @error('name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
-                                            @endforeach
-                                        </div>
-
-                                        <div class="text-center offset-md-2 col-md-8">
-                                            <x-admin.update-button :text="__('Update')">
-                                            </x-admin.update-button>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="slug">{{ __('Slug') }}<span
+                                                                class="text-danger">*</span></label>
+                                                        <input type="text" id="slug" name="slug"
+                                                            value="{{ old('slug', $attribute->slug) }}"
+                                                            class="form-control">
+                                                        @error('slug')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div
+                                                        class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                                                        <h5 class="mb-0">{{ __('Attribute Values') }}</h5>
+                                                        <button type="button"
+                                                            class="btn btn-primary btn-sm add-values">{{ __('+ Add Values') }}</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 values-container">
+                                                    @foreach ($attribute->values as $val)
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="d-flex justify-content-between">
+                                                                    <input type="text"
+                                                                        name="values[{{ $val->id }}]"
+                                                                        class="form-control" id="values" required
+                                                                        value="{{ old('values', $val->name) }}">
+                                                                    @if (!$loop->first)
+                                                                        <button type="button"
+                                                                            class="btn btn-danger btn-sm remove-values ml-2"
+                                                                            data-id="{{ $val->id }}"><i
+                                                                                class="fas fa-trash"></i></button>
+                                                                    @endif
+                                                                </div>
+                                                                @error('values')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                <div class="col-12 text-center">
+                                                    <x-admin.update-button :text="__('Update')">
+                                                    </x-admin.update-button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>

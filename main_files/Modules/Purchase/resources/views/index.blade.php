@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,7 +52,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select class="form-control select2" name="product_id">
                                         <option value="" selected disabled>{{ __('Product') }}
@@ -67,27 +67,22 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date" value=""
+                                            autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-xxl-1 col-md-4">
-                                <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -97,10 +92,10 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> Purchase List</h4>
+                <h4 class="section_title"> Purchase List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
@@ -186,47 +181,49 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body py-0">
                         <div class="row">
                             {{-- table --}}
-                            <div class="col-md-6">
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <th>{{ __('Name') }}</th>
-                                        <td>{{ $purchase->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Phone') }}</th>
-                                        <td>{{ $purchase->phone }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Email') }}</th>
-                                        <td>{{ $purchase->email }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('City') }}</th>
-                                        <td>{{ $purchase->city }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Tax Number') }}</th>
-                                        <td>{{ $purchase->tax_number }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Status') }}</th>
-                                        <td>{{ $purchase->status == 1 ? 'Active' : 'Inactive' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>{{ __('Address') }}</th>
-                                        <td>{{ $purchase->address }}</td>
-                                    </tr>
-                                </table>
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th>{{ __('Name') }}</th>
+                                            <td>{{ $purchase->name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Phone') }}</th>
+                                            <td>{{ $purchase->phone }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Email') }}</th>
+                                            <td>{{ $purchase->email }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('City') }}</th>
+                                            <td>{{ $purchase->city }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Tax Number') }}</th>
+                                            <td>{{ $purchase->tax_number }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Status') }}</th>
+                                            <td>{{ $purchase->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>{{ __('Address') }}</th>
+                                            <td>{{ $purchase->address }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
 
                 </div>
