@@ -430,7 +430,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger"
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-supplier-form{{ $supplier->id }}">{{ __('Update') }}</button>
                     </div>
@@ -498,7 +499,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger"
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
 
                     </div>
                 </div>

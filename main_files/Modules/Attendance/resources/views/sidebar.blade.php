@@ -33,13 +33,13 @@
                     <div class="text-truncate" data-i18n="Settings">Settings</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item">
+                    <li class="menu-item {{ Route::is('admin.attendance.settings.weekdays') ? 'active' : '' }}">
                         <a href="{{ route('admin.attendance.settings.weekdays') }}" class="menu-link">
                             <div class="text-truncate" data-i18n="Weekend Setup">{{ __('Weekend Setup') }}</div>
                         </a>
                     </li>
-                    <li class="menu-item">
-                        <a href="app-ecommerce-product-add.html" class="menu-link">
+                    <li class="menu-item {{ Route::is('admin.attendance.settings.holidays.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.attendance.settings.holidays.index') }}" class="menu-link">
                             <div class="text-truncate" data-i18n="Holiday Setup">{{ __('Holiday Setup') }}</div>
                         </a>
                     </li>

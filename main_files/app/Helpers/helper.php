@@ -280,6 +280,13 @@ if (!function_exists('getSettingStatus')) {
         return false;
     }
 }
+
+if (!function_exists('saveLog')) {
+    function saveLog($message, $level = 'info')
+    {
+        Log::log($level, $message);
+    }
+}
 if (!function_exists('isRoute')) {
     function isRoute(string | array $route, string $returnValue = null)
     {

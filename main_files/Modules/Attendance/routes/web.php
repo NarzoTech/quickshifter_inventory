@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Attendance\app\Http\Controllers\AttendanceController;
+use Modules\Attendance\app\Http\Controllers\HolidaysController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,4 +24,6 @@ Route::middleware(['auth:admin', 'translation'])
         Route::get('attendance/settings/weekdays', [AttendanceController::class, 'weekDays'])->name('attendance.settings.weekdays');
 
         Route::put('attendance/settings/weekdays/{id}', [AttendanceController::class, 'weekDaysUpdate'])->name('attendance.settings.weekdays.update');
+
+        Route::resource('attendance/settings/holidays', HolidaysController::class)->only('index', 'store', 'update', 'destroy')->names('attendance.settings.holidays');
     });
