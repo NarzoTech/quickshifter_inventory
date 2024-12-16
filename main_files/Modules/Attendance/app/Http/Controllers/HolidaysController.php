@@ -15,7 +15,36 @@ class HolidaysController extends Controller
      */
     public function index()
     {
-        $holidays = HolidaySetup::paginate(20);
+        $holidays = HolidaySetup::query();
+
+        if (request('keyword')) {
+            $holidays = $holidays->where('name', 'like', '%' . request('keyword') . '%')
+                ->orWhere('description', 'like', '%' . request('keyword') . '%');
+        }
+        if (request()->from_date) {
+            $date = now()->parse(request()->from_date);
+            $holidays = $holidays->where('start_date', '>=', $date);
+        }
+        if (request()->to_date) {
+            $date = now()->parse(request()->to_date);
+            $holidays = $holidays->where('end_date', '<=', $date);
+        }
+
+        if (request()->order_type || request()->order_by) {
+            $orderBy = request()->order_by ? request()->order_by : 'desc';
+            $orderType = request()->order_type ? request()->order_type : 'id';
+            $holidays = $holidays->orderBy($orderType, $orderBy);
+        } else {
+            $holidays = $holidays->orderBy('id', 'desc');
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+            $holidays = $holidays->paginate($parpage);
+        } else {
+            $holidays = $holidays->paginate(20);
+        }
+
         return view('attendance::holidays.index', compact('holidays'));
     }
 
