@@ -60,7 +60,7 @@ class AttendanceController extends Controller
             'attendance.*' => 'required|in:absent,present',
         ], [
             'date.required' => __('Date is required'),
-            'employee_id.required' => __('Member is required'),
+            'employee_id.required' => __('Employee is required'),
             'attendance.required' => __('Attendance is required'),
         ]);
         $date = $request->date;

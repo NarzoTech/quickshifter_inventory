@@ -86,7 +86,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h4>{{ __('Member List') }}</h4>
+                    <h4>{{ __('Employee List') }}</h4>
                     <div class="attendance_type d-none d-flex justify-content-center align-items-center">
                         <div class="selectgroup w-100">
                             <label class="selectgroup-item">
@@ -174,12 +174,12 @@
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li><a class="dropdown-item attendance" href="javascript:;"
-                                                                data-member-id={{ $employee->id }}
+                                                                data-employee-id={{ $employee->id }}
                                                                 data-date={{ $date->format('Y-m-d') }}
                                                                 data-value="present">{{ __('Present') }}</a>
                                                         </li>
                                                         <li><a class="dropdown-item attendance" href="javascript:;"
-                                                                data-member-id={{ $employee->id }}
+                                                                data-employee-id={{ $employee->id }}
                                                                 data-date={{ $date->format('Y-m-d') }}
                                                                 data-value="absent">{{ __('Absent') }}</a>
                                                         </li>
@@ -208,21 +208,21 @@
         'use strict';
         $(document).ready(function() {
             $(document).on('click', '.attendance', function() {
-                const id = $(this).data('member-id');
+                const id = $(this).data('employee-id');
                 const date = $(this).data('date');
 
                 // check  if date is after today
                 const today = new Date();
                 const selectedDate = new Date(date);
                 if (selectedDate > today) {
-                    toastr.warning("{{ __('You can not mark attendance for future date') }}");
+                    toastr.warning("{{ __('You can not mark attendance for future date') }}", '', options);
                     return;
                 }
 
                 const value = $(this).data('value');
 
                 const data = {
-                    member_id: [id],
+                    employee_id: [id],
                     date,
                     attendance: [value],
                 }
@@ -274,17 +274,17 @@
                     url: "{{ route('admin.attendance.store') }}",
                     success: function(response) {
                         if (response.success) {
-                            toastr.success(response.message);
+                            toastr.success(response.message, '', options);
                         } else {
-                            toastr.warning(response.message);
+                            toastr.warning(response.message, '', options);
                         }
                     },
                     error: function(error) {
-                        handleFetchError(error);
+                        handleError(error);
                     }
                 })
             } else {
-                toastr.warning("Please mark attendance");
+                toastr.warning("Please mark attendance", '', options);
             }
         }
     </script>

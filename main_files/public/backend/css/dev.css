@@ -1355,10 +1355,6 @@ body {
     background: green !important;
 }
 
-.attendance-table {
-    /* border: 1px solid #ddd !important; */
-}
-
 .attendance-table tr:last-child td,
 .attendance-table tbody tr td {
     border-right: 1px solid #ddd !important;
