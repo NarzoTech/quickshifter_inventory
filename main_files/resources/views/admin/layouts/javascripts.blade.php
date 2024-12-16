@@ -66,9 +66,15 @@
         function handleError(error) {
             console.log(error);
             if (error.responseJSON) {
-                $.each(error.responseJSON.errors, function(index, data) {
-                    toastr.error(data);
-                })
+                if (error.responseJSON.message) {
+                    toastr.error(error.responseJSON.message, '', options);
+                }
+                if (error.responseJSON.errors) {
+                    $.each(error.responseJSON.errors, function(index, data) {
+                        toastr.error(data, '', options);
+                    })
+                }
+
             }
         }
 

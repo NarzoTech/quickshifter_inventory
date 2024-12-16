@@ -114,15 +114,16 @@
                                                     </div>
                                                 </th>
                                                 <th>{{ __('Name') }}</th>
-                                                <th>{{ __('Member ID') }}</th>
+                                                <th>{{ __('Designation') }}</th>
+                                                <th>{{ __('Mobile') }}</th>
                                                 <th>{{ __('Status') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @if ($currentDate)
-                                                @foreach ($members as $key => $member)
+                                                @foreach ($employees as $key => $employee)
                                                     @php
-                                                        $atten = $member->attendance
+                                                        $atten = $employee->attendance
                                                             ->where('date', $currentDate)
                                                             ->first();
                                                     @endphp
@@ -138,10 +139,11 @@
                                                             </div>
                                                         </td>
 
-                                                        <td>{{ $member->user?->name }}</td>
-                                                        <td>{{ $member->member_id }}</td>
+                                                        <td>{{ $employee->name }}</td>
+                                                        <td>{{ $employee->designation }}</td>
+                                                        <td>{{ $employee->mobile }}</td>
                                                         <td>
-                                                            <div class="selectgroup w-100" data-id="{{ $member->id }}">
+                                                            <div class="selectgroup w-100" data-id="{{ $employee->id }}">
                                                                 <label class="selectgroup-item">
                                                                     <input type="radio"
                                                                         name="attendance[{{ $key }}]"
@@ -168,7 +170,7 @@
                                 </div>
                                 <div class="float-right">
                                     @if (request()->get('date'))
-                                        {{ $members->onEachSide(3)->links() }}
+                                        {{ $employees->onEachSide(3)->links() }}
                                     @endif
                                 </div>
                             </div>
@@ -195,7 +197,7 @@
                     return;
                 }
                 const data = {
-                    member_id: [id],
+                    employee_id: [id],
                     attendance: [value],
                 }
 
@@ -232,14 +234,14 @@
 
             $('.submit-button').on('click', function(e) {
                 const data = {
-                    member_id: [],
+                    employee_id: [],
                     attendance: [],
                 }
                 $('[class="selectgroup-input"]:checked').each(function() {
                     const input = $(this).parents('tr').find('[data-checkboxes="mygroup"]:checked');
                     if (input.length && $(this).closest('.selectgroup').data('id')) {
 
-                        data.member_id.push($(this).closest('.selectgroup').data('id'));
+                        data.employee_id.push($(this).closest('.selectgroup').data('id'));
                         data.attendance.push($(this).val());
                     }
                 })
@@ -251,7 +253,7 @@
 
                 // check if date is selected
                 if ($('.datepicker').val() == '') {
-                    toastr.warning("{{ __('Please select date') }}");
+                    toastr.warning("{{ __('Please select date') }}", '', options);
                 } else {
                     $('#search-form').submit();
                 }
@@ -271,17 +273,17 @@
                     url: "{{ route('admin.attendance.store') }}",
                     success: function(response) {
                         if (response.success) {
-                            toastr.success(response.message);
+                            toastr.success(response.message, '', options);
                         } else {
-                            toastr.warning(response.message);
+                            toastr.warning(response.message, '', options);
                         }
                     },
                     error: function(error) {
-                        handleFetchError(error);
+                        handleError(error);
                     }
                 })
             } else {
-                toastr.warning("Please mark attendance");
+                toastr.warning("Please mark attendance", '', options);
             }
         }
 

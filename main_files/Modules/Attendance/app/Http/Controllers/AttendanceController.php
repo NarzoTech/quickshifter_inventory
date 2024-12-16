@@ -26,7 +26,7 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        checkAdminHasPermissionAndThrowException('attendance.list');
+        // checkAdminHasPermissionAndThrowException('attendance.list');
 
         $employees = $this->employee->all()->paginate(20);
 
@@ -38,7 +38,7 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        checkAdminHasPermissionAndThrowException('attendance.create');
+        // checkAdminHasPermissionAndThrowException('attendance.create');
 
 
         $employees = $this->employee->all()->paginate(20);
@@ -50,7 +50,7 @@ class AttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        checkAdminHasPermissionAndThrowException(['attendance.store', 'attendance.update']);
+        // checkAdminHasPermissionAndThrowException(['attendance.store', 'attendance.update']);
 
         $request->validate([
             'date' => 'required',

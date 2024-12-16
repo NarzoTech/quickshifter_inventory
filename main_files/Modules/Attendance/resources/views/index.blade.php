@@ -135,16 +135,16 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($members as $key => $member)
+                                            @foreach ($employees as $key => $employee)
                                                 @php
-                                                    $attendance = $member->attendance;
+                                                    $attendance = $employee->attendance;
                                                     $present = $attendance->where('status', 'present');
                                                     $absent = $attendance->where('status', 'absent');
                                                 @endphp
 
                                                 <tr>
-                                                    <td class="sticky-1">{{ $member->user?->name }}</td>
-                                                    <td class="sticky-2">{{ $member->member_id }}</td>
+                                                    <td class="sticky-1">{{ $employee->user?->name }}</td>
+                                                    <td class="sticky-2">{{ $employee->member_id }}</td>
                                                     <td class="text-center ">{{ $present->count() }}</td>
                                                     <td class="text-center">{{ $absent->count() }}</td>
                                                     @for ($i = 1; $i <= $totalDays; $i++)
@@ -170,13 +170,13 @@
                                                                 <ul class="dropdown-menu">
                                                                     <li><a class="dropdown-item attendance"
                                                                             href="javascript:;"
-                                                                            data-member-id={{ $member->id }}
+                                                                            data-member-id={{ $employee->id }}
                                                                             data-date={{ $date->format('Y-m-d') }}
                                                                             data-value="present">{{ __('Present') }}</a>
                                                                     </li>
                                                                     <li><a class="dropdown-item attendance"
                                                                             href="javascript:;"
-                                                                            data-member-id={{ $member->id }}
+                                                                            data-member-id={{ $employee->id }}
                                                                             data-date={{ $date->format('Y-m-d') }}
                                                                             data-value="absent">{{ __('Absent') }}</a>
                                                                     </li>
@@ -190,9 +190,7 @@
                                     </table>
                                 </div>
                                 <div class="float-right">
-
-                                    {{ $members->onEachSide(3)->links() }}
-
+                                    {{ $employees->onEachSide(3)->links() }}
                                 </div>
                             </div>
                         </div>

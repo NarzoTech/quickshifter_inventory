@@ -4,6 +4,7 @@ namespace Modules\Employee\app\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Attendance\app\Models\Attendance;
 use Modules\Employee\Database\factories\EmployeeFactory;
 
 class Employee extends Model
@@ -67,5 +68,18 @@ class Employee extends Model
         $year = $year ?? now()->format('Y');
 
         return $this->employeeSalary->where('month', $month)->where('year', $year)->sum('amount');
+    }
+
+    public function attendance()
+    {
+        $month_year = request()->month_year ?? now()->format('m/Y');
+
+        $date = \Carbon\Carbon::createFromFormat('m/Y', $month_year);
+
+        $month = $date->month;
+        $year = $date->year;
+
+
+        return $this->hasMany(Attendance::class, 'employee_id', 'id')->whereMonth('date', $month)->whereYear('date', $year);
     }
 }
