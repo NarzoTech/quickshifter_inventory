@@ -6,7 +6,8 @@
 
 <link rel="stylesheet" href="{{ asset('backend/assets/vendor/fonts/boxicons.css') }}" />
 
-<link rel="stylesheet" href="{{ asset('global/css/all.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/fontawesome/css/all.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/css/bootstrap-toggle.min.css') }}">
 
 <!-- Core CSS -->
 <link rel="stylesheet" href="{{ asset('backend/assets/vendor/css/core.css') }}" class="template-customizer-core-css" />

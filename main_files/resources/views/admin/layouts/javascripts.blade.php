@@ -17,6 +17,7 @@
 
     <!-- Page JS -->
     <script src="{{ asset('backend/assets/js/dashboards-analytics.js') }}"></script>
+    <script src="{{ asset('backend/js/bootstrap-toggle.jquery.min.js') }}"></script>
     <script src="{{ asset('backend/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('backend/js/select2.min.js') }}"></script>
     <script src="{{ asset('backend/js/tagify.js') }}"></script>

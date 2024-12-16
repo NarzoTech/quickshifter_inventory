@@ -22,13 +22,12 @@
                                 <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="">{{ __('Order Type') }}</option>
-                                        <option value="due" {{ request('order_type') == 'due' ? 'selected' : '' }}>
-                                            {{ __('Due') }}</option>
+                                        <option value="id" {{ request('order_type') == 'id' ? 'selected' : '' }}>
+                                            {{ __('ID') }}</option>
 
-                                        <option value="total" {{ request('order_type') == 'total' ? 'selected' : '' }}>
-                                            {{ __('Total') }}</option>
-                                        <option value="paid" {{ request('order_type') == 'paid' ? 'selected' : '' }}>
-                                            {{ __('Paid') }}</option>
+                                        <option value="name" {{ request('order_type') == 'name' ? 'selected' : '' }}>
+                                            {{ __('Name') }}</option>
+
                                     </select>
                                 </div>
                             </div>
