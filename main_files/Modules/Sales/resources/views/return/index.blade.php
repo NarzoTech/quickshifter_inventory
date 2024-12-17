@@ -89,7 +89,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
+                <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
                             <th>{{ __('Sl') }}</th>

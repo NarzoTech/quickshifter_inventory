@@ -1,44 +1,40 @@
-<div class="modal-body">
+<div class="modal-header card-header">
+    <h4 class="section_title">View Sale</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body pt-0">
 
     <div class="row invoice-info">
-        <div class="col-sm-4 invoice-col">
+        <div class="col-lg-3 invoice-col">
             <span style="display: none;">{{ __('Business') }}:</span>
             <address>
-                <strong>{{ $setting->app_name }}</strong><br>
-
+                <strong>{{ $setting->app_name }}</strong>
             </address>
         </div>
 
-        <div class="col-sm-4 invoice-col">
-            {{ __('Customer') }}:
-            <address>
-                <strong></strong>
-                <b>{{ $sale?->customer?->name ?? 'Guest' }}</b><br>
-                {{ $sale?->customer?->phone ? 'Mobile: ' . $sale->customer->phone : '' }}
-                <br>
-                {{ $sale?->customer?->sale_note ? 'Remark: ' . $sale->customer->sale_note : '' }}
-            </address>
+        <div class="col-lg-3 invoice-col">
+            <b>{{ __('Customer') }}:</b>
+            <p>{{ $sale?->customer?->name ?? 'Guest' }}</p>
+            <p>{{ $sale?->customer?->phone ? 'Mobile: ' . $sale->customer->phone : '' }}</p>
+            <p>{{ $sale?->customer?->sale_note ? 'Remark: ' . $sale->customer->sale_note : '' }}</p>
         </div>
 
-        <div class="col-sm-4 invoice-col">
-            <b>{{ __('Invoice No') }}:</b> {{ $sale->invoice }}<br>
-
-
-            <b>{{ __('Date') }}:</b>{{ $sale->order_date }}<br>
-            <b>{{ __('Created By') }}</b>: {{ $sale->createdBy->name }} <br>
-            <b>{{ __('Created At') }}</b>{{ __(':') }}<br> {{ $sale->created_at->format('d-m-Y h:i A') }}
+        <div class="col-lg-6 invoice-col">
+            <b class="me-2">{{ __('Invoice No') }}:</b> {{ $sale->invoice }}<br>
+            <b class="me-2">{{ __('Date') }}:</b>{{ $sale->order_date }}<br>
+            <b class="me-2">{{ __('Created By') }}</b>: {{ $sale->createdBy->name }} <br>
+            <b class="me-2">{{ __('Created At') }}</b>{{ __(':') }}
+            {{ $sale->created_at->format('d-m-Y h:i A') }}
         </div>
     </div>
-    <hr style="margin-top: -6px;"><br>
 
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-sm-12 col-xs-12">
             <div class="table-responsive text-center">
-                <table class="table text-center bg-secondary text-white">
-
-
-                    <thead class="">
-                        <tr style=" background: #2dce89;">
+                <table class="table">
+                    <thead>
+                        <tr>
                             <th>{{ __('SL') }}</th>
                             <th>{{ __('Image') }}</th>
                             <th>{{ __('Product Name') }}</th>
@@ -58,12 +54,12 @@
                                 <td>
                                     @if ($details->product_id)
                                         <a href="{{ asset($details->product->single_image) }}">
-                                            <img style="height: 40px; width: 70px;"
+                                            <img style="height: 40px; width: 40px;"
                                                 src='{{ asset($details->product->single_image) }}' alt="Image">
                                         </a>
                                     @else
                                         <a href="{{ asset($details->service->single_image) }}">
-                                            <img style="height: 40px; width: 70px;"
+                                            <img style="height: 40px; width: 40px;"
                                                 src='{{ asset($details->service->single_image) }}' alt="Image">
                                     @endif
                                     </a>
@@ -108,54 +104,39 @@
                     <tbody>
                         <tr>
                             <th>{{ __('Sub Total') }}: </th>
-                            <td></td>
                             <td><span class="display_currency pull-right"
                                     data-currency_symbol="true">{{ currency($subTotal) }}</span>
                             </td>
                         </tr>
                         <tr>
                             <th>{{ __('Discount') }}: </th>
-                            <td></td>
                             <td><span class="display_currency pull-right"
                                     data-currency_symbol="true">{{ currency($sale->order_discount) }}</span>
                             </td>
                         </tr>
                         <tr>
                             <th>{{ __('Total Amount') }}: </th>
-                            <td></td>
                             <td><span class="display_currency pull-right"
                                     data-currency_symbol="true">{{ currency($sale->total_price) }}
                                 </span></td>
                         </tr>
+                        <tr>
+                            <th>{{ __('Total Pay') }}: </th>
+                            <td><span class="display_currency pull-right"
+                                    data-currency_symbol="true">{{ currency($sale->paid_amount) }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>{{ __('Final Due') }}: </th>
+                            <td><span class="display_currency pull-right"
+                                    data-currency_symbol="true">{{ currency($sale->due_amount) }}</span>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-
-            <div class="ml-auto">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <th>{{ __('Total Pay') }}: </th>
-                                <td></td>
-                                <td><span class="display_currency pull-right"
-                                        data-currency_symbol="true">{{ currency($sale->paid_amount) }}</span></td>
-                            </tr>
-
-                            <tr>
-                                <th>{{ __('Final Due') }}: </th>
-                                <td></td>
-                                <td><span class="display_currency pull-right"
-                                        data-currency_symbol="true">{{ currency($sale->due_amount) }}</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
-    <div class="modal-footer">
+    <div class="text-end">
         <button type="button" class="btn btn-danger no-print" data-bs-dismiss="modal">{{ __('Close') }}</button>
     </div>
 </div>

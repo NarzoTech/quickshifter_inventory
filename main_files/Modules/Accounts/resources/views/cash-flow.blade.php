@@ -10,28 +10,22 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-9">
                                 <div class="form-group">
-                                    <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date"
+                                            value="{{ request()->get('from_date') }}" autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-3">
                                 <div class="form-group">
-                                    <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-xxl-1 col-md-4">
-                                <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +38,7 @@
     <div class="card mt-3 mb-3">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> Cash Flow</h4>
+                <h4 class="section_title"> Cash Flow</h4>
             </div>
 
         </div>
@@ -53,11 +47,11 @@
                 <table style="width: 100%;" class="table mb-3" id="cash-summary-table">
                     <thead>
                         <tr>
-                            <td colspan="2" class="text-center">
-                                <h5>Cash In</h5>
+                            <td colspan="2" class="text-center bg-primary">
+                                <h5 class="mb-0 text-white">Cash In</h5>
                             </td>
-                            <td colspan="2" class="text-center">
-                                <h5>Cash Out</h5>
+                            <td colspan="2" class="text-center bg-warning">
+                                <h5 class="mb-0 text-white">Cash Out</h5>
                             </td>
                         </tr>
                         <tr>
@@ -293,33 +287,29 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="border-none"></td>
+                            <td colspan="3" class="text-end">
+                                <h5 class="m-0">
+                                    <b>Opening Balance =</b>
+                                </h5>
+                            </td>
                             <td colspan="" class="text-left">
-                                <h4 class="m-0">
-                                    Opening Balance =
-                                </h4>
+                                <h5 class="m-0">
+                                    <b>{{ $openingBalance }}</b>
+                                </h5>
                             </td>
-                            <td colspan="" class="text-left border-none">
-                                <h4 class="m-0">
-                                    {{ $openingBalance }}
-                                </h4>
-                            </td>
-                            <td></td>
                         </tr>
                         <tr>
-                            <td class="border-none"></td>
-                            <td class="text-left">
-                                <h4 class="m-0">
-                                    Current Balance =
-                                </h4>
+                            <td colspan="3" class="text-end">
+                                <h5 class="m-0">
+                                    <b>Current Balance =</b>
+                                </h5>
                             </td>
-                            <td class="text-left border-none">
-                                <h4 class="m-0">
-                                    {{ $currentBalance }}
-                                </h4>
+                            <td class="text-left">
+                                <h5 class="m-0">
+                                    <b>{{ $currentBalance }}</b>
+                                </h5>
                                 (Opening Balance + Cash In - Cash Out)
                             </td>
-                            <td></td>
                         </tr>
                     </tfoot>
                 </table>

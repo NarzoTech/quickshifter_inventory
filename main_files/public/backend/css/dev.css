@@ -1378,7 +1378,18 @@ td.sticky-2::after {
     }
 }
 
+#cash-summary-table tr td .icon-img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
 
+#cash-summary-table {}
+
+#cash-summary-table tr th,
+#cash-summary-table tr td {
+    width: 25%;
+}
 
 
 

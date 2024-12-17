@@ -12,7 +12,7 @@
                 <input type="hidden" name="sale_id" value="{{ $sale->id }}">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">{{ __('Sales Return') }}</div>
+                        <div class="section_title">{{ __('Sales Return') }}</div>
                     </div>
 
                     <div class="card-body">
@@ -73,123 +73,97 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ __('Product Name') }}</th>
-                                            <th>{{ __('Unit Price') }}</th>
-                                            <th>{{ __('Sell Quantity') }}</th>
-                                            <th>{{ __('Return Quantity') }}</th>
-                                            <th>{{ __('Return Subtotal') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="sale_return_table">
-                                        @foreach ($sale->products as $product)
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
                                             <tr>
-                                                <td>{{ $product->product->name }}
-                                                    <input type="hidden" name="product_id[]"
-                                                        value="{{ $product->product_id }}">
-                                                </td>
-                                                <td>{{ $product->price }}
-                                                    <input type="hidden" class="form-control" name="price[]"
-                                                        value="{{ $product->price }}">
-                                                </td>
-                                                <td>{{ $product->quantity }}</td>
-                                                <td>
-                                                    <input type="number" class="form-control" name="return_quantity[]">
-                                                </td>
-                                                <td>
-                                                    <input type="number" class="form-control" name="return_subtotal[]">
-                                                </td>
-
+                                                <th>{{ __('Product Name') }}</th>
+                                                <th>{{ __('Unit Price') }}</th>
+                                                <th>{{ __('Sell Quantity') }}</th>
+                                                <th>{{ __('Return Quantity') }}</th>
+                                                <th>{{ __('Return Subtotal') }}</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody id="sale_return_table">
+                                            @foreach ($sale->products as $product)
+                                                <tr>
+                                                    <td>{{ $product->product->name }}
+                                                        <input type="hidden" name="product_id[]"
+                                                            value="{{ $product->product_id }}">
+                                                    </td>
+                                                    <td>{{ $product->price }}
+                                                        <input type="hidden" class="form-control" name="price[]"
+                                                            value="{{ $product->price }}">
+                                                    </td>
+                                                    <td>{{ $product->quantity }}</td>
+                                                    <td>
+                                                        <input type="number" class="form-control" name="return_quantity[]">
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control" name="return_subtotal[]">
+                                                    </td>
+
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        {{-- summery --}}
-                        <div class="row">
-                            <div class="col-7"></div>
-                            <div class="col-5 row">
-                                <div class="col-12">
-                                    <div class="form-group d-flex">
-                                        <div class="col-4">
+                        <div class="row justify-content-end">
+                            <div class="col-xl-5 col-lg-7 col-md-8">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
                                             <label>{{ __('Paid Amount') }}</label>
-                                        </div>
-                                        <div class="col-8">
                                             <input type="number" class="form-control" name="paid_amount"
                                                 value="{{ $sale->payment->sum('amount') }}" readonly>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group d-flex">
-                                        <div class="col-4">
+                                    <div class="col-12">
+                                        <div class="form-group">
                                             <label>{{ __('Return Amount') }}</label>
-                                        </div>
-                                        <div class="col-8">
                                             <input type="return_amount" class="form-control" name="return_amount"
                                                 value="0">
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group d-flex">
-                                        <div class="col-4">
+                                    <div class="col-12">
+                                        <div class="form-group">
                                             <label>{{ __('Paying Amount') }}</label>
-                                        </div>
-                                        <div class="col-8">
                                             <input type="paying_amount" class="form-control" name="paying_amount"
                                                 value="0">
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group row">
-                                        <div class="col-4">
+                                    <div class="col-12">
+                                        <div class="form-group">
                                             <label>{{ __('Pay By') }}</label>
-                                        </div>
-                                        <div class="col-8">
-                                            <select name="payment_type" id="" class="form-control">
-                                                <option value="">{{ __('Select Payment Type') }}
-                                                </option>
-                                                @foreach (accountList() as $key => $list)
-                                                    <option value="{{ $key }}"
-                                                        @if ($key == 'cash') selected @endif
-                                                        data-name="{{ $list }}">{{ $list }}
+                                            <div class="pyment-method">
+                                                <select name="payment_type" id="" class="form-control">
+                                                    <option value="">{{ __('Select Payment Type') }}
                                                     </option>
-                                                @endforeach
-                                            </select>
+                                                    @foreach (accountList() as $key => $list)
+                                                        <option value="{{ $key }}"
+                                                            @if ($key == 'cash') selected @endif
+                                                            data-name="{{ $list }}">{{ $list }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group row">
-                                        <div class="col-4">
-
-                                        </div>
-                                        <div class="col-8 payment_methods">
-
+                                    <div class="col-12">
+                                        <div class="card-action d-flex justify-content-end">
+                                            <a href="{{ route('admin.purchase.index') }}"
+                                                class="btn me-2 btn-danger">{{ __('Cancel') }}</a>
+                                            <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-action d-flex justify-content-end">
-                            <button type="submit" class="btn btn-success me-2">{{ __('Submit') }}</button>
-                            <a href="{{ route('admin.purchase.index') }}" class="btn btn-danger">{{ __('Cancel') }}</a>
-                        </div>
                     </div>
-
                 </div>
             </form>
-
         </div>
     </div>
 @endsection
