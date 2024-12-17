@@ -590,6 +590,8 @@
         </div>
     </div>
 
+
+    {{-- hold sale list modal --}}
     <div class="modal fade" id="hold-list-modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -896,6 +898,7 @@
                 $('.add-payment').on('click', function() {
                     const row = `@include('pos::payment-row', ['add' => true])`;
                     $('#paymentRow').append(row)
+                    $('[name="payment_type[]"],[name="account_id[]"]').niceSelect();
                 })
                 $(document).on('click', '.remove-payment', function() {
                     $(this).parents('tr').remove()

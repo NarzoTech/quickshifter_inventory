@@ -25,10 +25,13 @@
                 <a href="javascript:0" class="btn btn-sm btn-danger remove-payment">
                     <i class="fa fa-trash"></i>
                 </a>
+            @else
+                <a href="javascript:0" class="btn btn-sm btn-primary add-payment">
+                    <i class="fa fa-plus"></i>
+                </a>
             @endif
-            <a href="javascript:0" class="btn btn-sm btn-success add-payment">
-                <i class="fa fa-plus"></i>
-            </a>
+
+
         </div>
     </td>
 </tr>
