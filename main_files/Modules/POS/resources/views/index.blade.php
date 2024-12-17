@@ -713,6 +713,7 @@
                         url: "{{ route('admin.cart-quantity-update') }}",
                         success: function(response) {
                             $(".product-table-container").html(response)
+                            $('[name="source"]').niceSelect();
                             totalSummery();
                             $('.preloader_area').addClass('d-none');
                         },
@@ -898,7 +899,8 @@
                 $('.add-payment').on('click', function() {
                     const row = `@include('pos::payment-row', ['add' => true])`;
                     $('#paymentRow').append(row)
-                    $('[name="payment_type[]"],[name="account_id[]"]').niceSelect();
+                    $('[name="payment_type[]"]').niceSelect();
+
                 })
                 $(document).on('click', '.remove-payment', function() {
                     $(this).parents('tr').remove()
@@ -1029,6 +1031,8 @@
                 url: "{{ route('admin.cart.hold.edit', '') }}/" + id,
                 success: function(response) {
                     $(".product-table-container").html(response)
+
+                    $('[name="source"]').niceSelect();
                     totalSummery();
 
                     $(parent).parents('tr').remove()
@@ -1048,6 +1052,7 @@
                 url: "{{ route('admin.cart-price-update') }}",
                 success: function(response) {
                     $(".product-table-container").html(response)
+                    $('[name="source"]').niceSelect();
                     totalSummery();
                 }
             });
@@ -1100,6 +1105,7 @@
                 url: "{{ url('admin/pos/remove-cart-item') }}" + "/" + rowId,
                 success: function(response) {
                     $(".product-table-container").html(response)
+                    $('[name="source"]').niceSelect();
                     totalSummery();
                     toastr.success("{{ __('Remove successfully') }}")
                 },
@@ -1250,6 +1256,7 @@
                 success: function(response) {
                     $(".product-table-container").html(response)
 
+                    $('[name="source"]').niceSelect();
                     toastr.success("{{ __('Item added successfully') }}")
                     totalSummery();
                     $('.preloader_area').addClass('d-none');
@@ -1366,6 +1373,8 @@
 
                 $(this).parents('td').siblings('.account_info').html(cash);
             }
+
+            $('select[name="account_id[]"]').niceSelect();
         });
 
         $('.receive_cash').on('input', function() {
