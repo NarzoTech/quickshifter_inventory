@@ -1,7 +1,7 @@
 <div class="pos_product_area">
     <div class="row">
         @foreach ($services as $index => $service)
-            <div class="col-md-4 d-flex align-items-stretch">
+            <div class="col-6 col-md-4 col-lg-4 col-xxl-3">
                 <div class="card produt_card cursor-pointer" onclick="singleAddToCart({{ $service->id }}, 'service')">
                     <div class="w-100 produt_card_img">
                         <img src="{{ $service->singleImage }}" class="card-img-top" alt="Product">

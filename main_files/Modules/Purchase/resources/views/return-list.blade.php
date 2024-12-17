@@ -8,58 +8,56 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4>
-                        <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addType"
-                            class="btn btn-primary"><i class="fa fa-plus"></i>
-                            {{ __('Add Type') }}</a>
-                    </h4>
+                    <h4 class="section_title">{{ __('Add Type') }}</h4>
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addType" class="btn btn-primary"><i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Type') }}</a>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            {{ __('SL') }}
-                                        </th>
-                                        <th>{{ __('Type') }}</th>
-                                        <th>{{ __('Created By') }}</th>
-                                        <th>{{ __('Action') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($lists as $list)
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $list->name }}</td>
-                                            <td>{{ $list->createdBy?->name }}</td>
-                                            <td>
-                                                <div class="btn-group" role="group">
-                                                    <button id="btnGroupDrop{{ $list->id }}" type="button"
-                                                        class="btn btn-primary dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                        aria-expanded="false">
-                                                        Action
-                                                    </button>
-                                                    <div class="dropdown-menu"
-                                                        aria-labelledby="btnGroupDrop{{ $list->id }}">
-                                                        <a class="dropdown-item" href="javascript:;"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#editType{{ $list->id }}">Edit</a>
-                                                        <a href="javascript:;" class="dropdown-item"
-                                                            onclick="deleteData({{ $list->id }})">
-                                                            Delete</a>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                            <th>{{ __('SL') }}</th>
+                                            <th>{{ __('Type') }}</th>
+                                            <th>{{ __('Created By') }}</th>
+                                            <th>{{ __('Action') }}</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($lists as $list)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $list->name }}</td>
+                                                <td>{{ $list->createdBy?->name }}</td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button id="btnGroupDrop{{ $list->id }}" type="button"
+                                                            class="btn btn-primary dropdown-toggle"
+                                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                            Action
+                                                        </button>
+                                                        <div class="dropdown-menu"
+                                                            aria-labelledby="btnGroupDrop{{ $list->id }}">
+                                                            <a class="dropdown-item" href="javascript:;"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editType{{ $list->id }}">Edit</a>
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $list->id }})">
+                                                                Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -70,11 +68,11 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">{{ __('Add Type') }}</h4>
+                    <h4 class="section_title">{{ __('Add Type') }}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <form action="{{ route('admin.purchase.return.type.store') }}" method="POST" id="add-type-form">
                         @csrf
                         <div class="row">
@@ -89,7 +87,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-type-form">Save</button>
                 </div>
 
@@ -104,12 +102,12 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Edit Return Type') }}</h4>
+                        <h4 class="section_title">{{ __('Edit Return Type') }}</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body py-0">
                         <form action="{{ route('admin.purchase.return.type.update', $list->id) }}" method="POST"
                             id="edit-bank-form{{ $list->id }}">
                             @csrf

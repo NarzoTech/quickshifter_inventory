@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,7 +52,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="brand_id" id="brand_id" class="form-control select2">
                                         <option value="" selected disabled>{{ __('Brand') }}</option>
@@ -65,7 +65,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="category_id" id="categories" class="form-control select2">
                                         <option value="" selected disabled>{{ __('Categories') }}
@@ -79,7 +79,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="stock_status" id="stock_status" class="form-control select2">
                                         <option value="">{{ __('All') }}</option>
@@ -92,42 +92,35 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date" value=""
+                                            autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-xxl-1 col-md-4">
-                                <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
-
-
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> Stock List</h4>
+                <h4 class="section_title">Stock List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" class="btn btn-danger reset-button">{{ __('Reset Stock') }}</a>
@@ -138,8 +131,8 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
+            <div class="table-responsive list_table stock_table">
+                <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
                             <th>{{ __('Sl') }}</th>
@@ -148,7 +141,6 @@
                             <th>{{ __('Avg P.P') }}</th>
                             <th>{{ __('L. P.P') }}</th>
                             <th>{{ __('Selling Price') }}</th>
-                            {{-- <th style="display: none;">Business Branch</th> --}}
                             <th>{{ __('In Quantity') }}</th>
                             <th>{{ __('Out Quantity') }}</th>
                             <th>{{ __('Stock') }}</th>
@@ -172,7 +164,6 @@
                                 <td>{{ $product->avg_purchase_price }}</td>
                                 <td>{{ $product->last_purchase_price }}</td>
                                 <td>{{ $product->selling_price }}</td>
-                                {{-- <td style="display: none;">{{ $product->business_branch->name }}</td> --}}
                                 <td>{{ $product->stockDetails->sum('in_quantity') }}</td>
                                 <td>{{ $product->stockDetails->sum('out_quantity') }}
                                 </td>
@@ -183,21 +174,20 @@
                                     {{ remove_comma($stock) * remove_comma($selling_price) }}
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.product.show', $product->id) }}"
-                                        class="btn btn-primary btn-sm" title="Product Details"><i
-                                            class="fa fa-eye"></i></a>
-                                    <a href="{{ route('admin.stock.ledger', $product->id) }}" class="btn btn-info btn-sm"
-                                        title="Stock Ledger">
-                                        <i class="fas fa-clipboard-list"></i>
-                                    </a>
-
-                                    {{-- reset stock --}}
-                                    {{-- {{ route('admin.stock.reset', $product->id) }} --}}
-                                    <a href="javascript:;" class="btn btn-danger btn-sm" title="Reset Stock"
-                                        onclick="resetStock({{ $product->id }})" data-bs-target="#stockModal"
-                                        data-bs-toggle="modal">
-                                        <i class="fas fa-undo"></i>
-                                    </a>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <a href="{{ route('admin.product.show', $product->id) }}"
+                                            class="btn btn-primary btn-sm" title="Product Details"><i
+                                                class="fa fa-eye"></i></a>
+                                        <a href="{{ route('admin.stock.ledger', $product->id) }}"
+                                            class="btn btn-info btn-sm" title="Stock Ledger">
+                                            <i class="fas fa-clipboard-list"></i>
+                                        </a>
+                                        <a href="javascript:;" class="btn btn-danger btn-sm" title="Reset Stock"
+                                            onclick="resetStock({{ $product->id }})" data-bs-target="#stockModal"
+                                            data-bs-toggle="modal">
+                                            <i class="fas fa-undo"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -216,11 +206,11 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ __('Stock Reset Confirmation') }}</h5>
+                    <h5 class="section_title">{{ __('Stock Reset Confirmation') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <p>{{ __('Are You sure want to Reset Stock') }}?</p>
                 </div>
                 <div class="modal-footer bg-whitesmoke br">

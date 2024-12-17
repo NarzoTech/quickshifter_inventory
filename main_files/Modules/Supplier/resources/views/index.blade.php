@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body pb-1">
+                <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
                             <div class="col-xxl-2 col-md-6 col-lg-4">
@@ -450,7 +450,7 @@
                         <h5 class="modal-title" id="exampleModalLabel1">{{ __('Supplier') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body pt-0">
+                    <div class="modal-body py-0">
                         <div class="row">
                             {{-- table --}}
                             <div class="col-md-12">

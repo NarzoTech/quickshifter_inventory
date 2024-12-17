@@ -5,96 +5,6 @@
 @endsection
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/pos.css') }}">
-
-    <style>
-        .ui-autocomplete {
-            z-index: 215000000 !important;
-        }
-
-        .theme-primary {
-            background: #ad07b0 !important;
-        }
-
-        .product-table thead {
-            position: sticky;
-            top: -1px;
-        }
-
-        .w-21 {
-            width: 21%;
-        }
-
-        .cursor-pointer {
-            cursor: pointer !important;
-        }
-
-        .table:not(.table-sm):not(.table-md):not(.dataTable) td,
-        .table:not(.table-sm):not(.table-md):not(.dataTable) th {}
-
-        .main-content {
-            padding-left: 0px !important;
-            padding-top: 0px !important;
-        }
-
-        .main-sidebar {
-            display: none;
-            width: 0 !important;
-        }
-
-        .pos-right-side .summary-table {
-            width: calc(100% + 40px);
-            margin-left: -20px;
-        }
-
-        .summary-table .current {
-            color: #384551 !important;
-        }
-
-        .pos_pro_table .nice-select {
-            width: 145px;
-        }
-
-        .dis-form {
-            display: none;
-        }
-
-        .dis-form input {
-            width: 80px;
-            border-radius: 6px;
-            padding: 11px;
-            text-align: center;
-            border: 1px solid #E3E3E3;
-            outline: none;
-            margin-left: 10px;
-            color: #384551;
-        }
-
-        .dis-form select {
-            position: relative;
-            width: 120px;
-            color: #fff;
-            background-color: #188ae2;
-            border-radius: 4px 0 0 4px;
-            padding: 5px;
-            z-index: 10;
-        }
-
-        @media only screen and (max-width:767px) {
-            .pos-right-side {
-                padding-bottom: 10px !important;
-            }
-        }
-
-        @media only screen and (max-width:480px) {
-            .pos-right-side {
-                padding-bottom: 5px !important;
-            }
-
-            #exchange-table {
-                display: block;
-            }
-        }
-    </style>
 @endpush
 @section('content')
 
@@ -103,7 +13,7 @@
         <section class="section">
             <div class="section-body">
                 <div class="row mt-4">
-                    <div class="col-md-6">
+                    <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-12">
                                 <ul class="nav nav-tabs pos_tabs" id="myTab" role="tablist">
@@ -190,7 +100,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="card-body product_body" style="overflow: auto">
+                                    <div class="card-body product_body">
 
                                     </div>
                                 </div>
@@ -310,7 +220,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-lg-6">
                         <div class="card sticky_sidebar">
                             <div class="card-header pos_sidebar_button">
                                 <div class="row w-100">
@@ -321,9 +231,9 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-lg-2">
+                                    <div class="col-md-3 col-lg-2 pe-0">
                                         <div class="form-group mb-0">
-                                            <button type="button" class="btn bg-label-primary w-100 addCustomer">
+                                            <button type="button" class="btn btn-primary w-100 addCustomer">
                                                 <i class="fa fa-plus" aria-hidden="true"></i>
                                                 {{ __('New') }}
                                             </button>
@@ -341,95 +251,100 @@
                                         @include('pos::ajax_cart')
                                     </div>
                                 </div>
-                                <table id="totalTable" class="summary-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>Items</td>
-                                            <td><span id="titems">{{ count($cart_contents) }}</span> </td>
-                                            <td class="custom_width">Total</td>
-                                            <td> <span id="total">{{ currency($cumalitive_sub_total) }}</span> </td>
-                                        </tr>
-                                        <tr>
-                                            <td> Extra <small class="text-info"></small> </td>
-                                            <td> <span id="extra">{{ currency(0) }}</span> </td>
-                                            <td class="custom_width">{{ __('Discount') }}
-                                                <i class="fa fa-edit dis-tgl" style="cursor: pointer;"></i>
-                                                <div class="dis-form">
-                                                    <select name="discount_type" id="discount_type"
-                                                        onchange="discountExist()">
-                                                        <option value="1" selected>{{ __('Amount') }} (TK )</option>
-                                                        <option value="2">{{ __('Percentage') }} (%)</option>
-                                                    </select>
-                                                    <input type="number" onchange="discountExist()"
-                                                        id="discount_total_amount" value="0" step="0.1"
-                                                        name="discount_total_amount" autocomplete="off" autofocus>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span id="tds">0</span>
-                                            </td>
-                                        </tr>
+                                <div class="table-responsive">
+                                    <table id="totalTable" class="summary-table">
+                                        <tbody>
+                                            <tr>
+                                                <td>Items</td>
+                                                <td><span id="titems">{{ count($cart_contents) }}</span> </td>
+                                                <td class="custom_width">Total</td>
+                                                <td> <span id="total">{{ currency($cumalitive_sub_total) }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td> Extra <small class="text-info"></small> </td>
+                                                <td> <span id="extra">{{ currency(0) }}</span> </td>
+                                                <td class="custom_width">{{ __('Discount') }}
+                                                    <i class="fa fa-edit dis-tgl" style="cursor: pointer;"></i>
+                                                    <div class="dis-form">
+                                                        <select name="discount_type" id="discount_type"
+                                                            onchange="discountExist()">
+                                                            <option value="1" selected>{{ __('Amount') }} (TK )
+                                                            </option>
+                                                            <option value="2">{{ __('Percentage') }} (%)</option>
+                                                        </select>
+                                                        <input type="number" onchange="discountExist()"
+                                                            id="discount_total_amount" value="0" step="0.1"
+                                                            name="discount_total_amount" autocomplete="off" autofocus>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span id="tds">0</span>
+                                                </td>
+                                            </tr>
 
-                                        <tr>
-                                            <td colspan="3"> After Discount Price </td>
-                                            <td>
-                                                <span id="gtotal">{{ currency($cumalitive_sub_total) }}</span>
-                                                <input type="hidden" value="0" id="business_vat">
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td colspan="3"> After Discount Price </td>
+                                                <td>
+                                                    <span id="gtotal">{{ currency($cumalitive_sub_total) }}</span>
+                                                    <input type="hidden" value="0" id="business_vat">
+                                                </td>
+                                            </tr>
 
-                                        <tr>
-                                            <td colspan="3"> Total Vat </td>
-                                            <td>
-                                                <span id="totalVat">0</span>
-                                                <input type="hidden" value="0" id="business_vat">
-                                            </td>
-                                        </tr>
-                                        <tr class="pay-row">
-                                            <td colspan="3">
-                                                Total Payable
-                                                <span id="payable_amount"></span>
-                                            </td>
-                                            <td>
-                                                {{ currency($cumalitive_sub_total) }}
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td colspan="3"> Total Vat </td>
+                                                <td>
+                                                    <span id="totalVat">0</span>
+                                                    <input type="hidden" value="0" id="business_vat">
+                                                </td>
+                                            </tr>
+                                            <tr class="pay-row">
+                                                <td colspan="3">
+                                                    Total Payable
+                                                    <span id="payable_amount"></span>
+                                                </td>
+                                                <td>
+                                                    {{ currency($cumalitive_sub_total) }}
+                                                </td>
+                                            </tr>
 
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+    </div>
 
-        <footer class="pos-footer" style="z-index: 9000">
-            <div>
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-block back-btn">
-                    <i class="fa fa-backward fa-lg mt-3"></i>
-                </a>
-            </div>
-            <h3 class="final-text">
-                Total : <span id="finalTotal"> {{ currency($cumalitive_sub_total) }} </span>
-            </h3>
-            <div class="btn-group lg-btns">
-                <div class="btn-group">
-                    <button type="button" class="btn hold-list-btn" title="Hold Sale List">
-                        <i class="fa fa-list" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="btn hold-btn" title="Hold Current Sale">
-                        Hold
-                    </button>
-                </div>
-                <button type="button" class="btn cancel-btn" onclick="resetCart()">
-                    Clear
+    <footer class="pos-footer" style="z-index: 9999">
+        <div>
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-block back-btn">
+                <i class="fa fa-backward fa-lg mt-3"></i>
+            </a>
+        </div>
+        <h3 class="final-text">
+            Total : <span id="finalTotal"> {{ currency($cumalitive_sub_total) }} </span>
+        </h3>
+        <div class="btn-group lg-btns">
+            <div class="btn-group">
+                <button type="button" class="btn hold-list-btn" title="Hold Sale List">
+                    <i class="fa fa-list" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="btn payment-btn" onclick="openPaymentModal()">
-                    Payment
+                <button type="button" class="btn hold-btn" title="Hold Current Sale">
+                    Hold
                 </button>
             </div>
-        </footer>
+            <button type="button" class="btn cancel-btn" onclick="resetCart()">
+                Clear
+            </button>
+            <button type="button" class="btn payment-btn" onclick="openPaymentModal()">
+                Payment
+            </button>
+        </div>
+    </footer>
     </div>
 
     @include('components.admin.preloader')
@@ -556,7 +471,7 @@
                                 </div>
                             </div>
 
-                            <div>
+                            <div class="table-responsive">
                                 <table class="table payment payment_det_table_2 mt-2">
                                     <thead>
                                         <tr>
@@ -635,13 +550,11 @@
                                     </tfoot>
                                 </table>
                             </div>
-                            <div class="mt-4">
-                                <div class="row">
-                                    <div class="col-12 text-end">
-                                        <button type="button" class="btn btn-danger"
-                                            onclick="modalHide('#payment-modal')">Cancel [Esc]</button>
-                                        <button type="submit" id="checkout" class="btn btn-success"> Checkout </button>
-                                    </div>
+                            <div class="row">
+                                <div class="col-12 text-end">
+                                    <button type="button" class="btn btn-danger"
+                                        onclick="modalHide('#payment-modal')">Cancel [Esc]</button>
+                                    <button type="submit" id="checkout" class="btn btn-primary"> Checkout </button>
                                 </div>
                             </div>
                         </div>

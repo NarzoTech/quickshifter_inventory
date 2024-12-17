@@ -8,10 +8,10 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body pb-1">
+                <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xl-3 col-lg-4 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-2 col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-2 col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,7 +52,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xl-2 col-lg-4 col-md-6">
                                 <div class="form-group">
                                     <select name="stock_status" id="stock_status" class="form-control select2">
                                         <option value="">{{ __('All') }}</option>
@@ -65,29 +65,23 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-xl-3 col-lg-4 col-md-6">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
-
-
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5 mb-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> Stock Ledger</h4>
+                <h4 class="section_title">Stock Ledger</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
@@ -98,7 +92,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
+                <table style="width: 100%;" class="table">
                     <thead>
                         <tr>
                             <th title="Sl">Sl</th>
@@ -108,7 +102,6 @@
                             <th title="Type">Type</th>
                             <th title="In Qty">In Qty</th>
                             <th title="Out Qty">Out Qty</th>
-                            {{-- <th title="Used Qty">Used Qty</th> --}}
                             <th title="Available Qty">Available Qty</th>
                             <th title="Rate">Rate</th>
                             <th title="Total">Total</th>
@@ -137,7 +130,6 @@
                                 <td>{{ ucwords($stock->type) }}</td>
                                 <td>{{ $stock->in_quantity }}</td>
                                 <td>{{ $stock->out_quantity }}</td>
-                                {{-- <td>{{ $stock->used_qty }}</td> --}}
                                 <td>{{ $available }}</td>
                                 <td>{{ $stock->rate }}</td>
                                 <td>{{ $stock->rate * $qty }}</td>
