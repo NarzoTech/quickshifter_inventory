@@ -187,6 +187,46 @@ class ReportController extends Controller
         }
 
 
+        // customer dues
+        $todaySales = Sale::where(function ($q)  use ($fromDate, $toDate) {
+            $q->whereHas('customer_due');
+            $q->where('order_date', '>=', $fromDate);
+            $q->where('order_date', '<=', $toDate);
+        })->get();
+
+        foreach ($todaySales as $sale) {
+            $SaleDue = $sale->customer_due->due_amount + $sale->customer_due->paid_amount;
+            $newData = [];
+            $newData['date'] = now()->parse($sale->order_date)->format('d-M');
+            $newData['mode'] = 'Debit';
+            $newData['category'] = "Customer Due";
+            $newData['particular'] = $sale->customer_due->customer->name;
+            $newData['debit'] = (int)$SaleDue;
+            $newData['credit'] = 0;
+            $newData['iv'] = 0;
+            $newData = (object)$newData;
+            $data->push($newData);
+        }
+
+        // customer due receive
+
+        $customerPayments = CustomerPayment::whereDate('payment_date', '>=', $fromDate)->whereDate('payment_date', '<=', $toDate)->where('payment_type', 'due_receive')->get();
+
+        foreach ($customerPayments as $cusPayment) {
+            if ($cusPayment->amount == 0) continue;
+            $newData = [];
+            $newData['date'] = now()->parse($cusPayment->payment_date)->format('d-M');
+            $newData['mode'] = accountList()[$cusPayment->account->account_type];
+            $newData['category'] = "Customer Due Receive";
+            $newData['particular'] = $cusPayment->customer->name;
+            $newData['debit'] = 0;
+            $newData['credit'] = (int)$cusPayment->amount;
+            $newData['iv'] = 0;
+            $newData = (object)$newData;
+            $data->push($newData);
+        }
+
+
         $purchases = Purchase::query();
 
         if ($fromDate) {
@@ -305,7 +345,7 @@ class ReportController extends Controller
 
         if (request('export')) {
             $fileName = 'dts-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-            return Excel::download(new DTSExport($data, $openingBalance), $fileName);
+            return Excel::download(new DTSExport($data), $fileName);
         }
 
         return view('report::dts', compact('data', 'currentBalance', 'openingBalance'));

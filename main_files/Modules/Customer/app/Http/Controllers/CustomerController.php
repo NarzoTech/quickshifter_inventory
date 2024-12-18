@@ -369,20 +369,20 @@ class CustomerController extends Controller
                     'created_by' => auth('admin')->user()->id,
                 ]);
 
-                // update customer due amount
-                $due = CustomerDue::where('invoice', $invo)->first();
-                $due->due_amount = $due->due_amount - $request->amount[$index];
-                $due->paid_amount = $due->paid_amount + $request->amount[$index];
-                $due->save();
+                if ($request->amount[$index]) {
+                    // update customer due amount
+                    $due = CustomerDue::where('invoice', $invo)->first();
+                    $due->due_amount = $due->due_amount - $request->amount[$index];
+                    $due->paid_amount = $due->paid_amount + $request->amount[$index];
+                    $due->save();
 
-                // create ledger details
-                $ledger->details()->create([
-                    'invoice' => $invo,
-                    'amount' => $request->amount[$index],
-                ]);
+                    // create ledger details
+                    $ledger->details()->create([
+                        'invoice' => $invo,
+                        'amount' => $request->amount[$index],
+                    ]);
+                }
             }
-
-
 
             DB::commit();
             return to_route('admin.customers.index')->with([

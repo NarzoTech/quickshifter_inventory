@@ -128,9 +128,10 @@ class SaleService
                 $data['customer_id'] = null;
                 $data['is_guest'] = 1;
             }
-            CustomerPayment::create($data);
+            if ($request->paying_amount[$key]) {
+                CustomerPayment::create($data);
+            }
         }
-
 
 
         // create due
@@ -273,7 +274,9 @@ class SaleService
                     $data['customer_id'] = null;
                     $data['is_guest'] = 1;
                 }
-                CustomerPayment::create($data);
+                if ($request->paying_amount[$key]) {
+                    CustomerPayment::create($data);
+                }
             }
 
 

@@ -40,9 +40,10 @@ class DTSExport implements FromCollection, WithHeadings, WithMapping
         if ($data->mode != 'Credit' && $data->category != 'Inventory') {
             $this->balance += $data->credit - $data->debit;
         }
+        $accountList = array_values(accountList());
         if (
             $data->category == 'Inventory' &&
-            ($data->mode == 'R/P Credit' || $data->mode == 'Cash')
+            ($data->mode == 'R/P Credit' || in_array($data->mode, $accountList))
         ) {
             $this->balance += $data->credit - $data->debit;
         }
