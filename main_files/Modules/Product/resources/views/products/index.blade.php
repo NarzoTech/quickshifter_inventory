@@ -115,13 +115,11 @@
                             <th>{{ __('After Disc. P.') }}</th>
                             <th>{{ __('Brand') }}</th>
                             <th>{{ __('Category') }}</th>
-                            {{-- <th>{{ __('Sub Category') }}</th> --}}
                             <th>{{ __('Status') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
                     <tbody>
-
                         @foreach ($products as $index => $product)
                             <tr>
                                 <td>{{ ++$index }}</td>
@@ -189,7 +187,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </td>
                             </tr>
                         @endforeach

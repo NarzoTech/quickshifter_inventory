@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,13 +52,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -70,8 +67,8 @@
 
     <div class="card mt-3 mb-3">
         <div class="card-header">
-            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> {{ __('Balance Transfer List') }}</h4>
+            <div class="card-header-title">
+                <h4 class="section_title"> {{ __('Balance Transfer List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#transferModal" class="btn btn-primary"><i
@@ -86,14 +83,13 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
+                <table style="width: 100%;" class="table common_table">
                     <thead>
                         <th style=""> # </th>
                         <th style=""> From Account </th>
                         <th style=""> To Account </th>
                         <th style=""> Amount </th>
                         <th style=""> Added By </th>
-                        {{-- <th style=""> Business </th> --}}
                         <th style=""> Date </th>
                         <th style=""> Remark </th>
                         <th>Action</th>
@@ -107,11 +103,10 @@
                                 <td>{{ accountList()[$balanceTransfer->toAccount->account_type] }}</td>
                                 <td>{{ $balanceTransfer->amount }}</td>
                                 <td>{{ $balanceTransfer->createdBy->name }}</td>
-                                {{-- <td>{{ $balanceTransfer->business->name }}</td> --}}
                                 <td>{{ $balanceTransfer->date }}</td>
                                 <td>{{ $balanceTransfer->note }}</td>
                                 <td>
-                                    <a href="javascript:;" data-bs-toggle="modal"
+                                    <a class="btn btn-primary" href="javascript:;" data-bs-toggle="modal"
                                         data-bs-target="#editTransferModal-{{ $balanceTransfer->id }}">
                                         <i class="fa fa-edit"></i>
                                     </a>
@@ -141,7 +136,7 @@
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <form action="{{ route('admin.balance.transfer.store') }}" method="POST" id="add-transfer-form">
                         @csrf
                         <div class="row">
@@ -185,7 +180,6 @@
                                     </select>
                                 </div>
                             </div>
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="from_account">{{ __('From Account') }}</label>
@@ -194,7 +188,6 @@
                                     </select>
                                 </div>
                             </div>
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="to_account">{{ __('To Account') }}</label>
@@ -203,7 +196,6 @@
                                     </select>
                                 </div>
                             </div>
-
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="remark">{{ __('Remark') }}</label>
@@ -216,7 +208,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-transfer-form">Save</button>
                 </div>
 
@@ -238,7 +230,7 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body py-0">
                         <form action="{{ route('admin.balance.transfer.update', $transfer->id) }}" method="POST"
                             id="edit-transfer-form{{ $transfer->id }}">
                             @csrf
@@ -318,7 +310,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-transfer-form{{ $transfer->id }}">Save</button>
                     </div>

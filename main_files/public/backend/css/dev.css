@@ -476,6 +476,10 @@ textarea {
     overflow-x: initial !important;
 }
 
+.table_x_scroll {
+    overflow-x: auto !important;
+}
+
 .produt_card_img {
     position: relative;
 }

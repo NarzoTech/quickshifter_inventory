@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,13 +52,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -69,24 +66,21 @@
     </div>
 
     <div class="row">
-        <div class="col-12 col-md-6">
-            <div class="card mt-3 mb-3">
-                <div class="card-header">
-                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                    </div>
-
-                </div>
+        <div class="col-12 col-md-6 mt-5">
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table mb-3">
-                            <tbody>
-                                <tr class="theme-primary">
-                                    <th class="text-center">Cash Amount</th>
+                        <table style="width: 100%;" class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><b>Cash Amount</b></th>
                                 </tr>
+                            </thead>
+                            <tbody>
                                 <tr>
                                     <th class="text-center">
-                                        <h4 class="header-title">
-                                            {{ currency($cashAccount?->getBalanceBetween()) }}
+                                        <h4>
+                                            <b>{{ currency($cashAccount?->getBalanceBetween()) }}</b>
                                         </h4>
                                     </th>
                                 </tr>
@@ -96,23 +90,22 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-6">
-            <div class="card mt-3 mb-3">
-                <div class="card-header">
-                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                    </div>
-
-                </div>
+        <div class="col-12 col-md-6 mt-5">
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table mb-3">
-                            <tbody>
-                                <tr class="theme-primary">
-                                    <th class="text-center">Total Amount</th>
+                        <table style="width: 100%;" class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><b>Total Amount</b></th>
                                 </tr>
+                            </thead>
+                            <tbody>
                                 <tr>
                                     <th class="text-center">
-                                        <h4 class="header-title">{{ currency($accountBalance) }}</h4>
+                                        <h4>
+                                            <b>{{ currency($accountBalance) }}</b>
+                                        </h4>
                                     </th>
                                 </tr>
                             </tbody>
@@ -121,17 +114,18 @@
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <div class="card mt-3 mb-3">
+
+        <div class="col-12 mt-5">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                        <h4 class="section_title"><i class="fas fa-list"></i> {{ __('Bank Accounts') }}</h4>
+                        <h4 class="section_title">{{ __('Bank Accounts') }}</h4>
                     </div>
 
                 </div>
                 <div class="card-body">
                     <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table mb-3">
+                        <table style="width: 100%;" class="table">
                             <thead>
                                 <tr>
                                     <th>{{ __('SN') }}</th>
@@ -183,17 +177,18 @@
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <div class="card mt-3 mb-3">
+
+        <div class="col-12 mt-5">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                        <h4 class="section_title"><i class="fas fa-list"></i> {{ __('Mobile Accounts') }}</h4>
+                        <h4 class="section_title"> {{ __('Mobile Accounts') }}</h4>
                     </div>
 
                 </div>
                 <div class="card-body">
                     <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table mb-3">
+                        <table style="width: 100%;" class="table">
                             <thead>
                                 <tr>
                                     <th>{{ __('SN') }}</th>
@@ -239,17 +234,17 @@
                 </div>
             </div>
         </div>
-        <div class="col-12">
-            <div class="card mt-3 mb-3">
+
+        <div class="col-12 mt-5">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                        <h4 class="section_title"><i class="fas fa-list"></i> {{ __('Bank Cards') }}</h4>
+                        <h4 class="section_title"> {{ __('Bank Cards') }}</h4>
                     </div>
-
                 </div>
                 <div class="card-body">
                     <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table mb-3">
+                        <table style="width: 100%;" class="table">
                             <thead>
                                 <tr>
                                     <th>{{ __('SN') }}</th>
@@ -299,7 +294,6 @@
             </div>
         </div>
     </div>
-
 
     @push('js')
         <script>

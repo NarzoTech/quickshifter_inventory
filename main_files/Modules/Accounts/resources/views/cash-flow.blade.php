@@ -10,7 +10,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xl-9">
+                            <div class="col-xl-9 col-lg-6">
                                 <div class="form-group">
                                     <div class="input-group input-daterange" id="bs-datepicker-daterange">
                                         <input type="text" id="dateRangePicker" placeholder="From Date"
@@ -22,7 +22,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3">
+                            <div class="col-xl-3 col-lg-6">
                                 <div class="form-group">
                                     <button type="button" class="btn bg-danger form-reset">Reset</button>
                                     <button type="submit" class="btn bg-primary">Search</button>
