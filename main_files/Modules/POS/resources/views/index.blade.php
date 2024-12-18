@@ -46,7 +46,7 @@
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group mb-2">
-                                                        <select name="category_id" id="category_id"
+                                                        <select name="category_id" id="product_category_id"
                                                             class="form-control select2">
                                                             <option value="">{{ __('Select Category') }}</option>
                                                             @if (request()->has('category_id'))
@@ -68,7 +68,8 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group mb-2">
-                                                        <select name="brand_id" id="brand_id" class="form-control select2">
+                                                        <select name="brand_id" id="product_brand_id"
+                                                            class="form-control select2">
                                                             <option value="">{{ __('Select brand') }}</option>
                                                             @if (request()->has('brand_id'))
                                                                 @foreach ($brands as $brand)
@@ -448,10 +449,8 @@
                                                 Sale Date
                                             </th>
                                             <td class="text-right w-40">
-
                                                 <input type="text" class="form-control datepicker" name="sale_date"
-                                                    id="flatpickr-inline" value="{{ date('d-m-Y') }}"
-                                                    autocomplete="off">
+                                                    value="{{ date('d-m-Y') }}" autocomplete="off">
                                             </td>
                                         </tr>
                                     </tfoot>

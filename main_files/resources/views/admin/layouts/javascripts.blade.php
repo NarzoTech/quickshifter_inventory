@@ -120,6 +120,8 @@
                 }
             });
             html += '</select>';
+
+            $('select[name="account_id[]"]').niceSelect();
             return html;
         }
     </script>

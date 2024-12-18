@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 
 <html lang="en"
-    class="light-style layout-menu-fixed layout-compact layout-navbar-fixed {{ isRoute(['admin.pos', 'admin.sales.edit'], 'layout-menu-collapsed') }}"
+    class="light-style layout-menu-fixed layout-compact layout-navbar-fixed {{ isRoute(['admin.pos'], 'layout-menu-collapsed') }}"
     dir="ltr" data-theme="theme-default" data-style="light" data-assets-path="{{ asset('backend/assets') }}/"
     data-template="vertical-menu-template">
 
