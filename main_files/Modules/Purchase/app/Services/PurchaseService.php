@@ -160,7 +160,9 @@ class PurchaseService
                 'account_type' => accountList()[$item],
                 'invoice' => $request->invoice_number,
             ];
-            SupplierPayment::create($data);
+            if ($request->paid_amount[$key]) {
+                SupplierPayment::create($data);
+            }
         }
 
         return $purchase;
@@ -270,7 +272,9 @@ class PurchaseService
                 'invoice' => $request->invoice_number,
                 'account_type' => accountList()[$item],
             ];
-            SupplierPayment::create($data);
+            if ($request->paid_amount[$key]) {
+                SupplierPayment::create($data);
+            }
         }
 
         // update ledger

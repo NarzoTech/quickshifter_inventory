@@ -200,28 +200,30 @@ class ReportController extends Controller
 
         // purchase
         foreach ($purchases as $purchase) {
-            $payment = $purchase->payments()->where('is_paid', 1)->where('payment_date', $fromDate)->sum('amount');
-
-            if ($payment != 0) {
-                $newData = [];
-                $newData['date'] = now()->parse($purchase->purchase_date)->format('d-M');
-                $newData['mode'] = 'Cash';
-                $newData['category'] = "Inventory";
-                $newData['particular'] = $purchase->supplier->name ?? 'Guest';
-                $newData['debit'] = (int)$payment;
-                $newData['credit'] = 0;
-                $newData['iv'] = 0;
-                $newData = (object)$newData;
-                $data->push($newData);
+            if ($purchase->payments->count() > 0 && $purchase->payments->sum('amount')) {
+                foreach ($purchase->payments as $payment) {
+                    // dd($payment);
+                    $newData = [];
+                    $newData['date'] = now()->parse($purchase->purchase_date)->format('d-M');
+                    $newData['mode'] = $payment->account_type;
+                    $newData['category'] = "Inventory";
+                    $newData['particular'] = $purchase->supplier->name ?? 'Guest';
+                    $newData['debit'] = (int)$payment->amount;
+                    $newData['credit'] = 0;
+                    $newData['iv'] = 0;
+                    $newData = (object)$newData;
+                    $data->push($newData);
+                }
             }
 
-            if ($purchase->total_amount) {
+            $due_amount = (int)$purchase->due_amount;
+            if ($due_amount) {
                 $newData = [];
                 $newData['date'] = now()->parse($purchase->purchase_date)->format('d-M');
                 $newData['mode'] = 'Credit';
                 $newData['category'] = "Inventory";
                 $newData['particular'] = $purchase->supplier->name ?? 'Guest';
-                $newData['debit'] = (int)$purchase->total_amount - $payment;
+                $newData['debit'] = (int)$purchase->due_amount;
                 $newData['credit'] = 0;
                 $newData['iv'] = 0;
                 $newData = (object)$newData;

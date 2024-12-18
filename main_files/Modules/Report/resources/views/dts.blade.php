@@ -91,6 +91,8 @@
                     <tbody>
                         @php
                             $balance = 0;
+                            $accountList = array_values(accountList());
+
                         @endphp
                         @foreach ($data as $index => $dts)
                             @php
@@ -99,7 +101,7 @@
                                 }
                                 if (
                                     $dts->category == 'Inventory' &&
-                                    ($dts->mode == 'R/P Credit' || $dts->mode == 'Cash')
+                                    ($dts->mode == 'R/P Credit' || in_array($dts->mode, $accountList))
                                 ) {
                                     $balance += $dts->credit - $dts->debit;
                                 }
