@@ -6,23 +6,21 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-
             <div class="section-body">
                 <div class="row">
                     <div class="col-md-12">
-
                         <form method="POST" action="{{ route('admin.quotation.update', $quotation->id) }}"
                             enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="card">
                                 <div class="card-header">
-                                    <div class="card-title">{{ __('Edit Quotation') }}</div>
+                                    <div class="section_title">{{ __('Edit Quotation') }}</div>
                                 </div>
 
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ __('Customer') }}</label>
                                                 <select class="form-control select2" name="customer_id">
@@ -37,7 +35,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>{{ __('Date') }}</label>
@@ -48,19 +45,15 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>{{ __('Note') }}</label>
-                                                <textarea name="note" id="note" class="form-control" cols="30" rows="10">{{ $quotation->note }}</textarea>
+                                                <textarea name="note" id="note" class="form-control" rows="5">{{ $quotation->note }}</textarea>
                                                 @error('note')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         {{-- product search box --}}
                                         <div class="col-md-12">
                                             <div class="form-group">
@@ -75,147 +68,106 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>{{ __('Product Name') }}</th>
-                                                        <th>{{ __('Quantity') }}</th>
-                                                        <th>{{ __('Unit Price') }}</th>
-                                                        <th>{{ __('Total Cost') }}</th>
-                                                        <th>
-                                                            <i class="fas fa-trash text-danger"></i>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="quotation_table">
-
-                                                    @foreach ($quotation->details as $details)
-                                                        <tr>
-                                                            <td>
-                                                                {{ $details->product->name }}
-                                                                <input type="hidden" name="product_id[]"
-                                                                    value="{{ $details->product_id }}">
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" class="form-control" name="quantity[]"
-                                                                    value="{{ $details->quantity }}">
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" class="form-control"
-                                                                    name="unit_price[]" value="{{ $details->price }}">
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" class="form-control" name="total[]"
-                                                                    value="{{ $details->sub_total }}">
-                                                            </td>
-                                                            <td>
-                                                                <i class="fas fa-trash text-danger"></i>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
                                     </div>
-
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body">
-                                    {{-- summery --}}
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="row d-flex justify-content-end">
-                                                <div class="col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('Subtotal') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="number" class="form-control" name="subtotal"
-                                                                value="{{ $quotation->subtotal }}" readonly>
-                                                        </div>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{{ __('Product Name') }}</th>
+                                                            <th>{{ __('Quantity') }}</th>
+                                                            <th>{{ __('Unit Price') }}</th>
+                                                            <th>{{ __('Total Cost') }}</th>
+                                                            <th class="text-center">
+                                                                <i class="fas fa-trash"></i>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="quotation_table">
+
+                                                        @foreach ($quotation->details as $details)
+                                                            <tr>
+                                                                <td>
+                                                                    {{ $details->product->name }}
+                                                                    <input type="hidden" name="product_id[]"
+                                                                        value="{{ $details->product_id }}">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" class="form-control"
+                                                                        name="quantity[]" value="{{ $details->quantity }}">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" class="form-control"
+                                                                        name="unit_price[]" value="{{ $details->price }}">
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" class="form-control"
+                                                                        name="total[]" value="{{ $details->sub_total }}">
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <i class="fas fa-trash text-danger"></i>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{-- summery --}}
+                                    <div class="row justify-content-end">
+                                        <div class="col-md-6 col-xl-5">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Subtotal') }}</label>
+                                                        <input type="number" class="form-control" name="subtotal"
+                                                            value="{{ $quotation->subtotal }}" readonly>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row d-flex justify-content-end">
-                                                <div class="col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('Discount / Less') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="text" class="form-control" name="discount"
-                                                                value="{{ $quotation->discount }}"
-                                                                placeholder="amount or %">
-                                                        </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Discount / Less') }}</label>
+                                                        <input type="text" class="form-control" name="discount"
+                                                            value="{{ $quotation->discount }}" placeholder="amount or %">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row d-flex justify-content-end">
-                                                <div class="col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('After Discount') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="number" class="form-control"
-                                                                name="after_discount"
-                                                                value="{{ $quotation->after_discount }}" readonly>
-                                                        </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('After Discount') }}</label>
+                                                        <input type="number" class="form-control" name="after_discount"
+                                                            value="{{ $quotation->after_discount }}" readonly>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row d-flex justify-content-end">
-                                                <div class="col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('Vat / Add') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="text" class="form-control" name="vat"
-                                                                value="{{ $quotation->vat }}" placeholder="amount or %">
-                                                        </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Vat / Add') }}</label>
+                                                        <input type="text" class="form-control" name="vat"
+                                                            value="{{ $quotation->vat }}" placeholder="amount or %">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row d-flex justify-content-end">
-                                                <div class="col-md-10">
-                                                    <div class="form-group row">
-                                                        <div class="col-md-4"></div>
-                                                        <div class="col-md-3 text-md-right">
-                                                            <label for=""
-                                                                class="mt-2">{{ __('Total Amount') }}</label>
-                                                        </div>
-                                                        <div class="col-md-5">
-                                                            <input type="total_amount" class="form-control"
-                                                                name="total_amount" value="{{ $quotation->total }}"
-                                                                readonly>
-                                                        </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>{{ __('Total Amount') }}</label>
+                                                        <input type="total_amount" class="form-control" name="total_amount"
+                                                            value="{{ $quotation->total }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="card-action d-flex justify-content-end">
+                                                        <a href="{{ route('admin.quotation.index') }}"
+                                                            class="btn me-2 btn-danger">{{ __('Cancel') }}</a>
+                                                        <button type="submit"
+                                                            class="btn btn-primary">{{ __('Submit') }}</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-action d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-success me-2">{{ __('Submit') }}</button>
-                                        <a href="{{ route('admin.quotation.index') }}"
-                                            class="btn btn-danger">{{ __('Cancel') }}</a>
-                                    </div>
                                 </div>
-
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -330,8 +282,6 @@
                     return;
                 }
             }
-
-
 
             $('#quotation_table').append(tr);
             calculateTotalAmount();

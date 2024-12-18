@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,13 +52,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -68,10 +65,10 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> Quotation List</h4>
+                <h4 class="section_title"> Quotation List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
@@ -90,7 +87,6 @@
                             <th>Quotation No</th>
                             <th>Customer</th>
                             <th>Total Amount</th>
-                            {{-- <th style="display: none;">Business Branch</th> --}}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -103,11 +99,8 @@
                                 <td>{{ $quotation->quotation_no }}</td>
                                 <td>{{ $quotation->customer->name }}</td>
                                 <td>{{ currency($quotation->total) }}</td>
-                                {{-- <td style="display: none;">
-                                                        {{ $quotation->business_branch->name }}
-                                                    </td> --}}
                                 <td>
-                                    <div class="btn-group">
+                                    <div class="d-flex gap-2">
                                         <a href="{{ route('admin.quotation.show', $quotation->id) }}"
                                             class="btn btn-sm btn-info">{{ __('View') }}</a>
 

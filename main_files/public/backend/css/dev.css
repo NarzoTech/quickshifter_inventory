@@ -468,10 +468,6 @@ img.mr-3.ml-3.rounded-circle {
     cursor: pointer;
 }
 
-textarea {
-    /* height: 65px !important; */
-}
-
 .table-invoice {
     overflow-x: initial !important;
 }

@@ -70,7 +70,7 @@
 
                     <td class="row_total">{{ currency($sub_total) }}</td>
 
-                    <td class="d-flex justify-content-center align-items-center">
+                    <td class="text-center">
                         <a href="javascript:;" onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
                             class="d-block p-2 "><i class="fa fa-trash text-danger" aria-hidden="true"></i></a>
 
