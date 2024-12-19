@@ -139,7 +139,7 @@ class ReportController extends Controller
         $lastPurchasePrice = 0;
         foreach ($sales as $sale) {
 
-            $lastPurchasePrice += remove_comma($sale->product->LastPurchasePrice ? $sale->product->LastPurchasePrice : $sale->product->cost) * abs($sale->quantity);
+            $lastPurchasePrice += (int)remove_comma($sale->product->LastPurchasePrice ? $sale->product->LastPurchasePrice : $sale->product->cost) * abs($sale->quantity);
         }
 
 
