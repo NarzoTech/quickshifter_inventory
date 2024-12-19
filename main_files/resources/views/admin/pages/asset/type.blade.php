@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-4 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="id" {{ request('order_type') == 'id' ? 'selected' : '' }}>
@@ -30,7 +30,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -43,7 +43,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -62,77 +62,74 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-label-primary">Search</button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="card mt-3 mb-3">
-        <div class="card-header">
-            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> {{ __('Asset Type List') }}</h4>
-            </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType" class="btn btn-primary"><i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Asset Type') }}</a>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
-                    <thead>
-                        <tr>
-                            <th>{{ __('SN') }}</th>
-                            <th>{{ __('Name') }}</th>
-                            <th>{{ __('Action') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($types as $index => $type)
-                            <tr>
-                                <td>{{ $loop->first + $index }}</td>
-                                <td>{{ $type->name }}</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $type->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $type->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editType{{ $type->id }}">Edit</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $type->id }})">
-                                                Delete</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
-                                colspan="3"></x-empty-table>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if (request()->get('par-page') !== 'all')
-                <div class="float-right">
-                    {{ $types->onEachSide(0)->links() }}
+            <div class="card mt-5">
+                <div class="card-header">
+                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                        <h4 class="section_title"> {{ __('Asset Type List') }}</h4>
+                    </div>
+                    <div class="btn-actions-pane-right actions-icon-btn">
+                        <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType"
+                            class="btn btn-primary"><i class="fa fa-plus"></i>
+                            {{ __('Add Asset Type') }}</a>
+                    </div>
                 </div>
-            @endif
+                <div class="card-body">
+                    <div class="table-responsive list_table">
+                        <table style="width: 100%;" class="table">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('SN') }}</th>
+                                    <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($types as $index => $type)
+                                    <tr>
+                                        <td>{{ $loop->first + $index }}</td>
+                                        <td>{{ $type->name }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop{{ $type->id }}" type="button"
+                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                    Action
+                                                </button>
+                                                <div class="dropdown-menu"
+                                                    aria-labelledby="btnGroupDrop{{ $type->id }}">
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editType{{ $type->id }}">Edit</a>
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $type->id }})">
+                                                        Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                        colspan="3"></x-empty-table>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (request()->get('par-page') !== 'all')
+                        <div class="float-right">
+                            {{ $types->onEachSide(0)->links() }}
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 
@@ -146,22 +143,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <form action="{{ route('admin.asset-category.store') }}" method="POST" id="add-bank-form">
                         @csrf
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="name" name="name">
-                            </div>
+                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-bank-form">Save</button>
                 </div>
 
@@ -182,7 +179,7 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body py-0">
                         <form action="{{ route('admin.asset-category.update', $type->id) }}" method="POST"
                             id="edit-type-form{{ $type->id }}">
                             @csrf
@@ -190,10 +187,11 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                    <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="{{ $type->name }}">
-                                </div>
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="{{ $type->name }}">
+                                    </div>
                                 </div>
                             </div>
                         </form>
