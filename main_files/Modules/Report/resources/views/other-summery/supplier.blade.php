@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-3 col-md-6 col-lg-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,28 +52,22 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-3 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date"
+                                            value="{{ request()->get('from_date') }}" autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-xxl-1 col-md-4">
-                                <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-label-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -82,10 +76,10 @@
             </div>
         </div>
     </div>
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5">
         <div class="card-header">
-            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> Supplier Other Due List</h4>
+            <div class="card-header-title">
+                <h4 class="section_title"> Supplier Other Due List</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"><i
@@ -100,7 +94,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
+                <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
                             <th>{{ __('Sl') }}</th>
@@ -144,17 +138,17 @@
 
                         @if ($summeries->count() > 0)
                             <tr>
-                                <td colspan="6" class="text-right">
-                                    Total
+                                <td colspan="6" class="text-end">
+                                    <b>Total</b>
                                 </td>
                                 <td>
-                                    {{ $data['total_amount'] }}
+                                    <b>{{ $data['total_amount'] }}</b>
                                 </td>
                                 <td>
-                                    {{ currency($data['total_paid']) }}
+                                    <b>{{ currency($data['total_paid']) }}</b>
                                 </td>
                                 <td colspan="2" class="text-left">
-                                    {{ currency($data['total_due']) }}
+                                    <b>{{ currency($data['total_due']) }}</b>
                                 </td>
                             </tr>
                         @endif
@@ -182,12 +176,12 @@
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <form action="{{ route('admin.other-summery.supplier.store') }}" method="POST"
                         id="add-supplier-due">
                         @csrf
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label for="supplier_id">{{ __('Supplier Name') }}</label>
                                     <select name="supplier_id" id="supplier_id" class="form-control select2"
@@ -200,39 +194,38 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}</label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
                                         value="{{ date('d-m-Y') }}">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label for="memo_number">{{ __('Memo No') }}</label>
                                     <input type="text" class="form-control" id="memo_number" name="memo_number">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label for="amount">{{ __('Total Amount') }}</label>
                                     <input type="text" class="form-control" id="amount" name="amount">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label for="paid">{{ __('Paid') }}</label>
                                     <input type="text" class="form-control" id="paid" name="paid">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label for="due">{{ __('Due') }}</label>
                                     <input type="text" class="form-control" id="due" name="due">
                                 </div>
                             </div>
-
-                            <div class="col-md-12">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label for="description">{{ __('Description') }}</label>
                                     <textarea name="description" id="description" class="form-control height-80px" rows="3"></textarea>
@@ -244,7 +237,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" form="add-supplier-due">Save</button>
                 </div>
 
@@ -260,18 +253,18 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Add Supplier Other Due') }}</h4>
+                        <h4 class="modal-title">{{ __('Edit Supplier Other Due') }}</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body py-0">
                         <form action="{{ route('admin.other-summery.supplier.update', $summery->id) }}" method="POST"
                             id="add-supplier-due-{{ $summery->id }}">
                             @csrf
                             @method('PUT')
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label for="supplier_id">{{ __('supplier Name') }}</label>
                                         <select name="supplier_id" id="supplier_id" class="form-control select2"
@@ -287,43 +280,42 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label for="date">{{ __('Date') }}</label>
                                         <input type="text" class="form-control datepicker" id="date"
                                             name="date" value="{{ now()->parse($summery->date)->format('d-m-Y') }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label for="memo_number">{{ __('Memo No') }}</label>
                                         <input type="text" class="form-control" id="memo_number" name="memo_number"
                                             value="{{ $summery->memo_number }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label for="amount">{{ __('Total Amount') }}</label>
                                         <input type="text" class="form-control" id="amount" name="amount"
                                             value="{{ $summery->amount }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label for="paid">{{ __('Paid') }}</label>
                                         <input type="text" class="form-control" id="paid" name="paid"
                                             value="{{ $summery->paid }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label for="due">{{ __('Due') }}</label>
                                         <input type="text" class="form-control" id="due" name="due"
                                             value="{{ $summery->due }}">
                                     </div>
                                 </div>
-
-                                <div class="col-md-12">
+                                <div class="col-12">
                                     <div class="form-group">
                                         <label for="description">{{ __('Description') }}</label>
                                         <textarea name="description" id="description" class="form-control height-80px" rows="3">{{ $summery->description }}</textarea>
@@ -332,10 +324,9 @@
                             </div>
                         </form>
                     </div>
-
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="add-supplier-due-{{ $summery->id }}">Save</button>
                     </div>
