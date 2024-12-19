@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-4 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="id" {{ request('order_type') == 'id' ? 'selected' : '' }}>
@@ -30,7 +30,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -43,7 +43,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -62,76 +62,73 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-label-primary">Search</button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="card mt-3 mb-3">
-        <div class="card-header">
-            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> {{ __('All Paid Salary List') }}</h4>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
-                    <thead>
-                        <tr>
-                            <th>{{ __('Sl') }}</th>
-                            <th>{{ __('Employee') }}</th>
-                            <th>{{ __('Paid') }}</th>
-                            <th>{{ __('Date') }}</th>
-                            {{-- <th style="display: none;">Business Branch</th> --}}
-                            <th>{{ __('Note') }}</th>
-                            <th>{{ __('Action') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($payments as $index => $payment)
-                            <tr>
-                                <td>{{ $payments->firstItem() + $index }}</td>
-                                <td>{{ $payment->employee?->name }}</td>
-                                <td>{{ currency($payment->amount) }}</td>
-                                <td>{{ now()->parse($payment->date)->format('d-m-Y') }}</td>
-                                <td>{{ $payment->note }}</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
-                                            class="btn btn-primary btn-sm me-2"><i class="fa fa-edit"></i></a>
-                                        <a href="javascript:;" class="btn btn-danger btn-sm"
-                                            onclick="deleteData({{ $payment->id }})">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
-                                colspan="6"></x-empty-table>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if (request()->get('par-page') !== 'all')
-                <div class="float-right">
-                    {{ $payments->onEachSide(0)->links() }}
+            <div class="card mt-5">
+                <div class="card-header">
+                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                        <h4 class="section_title"> {{ __('All Paid Salary List') }}</h4>
+                    </div>
                 </div>
-            @endif
+                <div class="card-body">
+                    <div class="table-responsive list_table">
+                        <table style="width: 100%;" class="table common_table">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('Sl') }}</th>
+                                    <th>{{ __('Employee') }}</th>
+                                    <th>{{ __('Paid') }}</th>
+                                    <th>{{ __('Date') }}</th>
+                                    {{-- <th style="display: none;">Business Branch</th> --}}
+                                    <th>{{ __('Note') }}</th>
+                                    <th>{{ __('Action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($payments as $index => $payment)
+                                    <tr>
+                                        <td>{{ $payments->firstItem() + $index }}</td>
+                                        <td>{{ $payment->employee?->name }}</td>
+                                        <td>{{ currency($payment->amount) }}</td>
+                                        <td>{{ now()->parse($payment->date)->format('d-m-Y') }}</td>
+                                        <td>{{ $payment->note }}</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
+                                                    class="btn btn-primary btn-sm me-2"><i class="fa fa-edit"></i></a>
+                                                <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                    onclick="deleteData({{ $payment->id }})">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                        colspan="6"></x-empty-table>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (request()->get('par-page') !== 'all')
+                        <div class="float-right">
+                            {{ $payments->onEachSide(0)->links() }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+
         </div>
     </div>
-
 
     @push('js')
         <script>

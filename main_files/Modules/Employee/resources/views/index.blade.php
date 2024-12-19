@@ -11,7 +11,7 @@
                 <div class="card-body pb-1">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-4 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="id" {{ request('order_type') == 'id' ? 'selected' : '' }}>
@@ -30,7 +30,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -43,7 +43,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -62,119 +62,115 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-1 col-md-4">
+                            <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
-                                    <button type="submit" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-label-primary">Search</button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="card mt-3 mb-3">
-        <div class="card-header">
-            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> {{ __('Employee List') }}</h4>
-            </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="{{ route('admin.employee.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
-                    {{ __('Add New Employee') }}</a>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
-                    <thead>
-                        <tr>
-                            <th>{{ __('Sl') }}</th>
-                            <th>{{ __('Employee Name') }}</th>
-                            <th>{{ __('Employee Picture') }}</th>
-                            <th>{{ __('Designation') }}</th>
-                            {{-- <th style="display: none;">Business Branch</th> --}}
-                            <th>{{ __('Phone') }}</th>
-                            <th>{{ __('Email') }}</th>
-                            <th>{{ __('Salary') }}</th>
-                            <th>{{ __('Status') }}</th>
-                            <th>{{ __('Joining Date') }}</th>
-                            <th>{{ __('Action') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($employees as $index => $employee)
-                            <tr>
-                                <td>{{ ++$index }}</td>
-                                <td>{{ $employee->name }}</td>
-                                <td>
-                                    <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
-                                        alt="" width="50px" height="50px">
-                                </td>
-                                <td>{{ $employee->designation }}</td>
-                                {{-- <td style="display: none;">{{ $employee->business_branch->name }}</td> --}}
-                                <td>{{ $employee->mobile }}</td>
-                                <td>{{ $employee->email }}</td>
-                                <td>{{ $employee->salary }}</td>
-                                <td>
-                                    @if ($employee->status == 1)
-                                        <span class="badge badge-success">
-                                            {{ __('Active') }}
-                                        </span>
-                                    @else
-                                        <span class="badge badge-danger">
-                                            {{ __('Inactive') }}
-                                        </span>
-                                    @endif
-                                </td>
-                                <td>{{ $employee->join_date }}</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $employee->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">{{ __('Action') }}</button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $employee->id }}">
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
-
-
-                                            <a class="dropdown-item view-payment" href="javascript:;"
-                                                data-id="{{ $employee->id }}">{{ __('View Payments') }}</a>
-
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
-
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
-                                colspan="10"></x-empty-table>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            @if (request()->get('par-page') !== 'all')
-                <div class="float-right">
-                    {{ $employees->onEachSide(0)->links() }}
+            <div class="card mt-5">
+                <div class="card-header">
+                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
+                        <h4 class="section_title"> {{ __('Employee List') }}</h4>
+                    </div>
+                    <div class="btn-actions-pane-right actions-icon-btn">
+                        <a href="{{ route('admin.employee.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                            {{ __('Add New Employee') }}</a>
+                    </div>
                 </div>
-            @endif
+                <div class="card-body">
+                    <div class="table-responsive list_table">
+                        <table style="width: 100%;" class="table mb-3">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('Sl') }}</th>
+                                    <th>{{ __('Employee Name') }}</th>
+                                    <th>{{ __('Employee Picture') }}</th>
+                                    <th>{{ __('Designation') }}</th>
+                                    <th>{{ __('Phone') }}</th>
+                                    <th>{{ __('Email') }}</th>
+                                    <th>{{ __('Salary') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                    <th>{{ __('Joining Date') }}</th>
+                                    <th>{{ __('Action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($employees as $index => $employee)
+                                    <tr>
+                                        <td>{{ ++$index }}</td>
+                                        <td>{{ $employee->name }}</td>
+                                        <td>
+                                            <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
+                                                alt="" width="50px" height="50px">
+                                        </td>
+                                        <td>{{ $employee->designation }}</td>
+                                        <td>{{ $employee->mobile }}</td>
+                                        <td>{{ $employee->email }}</td>
+                                        <td>{{ $employee->salary }}</td>
+                                        <td>
+                                            @if ($employee->status == 1)
+                                                <span class="badge badge-success">
+                                                    {{ __('Active') }}
+                                                </span>
+                                            @else
+                                                <span class="badge badge-danger">
+                                                    {{ __('Inactive') }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>{{ $employee->join_date }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop{{ $employee->id }}" type="button"
+                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">{{ __('Action') }}</button>
+                                                <div class="dropdown-menu"
+                                                    aria-labelledby="btnGroupDrop{{ $employee->id }}">
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
+
+                                                    <a class="dropdown-item view-payment" href="javascript:;"
+                                                        data-id="{{ $employee->id }}">{{ __('View Payments') }}</a>
+
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
+
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
+
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
+
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                        colspan="10"></x-empty-table>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (request()->get('par-page') !== 'all')
+                        <div class="float-right">
+                            {{ $employees->onEachSide(0)->links() }}
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
+
+
 
 
     <div tabindex="-1" role="dialog" id="viewDate" class ='modal'>
@@ -185,7 +181,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <div id="calendar">
                         <form id="viewDateForm" action="" method="get">
                             <div class="row">

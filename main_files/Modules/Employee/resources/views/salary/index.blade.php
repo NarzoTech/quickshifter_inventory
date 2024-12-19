@@ -7,22 +7,26 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h4>Employee Name: {{ $employee->name }}</h4>
+            <h4 class="section_title">Employee Name: {{ $employee->name }}</h4>
         </div>
         <div class="card-body">
-            <p>Salary: {{ currency($employee->salary) }}</p>
-            <p>Payable Salary: {{ currency($payableSalary) }}</p>
-            <p>Total Working Day: {{ $totalAttendance }} Days</p>
-            <p>Total Weekend & Holiday: {{ $totalDayOff }} Days</p>
-            <p>Phone: {{ $employee->phone }}</p>
-            <p>Paid Amount: {{ currency($payments->sum('amount')) }}</p>
-            <p>Payment Month: <b>{{ $month }}</b></p>
+            <p><b class="me-2">Salary:</b> {{ currency($employee->salary) }}</p>
+            <p><b class="me-2">Payable Salary:</b> {{ currency($payableSalary) }}</p>
+            <p><b class="me-2">Total Working Day:</b> {{ $totalAttendance }} Days</p>
+            <p><b class="me-2">Total Weekend & Holiday:</b> {{ $totalDayOff }} Days</p>
+            <p><b class="me-2">Phone:</b> {{ $employee->phone }}</p>
+            <p><b class="me-2">Paid Amount:</b> {{ currency($payments->sum('amount')) }}</p>
+            <p><b class="me-2">Payment Month:</b> {{ $month }}</p>
         </div>
     </div>
-    <div class="card">
+
+    <div class="card mt-5">
+        <div class="card-header">
+            <h4 class="section_title">{{ __('Payment Details') }}</h4>
+        </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
+                <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
                             <th>{{ __('Sl') }}</th>

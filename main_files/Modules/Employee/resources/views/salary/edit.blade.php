@@ -8,11 +8,11 @@
     <div class="main-content">
         <section class="section">
             <div class="section-body">
-                <div class="mt-4 row">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4>{{ __('Edit Salary') }}</h4>
+                                <h4 class="section_title">{{ __('Edit Salary') }}</h4>
                             </div>
                             <div class="card-body">
                                 <form action="{{ route('admin.employee.salary.update', $payment->id) }}" method="post"
@@ -20,24 +20,32 @@
                                     @csrf
                                     @method('PUT')
                                     <input type="hidden" name="type" value="{{ request('pay') }}">
-                                    <div class="form-group row">
-                                        <div class="col-md-4 mt-3">
-                                            <label for="">{{ __('Employee Name') }}<span
-                                                    class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" name="name"
-                                                value="{{ $employee->name }}" readonly required>
-                                        </div>
-                                        <div class="col-md-4 mt-3">
-                                            <label for="salary" class="">{{ __('Employee Monthly Salary') }}</label>
-                                            <input type="text" id="salary" name="salary"
-                                                value="{{ $employee->salary }}" class="form-control" readonly>
-                                        </div>
 
-                                        <div class="col-md-4 mt-3">
-                                            <label for="date" class="col-form-label">{{ __('Salary Date') }}</label>
-                                            <input type="text" name="date" id="date"
-                                                value="{{ old('date', Carbon\Carbon::now()->format('d-m-Y')) }}"
-                                                class="form-control datepicker">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Employee Name') }}<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="name"
+                                                    value="{{ $employee->name }}" readonly required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="salary"
+                                                    class="">{{ __('Employee Monthly Salary') }}</label>
+                                                <input type="text" id="salary" name="salary"
+                                                    value="{{ $employee->salary }}" class="form-control" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="date"
+                                                    class="col-form-label p-0">{{ __('Salary Date') }}</label>
+                                                <input type="text" name="date" id="date"
+                                                    value="{{ old('date', Carbon\Carbon::now()->format('d-m-Y')) }}"
+                                                    class="form-control datepicker">
+                                            </div>
                                         </div>
                                         @php
                                             $months = [
@@ -55,56 +63,67 @@
                                                 'December',
                                             ];
                                         @endphp
-                                        <div class="col-md-4 mt-2">
-                                            <label for="month" class="col-form-label">{{ __('Month') }}</label>
-                                            <select class="form-control select2" name="month" id="month">
-                                                <option value="">{{ __('Select') }}</option>
-                                                @foreach ($months as $key => $month)
-                                                    <option value="{{ $month }}"
-                                                        {{ $payment->month == $month ? 'selected' : '' }}>
-                                                        {{ $month }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-4 mt-3">
-                                            <label for="salary" class="">{{ __('Salary Year') }}</label>
-                                            <input type="number" id="year" name="year"
-                                                value="{{ $payment->year }}" placeholder="Salary Year"
-                                                class="form-control">
-                                        </div>
-
-                                        <div class="col-md-4 mt-2">
-                                            <label for="salary" class="col-form-label">{{ __('Paid Amount') }}</label>
-                                            <input type="text" name="amount" id="amount"
-                                                value="{{ old('amount', $payment->amount) }}" placeholder="Pay Amount"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-4 mt-3">
-                                            <label for="">{{ __('Payment Type') }}</label>
-                                            <select name="payment_type" id="payment_type" class="form-control payment_type"
-                                                required>
-                                                <option value="" disabled selected>
-                                                    {{ __('Select Payment Type') }}
-                                                </option>
-                                                @foreach (accountList() as $key => $list)
-                                                    <option value="{{ $key }}" data-name="{{ $list }}"
-                                                        {{ $key == $payment->payment_type ? 'selected' : '' }}>
-                                                        {{ $list }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4 mt-3">
-                                            <div id="account" class="mt-4">
-
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="month"
+                                                    class="col-form-label p-0">{{ __('Month') }}</label>
+                                                <select class="form-control select2" name="month" id="month">
+                                                    <option value="">{{ __('Select') }}</option>
+                                                    @foreach ($months as $key => $month)
+                                                        <option value="{{ $month }}"
+                                                            {{ $payment->month == $month ? 'selected' : '' }}>
+                                                            {{ $month }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="salary" class="">{{ __('Salary Year') }}</label>
+                                                <input type="number" id="year" name="year"
+                                                    value="{{ $payment->year }}" placeholder="Salary Year"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="salary"
+                                                    class="col-form-label p-0">{{ __('Paid Amount') }}</label>
+                                                <input type="text" name="amount" id="amount"
+                                                    value="{{ old('amount', $payment->amount) }}" placeholder="Pay Amount"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Payment Type') }}</label>
+                                                <select name="payment_type" id="payment_type"
+                                                    class="form-control payment_type" required>
+                                                    <option value="" disabled selected>
+                                                        {{ __('Select Payment Type') }}
+                                                    </option>
+                                                    @foreach (accountList() as $key => $list)
+                                                        <option value="{{ $key }}"
+                                                            data-name="{{ $list }}"
+                                                            {{ $key == $payment->payment_type ? 'selected' : '' }}>
+                                                            {{ $list }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div id="account">
 
-
-                                        <div class="col-md-12 mt-3">
-                                            <label for="">{{ __('Note') }}</label>
-                                            <textarea name="note" id="" rows="3" class="form-control" placeholder="Note">{{ old('note') }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Note') }}</label>
+                                                <textarea name="note" id="" rows="3" class="form-control" placeholder="Note">{{ old('note') }}</textarea>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">
