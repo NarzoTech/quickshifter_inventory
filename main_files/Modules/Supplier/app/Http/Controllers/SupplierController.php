@@ -244,6 +244,13 @@ class SupplierController extends Controller
         }
         $data['total'] = $payments->sum('amount');
 
+        if (request('export_pdf')) {
+            $html = view('supplier::pdf.due-pay-list', ['payments' => $payments->get(),  'data' => $data])->render();
+
+            $pdf = $fileName = 'due-pay-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+            return $pdf->download($fileName);
+        }
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
