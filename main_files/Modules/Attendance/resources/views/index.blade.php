@@ -82,11 +82,11 @@
         </div>
     </div>
 
-    <div class="row mt-4">
+    <div class="row mt-5">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <h4>{{ __('Employee List') }}</h4>
+                    <h4 class="section_title">{{ __('Employee List') }}</h4>
                     <div class="attendance_type d-none d-flex justify-content-center align-items-center">
                         <div class="selectgroup w-100">
                             <label class="selectgroup-item">
@@ -128,7 +128,6 @@
                                     <th rowspan="1" colspan="{{ $totalDays }}" class="text-center">
                                         {{ __('Date') }}</th>
                                 </tr>
-                                <br>
                                 <tr>
                                     <td colspan="1" class="text-white bg-green text-center th-present">P
                                     </td>

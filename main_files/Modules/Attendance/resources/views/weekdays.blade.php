@@ -7,64 +7,71 @@
         <section class="section">
 
             <div class="section-body">
-                <div class="mt-4 row">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body pb-0">
-                                <form action="" method="GET" id="search-form" onchange="this.submit();">
+                                <form class="form_search" action="" method="GET" id="search-form"
+                                    onchange="this.submit();">
                                     <div class="row">
-                                        <div class="col-md-3 form-group">
-                                            <div class="search_wrapper">
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="form-group search-wrapper">
                                                 <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                                     class="form-control" placeholder="{{ __('Search by name or ID') }}">
                                                 <button class="search_button" type="submit">
-                                                    <i class="fas fa-search"></i>
+                                                    <i class='bx bx-search'></i>
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-md-3 form-group">
-                                            <select name="subscription_status" id="subscription_status" class="form-select">
-                                                <option value="">{{ __('Subscription Status') }}</option>
-                                                <option value="all">{{ __('All') }}</option>
-                                                <option value="1"
-                                                    {{ request('subscription_status') == '1' ? 'selected' : '' }}>
-                                                    {{ __('Active') }}
-                                                </option>
-                                                <option value="expired"
-                                                    {{ request('subscription_status') == 'expired' ? 'selected' : '' }}>
-                                                    {{ __('Expired') }}
-                                                </option>
-                                                <option value="no_plan"
-                                                    {{ request('subscription_status') == 'no_plan' ? 'selected' : '' }}>
-                                                    {{ __('No Plan') }}
-                                                </option>
-                                            </select>
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="form-group">
+                                                <select name="subscription_status" id="subscription_status"
+                                                    class="form-select">
+                                                    <option value="">{{ __('Subscription Status') }}</option>
+                                                    <option value="all">{{ __('All') }}</option>
+                                                    <option value="1"
+                                                        {{ request('subscription_status') == '1' ? 'selected' : '' }}>
+                                                        {{ __('Active') }}
+                                                    </option>
+                                                    <option value="expired"
+                                                        {{ request('subscription_status') == 'expired' ? 'selected' : '' }}>
+                                                        {{ __('Expired') }}
+                                                    </option>
+                                                    <option value="no_plan"
+                                                        {{ request('subscription_status') == 'no_plan' ? 'selected' : '' }}>
+                                                        {{ __('No Plan') }}
+                                                    </option>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 form-group">
-                                            <select name="par-page" id="par-page" class="form-select">
-                                                <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('10') }}
-                                                </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('50') }}
-                                                </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('100') }}
-                                                </option>
-                                                <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('All') }}
-                                                </option>
-                                            </select>
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="form-group">
+                                                <select name="par-page" id="par-page" class="form-select">
+                                                    <option value="">{{ __('Per Page') }}</option>
+                                                    <option value="10"
+                                                        {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                                        {{ __('10') }}
+                                                    </option>
+                                                    <option value="50"
+                                                        {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                                        {{ __('50') }}
+                                                    </option>
+                                                    <option value="100"
+                                                        {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                                        {{ __('100') }}
+                                                    </option>
+                                                    <option value="all"
+                                                        {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                                        {{ __('All') }}
+                                                    </option>
+                                                </select>
+                                            </div>
                                         </div>
-
-                                        <div class="col-md-3 form-group">
-                                            <input type="text" name="date" class="form-control datepicker"
-                                                value="{{ request()->get('date') ?? now()->format('Y-m-d') }}"
-                                                placeholder="{{ __('Date') }}" data-date-end-date="0d"
-                                                autocomplete="off">
+                                        <div class="col-lg-3 col-md-6">
+                                            <div class="form-group">
+                                                <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                                <button type="submit" class="btn bg-label-primary">Search</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -74,10 +81,11 @@
                     @php
                         $currentDate = request()->get('date') ?? now()->format('Y-m-d');
                     @endphp
-                    <div class="col-12">
+
+                    <div class="col-12 mt-5">
                         <div class="card  {{ !$currentDate ? 'd-none' : '' }}">
                             <div class="card-header d-flex justify-content-between">
-                                <h4>{{ __('Weekdays Setup') }}</h4>
+                                <h4 class="section_title">{{ __('Weekdays Setup') }}</h4>
                                 <div class="attendance_type d-none d-flex justify-content-center align-items-center">
                                     <div class="selectgroup w-100">
                                         <label class="selectgroup-item">
@@ -101,8 +109,8 @@
 
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive max-h-400">
-                                    <table class="table">
+                                <div class="table-responsive">
+                                    <table class="table common_table">
                                         <thead>
                                             <tr>
                                                 <th>{{ __('Name') }}</th>
@@ -151,7 +159,7 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body pt-0 pb-0">
+                    <div class="modal-body py-0">
                         <form action="{{ route('admin.attendance.settings.weekdays.update', $day->id) }}" method="POST"
                             id="update-weekday-form_{{ $day->id }}">
                             @csrf

@@ -90,9 +90,7 @@
 
     <div class="card mt-5 mb-5">
         <div class="card-header">
-            <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title">Holiday list</h4>
-            </div>
+            <h4 class="section_title">Holiday list</h4>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addHoliday" class="btn bg-label-primary"> <i
                         class="fa fa-plus"></i> {{ __('Add Holiday') }}</a>
@@ -101,7 +99,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table mb-3">
+                <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
                             <th>{{ __('ID') }}</th>
@@ -165,8 +163,6 @@
                                         placeholder="Name">
                                 </div>
                             </div>
-
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date">{{ __('Start Date') }} <span
@@ -175,7 +171,6 @@
                                         name="start_date" placeholder="MM/DD/YY">
                                 </div>
                             </div>
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date">{{ __('End Date') }}<span class="text-danger">*</span></label>
@@ -186,13 +181,12 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control">
+                                    <select name="status" id="status" class="form-control mb-0">
                                         <option value="1">{{ __('Active') }}</option>
                                         <option value="0">{{ __('Inactive') }}</option>
                                     </select>
                                 </div>
                             </div>
-
                             <div class="col-md-12">
                                 <div class="form-group mt-4 mb-0">
                                     <label for="description">{{ __('Description') }}<span
@@ -235,8 +229,6 @@
                                             placeholder="Name" value="{{ $day->name }}">
                                     </div>
                                 </div>
-
-
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="date">{{ __('Start Date') }} <span
@@ -245,7 +237,6 @@
                                             name="start_date" placeholder="MM/DD/YY" value="{{ $day->start_date }}">
                                     </div>
                                 </div>
-
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="date">{{ __('End Date') }}<span
@@ -257,7 +248,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="status">{{ __('Status') }}</label>
-                                        <select name="status" id="status" class="form-control">
+                                        <select name="status" id="status" class="form-control mb-0">
                                             <option value="1" @if ($day->status == 1) selected @endif>
                                                 {{ __('Active') }}</option>
                                             <option value="0" @if ($day->status == 0) selected @endif>
@@ -265,7 +256,6 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="col-md-12">
                                     <div class="form-group mt-4 mb-0">
                                         <label for="description">{{ __('Description') }}<span

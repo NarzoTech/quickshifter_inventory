@@ -81,7 +81,7 @@
             </div>
         </div>
     </div>
-    <div class="mt-4 row">
+    <div class="row mt-5">
         @php
             $currentDate = request()->get('date') ?? now()->format('Y-m-d');
         @endphp
@@ -107,7 +107,7 @@
 
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive max-h-400">
+                    <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>

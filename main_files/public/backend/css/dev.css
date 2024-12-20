@@ -1212,12 +1212,18 @@ body {
 
 .attendance-table a.dropdown-toggle.absent::after,
 .attendance-table a.dropdown-toggle.present::after {
+    display: none;
+}
+
+.attendance-table a.dropdown-toggle.absent::before,
+.attendance-table a.dropdown-toggle.present::before {
     content: "\f00c";
     font-family: "Font Awesome 5 Free";
     font-weight: 600;
     font-size: 11px;
     color: #fff;
     border: none !important;
+    margin-left: 3px;
 }
 
 .attendance-table a.dropdown-toggle.absent::after {
@@ -1391,13 +1397,64 @@ td.sticky-2::after {
     width: 25%;
 }
 
+.dropdown-toggle::after {
+    margin-right: 7px;
+}
 
+.image_preview {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+    background: #eee;
+    position: relative;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: end;
+}
 
+.image_preview label {
+    bottom: 20px;
+    background: #fff;
+    padding: 6px 20px;
+    border: 1px solid #eeeeeebf;
+    color: #000;
+    margin-bottom: 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    transition: all linear .3s;
+    -webkit-transition: all linear .3s;
+    -moz-transition: all linear .3s;
+    -ms-transition: all linear .3s;
+    -o-transition: all linear .3s;
+}
 
+.image_preview label:hover {
+    background: #5f61e6;
+    border-color: #5f61e6;
+    color: #fff;
+}
 
+.print_settings h4 {
+    color: #1ba161;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+}
 
-
-
+.print_settings .input-group span {
+    background: #5f61e6;
+    color: #fff;
+    line-height: 26px;
+}
 
 
 
