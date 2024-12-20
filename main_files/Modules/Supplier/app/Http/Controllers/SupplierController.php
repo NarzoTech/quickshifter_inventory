@@ -8,6 +8,7 @@ use App\Exports\SupplierExport;
 use App\Http\Controllers\Controller;
 use App\Models\Ledger;
 use App\Traits\RedirectHelperTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,7 @@ class SupplierController extends Controller
             return Excel::download(new SupplierExport($this->supplierService), $fileName);
         }
 
+
         $data['totalPurchase'] = 0;
         $data['pay'] = 0;
         $data['total_return'] = 0;
@@ -47,7 +49,7 @@ class SupplierController extends Controller
         $data['total_advance'] = 0;
         $data['total_due_dismiss'] = 0;
 
-        foreach ($suppliers as $supplier) {
+        foreach ($suppliers->get() as $supplier) {
             $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
             $data['pay'] += $supplier->payments->sum('amount');
 
@@ -61,6 +63,13 @@ class SupplierController extends Controller
             $data['total_due'] += $supplier->total_due - $totalReturn;
             $data['total_advance'] += $supplier->advance;
             $data['total_due_dismiss'] += $supplier->total_due_dismiss;
+        }
+
+        if (request('export_pdf')) {
+            $html = view('supplier::pdf.supplier', ['suppliers' => $suppliers->get(),  'data' => $data])->render();
+            $pdf = $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+            return $pdf->download($fileName);
         }
 
         if (request('par-page')) {

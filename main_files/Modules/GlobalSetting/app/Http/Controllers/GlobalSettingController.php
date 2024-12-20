@@ -24,7 +24,7 @@ class GlobalSettingController extends Controller
 
     public function general_setting()
     {
-        checkAdminHasPermissionAndThrowException('setting.view');
+        // checkAdminHasPermissionAndThrowException('setting.view');
         $custom_paginations = CustomPagination::all();
         $all_timezones = AllTimeZoneEnum::getAll();
 
@@ -34,7 +34,7 @@ class GlobalSettingController extends Controller
     public function update_general_setting(Request $request)
     {
 
-        checkAdminHasPermissionAndThrowException('setting.update');
+        // checkAdminHasPermissionAndThrowException('setting.update');
 
         $request->validate([
             'app_name' => 'required',

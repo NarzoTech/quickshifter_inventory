@@ -141,8 +141,7 @@
                                                 <label for="">Timezone</label>
                                                 <select name="timezone" id="" class="form-control select2">
                                                     @foreach ($all_timezones as $timezone)
-                                                        <option value="{{ $timezone->name }}"
-                                                            @selected($setting->timezone == $timezone->name)>
+                                                        <option value="{{ $timezone->name }}" @selected($setting->timezone == $timezone->name)>
                                                             {{ $timezone->name }}</option>
                                                     @endforeach
                                                 </select>

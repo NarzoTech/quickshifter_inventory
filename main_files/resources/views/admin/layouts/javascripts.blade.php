@@ -166,6 +166,16 @@
 
                 window.location.href = fullUrl;
             })
+            $('.export-pdf').on('click', function() {
+                // get full url including query string
+                var fullUrl = window.location.href;
+                if (fullUrl.includes('?')) {
+                    fullUrl += '&export_pdf=true';
+                } else {
+                    fullUrl += '?export_pdf=true';
+                }
+                window.location.href = fullUrl;
+            })
             $('.form-reset').on('click', function() {
                 // get full url without query string
                 var fullUrl = window.location.href;
