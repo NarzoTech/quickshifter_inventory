@@ -5,6 +5,7 @@ namespace Modules\Supplier\app\Http\Controllers;
 use App\Enums\RedirectType;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,8 +25,16 @@ class SupplierGroupController extends Controller
      */
     public function index()
     {
-        $supplierGroups = $this->userGroup->getUserGroup()->where('type', 'supplier')->paginate(request()->get('par-page') ? request()->get('par-page') : 20);
+        $supplierGroups = $this->userGroup->getUserGroup()->where('type', 'supplier');
 
+        if (request('export_pdf')) {
+            $html = view('supplier::pdf.group', ['supplierGroups' => $supplierGroups->get()])->render();
+
+            $pdf = $fileName = 'supplier-group-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+            return $pdf->download($fileName);
+        }
+        $supplierGroups = $supplierGroups->paginate(request()->get('par-page') ? request()->get('par-page') : 20);
         $supplierGroups->appends(request()->query());
 
         return view('supplier::group.index', compact('supplierGroups'));

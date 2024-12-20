@@ -67,7 +67,7 @@
     <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title">Suppliers List</h4>
+                <h4 class="section_title">{{ __('Suppliers List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addgroup" class="btn btn-primary"> <i
@@ -108,21 +108,21 @@
                                         <button id="btnGroupDrop{{ $group->id }}" type="button"
                                             class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                                             aria-haspopup="true" aria-expanded="false">
-                                            Action
+                                            {{ __('Action') }}
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
                                             <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editGroup{{ $group->id }}">Edit</a>
+                                                data-bs-target="#editGroup{{ $group->id }}">{{ __('Edit') }}</a>
                                             <a href="javascript:;"class="dropdown-item"
                                                 onclick="deleteData({{ $group->id }})">
-                                                Delete</a>
+                                                {{ __('Delete') }}</a>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <x-empty-table :name="__('Supplier Group')" route="" create="no" :message="__('No data found!')"
-                                colspan="6"></x-empty-table>
+                                colspan="5"></x-empty-table>
                         @endforelse
                     </tbody>
                 </table>
