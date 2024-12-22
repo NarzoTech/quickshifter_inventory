@@ -1,7 +1,7 @@
 <div class="row payment-row mb-5">
     <div class="col-md-12 mt-0">
         <div class="input-group">
-            <select name="payment_type[]" id="" class="form-control nice-select rounded me-2">
+            <select name="payment_type[]" id="" class="form-select nice-select rounded me-2">
                 <option value="">
                     {{ __('Select Payment Type') }}
                 </option>

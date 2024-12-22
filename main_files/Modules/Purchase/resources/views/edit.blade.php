@@ -298,6 +298,7 @@
                 const add = `@include('purchase::add-payment-method', ['add' => true])`
 
                 $('.paymentsystem').append(add);
+                $('select.nice-select').niceSelect();
             })
             $(document).on('click', '.removePayment', function() {
                 $(this).parents('.payment-row').remove();

@@ -1,4 +1,4 @@
-@foreach ($purchase->payments as $index => $payment)
+@forelse ($purchase->payments as $index => $payment)
     <div class="row payment-row mb-5">
         <div class="col-md-12">
             <div class="input-group">
@@ -41,4 +41,6 @@
             </div>
         </div>
     </div>
-@endforeach
+@empty
+    @include('purchase::add-payment-method')
+@endforelse

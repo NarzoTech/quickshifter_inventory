@@ -107,7 +107,9 @@
                                                                         name="total[]" value="{{ $details->sub_total }}">
                                                                 </td>
                                                                 <td class="text-center">
-                                                                    <i class="fas fa-trash text-danger"></i>
+                                                                    <button type="button" class="btn btn-white"
+                                                                        onclick="removequotationRow(this)"><i
+                                                                            class="fas fa-trash text-danger"></i></button>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -151,8 +153,8 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('Total Amount') }}</label>
-                                                        <input type="total_amount" class="form-control" name="total_amount"
-                                                            value="{{ $quotation->total }}" readonly>
+                                                        <input type="total_amount" class="form-control"
+                                                            name="total_amount" value="{{ $quotation->total }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
