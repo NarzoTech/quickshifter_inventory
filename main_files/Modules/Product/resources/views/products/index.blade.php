@@ -148,45 +148,40 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="d-flex gap-2">
-                                        <button type="button" data-bs-toggle="modal"
+                                    {{-- <div class="btn-group" role="group"> --}}
+                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
+                                        id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        Action
+                                    </button>
+
+                                    <div class="dropdown-menu" x-placement="top-start"
+                                        style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -131px, 0px);">
+                                        <a href="javascript:;" class="dropdown-item productView"
+                                            data-id="{{ $product->id }}">
+                                            {{ __('View') }}</a>
+
+                                        <a href="{{ route('admin.product.show', ['product' => $product->id]) }}"
+                                            class="dropdown-item"></i>
+                                            {{ __('Details') }}</a>
+
+                                        <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
+                                            class="dropdown-item">
+
+                                            {{ __('Edit') }}</a>
+
+                                        <a class="dropdown-item" href="javascript:;"
+                                            onclick="status('{{ $product->id }}')" data-status="{{ $product->id }}">
+                                            {{ $product->status == 1 ? 'Disable' : 'Enable' }}
+                                        </a>
+                                        <a class="dropdown-item"
+                                            href="{{ route('admin.product-variant', $product->id) }}">{{ __('Product Variant') }}</a>
+
+                                        <a class="dropdown-item" href="javascript:;"
                                             @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
-                                            @else onclick="deleteData({{ $product->id }})" @endif
-                                            class="btn btn-danger btn-sm me-2">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                        </button>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
-                                                id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
-                                                <i class="fas fa-cog"></i>
-                                            </button>
-
-                                            <div class="dropdown-menu" x-placement="top-start"
-                                                style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -131px, 0px);">
-                                                <a href="javascript:;" class="dropdown-item productView"
-                                                    data-id="{{ $product->id }}">
-                                                    {{ __('View') }}</a>
-
-                                                <a href="{{ route('admin.product.show', ['product' => $product->id]) }}"
-                                                    class="dropdown-item"></i>
-                                                    {{ __('Details') }}</a>
-
-                                                <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
-                                                    class="dropdown-item">
-
-                                                    {{ __('Edit') }}</a>
-
-                                                <a class="dropdown-item" href="javascript:;"
-                                                    onclick="status('{{ $product->id }}')"
-                                                    data-status="{{ $product->id }}">
-                                                    {{ $product->status == 1 ? 'Disable' : 'Enable' }}
-                                                </a>
-                                                <a class="dropdown-item"
-                                                    href="{{ route('admin.product-variant', $product->id) }}">{{ __('Product Variant') }}</a>
-                                            </div>
-                                        </div>
+                                            @else onclick="deleteData({{ $product->id }})" @endif>{{ __('Delete') }}</a>
                                     </div>
+                                    {{-- </div> --}}
                                 </td>
                             </tr>
                         @endforeach

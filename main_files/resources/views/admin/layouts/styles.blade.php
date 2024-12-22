@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('backend/css/bootstrap4-toggle.min.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/css/bootstrap5-toggle.min.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/tagify.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/bootstrap-datepicker.min.css') }}">
@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="{{ asset('backend/assets/vendor/fonts/boxicons.css') }}" />
 
 <link rel="stylesheet" href="{{ asset('backend/fontawesome/css/all.min.css') }}">
-<link rel="stylesheet" href="{{ asset('backend/css/bootstrap-toggle.min.css') }}">
 
 <!-- Core CSS -->
 <link rel="stylesheet" href="{{ asset('backend/assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
