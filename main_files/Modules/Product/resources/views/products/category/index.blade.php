@@ -117,15 +117,24 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.category.edit', $category->id) }}"
-                                        class="btn btn-primary btn-sm me-1" data-bs-toggle="tooltip"
-                                        title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $category->id }}" type="button"
+                                            class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $category->id }}">
+                                            <a href="{{ route('admin.category.edit', $category->id) }}"
+                                                class=" dropdown-item" data-bs-toggle="tooltip"
+                                                title="{{ __('Edit') }}">{{ __('Edit') }}</a>
 
-                                    <a href="javascript:void(0)"
-                                        class="btn btn-danger trigger--fire-modal-1 deleteForm btn-sm"
-                                        data-bs-toggle="tooltip" title="{{ __('Delete') }}"
-                                        data-url="{{ route('admin.category.destroy', $category->id) }}"
-                                        data-form="deleteForm"><i class="fas fa-trash"></i></a>
+                                            <a href="javascript:void(0)"
+                                                class="trigger--fire-modal-1 deleteForm dropdown-item"
+                                                data-bs-toggle="tooltip" title="{{ __('Delete') }}"
+                                                data-url="{{ route('admin.category.destroy', $category->id) }}"
+                                                data-form="deleteForm">{{ __('Delete') }}</a>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

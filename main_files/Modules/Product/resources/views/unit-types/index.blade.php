@@ -117,13 +117,21 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <div class="d-flex gap-1">
-                                                <a href="{{ route('admin.unit.edit', $unit->id) }}"
-                                                    class="btn btn-primary btn-sm edit-btn"><i class="fa fa-edit"
-                                                        aria-hidden="true"></i></a>
-                                                <a href="javascript:;" class="btn btn-danger btn-sm"
-                                                    onclick="deleteData({{ $unit->id }})"><i class="fa fa-trash"
-                                                        aria-hidden="true"></i></a>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop{{ $unit->id }}" type="button"
+                                                    class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                    Action
+                                                </button>
+                                                <div class="dropdown-menu"
+                                                    aria-labelledby="btnGroupDrop{{ $unit->id }}">
+                                                    <a href="{{ route('admin.unit.edit', $unit->id) }}"
+                                                        class="dropdown-item">{{ __('Edit') }}</a>
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $unit->id }})">
+                                                        {{ __('Delete') }}
+                                                    </a>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -142,7 +150,6 @@
 @push('js')
     <script>
         $(document).ready(function() {
-
             $('.edit-btn').click(function(e) {
                 $('.preloader_area').removeClass('d-none');
                 e.preventDefault();

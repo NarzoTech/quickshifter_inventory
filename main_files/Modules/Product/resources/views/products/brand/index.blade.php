@@ -111,14 +111,21 @@
                                         style="width: 80px"></td>
                                 <td class="text-left">{{ $brand->name }}</td>
                                 <td>
-                                    <div class="d-flex" gap-1>
-                                        <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
-                                            class="btn btn-primary me-1 btn-sm" data-bs-toggle="tooltip" title="Edit"><i
-                                                class="fas fa-pencil-alt"></i></a>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $brand->id }}" type="button"
+                                            class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $brand->id }}">
+                                            <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
+                                                class="dropdown-item" data-bs-toggle="tooltip"
+                                                title="Edit">{{ __('Edit') }}</a>
 
-                                        <a href="javascript:;" data-bs-target="#deleteModal" data-bs-toggle="modal"
-                                            class="btn btn-danger btn-sm" onclick="deleteData({{ $brand->id }})"><i
-                                                class="fas fa-trash"></i></a>
+                                            <a href="javascript:;" data-bs-target="#deleteModal" data-bs-toggle="modal"
+                                                class="dropdown-item"
+                                                onclick="deleteData({{ $brand->id }})">{{ __('Delete') }}</a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
