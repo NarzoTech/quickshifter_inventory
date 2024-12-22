@@ -246,7 +246,7 @@
     </div>
 
 
-    @foreach ($summeries as $summery)
+    @foreach ($summeries as $index => $summery)
         <div class="modal fade" id="editSupplier-{{ $summery->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -267,9 +267,9 @@
                                 <div class="col-md-6 col-lg-4">
                                     <div class="form-group">
                                         <label for="supplier_id">{{ __('supplier Name') }}</label>
-                                        <select name="supplier_id" id="supplier_id" class="form-control select2"
-                                            data-control="select2"
-                                            data-dropdown-parent="#editsupplier-{{ $summery->id }}">
+                                        <select name="supplier_id" id="supplier_id-{{ $summery->id }}"
+                                            class="form-control select2" data-control="select2"
+                                            data-dropdown-parent="#editSupplier-{{ $summery->id }}">
                                             <option value="">{{ __('Select Group') }}</option>
                                             @foreach ($suppliers as $supplier)
                                                 <option value="{{ $supplier->id }}"

@@ -50,6 +50,8 @@ class OtherSummeryController extends Controller
             'customer_id' => 'required',
             'date' => 'required|date',
             'amount' => 'required',
+            'paid' => 'required',
+            'due' => 'required',
         ]);
 
         $customer = User::find($request->customer_id);
@@ -78,6 +80,8 @@ class OtherSummeryController extends Controller
             'customer_id' => 'required',
             'date' => 'required|date',
             'amount' => 'required',
+            'paid' => 'required',
+            'due' => 'required',
         ]);
         $summery =  OtherSummery::find($id);
 
@@ -134,6 +138,8 @@ class OtherSummeryController extends Controller
             'supplier_id' => 'required',
             'date' => 'required|date',
             'amount' => 'required',
+            'paid' => 'required',
+            'due' => 'required',
         ]);
         $supplier = Supplier::find($request->supplier_id);
         if (!$supplier) {
@@ -159,9 +165,11 @@ class OtherSummeryController extends Controller
     public function supplierUpdate(Request $request, $id)
     {
         $request->validate([
-            'supplier_id' => 'required',
+            'customer_id' => 'required',
             'date' => 'required|date',
             'amount' => 'required',
+            'paid' => 'required',
+            'due' => 'required',
         ]);
         $summery =  OtherSummery::find($id);
 

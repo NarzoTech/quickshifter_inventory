@@ -2,6 +2,12 @@ supplier_payments table
     Add column
     ledger_id unsigned bigint null;
 
+ALTER TABLE `inventory`.`other_summeries`
+CHANGE COLUMN `id` `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
+ADD PRIMARY KEY (`id`);
+;
+
+
 
 
 https://codecanyon.net/search/attendance
