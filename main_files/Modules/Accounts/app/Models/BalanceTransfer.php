@@ -26,16 +26,16 @@ class BalanceTransfer extends Model
 
     public function fromAccount()
     {
-        return $this->belongsTo(Account::class, 'from_account_id');
+        return $this->belongsTo(Account::class, 'from_account_id')->withDefault();
     }
 
     public function toAccount()
     {
-        return $this->belongsTo(Account::class, 'to_account_id');
+        return $this->belongsTo(Account::class, 'to_account_id')->withDefault();
     }
 
     public function createdBy()
     {
-        return $this->belongsTo(Admin::class, 'created_by');
+        return $this->belongsTo(Admin::class, 'created_by')->withDefault();
     }
 }

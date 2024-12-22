@@ -24,11 +24,11 @@ class PurchaseReturnType extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(Admin::class, 'created_by');
+        return $this->belongsTo(Admin::class, 'created_by')->withDefault();
     }
 
     public function updatedBy()
     {
-        return $this->belongsTo(Admin::class, 'updated_by');
+        return $this->belongsTo(Admin::class, 'updated_by')->withDefault();
     }
 }

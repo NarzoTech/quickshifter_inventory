@@ -2,11 +2,11 @@
 
 namespace Modules\Order\app\Models;
 
-use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Order\Database\factories\OrderReviewFactory;
+use Modules\Product\app\Models\Product;
 
 class OrderReview extends Model
 {
@@ -29,18 +29,16 @@ class OrderReview extends Model
 
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class)->withDefault();
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withDefault();
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault();
     }
-
-    
 }

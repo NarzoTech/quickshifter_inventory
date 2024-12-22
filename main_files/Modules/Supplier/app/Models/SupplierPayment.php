@@ -40,11 +40,11 @@ class SupplierPayment extends Model
     public function purchase()
     {
 
-        return $this->belongsTo(Purchase::class, 'purchase_id', 'id');
+        return $this->belongsTo(Purchase::class, 'purchase_id', 'id')->withDefault();
     }
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault();
     }
 
     public function account()

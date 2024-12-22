@@ -27,11 +27,11 @@ class SalesReturnDetails extends Model
 
     public function saleReturn()
     {
-        return $this->belongsTo(SalesReturn::class, 'sale_return_id');
+        return $this->belongsTo(SalesReturn::class, 'sale_return_id')->withDefault();
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class, 'product_id')->withDefault();
     }
 }

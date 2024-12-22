@@ -32,7 +32,7 @@ class SalesReturn extends Model
 
     public function sale()
     {
-        return $this->belongsTo(Sale::class, 'sale_id');
+        return $this->belongsTo(Sale::class, 'sale_id')->withDefault();
     }
 
     public function ledger()

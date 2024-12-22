@@ -40,15 +40,15 @@ class PurchaseReturn extends Model
     // relationships
     public function purchase()
     {
-        return $this->belongsTo(Purchase::class);
+        return $this->belongsTo(Purchase::class)->withDefault();
     }
     public function returnType()
     {
-        return $this->belongsTo(PurchaseReturnType::class, 'return_type_id', 'id');
+        return $this->belongsTo(PurchaseReturnType::class, 'return_type_id', 'id')->withDefault();
     }
     public function warehouse()
     {
-        return $this->belongsTo(Warehouse::class);
+        return $this->belongsTo(Warehouse::class)->withDefault();
     }
     public function purchaseDetails()
     {

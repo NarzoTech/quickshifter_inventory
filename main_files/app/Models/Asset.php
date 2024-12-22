@@ -14,11 +14,11 @@ class Asset extends Model
 
     public function account()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(Account::class)->withDefault();
     }
 
     public function type()
     {
-        return $this->belongsTo(AssetType::class);
+        return $this->belongsTo(AssetType::class)->withDefault();
     }
 }

@@ -332,7 +332,7 @@ class Product extends Model
 
     public function mediaImage()
     {
-        return $this->belongsTo(Media::class, 'image', 'id');
+        return $this->belongsTo(Media::class, 'image', 'id')->withDefault();
     }
 
     public function getImageUrlAttribute()
