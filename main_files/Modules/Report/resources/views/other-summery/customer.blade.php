@@ -256,8 +256,8 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="customer_id">{{ __('Customer Name') }}</label>
-                                        <select name="customer_id" id="customer_id" class="form-control select2"
-                                            data-control="select2"
+                                        <select name="customer_id" id="customer_id-{{ $summery->id }}"
+                                            class="form-control select2" data-control="select2"
                                             data-dropdown-parent="#editCustomer-{{ $summery->id }}">
                                             <option value="">{{ __('Select Group') }}</option>
                                             @foreach ($customers as $customer)
