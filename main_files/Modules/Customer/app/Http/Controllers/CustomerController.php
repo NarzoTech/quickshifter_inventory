@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\MailSenderService;
 use App\Traits\GetGlobalInformationTrait;
 use App\Traits\RedirectHelperTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -129,6 +130,17 @@ class CustomerController extends Controller
 
             $data['total_advance'] += $customer->advances();
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
+        }
+
+        if (request('export_pdf')) {
+            $html = view('customer::pdf.customer', [
+                'users' => $query->get(),
+                'data' => $data
+            ])->render();
+
+            $pdf = $fileName = 'customer-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+            return $pdf->download($fileName);
         }
 
         if (request('par-page')) {

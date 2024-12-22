@@ -6,7 +6,7 @@
     <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
         <thead>
             @php
-                $list = [__('Name'), __('Discount'), __('Status'), __('Action')];
+                $list = [__('Name'), __('Discount'), __('Status')];
             @endphp
             <tr style="background-color: #003366; color: white;">
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('SN') }}</th>
