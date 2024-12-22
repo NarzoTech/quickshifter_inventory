@@ -141,7 +141,7 @@
                                                 </div>
                                             </td>
 
-                                            <td>{{ $employee->name }}</td>
+                                            <td>{{ ucwords($employee->name) }}</td>
                                             <td>{{ $employee->designation }}</td>
                                             <td>{{ $employee->mobile }}</td>
                                             <td>

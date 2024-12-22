@@ -99,7 +99,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table common_table">
+                <table style="width: 100%;" class="table">
                     <thead>
                         <tr>
                             <th>{{ __('ID') }}</th>
@@ -122,11 +122,24 @@
                                 <td>{{ $day->end_date }}</td>
                                 <td>{{ $day->status ? 'Active' : 'Inactive' }}</td>
                                 <td>
-                                    <a href="javascript:;" data-bs-toggle="modal"
-                                        data-bs-target="#editHoliday{{ $day->id }}" class="btn bg-label-primary"><i
-                                            class="fa fa-edit"></i></a>
-                                    <a href="javascript:;" onclick="deleteData({{ $day->id }})"
-                                        class="btn bg-label-danger"><i class="fa fa-trash"></i></a>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $day->id }}" type="button"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $day->id }}">
+
+                                            <a href="javascript:;" data-bs-toggle="modal"
+                                                data-bs-target="#editHoliday{{ $day->id }}"
+                                                class="dropdown-item">{{ __('Edit') }}</a>
+
+                                            <a href="javascript:;" class="dropdown-item"
+                                                onclick="deleteData({{ $day->id }})">
+                                                {{ __('Delete') }}
+                                            </a>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

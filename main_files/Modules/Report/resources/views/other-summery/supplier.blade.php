@@ -94,7 +94,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table common_table">
+                <table style="width: 100%;" class="table">
                     <thead>
                         <tr>
                             <th>{{ __('Sl') }}</th>
@@ -122,15 +122,20 @@
                                 <td>{{ $summery->paid }}</td>
                                 <td>{{ $summery->due }}</td>
                                 <td>
-                                    <div class="btn-group">
-                                        <a href="javascript:void(0);" class="btn btn-primary me-2 btn-sm"
-                                            data-bs-toggle="modal" data-bs-target="#editSupplier-{{ $summery->id }}">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="javascript:void(0);" class="btn btn-danger btn-sm"
-                                            onclick="deleteData({{ $summery->id }})">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $summery->id }}" type="button"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $summery->id }}">
+
+                                            <a href="javascript:void(0);" data-bs-toggle="modal"
+                                                data-bs-target="#editCustomer-{{ $summery->id }}"
+                                                class="dropdown-item">{{ __('Edit') }}</a>
+                                            <a href="javascript:;" class="dropdown-item"
+                                                onclick="deleteData({{ $summery->id }})">{{ __('Delete') }}</a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

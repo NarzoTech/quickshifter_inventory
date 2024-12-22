@@ -147,7 +147,7 @@
                                     @endphp
 
                                     <tr>
-                                        <td class="sticky-1">{{ $employee->name }}</td>
+                                        <td class="sticky-1">{{ ucwords($employee->name) }}</td>
                                         <td class="sticky-2">{{ $employee->mobile }}</td>
                                         <td class="text-center ">{{ $present->count() }}</td>
                                         <td class="text-center">{{ $absent->count() }}</td>

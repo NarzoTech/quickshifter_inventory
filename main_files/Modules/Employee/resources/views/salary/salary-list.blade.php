@@ -81,7 +81,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table common_table">
+                        <table style="width: 100%;" class="table">
                             <thead>
                                 <tr>
                                     <th>{{ __('Sl') }}</th>
@@ -102,18 +102,27 @@
                                         <td>{{ now()->parse($payment->date)->format('d-m-Y') }}</td>
                                         <td>{{ $payment->note }}</td>
                                         <td>
-                                            <div class="btn-group">
-                                                <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
-                                                    class="btn btn-primary btn-sm me-2"><i class="fa fa-edit"></i></a>
-                                                <a href="javascript:;" class="btn btn-danger btn-sm"
-                                                    onclick="deleteData({{ $payment->id }})">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop{{ $payment->id }}" type="button"
+                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                    Action
+                                                </button>
+                                                <div class="dropdown-menu"
+                                                    aria-labelledby="btnGroupDrop{{ $payment->id }}">
+
+                                                    <a href="{{ route('admin.employee.salary.edit', $payment->id) }}"
+                                                        class="dropdown-item">{{ __('Edit') }}</a>
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $payment->id }})">
+                                                        {{ __('Delete') }}
+                                                    </a>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                    <x-empty-table :name="__('Paid Salary List')" route="" create="no" :message="__('No data found!')"
                                         colspan="6"></x-empty-table>
                                 @endforelse
                             </tbody>
