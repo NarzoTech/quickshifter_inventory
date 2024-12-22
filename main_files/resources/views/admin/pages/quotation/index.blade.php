@@ -100,18 +100,25 @@
                                 <td>{{ $quotation->customer->name }}</td>
                                 <td>{{ currency($quotation->total) }}</td>
                                 <td>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('admin.quotation.show', $quotation->id) }}"
-                                            class="btn btn-sm btn-info">{{ __('View') }}</a>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $quotation->id }}" type="button"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $quotation->id }}">
+                                            <a href="{{ route('admin.quotation.show', $quotation->id) }}"
+                                                class="dropdown-item">{{ __('View') }}</a>
 
-                                        <a href="{{ route('admin.quotation.edit', $quotation->id) }}"
-                                            class="btn btn-sm btn-primary">{{ __('Edit') }}</a>
+                                            <a href="{{ route('admin.quotation.edit', $quotation->id) }}"
+                                                class="dropdown-item">{{ __('Edit') }}</a>
 
-                                        <a href="{{ route('admin.pos') }}?quotation_id={{ $quotation->id }}"
-                                            class="btn btn-sm btn-primary">{{ __('Sale') }}</a>
+                                            <a href="{{ route('admin.pos') }}?quotation_id={{ $quotation->id }}"
+                                                class="dropdown-item">{{ __('Sale') }}</a>
 
-                                        <a href="javascript:;" class="btn btn-sm btn-danger"
-                                            onclick="deleteData({{ $quotation->id }})">{{ __('Delete') }}</a>
+                                            <a href="javascript:;" class="dropdown-item"
+                                                onclick="deleteData({{ $quotation->id }})">{{ __('Delete') }}</a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
