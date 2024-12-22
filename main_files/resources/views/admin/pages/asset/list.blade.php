@@ -171,7 +171,7 @@
                                 <div class="form-group">
                                     <label for="">{{ __('Date') }}</label>
                                     <input type="text" name="date" value="{{ now()->format('d-m-Y') }}"
-                                        class="form-control datepicker" required>
+                                        class="form-control datepicker" required autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-12">
@@ -270,7 +270,7 @@
                                     <div class="form-group">
                                         <label for="">{{ __('Date') }}</label>
                                         <input type="text" name="date" value="{{ $type->date }}"
-                                            class="form-control datepicker" required>
+                                            class="form-control datepicker" required autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-12">

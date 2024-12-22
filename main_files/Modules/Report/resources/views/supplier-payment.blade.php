@@ -57,11 +57,11 @@
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <input type="text" placeholder="From Date" name="from_date"
-                                                value="{{ request()->get('from_date') }}" class="form-control datepicker">
+                                                value="{{ request()->get('from_date') }}" class="form-control datepicker" autocomplete="off">
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <input type="text" placeholder="To Date" name="to_date"
-                                                value="{{ request()->get('to_date') }}" class="form-control datepicker">
+                                                value="{{ request()->get('to_date') }}" class="form-control datepicker" autocomplete="off">
                                         </div>
                                     </div>
                                     {{-- excel  buttons --}}

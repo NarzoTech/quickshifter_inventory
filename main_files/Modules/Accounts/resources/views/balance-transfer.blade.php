@@ -143,7 +143,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}</label>
-                                    <input type="text" class="form-control datepicker" id="date" name="date">
+                                    <input type="text" class="form-control datepicker" id="date" name="date"
+                                        autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -240,7 +241,7 @@
                                     <div class="form-group">
                                         <label for="date">{{ __('Date') }}</label>
                                         <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ $transfer->date }}">
+                                            name="date" value="{{ $transfer->date }}" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

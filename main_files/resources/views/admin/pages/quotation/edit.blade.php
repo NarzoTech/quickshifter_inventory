@@ -39,7 +39,8 @@
                                             <div class="form-group">
                                                 <label>{{ __('Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="date"
-                                                    value="{{ now()->parse($quotation->date)->format('d-m-Y') }}">
+                                                    value="{{ now()->parse($quotation->date)->format('d-m-Y') }}"
+                                                    autocomplete="off">
                                                 @error('date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

@@ -168,14 +168,14 @@
                                     <label for="date">{{ __('Start Date') }} <span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="start_date"
-                                        name="start_date" placeholder="MM/DD/YY">
+                                        name="start_date" placeholder="MM/DD/YY" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date">{{ __('End Date') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="end_date" name="end_date"
-                                        placeholder="MM/DD/YY">
+                                        placeholder="MM/DD/YY" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -234,7 +234,8 @@
                                         <label for="date">{{ __('Start Date') }} <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="start_date"
-                                            name="start_date" placeholder="MM/DD/YY" value="{{ $day->start_date }}">
+                                            name="start_date" placeholder="MM/DD/YY" value="{{ $day->start_date }}"
+                                            autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -242,7 +243,8 @@
                                         <label for="date">{{ __('End Date') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="end_date"
-                                            name="end_date" placeholder="MM/DD/YY" value="{{ $day->end_date }}">
+                                            name="end_date" placeholder="MM/DD/YY" value="{{ $day->end_date }}"
+                                            autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-md-12">

@@ -198,7 +198,7 @@
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}</label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ date('d-m-Y') }}">
+                                        value="{{ date('d-m-Y') }}" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-4">
@@ -284,7 +284,8 @@
                                     <div class="form-group">
                                         <label for="date">{{ __('Date') }}</label>
                                         <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ now()->parse($summery->date)->format('d-m-Y') }}">
+                                            name="date" value="{{ now()->parse($summery->date)->format('d-m-Y') }}"
+                                            autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-lg-4">

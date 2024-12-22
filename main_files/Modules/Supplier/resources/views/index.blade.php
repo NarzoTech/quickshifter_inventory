@@ -296,7 +296,7 @@
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}</label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
-                                        placeholder="MM/DD/YY">
+                                        placeholder="MM/DD/YY" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6">

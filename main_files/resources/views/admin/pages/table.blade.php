@@ -54,13 +54,15 @@
                             <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
                                     <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker">
+                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
                                     <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker">
+                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                        autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-xxl-1 col-md-4">

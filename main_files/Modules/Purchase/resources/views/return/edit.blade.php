@@ -39,7 +39,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Return Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="return_date"
-                                                    value="{{ old('return_date', now()->format('d-m-Y')) }}">
+                                                    value="{{ old('return_date', now()->format('d-m-Y')) }}" autocomplete="off">
                                                 @error('return_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

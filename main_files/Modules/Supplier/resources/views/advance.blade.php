@@ -106,7 +106,7 @@
                                                             </div>
                                                             <input class="form-control input_number datepicker"
                                                                 name="date" type="text" value="{{ date('d-m-Y') }}"
-                                                                id="date" aria-required="true" aria-invalid="false">
+                                                                id="date" aria-required="true" aria-invalid="false" autocomplete="off">
                                                         </div>
                                                     </div>
                                                 </div>
