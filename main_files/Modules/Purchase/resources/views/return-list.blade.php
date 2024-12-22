@@ -8,10 +8,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="section_title">{{ __('Add Type') }}</h4>
+                    <h4 class="section_title">{{ __('Purchases Return Type') }}</h4>
                     <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addType" class="btn btn-primary"><i
                             class="fa fa-plus"></i>
-                        {{ __('Add Type') }}</a>
+                        {{ __('Add Purchases Return Type') }}</a>
                 </div>
                 <div class="card-body">
                     <div class="row">

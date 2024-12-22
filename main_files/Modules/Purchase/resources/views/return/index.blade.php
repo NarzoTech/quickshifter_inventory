@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Purchases Return') }}</title>
+    <title>{{ __('Purchases Return List') }}</title>
 @endsection
 
 @section('content')
@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="section_title">Purchases Return List</div>
+                    <div class="section_title">{{ __('Purchases Return List') }}</div>
                 </div>
                 <div class="card-body">
                     <div class="row">

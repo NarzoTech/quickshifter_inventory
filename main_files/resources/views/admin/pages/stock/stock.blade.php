@@ -132,7 +132,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive list_table stock_table">
-                <table style="width: 100%;" class="table common_table">
+                <table style="width: 100%;" class="table">
                     <thead>
                         <tr>
                             <th>{{ __('Sl') }}</th>
@@ -174,19 +174,26 @@
                                     {{ remove_comma($stock) * remove_comma($selling_price) }}
                                 </td>
                                 <td>
-                                    <div class="d-flex gap-2 align-items-center">
-                                        <a href="{{ route('admin.product.show', $product->id) }}"
-                                            class="btn btn-primary btn-sm" title="Product Details"><i
-                                                class="fa fa-eye"></i></a>
-                                        <a href="{{ route('admin.stock.ledger', $product->id) }}"
-                                            class="btn btn-info btn-sm" title="Stock Ledger">
-                                            <i class="fas fa-clipboard-list"></i>
-                                        </a>
-                                        <a href="javascript:;" class="btn btn-danger btn-sm" title="Reset Stock"
-                                            onclick="resetStock({{ $product->id }})" data-bs-target="#stockModal"
-                                            data-bs-toggle="modal">
-                                            <i class="fas fa-undo"></i>
-                                        </a>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $product->id }}" type="button"
+                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $product->id }}">
+                                            <a href="{{ route('admin.product.show', $product->id) }}"
+                                                class="dropdown-item"
+                                                title="Product Details">{{ __('Product Details') }}</a>
+                                            <a href="{{ route('admin.stock.ledger', $product->id) }}"
+                                                class="dropdown-item" title="Stock Ledger">
+                                                {{ __('Stock Ledger') }}
+                                            </a>
+                                            <a href="javascript:;" class="dropdown-item" title="Reset Stock"
+                                                onclick="resetStock({{ $product->id }})" data-bs-target="#stockModal"
+                                                data-bs-toggle="modal">
+                                                {{ __('Reset Stock') }}
+                                            </a>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

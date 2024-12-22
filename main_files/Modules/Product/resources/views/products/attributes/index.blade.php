@@ -102,15 +102,24 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.attribute.edit', $attribute->id) }}"
-                                        class="btn btn-primary btn-action me-1" data-bs-toggle="tooltip"
-                                        title="{{ __('Edit') }}"><i class="fas fa-pencil-alt"></i></a>
-                                    <a href="javascript:void(0)"
-                                        class="btn btn-danger btn-action trigger--fire-modal-1 deleteForm"
-                                        data-bs-toggle="modal" title="{{ __('Delete') }}"
-                                        data-url="{{ route('admin.attribute.destroy', $attribute->id) }}"
-                                        data-form="deleteForm" data-id="{{ $attribute->id }}"><i
-                                            class="fas fa-trash"></i></a>
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDrop{{ $attribute->id }}" type="button"
+                                            class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $attribute->id }}">
+                                            <a href="{{ route('admin.attribute.edit', $attribute->id) }}"
+                                                class="dropdown-item" data-bs-toggle="tooltip"
+                                                title="{{ __('Edit') }}">{{ __('Edit') }}</a>
+                                            <a href="javascript:void(0)"
+                                                class="dropdown-item trigger--fire-modal-1 deleteForm"
+                                                data-bs-toggle="modal" title="{{ __('Delete') }}"
+                                                data-url="{{ route('admin.attribute.destroy', $attribute->id) }}"
+                                                data-form="deleteForm"
+                                                data-id="{{ $attribute->id }}">{{ __('Delete') }}</a>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
