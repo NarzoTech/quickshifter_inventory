@@ -1,181 +1,176 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Purchase List') }}</title>
+    <title>{{ __('Create Purchase') }}</title>
 @endsection
 
 @section('content')
-    <div class="main-content">
-        <section class="section">
+    <div class="row">
+        <div class="col-md-12">
 
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-md-12">
+            <form method="POST" action="{{ route('admin.purchase.store') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="card">
 
-                        <form method="POST" action="{{ route('admin.purchase.store') }}" enctype="multipart/form-data">
-                            @csrf
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="section_title">{{ __('Create Purchase') }}</div>
+                    <div class="card-header d-flex justify-content-between">
+                        <h4 class="section_title">{{ __('Create Purchase') }}</h4>
+                        <div>
+                            <a href="{{ route('admin.purchase.index') }}" class="btn btn-primary"><i
+                                    class="fa fa-arrow-left"></i>{{ __('Back') }}</a>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>{{ __('Supplier') }}</label>
+                                    <select class="form-control select2" name="supplier_id">
+                                        <option value="">{{ __('Select Supplier') }}</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('supplier_id')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
-
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Supplier') }}</label>
-                                                <select class="form-control select2" name="supplier_id">
-                                                    <option value="">{{ __('Select Supplier') }}</option>
-                                                    @foreach ($suppliers as $supplier)
-                                                        <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('supplier_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>{{ __('Invoice Number') }}</label>
+                                    <input type="text" class="form-control" name="invoice_number"
+                                        value="{{ old('invoice_number', $invoiceNumber) }}">
+                                    @error('invoice_number')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>{{ __('Memo No') }}</label>
+                                    <input type="text" class="form-control" name="memo_no" value="{{ old('memo_no') }}">
+                                    @error('memo_no')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>{{ __('Purchase Date') }}</label>
+                                    <input type="text" class="form-control datepicker" name="purchase_date"
+                                        value="{{ old('purchase_date', now()->format('d-m-Y')) }}" autocomplete="off">
+                                    @error('purchase_date')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>{{ __('Reference No') }}</label>
+                                    <input type="text" class="form-control" name="reference_no"
+                                        value="{{ old('reference_no') }}">
+                                    @error('reference_no')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>{{ __('Attachment') }}</label>
+                                    <input type="file" class="form-control" name="attachment"
+                                        value="{{ old('attachment') }}">
+                                    @error('attachment')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            {{-- product search box --}}
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>{{ __('Product') }}</label>
+                                    <select class="form-control select2" id="product_id">
+                                        <option value="">{{ __('Select Product') }}</option>
+                                        @foreach ($products as $product)
+                                            <option value="{{ $product->id }}">{{ $product->name }}
+                                                ({{ $product->sku }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>{{ __('Product Name') }}</th>
+                                                <th>{{ __('Product Stock') }}</th>
+                                                <th>{{ __('Quantity') }}</th>
+                                                <th>{{ __('Purchase Price') }}</th>
+                                                <th>{{ __('Sub Total') }}</th>
+                                                <th>{{ __('Profit') }}%</th>
+                                                <th>{{ __('Selling Price') }}</th>
+                                                <th class="text-center">
+                                                    <i class="fas fa-trash text-danger"></i>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="purchase_table"> </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- summery --}}
+                        <div class="row justify-content-end mt-5">
+                            <div class="col-xxl-5 col-xl-6 col-lg-7">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>{{ __('Item Count') }}</label>
+                                            <input type="number" class="form-control" name="items" value="0"
+                                                readonly>
                                         </div>
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Invoice Number') }}</label>
-                                                <input type="text" class="form-control" name="invoice_number"
-                                                    value="{{ old('invoice_number', $invoiceNumber) }}">
-                                                @error('invoice_number')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>{{ __('Total Amount') }}</label>
+                                            <input type="total_amount" class="form-control" name="total_amount"
+                                                value="0" readonly>
                                         </div>
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Memo No') }}</label>
-                                                <input type="text" class="form-control" name="memo_no"
-                                                    value="{{ old('memo_no') }}">
-                                                @error('memo_no')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Purchase Date') }}</label>
-                                                <input type="text" class="form-control datepicker" name="purchase_date"
-                                                    value="{{ old('purchase_date', now()->format('d-m-Y')) }}"
-                                                    autocomplete="off">
-                                                @error('purchase_date')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Reference No') }}</label>
-                                                <input type="text" class="form-control" name="reference_no"
-                                                    value="{{ old('reference_no') }}">
-                                                @error('reference_no')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
-                                                <label>{{ __('Attachment') }}</label>
-                                                <input type="file" class="form-control" name="attachment"
-                                                    value="{{ old('attachment') }}">
-                                                @error('attachment')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        {{-- product search box --}}
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label>{{ __('Product') }}</label>
-                                                <select class="form-control select2" id="product_id">
-                                                    <option value="">{{ __('Select Product') }}</option>
-                                                    @foreach ($products as $product)
-                                                        <option value="{{ $product->id }}">{{ $product->name }}
-                                                            ({{ $product->sku }})
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>{{ __('Payment Type') }}</label>
+                                            <div class="paymentsystem">
+                                                @include('purchase::add-payment-method')
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-5">
-                                        <div class="col-12">
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>{{ __('Product Name') }}</th>
-                                                            <th>{{ __('Product Stock') }}</th>
-                                                            <th>{{ __('Quantity') }}</th>
-                                                            <th>{{ __('Purchase Price') }}</th>
-                                                            <th>{{ __('Sub Total') }}</th>
-                                                            <th>{{ __('Profit') }}%</th>
-                                                            <th>{{ __('Selling Price') }}</th>
-                                                            <th class="text-center">
-                                                                <i class="fas fa-trash text-danger"></i>
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="purchase_table"> </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {{-- summery --}}
-                                    <div class="row justify-content-end mt-5">
-                                        <div class="col-xxl-5 col-xl-6 col-lg-7">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label>{{ __('Item Count') }}</label>
-                                                        <input type="number" class="form-control" name="items"
-                                                            value="0" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label>{{ __('Total Amount') }}</label>
-                                                        <input type="total_amount" class="form-control" name="total_amount"
-                                                            value="0" readonly>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label>{{ __('Payment Type') }}</label>
-                                                        <div class="paymentsystem">
-                                                            @include('purchase::add-payment-method')
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label>{{ __('Due') }}</label>
-                                                        <input type="text" class="form-control" name="due_amount"
-                                                            readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="card-action d-flex justify-content-end">
-                                                <a href="{{ route('admin.purchase.index') }}"
-                                                    class="btn btn-danger me-2">{{ __('Cancel') }}</a>
-                                                <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
-                                            </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>{{ __('Due') }}</label>
+                                            <input type="text" class="form-control" name="due_amount" readonly>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </form>
-
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card-action d-flex justify-content-end">
+                                    <a href="{{ route('admin.purchase.index') }}"
+                                        class="btn btn-danger me-2">{{ __('Cancel') }}</a>
+                                    <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </form>
+
+        </div>
     </div>
 @endsection
 

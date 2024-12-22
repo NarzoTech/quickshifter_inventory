@@ -71,8 +71,8 @@
                             </div>
                             <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
-                                    <button type="submit" class="btn bg-label-primary">Search</button>
+                                    <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn bg-label-primary">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>

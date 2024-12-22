@@ -81,8 +81,8 @@
                             </div>
                             <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
-                                    <button type="submit" class="btn bg-primary">Search</button>
+                                    <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn bg-primary">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -95,16 +95,16 @@
     <div class="card mt-5 mb-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"> Purchase List</h4>
+                <h4 class="section_title"> {{ __('Purchase List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
                     {{ __('Add Purchase') }}</a>
 
                 <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
+                    {{ __('Excel') }}</button>
                 <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                    {{ __('PDF') }}</button>
             </div>
         </div>
         <div class="card-body">
@@ -149,7 +149,6 @@
                                             <a class="dropdown-item"
                                                 href="{{ route('admin.purchase.return', $purchase->id) }}">Purchase
                                                 Return</a>
-                                            <a class="dropdown-item" href="#">Sales</a>
                                             <a href="javascript:;" class="dropdown-item"
                                                 onclick="deleteData({{ $purchase->id }})">
                                                 Delete</a>

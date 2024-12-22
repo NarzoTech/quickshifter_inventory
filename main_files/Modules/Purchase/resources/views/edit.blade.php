@@ -16,8 +16,13 @@
                             @csrf
                             @method('PUT')
                             <div class="card">
-                                <div class="card-header">
-                                    <div class="card-title">{{ __('Edit Purchase') }}</div>
+
+                                <div class="card-header d-flex justify-content-between">
+                                    <h4 class="section_title">{{ __('Edit Purchase') }}</h4>
+                                    <div>
+                                        <a href="{{ route('admin.purchase.index') }}" class="btn btn-primary"><i
+                                                class="fa fa-arrow-left"></i>{{ __('Back') }}</a>
+                                    </div>
                                 </div>
 
                                 <div class="card-body">

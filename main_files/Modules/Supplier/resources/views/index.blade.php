@@ -169,7 +169,8 @@
                                                 <a class="dropdown-item"
                                                     href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
                                             @endif
-                                            <a class="dropdown-item" href="#">{{ __('Sales') }}</a>
+                                            <a class="dropdown-item"
+                                                href="{{ route('admin.purchase.index') }}?supplier_id={{ $supplier->id }}">{{ __('Purchase') }}</a>
                                             <a href="javascript:;" class="dropdown-item"
                                                 onclick="deleteData({{ $supplier->id }})">
                                                 Delete</a>
@@ -330,8 +331,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" form="add-supplier-form">Save</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="submit" class="btn btn-primary" form="add-supplier-form">{{ __('Save') }}</button>
                 </div>
             </div>
         </div>

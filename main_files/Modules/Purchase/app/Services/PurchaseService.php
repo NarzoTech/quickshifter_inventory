@@ -53,6 +53,10 @@ class PurchaseService
                 ;
             });
         }
+        if (request()->supplier_id) {
+            $purchase = $purchase->where('supplier_id', request()->supplier_id);
+        }
+
         if (request('from_date') && request('to_date')) {
             $purchase = $purchase->whereBetween('purchase_date', [now()->parse(request('from_date')), now()->parse(request('to_date'))]);
         }
