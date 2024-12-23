@@ -2,6 +2,7 @@
 
 namespace Modules\Accounts\app\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Modules\Accounts\app\Models\Account;
 
 class AccountsService
@@ -18,18 +19,21 @@ class AccountsService
     }
     public function create(array $data): Account
     {
-        return $this->account->create($data);
+        $account = $this->account->create($data);
+        $this->cacheClear();
+        return $account;
     }
 
     public function update(Account $account, array $data): Account
     {
         $account->update($data);
-
+        $this->cacheClear();
         return $account;
     }
 
     public function delete(Account $account): bool
     {
+        $this->cacheClear();
         return $account->delete();
     }
 
@@ -42,6 +46,11 @@ class AccountsService
         });
 
         return $accountBalance;
+    }
+
+    private function cacheClear()
+    {
+        Cache::forget('accounts');
     }
 
     public function accountBalance($fromDate, $toDate)

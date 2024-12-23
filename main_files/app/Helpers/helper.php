@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Modules\Accounts\app\Models\Account;
 use Modules\BasicPayment\app\Models\BasicPayment;
 use Modules\Currency\app\Models\MultiCurrency;
 use Modules\GlobalSetting\app\Models\Setting;
@@ -99,6 +100,78 @@ if (!function_exists('mobileBankList')) {
         ];
 
         return $list;
+    }
+}
+
+if (!function_exists('selectedAccount')) {
+    function selectedAccount($inputValue, $selectedId = null)
+    {
+        $accounts = Cache::rememberForever('accounts', function () {
+            return Account::all();
+        });
+
+        $html = '';
+
+        if (!empty($accounts)) {
+            foreach ($accounts as $account) {
+                $isSelected = $account->id == $selectedId ? 'selected' : '';
+
+                switch ($inputValue) {
+                    case 'bank':
+                        $html .= generateOption(
+                            $account->id,
+                            "{$account->bank_account_number} ({$account->bank?->name})",
+                            $isSelected
+                        );
+                        break;
+
+                    case 'mobile_banking':
+                        $html .= generateOption(
+                            $account->id,
+                            "{$account->mobile_number} ({$account->mobile_bank_name})",
+                            $isSelected
+                        );
+                        break;
+
+                    case 'card':
+                        $html .= generateOption(
+                            $account->id,
+                            "{$account->card_number} ({$account->bank?->name})",
+                            $isSelected
+                        );
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        // Add 'cash' option if input value is 'cash'
+        if ($inputValue === 'cash') {
+            $isSelected = $selectedId === 'cash' ? 'selected' : '';
+            $html .= generateOption('cash', __('Cash'), $isSelected);
+        }
+
+        return $html;
+    }
+
+    /**
+     * Generate an option HTML tag with optional selected attribute.
+     *
+     * @param string $value
+     * @param string $label
+     * @param string $selected
+     * @return string
+     */
+    function generateOption(string $value, string $label, string $selected = ''): string
+    {
+        return sprintf(
+            '<option value="%s" %s>%s</option>',
+            htmlspecialchars($value, ENT_QUOTES, 'UTF-8'),
+            $selected,
+            htmlspecialchars($label, ENT_QUOTES, 'UTF-8')
+        );
     }
 }
 

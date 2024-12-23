@@ -286,7 +286,7 @@
                                     <div class="form-group">
                                         <label for="from_account">{{ __('From Account') }}</label>
                                         <select name="from_account" id="from_account" class="form-control">
-                                            <option value="{{ $transfer->from_account_id }}" selected></option>
+                                            {!! selectedAccount($transfer->fromAccount->account_type, $transfer->from_account_id) !!}
                                         </select>
                                     </div>
                                 </div>
@@ -295,7 +295,7 @@
                                     <div class="form-group">
                                         <label for="to_account">{{ __('To Account') }}</label>
                                         <select name="to_account" id="to_account" class="form-control">
-                                            <option value="{{ $transfer->to_account_id }}" selected></option>
+                                            {!! selectedAccount($transfer->toAccount->account_type, $transfer->to_account_id) !!}
                                         </select>
                                     </div>
                                 </div>
@@ -335,7 +335,6 @@
                     if (placeName) {
                         placeName = placeName.replaceAll('_type', '');
                     }
-
                     const accounts = accountsList.filter(account => account.account_type == $(this).val());
                     const accountInput = $(`#${placeName}`);
                     if (accounts) {
@@ -368,6 +367,8 @@
                             `<option value="cash">{{ __('Cash') }}</option>`;
                         accountInput.html(cash);
                     }
+                    accountInput.niceSelect('destroy');
+                    accountInput.niceSelect();
                 });
 
             $(document).on('change', '.from_account_type, .to_account_type', function() {
@@ -408,6 +409,8 @@
                         `<option value="cash">{{ __('Cash') }}</option>`;
                     accountInput.html(cash);
                 }
+                accountInput.niceSelect('destroy');
+                accountInput.niceSelect();
             })
         })
     </script>
