@@ -1,11 +1,12 @@
 <li
-    class="menu-item {{ isRoute(['admin.customers.index', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list'], 'active open') }}">
+    class="menu-item {{ isRoute(['admin.customers.*', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list'], 'active open') }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class='menu-icon tf-icons bx bx-user'></i>
         <div class="text-truncate" data-i18n="{{ __('Manage Customer') }}">{{ __('Manage Customer') }}</div>
     </a>
     <ul class="menu-sub">
-        <li class="menu-item {{ isRoute('admin.customers.index', 'active') }}">
+        <li
+            class="menu-item {{ isRoute(['admin.customers.index', 'admin.customers.advance', 'admin.customers.import'], 'active') }}">
             <a href="{{ route('admin.customers.index') }}" class="menu-link">
                 <div class="text-truncate" data-i18n="Landing">{{ __('Customers') }}</div>
             </a>
