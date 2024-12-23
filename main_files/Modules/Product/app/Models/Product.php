@@ -29,7 +29,7 @@ class Product extends Model
         'unit_id',
         'unit_sale_id',
         'unit_purchase_id',
-        'images',
+        'image',
         'cost',
         'price',
         'stock_alert',

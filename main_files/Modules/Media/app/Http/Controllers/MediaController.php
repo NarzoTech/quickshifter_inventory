@@ -34,9 +34,9 @@ class MediaController extends Controller
         checkAdminHasPermissionAndThrowException('media.view');
         $query = Media::query();
         $query->when($request->filled('keyword'), function ($q) use ($request) {
-            $q->where('title', 'like', '%'.$request->keyword.'%');
-            $q->orWhere('alt_text', 'like', '%'.$request->keyword.'%');
-            $q->orWhere('description', 'like', '%'.$request->keyword.'%');
+            $q->where('title', 'like', '%' . $request->keyword . '%');
+            $q->orWhere('alt_text', 'like', '%' . $request->keyword . '%');
+            $q->orWhere('description', 'like', '%' . $request->keyword . '%');
         });
         if ($request->filled('par-page')) {
             $media_list = $request->get('par-page') == 'all' ? $query->get() : $query->orderBy('id', 'desc')->paginate($request->get('par-page'))->withQueryString();
@@ -69,8 +69,8 @@ class MediaController extends Controller
             $extention = $image->getClientOriginalExtension();
             $file_name = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
 
-            $unique_name = 'media-'.$file_name.'-'.time().'-'.rand(999, 9999).'.'.$extention;
-            $file_path = 'uploads/media/'.$unique_name;
+            $unique_name = 'media-' . $file_name . '-' . time() . '-' . rand(999, 9999) . '.' . $extention;
+            $file_path = 'uploads/media/' . $unique_name;
             $image->move(public_path('uploads/media/'), $unique_name);
 
             $media = Media::create([
@@ -124,8 +124,8 @@ class MediaController extends Controller
             $extention = $request->image->getClientOriginalExtension();
             $file_name = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
 
-            $unique_name = 'media-'.$file_name.'-'.time().'-'.rand(999, 9999).'.'.$extention;
-            $file_path = 'uploads/media/'.$unique_name;
+            $unique_name = 'media-' . $file_name . '-' . time() . '-' . rand(999, 9999) . '.' . $extention;
+            $file_path = 'uploads/media/' . $unique_name;
             $request->image->move(public_path('uploads/media/'), $unique_name);
 
             $media->title = $file_name;
@@ -160,13 +160,12 @@ class MediaController extends Controller
     public function media_search(Request $request)
     {
         $media_list = Media::when($request->keyword, function ($q) use ($request) {
-            $q->where('title', 'like', '%'.$request->keyword.'%')
-                ->orWhere('alt_text', 'like', '%'.$request->keyword.'%')
-                ->orWhere('description', 'like', '%'.$request->keyword.'%');
+            $q->where('title', 'like', '%' . $request->keyword . '%')
+                ->orWhere('alt_text', 'like', '%' . $request->keyword . '%')
+                ->orWhere('description', 'like', '%' . $request->keyword . '%');
         })->orderBy('id', 'desc')->paginate($this->paginateValue)->withQueryString();
 
         return response()->json(['success' => true, 'data' => $media_list], 200);
-
     }
 
     public function media_select(Request $request)
@@ -174,7 +173,6 @@ class MediaController extends Controller
         $media_list = Media::whereIn('id', $request->id_list)->latest()->select('id', 'path')->get();
 
         return response()->json(['success' => true, 'data' => $media_list], 200);
-
     }
 
     public function media_multi_delete(Request $request)
@@ -188,6 +186,5 @@ class MediaController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => __('Successfully Deleted')], 200);
-
     }
 }

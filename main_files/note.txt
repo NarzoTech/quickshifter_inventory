@@ -7,6 +7,17 @@ CHANGE COLUMN `id` `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
 ADD PRIMARY KEY (`id`);
 ;
 
+-- Step 1: Drop the existing check constraint
+ALTER TABLE `inventory`.`products` DROP CHECK `products_chk_1`;
+
+-- Step 2: Rename the column
+ALTER TABLE `inventory`.`products`
+CHANGE COLUMN `images` `image` VARCHAR(255) NULL DEFAULT NULL;
+
+-- Step 3 (Optional): Recreate the check constraint with the updated column name
+ALTER TABLE `inventory`.`products`
+ADD CONSTRAINT `products_chk_1` CHECK (`image` IS NOT NULL OR LENGTH(`image`) > 0);
+
 
 
 

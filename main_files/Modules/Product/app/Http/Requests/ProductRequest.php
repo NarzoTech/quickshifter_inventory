@@ -29,7 +29,7 @@ class ProductRequest extends FormRequest
             'unit_id' => 'required',
             'unit_sale_id' => 'required',
             'unit_purchase_id' => 'required',
-            'images' => 'required',
+            'image' => 'nullable|image|max:2048',
             'cost' => 'nullable',
             'price' => 'nullable',
             'stock_alert' => 'nullable',
@@ -42,6 +42,21 @@ class ProductRequest extends FormRequest
             'status' => 'required',
             "tax_type" => 'nullable',
             "tax" => 'nullable',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Product name is required',
+            'category_id.required' => 'Product category is required',
+            'unit_id.required' => 'Product unit is required',
+            'unit_sale_id.required' => 'Product sale unit is required',
+            'unit_purchase_id.required' => 'Product purchase unit is required',
+            'sku.required' => 'Product sku is required',
+            'barcode.required' => 'Product barcode is required',
+            'status.required' => 'Product status is required',
+            'image.size' => 'Image size must be less than 2MB',
         ];
     }
 }

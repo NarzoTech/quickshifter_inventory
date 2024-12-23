@@ -16,7 +16,8 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form class="create_product_table" action="{{ route('admin.product.store') }}" method="post">
+                    <form class="create_product_table" action="{{ route('admin.product.store') }}" method="post"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-lg-8">
@@ -172,14 +173,10 @@
                             <div class="col-lg-4">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        @if (Module::isEnabled('Media'))
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <x-media::media-input label_text="Images" name="images[]"
-                                                        multiple="yes" />
-                                                </div>
-                                            </div>
-                                        @endif
+                                        <div id="image-preview" class="image-preview">
+                                            <label for="upload" id="image-label">{{ __('Image') }}</label>
+                                            <input type="file" name="image" id="image-upload">
+                                        </div>
                                     </div>
                                     <div class="col-md-6 col-lg-12">
                                         <div class="form-group">
@@ -265,11 +262,6 @@
     @include('product::products.category.create-modal')
     @include('product::products.brand.create-modal')
     @include('product::unit-types.unit-modal')
-
-    {{-- Media Modal Show --}}
-    @if (Module::isEnabled('Media'))
-        @stack('media_list_html')
-    @endif
 @endsection
 
 @push('js')
@@ -397,6 +389,16 @@
                         $('.operator_value').addClass('d-none');
                     }
                 });
+
+                $.uploadPreview({
+                    input_field: "#image-upload",
+                    preview_box: "#image-preview",
+                    label_field: "#image-label",
+                    label_default: "Choose File",
+                    label_selected: "Change File",
+                    no_label: false
+                });
+
             });
 
             function changeAttr(val, selectorName) {
@@ -410,17 +412,7 @@
                     $(`.${selectorName}`).addClass('d-none')
                 }
             }
+
         })(jQuery);
     </script>
-
-    @if (Module::isEnabled('Media'))
-        @stack('media_libary_js')
-    @endif
-@endpush
-
-{{-- Media Css --}}
-@push('css')
-    @if (Module::isEnabled('Media'))
-        @stack('media_libary_css')
-    @endif
 @endpush

@@ -91,7 +91,7 @@ class ProductController extends Controller
             $product = $this->productService->storeProduct($request);
             DB::commit();
             if ($product->id) {
-                return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.product.create', [], [
+                return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.product.edit', [$product->id], [
                     'messege' => 'Product created successfully',
                     'alert-type' => 'success',
                 ]);

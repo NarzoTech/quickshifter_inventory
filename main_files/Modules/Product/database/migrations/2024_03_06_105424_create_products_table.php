@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('unit_id')->nullable();
             $table->unsignedBigInteger('unit_sale_id')->nullable();
             $table->unsignedBigInteger('unit_purchase_id')->nullable();
-            $table->json('images')->nullable();
+            $table->string('image')->nullable();
             $table->decimal('cost', 10, 0)->nullable();
             $table->decimal('price', 10, 2)->nullable();
             $table->float('stock_alert', 10, 0)->nullable()->default(0);

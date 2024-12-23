@@ -65,8 +65,16 @@ class ProductService
     }
     public function storeProduct($request)
     {
+
+        $data = $request->validated();
+
+        if ($request->file('image')) {
+            $data['image'] = file_upload($request->image);
+        }
+
+
         $product = $this->product->create(
-            $request->validated()
+            $data
         );
         Stock::create([
             'purchase_id' => null,
@@ -88,8 +96,12 @@ class ProductService
 
     public function updateProduct($request, $product)
     {
+        $data = $request->validated();
+        if ($request->file('image')) {
+            $data['image'] = file_upload($request->image);
+        }
         $product->update(
-            $request->validated()
+            $data
         );
 
         return $product;
