@@ -32,12 +32,6 @@
             </a>
         </li>
 
-
-        <li class="menu-item {{ Route::is('admin.attribute.*') ? 'active' : '' }}">
-            <a href="{{ route('admin.attribute.index') }}" class="menu-link">
-                <div class="text-truncate" data-i18n="Help Center">{{ __('Attribute') }}</div>
-            </a>
-        </li>
         <li class="menu-item {{ Route::is('admin.product.barcode') ? 'active' : '' }}">
             <a href="{{ route('admin.product.barcode') }}" class="menu-link">
                 <div class="text-truncate" data-i18n="Help Center">{{ __('Print Barcode') }} / {{ __('Label') }}

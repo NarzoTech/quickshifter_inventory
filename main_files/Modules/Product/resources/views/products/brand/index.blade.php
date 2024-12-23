@@ -79,7 +79,7 @@
                 <button class="btn btn-danger delete-button">Delete</button>
             </div>
             <div class="table-responsive">
-                <table style="width: 100%;" class="table common_table mb-5">
+                <table style="width: 100%;" class="table mb-5">
                     <thead>
                         <tr>
                             <th>

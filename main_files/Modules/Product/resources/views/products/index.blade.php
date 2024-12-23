@@ -101,7 +101,7 @@
                     {{ __('Import Products') }}</a>
             </div>
         </div>
-        <div class="card-body common_table">
+        <div class="card-body">
             <div class="table-responsive">
                 <table style="width: 100%;" class="table product_list_table">
                     <thead>
@@ -175,9 +175,6 @@
                                                 data-status="{{ $product->id }}">
                                                 {{ $product->status == 1 ? 'Disable' : 'Enable' }}
                                             </a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.product-variant', $product->id) }}">{{ __('Product Variant') }}</a>
-
                                             <a class="dropdown-item" href="javascript:;"
                                                 @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
                                             @else onclick="deleteData({{ $product->id }})" @endif>{{ __('Delete') }}</a>

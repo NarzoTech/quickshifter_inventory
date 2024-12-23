@@ -73,7 +73,7 @@
                     {{ __('Add Category') }}</a>
             </div>
         </div>
-        <div class="card-body common_table">
+        <div class="card-body">
             <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
                 <span><span class="number">0 </span> rows selected</span>
                 <button class="btn btn-danger delete-button">Delete</button>

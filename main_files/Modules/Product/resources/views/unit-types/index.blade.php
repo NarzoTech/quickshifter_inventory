@@ -84,7 +84,7 @@
         </div>
 
         <div class="col-xxl-9 col-lg-8">
-            <div class="card common_table">
+            <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-invoice" id="dataTable">
