@@ -68,14 +68,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{-- excel  buttons --}}
-                                <div class="col-lg-1">
+
+                                <div class="col-xxl-2 col-md-6 col-lg-4">
                                     <div class="form-group">
-                                        <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button type="button" class="btn btn-primary export"><i
-                                                    class="far fa-file-excel me-2"></i>
-                                                Excel</button>
-                                        </div>
+                                        <button type="button"
+                                            class="btn bg-danger form-reset">{{ __('Reset') }}</button>
+                                        <button type="submit" class="btn bg-label-primary">{{ __('Search') }}</button>
                                     </div>
                                 </div>
                             </div>
@@ -85,7 +83,13 @@
 
                 <div class="card mt-5">
                     <div class="card-header">
-                        <h4 class="section_title">Report List</h4>
+                        <h4 class="section_title">{{ __('Report List') }}</h4>
+                        <div class="btn-actions-pane-right actions-icon-btn">
+                            <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                                Excel</button>
+                            <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                                PDF</button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

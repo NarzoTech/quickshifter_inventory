@@ -137,7 +137,7 @@
                         {{ __('Business Settings') }}
                     </a>
                 </li>
-                <li class="{{ isRoute('admin.print.settings', 'active') }} menu-item ">
+                {{-- <li class="{{ isRoute('admin.print.settings', 'active') }} menu-item ">
                     <a class="menu-link" href="{{ route('admin.print.settings') }}">
                         {{ __('Print Settings') }}
                     </a>
@@ -156,7 +156,7 @@
                     <a class="menu-link" href="{{ route('admin.courier.settings') }}">
                         {{ __('Courier Settings') }}
                     </a>
-                </li>
+                </li> --}}
                 <li class="{{ isRoute('admin.reset.database', 'active') }} menu-item ">
                     <a class="menu-link" href="{{ route('admin.reset.database') }}">
                         {{ __('Reset Database') }}
