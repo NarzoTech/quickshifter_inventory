@@ -1,7 +1,7 @@
 @foreach ($sale->payment as $index => $payment)
     <tr data-counter="1">
-        <td style="text-align: center; vertical-align: middle;">
-            <select name="payment_type[]" class="form-control form-control-sm pay_by" required>
+        <td>
+            <select name="payment_type[]" class="form-control pay_by" required>
                 @foreach (accountList() as $key => $list)
                     <option value="{{ $key }}" @if ($key == $payment->account->account_type) selected @endif
                         data-name="{{ $list }}">{{ $list }}
@@ -9,34 +9,37 @@
                 @endforeach
             </select>
         </td>
-        <td style="text-align: center; vertical-align: middle;" class="account_info">
+        <td class="account_info">
+            <div class="form-group mb-0">
+                @php
+                    $account = $accounts->where('account_type', $payment->account->account_type);
+                    $html = '';
+                @endphp
+                @if ($account)
+                    @if ($payment->account->account_type != 'cash')
+                        <select name="account_id[]" class="form-control" required>
+                    @endif
 
-            @php
-                $account = $accounts->where('account_type', $payment->account->account_type);
-                $html = '';
-            @endphp
-            @if ($account)
-                @if ($payment->account->account_type != 'cash')
-                    <select name="account_id[]" class="form-control form-control-sm" required>
+                    @foreach ($account as $key => $list)
+                        @include('accounts::payment', [
+                            'html' => $html,
+                            'account' => $list,
+                            'value' => $payment->account->account_type,
+                        ])
+                    @endforeach
+                    @if ($payment->account->account_type != 'cash' && $html)
+                        </select>
+                    @endif
                 @endif
-
-                @foreach ($account as $key => $list)
-                    @include('accounts::payment', [
-                        'html' => $html,
-                        'account' => $list,
-                        'value' => $payment->account->account_type,
-                    ])
-                @endforeach
-                @if ($payment->account->account_type != 'cash' && $html)
-                    </select>
-                @endif
-            @endif
+            </div>
         </td>
-        <td style="text-align: center; vertical-align: middle;">
-            <input type="text" name="paying_amount[]" class="form-control form-control-sm text-center paying_amount"
-                id="payingAmount" placeholder="Amount" required autocomplete="off" value="{{ $payment->amount }}">
+        <td>
+            <div class="form-group mb-0">
+                <input type="text" name="paying_amount[]" class="form-control text-center paying_amount"
+                    id="payingAmount" placeholder="Amount" required autocomplete="off" value="{{ $payment->amount }}">
+            </div>
         </td>
-        <td style="text-align: center; vertical-align: middle;">
+        <td>
             <div class="btn-group btn-group-sm">
                 @if ($index > 0)
                     <a href="javascript:0" class="btn btn-sm btn-danger remove-payment">

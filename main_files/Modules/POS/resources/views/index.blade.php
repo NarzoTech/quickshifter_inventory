@@ -5,6 +5,11 @@
 @endsection
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/pos.css') }}">
+    <style>
+        .ui-autocomplete {
+            z-index: 215000000 !important;
+        }
+    </style>
 @endpush
 @section('content')
 
@@ -304,7 +309,7 @@
                                                     Total Payable
                                                     <span id="payable_amount"></span>
                                                 </td>
-                                                <td>
+                                                <td id="totalAmountWithVat">
                                                     {{ currency($cumalitive_sub_total) }}
                                                 </td>
                                             </tr>
@@ -408,6 +413,7 @@
                                             <input type="hidden" name="sub_total" value="" autocomplete="off">
                                             <td class="text-right w-40" id="sub_totalModal">0</td>
                                         </tr>
+
                                         <tr class="discount-row">
                                             <th class="text-right w-60" colspan="2">
                                                 Discount
@@ -449,8 +455,11 @@
                                                 Sale Date
                                             </th>
                                             <td class="text-right w-40">
-                                                <input type="text" class="form-control datepicker" name="sale_date"
-                                                    value="{{ date('d-m-Y') }}" autocomplete="off">
+                                                <div class="form-group mb-0">
+                                                    <input type="text" class="form-control datepicker"
+                                                        name="sale_date" value="{{ now()->format('d-m-Y') }}"
+                                                        autocomplete="off">
+                                                </div>
                                             </td>
                                         </tr>
                                     </tfoot>
