@@ -110,7 +110,7 @@ input.datepicker {
     bottom: 0;
     background: rgb(96, 92, 168);
     width: 100%;
-    min-height: var(--pos-footer-height);
+    height: 50px;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -127,6 +127,7 @@ input.datepicker {
     font-size: 30px;
     font-weight: 900;
     color: #fff;
+    padding-bottom: 15px;
 }
 
 .pos-footer .cancel-btn {
@@ -166,8 +167,13 @@ input.datepicker {
     color: #fff;
 }
 
+.pos-footer button,
+.pos-footer a {
+    height: 50px !important;
+}
+
 .pos-footer .final-text {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 900;
     margin: 0;
     flex: 1;
@@ -314,14 +320,50 @@ input {
     margin-right: 5px;
 }
 
+.product-table {
+    position: relative;
+}
+
+.product-table .table-responsive {
+    height: 390px;
+    overflow-y: auto;
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+}
+
+.product-table .table-responsive::-webkit-scrollbar {
+    background: #eee;
+    width: 5px;
+}
+
+.product-table .table-responsive::-webkit-scrollbar-thumb {
+    background: #5f61e6;
+}
+
+.product-table .table-responsive table {
+    margin-bottom: 80px !important;
+    border-left: 0;
+}
+
 .pos_pro_table {}
 
 .pos_pro_table table {
     width: 100%;
-    margin-bottom: 80px !important;
 }
 
-.pos_pro_table table thead {}
+.pos_pro_list_table thead {
+    position: sticky;
+    top: -1px;
+    z-index: 9;
+}
+
+.pos_pro_list_table {
+    position: relative;
+}
+
+.pos_pro_list_table thead {}
+
+.pos_pro_list_table tbody {}
 
 .pos_pro_table table thead tr th {
     text-align: left;
@@ -347,6 +389,11 @@ input {
     margin: 0;
 }
 
+.pos_pro_table table tr th,
+.pos_pro_table table tr td {
+    padding: 7px 7px !important;
+}
+
 .pos_pro_table select {
     border: 1px solid #ddd;
     padding: 7px;
@@ -362,7 +409,7 @@ input {
 }
 
 .pos_pro_table input {
-    padding: 0;
+    padding: 7px;
     border: none;
     text-align: center;
     color: #646e78;
@@ -398,7 +445,23 @@ input {
     border-right: 1px solid #ffffff73;
 }
 
-.pos_product_area {}
+.pos_product_area {
+    height: 490px;
+    overflow: hidden;
+    overflow-y: scroll;
+    margin-bottom: 15px;
+}
+
+.pos_product_area::-webkit-scrollbar {
+    background: #eee;
+    width: 5px;
+    height: 5px;
+}
+
+.pos_product_area::-webkit-scrollbar-thumb {
+    background: #5f61e6;
+    scrollbar-width: thin;
+}
 
 .pos-footer button:hover,
 .pos-footer .back-btn:hover {
@@ -418,3 +481,5 @@ input {
 .summary-table .custom_width {
     width: 270px;
 }
+
+.pos-footer .cancel-btn button {}

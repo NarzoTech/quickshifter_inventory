@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body pb-1">
+                <div class="card-body pb-0">
                     <form action="{{ route('admin.suppliers.index') }}" method="GET">
                         <div class="row">
                             <div class="col-xxl-3 col-md-4">

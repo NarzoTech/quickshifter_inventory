@@ -12,7 +12,7 @@
             <div class="section-body">
                 {{-- Search filter --}}
                 <div class="card">
-                    <div class="card-body pb-1">
+                    <div class="card-body pb-0">
                         <form class="search_form" action="" method="GET">
                             <div class="row">
                                 <div class="col-lg-4 col-md-6">
