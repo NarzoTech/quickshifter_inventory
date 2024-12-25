@@ -14,14 +14,14 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class SupplierExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
 
-    public function __construct(private SupplierService $supplier) {}
+    public function __construct(private $supplier) {}
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        $suppliers = $this->supplier->allSupplier()->get();
-        return $suppliers;
+        $supplierData = request()->order_type ? $this->supplier : $this->supplier->get();
+        return $supplierData;
     }
 
     public function headings(): array

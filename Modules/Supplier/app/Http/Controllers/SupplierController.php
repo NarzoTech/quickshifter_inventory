@@ -37,7 +37,7 @@ class SupplierController extends Controller
 
         if (request('export')) {
             $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-            return Excel::download(new SupplierExport($this->supplierService), $fileName);
+            return Excel::download(new SupplierExport($suppliers), $fileName);
         }
 
 
@@ -49,7 +49,9 @@ class SupplierController extends Controller
         $data['total_advance'] = 0;
         $data['total_due_dismiss'] = 0;
 
-        foreach ($suppliers->get() as $supplier) {
+        $supplierData = request()->order_type ? $suppliers : $suppliers->get();
+
+        foreach ($supplierData as $supplier) {
             $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
             $data['pay'] += $supplier->payments->sum('amount');
 
@@ -66,11 +68,12 @@ class SupplierController extends Controller
         }
 
         if (request('export_pdf')) {
-            $html = view('supplier::pdf.supplier', ['suppliers' => $suppliers->get(),  'data' => $data])->render();
+            $html = view('supplier::pdf.supplier', ['suppliers' => $supplierData,  'data' => $data])->render();
             $pdf = $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
             $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
             return $pdf->download($fileName);
         }
+
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
@@ -83,6 +86,8 @@ class SupplierController extends Controller
             $perPage = 20;
         }
 
+
+
         if (request()->order_type) {
             // Convert sorted collection to paginate manually
             $page = request('page', 1); // Default to page 1
@@ -92,16 +97,6 @@ class SupplierController extends Controller
 
         // Create LengthAwarePaginator
 
-        if (request('par-page')) {
-            if (request('par-page') == 'all') {
-                $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate();
-            } else {
-                $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate(request('par-page'));
-            }
-        } else {
-            $suppliers = request()->order_type ? $paginatedSuppliers : $suppliers->paginate(20);
-        }
-
         if (request()->order_type) {
             $suppliers = new LengthAwarePaginator(
                 $paginatedSuppliers,
@@ -110,6 +105,8 @@ class SupplierController extends Controller
                 $page,
                 ['path' => request()->url(), 'query' => request()->query()]
             );
+        } else {
+            $suppliers = $suppliers->paginate($perPage);
         }
 
         $suppliers->appends(request()->query());
