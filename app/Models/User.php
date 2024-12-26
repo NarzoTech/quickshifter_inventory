@@ -16,6 +16,7 @@ use Modules\Customer\app\Models\UserGroup;
 use Modules\Customer\app\Models\Vehicle;
 use Modules\LiveChat\app\Models\Message;
 use Modules\Order\app\Models\OrderReview;
+use Modules\Report\app\Models\OtherSummery;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
 
@@ -171,5 +172,10 @@ class User extends Model
     public function orderReviews()
     {
         return $this->hasMany(OrderReview::class, 'user_id');
+    }
+
+    public function otherSummery()
+    {
+        return $this->hasMany(OtherSummery::class, 'customer_id');
     }
 }
