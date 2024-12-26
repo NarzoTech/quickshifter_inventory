@@ -25,3 +25,10 @@ https://codecanyon.net/search/attendance
 https://demo.24hourworx.com/hrm/weekend/setup
 
 
+
+
+
+
+Barcode will be omitted from the report.
+
+

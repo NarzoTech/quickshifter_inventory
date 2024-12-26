@@ -79,6 +79,12 @@ class SupplierService
             switch (request()->order_type) {
                 case 'due':
                     $suppliers = $suppliers->with(['purchases', 'payments', 'purchaseReturn'])
+                        ->where(function ($q) {
+                            // check if supplier has due
+                            $q->whereHas('purchases', function ($query) {
+                                $query->where('due_amount', '>', 0);
+                            });
+                        })
                         ->get()
                         ->$orderBy(function ($supplier) {
                             $totalPurchase = $supplier->purchases->sum('total_amount');
@@ -90,7 +96,11 @@ class SupplierService
                     break;
 
                 case 'paid':
-                    $suppliers = $suppliers->with(['payments'])
+                    $suppliers = $suppliers->with(['payments', 'purchases'])
+                        ->where(function ($q) {
+                            // check if supplier payment is paid
+                            $q->whereHas('payments', function ($query) {});
+                        })
                         ->get()
                         ->$orderBy(function ($supplier) {
                             return $supplier->payments->sum('amount');
@@ -99,6 +109,7 @@ class SupplierService
 
                 case 'total':
                     $suppliers = $suppliers->with(['purchases'])
+
                         ->get()
                         ->$orderBy(function ($supplier) {
                             return $supplier->purchases->sum('total_amount');

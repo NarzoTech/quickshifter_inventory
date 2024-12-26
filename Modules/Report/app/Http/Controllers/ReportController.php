@@ -487,7 +487,7 @@ class ReportController extends Controller
         }
         $totalAmount = $expenses->sum('amount');
         $expenses = $expenses->paginate(20);
-        $exprenses->appends(request()->query());
+        $expenses->appends(request()->query());
         return view('report::expense', compact('expenses', 'totalAmount'));
     }
 
