@@ -19,6 +19,9 @@
         </thead>
         <tbody>
 
+            @php
+                $i = 1;
+            @endphp
 
             @foreach ($suppliers as $index => $supplier)
                 @php
@@ -26,7 +29,7 @@
                     $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
                 @endphp
                 <tr>
-                    <td style="border: 1px solid #ccc; padding: 8px;">{{ ++$index }}</td>
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ $i++ }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $supplier->name }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $supplier->phone }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $supplier->area->name }}</td>
