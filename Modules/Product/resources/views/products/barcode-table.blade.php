@@ -19,7 +19,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="form-group">
+                                        <div class="form-group mb-0">
                                             <div class="input-group">
                                                 <div class="input-group-text">
                                                     <i class='bx bx-search'></i>

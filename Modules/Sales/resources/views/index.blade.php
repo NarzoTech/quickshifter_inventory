@@ -75,7 +75,7 @@
         </div>
     </div>
 
-    <div class="card mt-5 mb-5">
+    <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title">Sales List</h4>

@@ -88,7 +88,7 @@
         </div>
     </div>
 
-    <div class="card mt-5 mb-5">
+    <div class="card mt-5">
         <div class="card-header">
             <h4 class="section_title">Holiday list</h4>
             <div class="btn-actions-pane-right actions-icon-btn">

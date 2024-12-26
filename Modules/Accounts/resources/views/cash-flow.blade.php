@@ -35,12 +35,11 @@
         </div>
     </div>
 
-    <div class="card mt-3 mb-3">
+    <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> Cash Flow</h4>
             </div>
-
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">

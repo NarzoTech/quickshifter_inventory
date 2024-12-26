@@ -161,7 +161,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="short_description">{{ __('Short Description') }}</label>
-                                            <textarea name="short_description" id="" cols="30" rows="5" class="form-control">{!! old('short_description') !!}</textarea>
+                                            <textarea name="short_description" id="" rows="9" class="form-control">{!! old('short_description') !!}</textarea>
                                             @error('short_description')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -172,7 +172,7 @@
 
                             <div class="col-lg-4">
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-5">
                                         <div id="image-preview" class="image-preview">
                                             <label for="upload" id="image-label">{{ __('Image') }}</label>
                                             <input type="file" name="image" id="image-upload">
