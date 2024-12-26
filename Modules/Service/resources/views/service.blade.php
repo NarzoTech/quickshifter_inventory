@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body pb-1">
+                <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
                             <div class="col-lg-3 col-md-6">
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <div class="card mt-5 mb-5">
+    <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title">Service List</h4>

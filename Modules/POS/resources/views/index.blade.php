@@ -18,7 +18,7 @@
     <div class="main-content">
         <section class="section">
             <div class="section-body">
-                <div class="row mt-4">
+                <div class="row">
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-md-12">
@@ -50,7 +50,17 @@
                                     <div class="card-header">
                                         <form id="product_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4 col-lg-4 col-sm-12">
+                                                    <div class="form-group mb-2">
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="name"
+                                                            placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
+                                                            autocomplete="off" value="{{ request()->get('name') }}">
+                                                        <ul class="dropdown-menu" id="itemList">
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="category_id" id="product_category_id"
                                                             class="form-control select2">
@@ -72,7 +82,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="brand_id" id="product_brand_id"
                                                             class="form-control select2">
@@ -94,16 +104,6 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group mb-2">
-                                                        <input type="text" class="form-control" name="name"
-                                                            id="name"
-                                                            placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
-                                                            autocomplete="off" value="{{ request()->get('name') }}">
-                                                        <ul class="dropdown-menu" id="itemList">
-                                                        </ul>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -118,7 +118,18 @@
                                     <div class="card-header">
                                         <form id="favorite_product_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4 col-lg-4 col-sm-12">
+                                                    <div class="form-group mb-2">
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="favoriteName"
+                                                            placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
+                                                            autocomplete="off" value="{{ request()->get('name') }}">
+                                                        <ul class="dropdown-menu" id="favoriteItemList">
+
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="category_id" id="category_id"
                                                             class="form-control select2">
@@ -140,7 +151,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="brand_id" id="brand_id"
                                                             class="form-control select2">
@@ -160,17 +171,6 @@
                                                                 @endforeach
                                                             @endif
                                                         </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group mb-2">
-                                                        <input type="text" class="form-control" name="name"
-                                                            id="favoriteName"
-                                                            placeholder="{{ __('Enter Product name / SKU / Scan bar code') }}"
-                                                            autocomplete="off" value="{{ request()->get('name') }}">
-                                                        <ul class="dropdown-menu" id="favoriteItemList">
-
-                                                        </ul>
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,7 +228,7 @@
                     </div>
 
                     <div class="col-lg-6">
-                        <div class="card sticky_sidebar">
+                        <div class="card">
                             <div class="card-header pos_sidebar_button">
                                 <div class="row w-100">
                                     <div class="col-md-9 col-lg-10">

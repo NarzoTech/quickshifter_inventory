@@ -25,7 +25,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive table-invoice">
-                                    <table class="table table-striped" id="dataTable">
+                                    <table class="table" id="dataTable">
                                         <thead>
                                             <tr>
                                                 <th>{{ __('SN') }}</th>

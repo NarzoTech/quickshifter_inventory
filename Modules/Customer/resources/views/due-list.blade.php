@@ -4,7 +4,7 @@
 @endsection
 
 @section('content')
-    <div class="card mt-3 mb-3">
+    <div class="card">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Customer Due Receive List') }}</h4>

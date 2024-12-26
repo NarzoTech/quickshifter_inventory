@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body pb-1">
+                <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
                             <div class="col-xxl-3 col-md-6 col-lg-4">
@@ -143,7 +143,7 @@
 
                         @if ($summeries->count() > 0)
                             <tr>
-                                <td colspan="6" class="text-end">
+                                <td colspan="6" class="text-center">
                                     <b>Total</b>
                                 </td>
                                 <td>

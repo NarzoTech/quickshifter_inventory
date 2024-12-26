@@ -181,23 +181,23 @@
                         @endforeach
 
                         <tr>
-                            <td colspan="4" class="text-right font-weight-bold">
-                                {{ __('Total') }}
+                            <td colspan="4" class="text-center">
+                                <b> {{ __('Total') }}</b>
                             </td>
                             <td colspan="1">
-                                {{ currency($data['totalPurchase']) }}
+                                <b>{{ currency($data['totalPurchase']) }}</b>
                             </td>
                             <td colspan="1">
-                                {{ currency($data['pay']) }}
+                                <b>{{ currency($data['pay']) }}</b>
                             </td>
                             <td colspan="1">
-                                {{ currency($data['total_due']) }}
+                                <b>{{ currency($data['total_due']) }}</b>
                             </td>
                             <td colspan="1">
-                                {{ currency($data['total_advance']) }}
+                                <b>{{ currency($data['total_advance']) }}</b>
                             </td>
                             <td colspan="1">
-                                {{ currency($data['total_due_dismiss']) }}
+                                <b>{{ currency($data['total_due_dismiss']) }}</b>
                             </td>
                         </tr>
                     </tbody>
