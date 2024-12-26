@@ -703,6 +703,7 @@ table {
 table tr th,
 table tr td {
     border-right: 1px solid var(--bs-table-border-color);
+    padding: 10px 15px !important;
 }
 
 .form-group select {

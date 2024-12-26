@@ -141,7 +141,7 @@
 
                         @if ($summeries->count() > 0)
                             <tr>
-                                <td colspan="5" class="text-end">
+                                <td colspan="5" class="text-center">
                                     <b>Total</b>
                                 </td>
                                 <td>
