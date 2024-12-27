@@ -98,11 +98,9 @@
                     <thead>
                         <tr>
                             <th>{{ __('Sl') }}</th>
-                            <th>{{ __('Date') }}</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Company') }}</th>
                             <th>{{ __('Phone') }}</th>
-                            <th>{{ __('Memo') }}</th>
                             <th>{{ __('Total') }}</th>
                             <th>{{ __('Paid') }}</th>
                             <th>{{ __('Due') }}</th>
@@ -113,14 +111,12 @@
                         @foreach ($summeries as $summery)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ now()->parse($summery->date)->format('d-m-Y') }}</td>
-                                <td>{{ $summery->supplier->name }}</td>
-                                <td>{{ $summery->supplier->company }}</td>
-                                <td>{{ $summery->supplier->phone }}</td>
-                                <td>{{ $summery->memo_number }}</td>
-                                <td>{{ $summery->amount }}</td>
-                                <td>{{ $summery->paid }}</td>
-                                <td>{{ $summery->due }}</td>
+                                <td>{{ $summery->name }}</td>
+                                <td>{{ $summery->company }}</td>
+                                <td>{{ $summery->phone }}</td>
+                                <td>{{ $summery->otherSummery->sum('amount') }}</td>
+                                <td>{{ $summery->otherSummery->sum('paid') }}</td>
+                                <td>{{ $summery->otherSummery->sum('due') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop{{ $summery->id }}" type="button"
@@ -130,11 +126,13 @@
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $summery->id }}">
 
-                                            <a href="javascript:void(0);" data-bs-toggle="modal"
-                                                data-bs-target="#editCustomer-{{ $summery->id }}"
-                                                class="dropdown-item">{{ __('Edit') }}</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $summery->id }})">{{ __('Delete') }}</a>
+                                            @if ($summery->otherSummery->sum('due'))
+                                                <a href="javascript:void(0);"
+                                                    onclick="payDueModal({{ $summery->id }},{{ $summery->otherSummery->sum('due') }})"
+                                                    class="dropdown-item">{{ __('Pay') }}</a>
+                                            @endif
+                                            <a href="{{ route('admin.other-summery.supplier.ledger', $summery->id) }}"
+                                                class="dropdown-item">{{ __('Ledger') }}</a>
                                         </div>
                                     </div>
                                 </td>
@@ -143,7 +141,7 @@
 
                         @if ($summeries->count() > 0)
                             <tr>
-                                <td colspan="6" class="text-center">
+                                <td colspan="4" class="text-center">
                                     <b>Total</b>
                                 </td>
                                 <td>
@@ -251,106 +249,69 @@
     </div>
 
 
-    @foreach ($summeries as $index => $summery)
-        <div class="modal fade" id="editSupplier-{{ $summery->id }}">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
+    <div class="modal fade" id="paymentModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Edit Supplier Other Due') }}</h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="section_title">{{ __('Pay Due') }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-                    <!-- Modal body -->
-                    <div class="modal-body py-0">
-                        <form action="{{ route('admin.other-summery.supplier.update', $summery->id) }}" method="POST"
-                            id="add-supplier-due-{{ $summery->id }}">
-                            @csrf
-                            @method('PUT')
-                            <div class="row">
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="form-group">
-                                        <label for="supplier_id">{{ __('supplier Name') }}</label>
-                                        <select name="supplier_id" id="supplier_id-{{ $summery->id }}"
-                                            class="form-control select2" data-control="select2"
-                                            data-dropdown-parent="#editSupplier-{{ $summery->id }}">
-                                            <option value="">{{ __('Select Group') }}</option>
-                                            @foreach ($suppliers as $supplier)
-                                                <option value="{{ $supplier->id }}"
-                                                    {{ $supplier->id == $summery->supplier_id ? 'selected' : '' }}>
-                                                    {{ $supplier->name }} -
-                                                    {{ $supplier->phone }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="form-group">
-                                        <label for="date">{{ __('Date') }}</label>
-                                        <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ now()->parse($summery->date)->format('d-m-Y') }}"
-                                            autocomplete="off">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="form-group">
-                                        <label for="memo_number">{{ __('Memo No') }}</label>
-                                        <input type="text" class="form-control" id="memo_number" name="memo_number"
-                                            value="{{ $summery->memo_number }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="form-group">
-                                        <label for="amount">{{ __('Total Amount') }}</label>
-                                        <input type="text" class="form-control" id="amount" name="amount"
-                                            value="{{ $summery->amount }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="form-group">
-                                        <label for="paid">{{ __('Paid') }}</label>
-                                        <input type="text" class="form-control" id="paid" name="paid"
-                                            value="{{ $summery->paid }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="form-group">
-                                        <label for="due">{{ __('Due') }}</label>
-                                        <input type="text" class="form-control" id="due" name="due"
-                                            value="{{ $summery->due }}">
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="description">{{ __('Description') }}</label>
-                                        <textarea name="description" id="description" class="form-control height-80px" rows="3">{{ $summery->description }}</textarea>
-                                    </div>
+                <!-- Modal body -->
+                <div class="modal-body py-0">
+                    <form action="{{ route('admin.other-summery.pay-due') }}" method="POST" id="pay-amount">
+                        @csrf
+                        @method('PUT')
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="amount">{{ __('Pay Amount') }}<span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="amount" name="amount">
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary"
-                            form="add-supplier-due-{{ $summery->id }}">Save</button>
-                    </div>
-
+                        </div>
+                        <input id="id" type="hidden" />
+                    </form>
                 </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="submit" class="btn btn-primary" form="pay-amount">{{ __('Pay') }}</button>
+                </div>
+
             </div>
         </div>
-    @endforeach
+    </div>
 @endsection
 
 
 @push('js')
     <script>
+        $(document).ready(function() {
+            $('[name="paid"],[name="amount"]').on('input', function() {
+                var paid = $(this).val() ? parseFloat($(this).val()) : 0;
+                var amount = $('[name="amount"]').val() ? parseFloat($('[name="amount"]').val()) : 0;
+                var due = amount - paid;
+
+                const form = $(this).closest('form');
+                form.find('[name="due"]').val(due);
+            })
+        })
+
         function deleteData(id) {
             let url = '{{ route('admin.other-summery.supplier.delete', ':id') }}';
             url = url.replace(':id', id);
             $("#deleteForm").attr('action', url);
             $('#deleteModal').modal('show');
+        }
+
+        function payDueModal(id, due) {
+            $('#pay-amount #id').attr('name', 'supplier_id').attr('value', id);
+            $('#pay-amount #amount').val(due);
+            $('#paymentModal').modal('show');
         }
     </script>
 @endpush

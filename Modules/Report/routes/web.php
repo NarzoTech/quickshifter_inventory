@@ -54,6 +54,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     // supplier
     Route::get('other-summery/supplier', [OtherSummeryController::class, 'supplier'])->name('other-summery.supplier');
     Route::post('other-summery/supplier', [OtherSummeryController::class, 'supplierStore'])->name('other-summery.supplier.store');
+    Route::get('other-summery/supplier/{id}/ledger', [OtherSummeryController::class, 'supplierLedger'])->name('other-summery.supplier.ledger');
 
     Route::put('other-summery/supplier/{id}', [OtherSummeryController::class, 'supplierUpdate'])->name('other-summery.supplier.update');
 

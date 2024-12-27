@@ -114,7 +114,7 @@
                                 <td>{{ $summery->customer->phone }}</td>
                                 <td>{{ $summery->amount }}</td>
                                 <td>{{ $summery->paid }}</td>
-                                <td>{{ $summery->amount }}</td>
+                                <td>{{ $summery->due }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop{{ $summery->id }}" type="button"
@@ -142,7 +142,7 @@
                                     <b>Total</b>
                                 </td>
                                 <td>
-                                    <b>{{ $data['total_amount'] }}</b>
+                                    <b>{{ currency($data['total_amount']) }}</b>
                                 </td>
                                 <td>
                                     <b>{{ currency($data['total_paid']) }}</b>

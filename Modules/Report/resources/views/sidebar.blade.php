@@ -23,7 +23,7 @@
 </li>
 
 <li
-    class="menu-item  {{ isRoute(['admin.other-summery.customer', 'admin.other-summery.supplier', 'admin.other-summery.customer.ledger'], 'active open') }}">
+    class="menu-item  {{ isRoute(['admin.other-summery.customer', 'admin.other-summery.supplier', 'admin.other-summery.customer.ledger', 'admin.other-summery.supplier.ledger'], 'active open') }}">
 
     <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class='menu-icon tf-icons bx bx-store'></i>
@@ -37,7 +37,8 @@
                 {{ __('Customer Other Due') }}
             </a>
         </li>
-        <li class="{{ Route::is('admin.other-summery.supplier') ? 'active' : '' }} menu-item">
+        <li
+            class="{{ isRoute(['admin.other-summery.supplier', 'admin.other-summery.supplier.ledger'], 'active') }} menu-item">
             <a href="{{ route('admin.other-summery.supplier') }}" class="menu-link">
                 {{ __('Supplier Other Due') }}
             </a>

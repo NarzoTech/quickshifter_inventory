@@ -20,7 +20,7 @@ class OtherSummeryController extends Controller
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $customers = User::all();
-        // $summeries =  OtherSummery::with('customer')->whereNotNull('customer_id');
+
         $summeries = User::whereHas('otherSummery');
 
 
@@ -84,8 +84,6 @@ class OtherSummeryController extends Controller
 
     public function customerLedger($id)
     {
-
-
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $customers = User::all();
@@ -119,6 +117,41 @@ class OtherSummeryController extends Controller
 
         return view('report::other-summery.customer-ledger', compact('summeries', 'data'));
     }
+    public function supplierLedger($id)
+    {
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
+        $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
+        $customers = User::all();
+        $summeries = OtherSummery::where('supplier_id', $id);
+
+        if ($fromDate || $toDate) {
+            $summeries = $summeries->whereBetween('date', [$fromDate, $toDate]);
+        }
+        if (request()->keyword) {
+            $summeries = $summeries->where(function ($q) {
+                $q->whereHas('supplier', function ($q) {
+                    $q->where('name', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('phone', 'like', '%' . request()->keyword . '%');
+                });
+            });
+        }
+
+        if (request('par-page')) {
+            $perpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $perpage = 20;
+        }
+
+        $data['total_amount'] = $summeries->sum('amount');
+        $data['total_paid'] = $summeries->sum('paid');
+        $data['total_due'] = $summeries->sum('due');
+
+
+        $summeries = $summeries->paginate($perpage);
+        $summeries->appends(request()->all());
+
+        return view('report::other-summery.supplier-ledger', compact('summeries', 'data'));
+    }
 
     public function payDue(Request $request)
     {
@@ -129,6 +162,7 @@ class OtherSummeryController extends Controller
         ]);
 
         $summery = OtherSummery::where('customer_id', $request->customer_id)->where('supplier_id', $request->supplier_id)->get();
+
 
         $amount = $request->amount;
         foreach ($summery as $key => $value) {
@@ -180,26 +214,30 @@ class OtherSummeryController extends Controller
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $suppliers = Supplier::all();
-        $summeries =  OtherSummery::with('supplier')->whereNotNull('supplier_id');
+        $summeries = Supplier::whereHas('otherSummery');
 
         if ($fromDate || $toDate) {
-            $summeries = $summeries->whereBetween('date', [$fromDate, $toDate]);
+            $summeries = $summeries->whereHas('otherSummery', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('date', [$fromDate, $toDate]);
+            });
         }
         if (request()->keyword) {
             $summeries = $summeries->where(function ($q) {
-                $q->whereHas('supplier', function ($q) {
-                    $q->where('name', 'like', '%' . request()->keyword . '%')
-                        ->orWhere('phone', 'like', '%' . request()->keyword . '%')
-                        ->orWhere('company', 'like', '%' . request()->keyword . '%');
-                })
-                    ->orWhere('memo_number', 'like', '%' . request()->keyword . '%')
-                ;
+                $q->where('name', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('phone', 'like', '%' . request()->keyword . '%');
             });
         }
 
-        $data['total_amount'] = $summeries->sum('amount');
-        $data['total_paid'] = $summeries->sum('paid');
-        $data['total_due'] = $summeries->sum('due');
+        $summeriesData = $summeries->with('otherSummery')->get();
+        $data['total_amount'] = $summeriesData->sum(function ($user) {
+            return $user->otherSummery->sum('amount');
+        });
+        $data['total_paid'] = $summeriesData->sum(function ($user) {
+            return $user->otherSummery->sum('paid');
+        });
+        $data['total_due'] = $summeriesData->sum(function ($user) {
+            return $user->otherSummery->sum('due');
+        });
 
 
         $summeries = $summeries->paginate(20);
@@ -241,7 +279,7 @@ class OtherSummeryController extends Controller
     public function supplierUpdate(Request $request, $id)
     {
         $request->validate([
-            'customer_id' => 'required',
+            'supplier_id' => 'required',
             'date' => 'required|date',
             'amount' => 'required',
             'paid' => 'required',
