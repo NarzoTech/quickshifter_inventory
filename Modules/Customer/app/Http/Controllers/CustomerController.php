@@ -401,16 +401,46 @@ class CustomerController extends Controller
     public function dueReceiveList()
     {
         $payments  = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->where('amount', '>', 0);
+        // Date filtering
+        if (request()->from_date && request()->to_date) {
+            $fromDate = \Carbon\Carbon::parse(request()->from_date)->startOfDay();
+            $toDate = \Carbon\Carbon::parse(request()->to_date)->endOfDay();
+            $payments = $payments->whereBetween('payment_date', [$fromDate, $toDate]);
+        }
+
+        // Keyword search
+        if (request()->keyword) {
+            $keyword = '%' . request()->keyword . '%';
+            $payments = $payments->where(function ($q) use ($keyword) {
+                $q->where('note', 'like', $keyword)
+                    ->orWhere('amount', 'like', $keyword)
+
+                    ->orWhereHas('customer', function ($query) use ($keyword) {
+                        $query->where('name', 'like', $keyword)
+                            ->orWhere('phone', 'like', $keyword)
+                            ->orWhere('address', 'like', $keyword)
+                            ->orWhere('email', 'like', $keyword);
+                    });
+            })
+                ->orWhere('invoice', 'like', $keyword)
+                ->orWhere('account_type', 'like', $keyword);
+        }
+
+        if (request()->order_by) {
+            $payments = $payments->orderBy('payment_date', request()->order_by);
+        } else {
+            $payments = $payments->orderBy('payment_date', 'desc');
+        }
 
         if (request('customer')) {
             $payments = $payments->where('customer_id', request('customer'));
         }
-
+        $data['total'] = $payments->sum('amount');
         $payments = $payments->paginate(20);
 
         $payments->appends(request()->query());
 
-        return view('customer::due-list', compact('payments'));
+        return view('customer::due-list', compact('payments', 'data'));
     }
 
     public function dueReceiveEdit($id)
