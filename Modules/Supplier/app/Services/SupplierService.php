@@ -97,14 +97,15 @@ class SupplierService
 
                 case 'paid':
                     $suppliers = $suppliers->with(['payments', 'purchases'])
-                        ->where(function ($q) {
-                            // check if supplier payment is paid
-                            $q->whereHas('payments', function ($query) {});
-                        })
-                        ->get()
-                        ->$orderBy(function ($supplier) {
-                            return $supplier->payments->sum('amount');
-                        });
+                        ->whereHas('purchases')
+                        ->get();
+                    $suppliers = $suppliers->filter(function ($supplier) {
+                        return $supplier->purchases->sum('total_amount') == $supplier->payments->sum('amount');
+                    });
+
+                    $suppliers = $suppliers->$orderBy(function ($supplier) {
+                        return $supplier->payments->sum('amount');
+                    });
                     break;
 
                 case 'total':
