@@ -174,6 +174,7 @@
     </div>
 @endsection
 
+
 @push('js')
     <script>
         'use strict';

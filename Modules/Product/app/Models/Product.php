@@ -4,6 +4,7 @@ namespace Modules\Product\app\Models;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Stock;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -322,14 +323,10 @@ class Product extends Model
         $this->attributes['tags'] = json_encode($value);
     }
 
-    public function mediaImage()
-    {
-        return $this->belongsTo(Media::class, 'image', 'id')->withDefault();
-    }
 
     public function getImageUrlAttribute()
     {
-        return $this->mediaImage?->path;
+        return $this->image;
     }
 
 
@@ -342,8 +339,6 @@ class Product extends Model
     {
         return $this->getSellingPriceAttribute();
     }
-
-
 
     public function getStockAttribute($value)
     {

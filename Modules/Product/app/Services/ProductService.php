@@ -58,6 +58,8 @@ class ProductService
     {
         $products = $this->product->where('status', 1)->withCount('variants')->with('category', 'purchaseDetails', 'latestPurchaseDetail');
 
+        $sort = request()->order_by ? request()->order_by : 'asc';
+        $products = $products->orderBy('name', $sort);
         return $products;
     }
 

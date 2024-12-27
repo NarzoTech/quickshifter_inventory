@@ -362,7 +362,7 @@ class PurchaseService
 
     public function getSuppliers()
     {
-        return Supplier::where('status', 1)->latest()->get();
+        return Supplier::where('status', 1)->orderBy('name', 'asc')->latest()->get();
     }
 
     public function getWarehouses()

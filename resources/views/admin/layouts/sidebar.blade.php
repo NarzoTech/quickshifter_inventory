@@ -167,9 +167,9 @@
                         {{ __('Clear Cache') }}
                     </a>
                 </li>
-                @if (Module::isEnabled('Tax'))
+                {{-- @if (Module::isEnabled('Tax'))
                     @include('tax::sidebar')
-                @endif
+                @endif --}}
             </ul>
         </li>
 
