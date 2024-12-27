@@ -26,7 +26,15 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = $this->brandService->getPaginateBrands()->paginate(20);
+        $brands = $this->brandService->getPaginateBrands();
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+
+        $brands = $brands->paginate($parpage);
         $brands->appends(request()->query());
 
         return view('product::products.brand.index', compact('brands'));

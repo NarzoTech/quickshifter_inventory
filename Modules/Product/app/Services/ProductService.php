@@ -40,7 +40,9 @@ class ProductService
             });
         }
         if (request('order_by')) {
-            $query = $query->orderBy('id', request('order_by'));
+            $query = $query->orderBy('name', request('order_by'));
+        } else {
+            $query = $query->orderBy('name', 'asc');
         }
         if (request('brand_id')) {
             $query = $query->where('brand_id', request('brand_id'));

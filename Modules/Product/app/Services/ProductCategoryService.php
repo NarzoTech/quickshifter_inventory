@@ -22,10 +22,21 @@ class ProductCategoryService
     public function getAllProductCategories()
     {
         $category = $this->category;
-        if (request()->search) {
-            $category = $category->where('name', 'like', '%' . request()->search . '%');
+        if (request()->keyword) {
+            $category = $category->where('name', 'like', '%' . request()->keyword . '%');
         }
-        $category = $category->paginate(20);
+        if (request()->order_by) {
+            $category = $category->orderBy('name', request()->order_by);
+        } else {
+            $category = $category->orderBy('name', 'asc');
+        }
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+
+        $category = $category->paginate($parpage);
         $category->appends(request()->query());
 
         return $category;

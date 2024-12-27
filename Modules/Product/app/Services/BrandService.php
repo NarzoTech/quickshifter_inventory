@@ -25,9 +25,14 @@ class BrandService
     // get product paginate
     public function getPaginateBrands()
     {
-        $brand = $this->brand->orderBy('id', 'DESC');
-        if (request()->search) {
+        $brand = $this->brand;
+        if (request()->keyword) {
             $brand = $brand->where('name', 'like', '%' . request()->search . '%')->orWhere('description', 'like', '%' . request()->search . '%');
+        }
+        if (request()->order_by) {
+            $brand = $brand->orderBy('name', request()->order_by);
+        } else {
+            $brand = $brand->orderBy('name', 'asc');
         }
 
         return $brand;
