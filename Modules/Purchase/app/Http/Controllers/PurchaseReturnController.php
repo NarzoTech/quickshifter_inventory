@@ -26,7 +26,31 @@ class PurchaseReturnController extends Controller
      */
     public function index()
     {
-        $returns = $this->purchaseService->allReturn()->paginate(20);
+        $returns = $this->purchaseService->allReturn();
+
+        if (request()->keyword) {
+            $returns = $returns->where(function ($q) {
+                $q->where('invoice', 'like', '%' . request()->keyword . '%')
+                    ->orWhereHas('supplier', function ($q) {
+                        $q->where('name', 'like', '%' . request()->keyword . '%');
+                    })
+                ;
+            });
+        }
+        if (request('from_date') && request('to_date')) {
+            $returns = $returns->whereBetween('return_date', [now()->parse(request('from_date')), now()->parse(request('to_date'))]);
+        }
+        if (request()->order_by) {
+            $returns = $returns->orderBy('return_date', request()->order_by);
+        } else {
+            $returns = $returns->orderBy('return_date', 'desc');
+        }
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        $returns = $returns->paginate($parpage);
         $returns->appends(request()->query());
 
         return view('purchase::return.index', compact('returns'));

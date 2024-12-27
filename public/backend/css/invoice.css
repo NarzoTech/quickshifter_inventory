@@ -44,7 +44,7 @@ opacity: .4;
 
 .invoice-watermark img {
     width: 100%;
-    opacity: .3;
+    opacity: 0.3;
 }
 
 @media print {
@@ -56,6 +56,7 @@ opacity: .4;
         size: A4;
     }
 
+    .container-fluid,
     .page {
         width: 100%;
         max-width: 100%;
@@ -64,14 +65,18 @@ opacity: .4;
         padding: 0;
         box-shadow: none;
     }
+    .page {
+        padding: 10px 20px !important;
+    }
 
     .page,
     .page * {
         color: black;
     }
 
-    .main-footer {
-        display: none;
+    footer,
+    nav {
+        display: none !important;
     }
 }
 

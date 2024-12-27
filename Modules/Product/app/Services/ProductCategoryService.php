@@ -52,8 +52,8 @@ class ProductCategoryService
     public function getCategories()
     {
         $category = $this->category->with('products');
-        if (request()->search) {
-            $category = $category->where('name', 'like', '%' . request()->search . '%');
+        if (request()->keyword) {
+            $category = $category->where('name', 'like', '%' . request()->keyword . '%');
         }
 
         return $category;

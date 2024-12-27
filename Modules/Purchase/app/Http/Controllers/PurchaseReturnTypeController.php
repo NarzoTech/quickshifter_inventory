@@ -20,7 +20,25 @@ class PurchaseReturnTypeController extends Controller
     public function index()
     {
 
-        $lists = PurchaseReturnType::all();
+        $lists = PurchaseReturnType::query();
+
+        if (request()->keyword) {
+            $lists = $lists->where(function ($q) {
+                $q->where('name', 'like', '%' . request()->keyword . '%');
+            });
+        }
+        if (request()->order_by) {
+            $sort = request()->order_by;
+            $lists = $lists->orderBy('name', $sort);
+        }
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        $lists = $lists->paginate($parpage);
+        $lists->appends(request()->query());
+
         return view('purchase::return-list', compact('lists'));
     }
 

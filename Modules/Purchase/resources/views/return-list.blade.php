@@ -5,59 +5,117 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="section_title">{{ __('Purchases Return Type') }}</h4>
-                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addType" class="btn btn-primary"><i
-                            class="fa fa-plus"></i>
-                        {{ __('Add Purchases Return Type') }}</a>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ __('SL') }}</th>
-                                            <th>{{ __('Type') }}</th>
-                                            <th>{{ __('Created By') }}</th>
-                                            <th>{{ __('Action') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lists as $list)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $list->name }}</td>
-                                                <td>{{ $list->createdBy?->name }}</td>
-                                                <td>
-                                                    <div class="btn-group" role="group">
-                                                        <button id="btnGroupDrop{{ $list->id }}" type="button"
-                                                            class="btn btn-primary dropdown-toggle"
-                                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                            Action
-                                                        </button>
-                                                        <div class="dropdown-menu"
-                                                            aria-labelledby="btnGroupDrop{{ $list->id }}">
-                                                            <a class="dropdown-item" href="javascript:;"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#editType{{ $list->id }}">Edit</a>
-                                                            <a href="javascript:;" class="dropdown-item"
-                                                                onclick="deleteData({{ $list->id }})">
-                                                                Delete</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                <div class="card-body pb-0">
+                    <form action="" method="GET">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group search-wrapper">
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                    <button type="submit">
+                                        <i class='bx bx-search'></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <select name="order_by" id="order_by" class="form-control">
+                                        <option value="">{{ __('Order By') }}</option>
+                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                            {{ __('ASC') }}
+                                        </option>
+                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                            {{ __('DESC') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('Per Page') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('10') }}
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('50') }}
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('100') }}
+                                        </option>
+                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                            {{ __('All') }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-primary">Search</button>
+                                </div>
                             </div>
                         </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-5">
+        <div class="card-header">
+            <h4 class="section_title">{{ __('Purchases Return Type') }}</h4>
+            <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addType" class="btn btn-primary"><i
+                    class="fa fa-plus"></i>
+                {{ __('Add Purchases Return Type') }}</a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('SL') }}</th>
+                                    <th>{{ __('Type') }}</th>
+                                    <th>{{ __('Created By') }}</th>
+                                    <th>{{ __('Action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($lists as $list)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $list->name }}</td>
+                                        <td>{{ $list->createdBy?->name }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop{{ $list->id }}" type="button"
+                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                    Action
+                                                </button>
+                                                <div class="dropdown-menu"
+                                                    aria-labelledby="btnGroupDrop{{ $list->id }}">
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editType{{ $list->id }}">Edit</a>
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $list->id }})">
+                                                        Delete</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+                    @if (request()->get('par-page') !== 'all')
+                        <div class="float-right">
+                            {{ $lists->onEachSide(0)->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -115,7 +173,8 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
+                                        <label for="name">{{ __('Name') }}<span
+                                                class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
                                             value="{{ $list->name }}">
                                     </div>
@@ -126,7 +185,8 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                        <button type="button" class="btn btn-danger"
+                            data-bs-dismiss="modal">{{ __('Close') }}</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-bank-form{{ $list->id }}">{{ __('Update') }}</button>
                     </div>

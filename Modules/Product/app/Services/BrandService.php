@@ -27,7 +27,7 @@ class BrandService
     {
         $brand = $this->brand;
         if (request()->keyword) {
-            $brand = $brand->where('name', 'like', '%' . request()->search . '%')->orWhere('description', 'like', '%' . request()->search . '%');
+            $brand = $brand->where('name', 'like', '%' . request()->keyword . '%')->orWhere('description', 'like', '%' . request()->keyword . '%');
         }
         if (request()->order_by) {
             $brand = $brand->orderBy('name', request()->order_by);

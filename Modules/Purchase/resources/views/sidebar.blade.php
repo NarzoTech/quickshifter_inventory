@@ -9,7 +9,8 @@
                 <div class="text-truncate" data-i18n="{{ __('Add Purchase') }}">{{ __('Add Purchase') }}</div>
             </a>
         </li>
-        <li class="menu-item {{ Route::is('admin.purchase.index') ? 'active' : '' }}">
+        <li
+            class="menu-item {{ isRoute(['admin.purchase.index', 'admin.purchase.invoice', 'admin.purchase.edit', 'admin.purchase.return'], 'active') }}">
             <a href="{{ route('admin.purchase.index') }}" class="menu-link">
                 <div class="text-truncate" data-i18n="{{ __('Manage Purchase') }}">{{ __('Manage Purchase') }}</div>
             </a>
