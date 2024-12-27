@@ -25,8 +25,20 @@ class ServiceController extends Controller
     public function index()
     {
         $categories = $this->category->all()->get();
-        $services = $this->service->all()->paginate(20);
-        $services->appends(request()->query());
+        $services = $this->service->all();
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $services = $services->get();
+        } else {
+            $services = $services->paginate($parpage);
+            $services->appends(request()->query());
+        }
+
         return view('service::service', compact('categories', 'services'));
     }
 

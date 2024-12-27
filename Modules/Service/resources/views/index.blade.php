@@ -105,7 +105,7 @@
                             </tr>
                         @empty
                             <x-empty-table :name="__('Category')" route="" create="no" :message="__('No data found!')"
-                                colspan="6"></x-empty-table>
+                                colspan="3"></x-empty-table>
                         @endforelse
                     </tbody>
                 </table>

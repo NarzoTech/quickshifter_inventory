@@ -25,9 +25,8 @@ class ServicesService
             });
         }
 
-        if (request()->order_by) {
-            $service = $service->orderBy('id', request()->order_by == 1 ? 'asc' : 'desc');
-        }
+        $sort = request('order_by') ? request('order_by') : 'asc';
+        $service = $service->orderBy('name', $sort);
         return $service;
     }
 

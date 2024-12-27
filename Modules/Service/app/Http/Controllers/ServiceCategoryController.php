@@ -24,7 +24,7 @@ class ServiceCategoryController extends Controller
      */
     public function index()
     {
-        $categories = $this->serviceCategoryService->all()->paginate(10);
+        $categories = $this->serviceCategoryService->all();
         $categories->appends(request()->query());
 
         return view('service::index', compact('categories'));
