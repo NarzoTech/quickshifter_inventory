@@ -44,12 +44,23 @@ class GlobalSettingController extends Controller
             // 'timezone' => __('Timezone is required'),
         ]);
 
+
         foreach ($request->except('_token', '_method') as $key => $value) {
 
             $setting = Setting::where('key', $key)->first();
 
             if ($key == 'logo') {
                 $file_name = file_upload($request->logo, 'uploads/custom-images/', $this->cachedSetting?->logo);
+                $value = $file_name;
+            }
+            // favicon
+            if ($key == 'favicon') {
+                $file_name = file_upload($request->favicon, 'uploads/custom-images/', $this->cachedSetting?->favicon);
+                $value = $file_name;
+            }
+            // login
+            if ($key == 'login') {
+                $file_name = file_upload($request->login, 'uploads/custom-images/', $this->cachedSetting?->login);
                 $value = $file_name;
             }
 

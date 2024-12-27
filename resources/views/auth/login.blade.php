@@ -55,10 +55,6 @@
                     <div class="inflanar-signin__form-login--label"><span>{{ __('OR') }}</span></div>
                     <!-- Login Button Group -->
                     <div class="inflanar-signin__button--group">
-
-                        {{-- <a href="{{ route('login-google') }}" class="inflanar-btn inflanar-btn__other" type="button"><div class="inflanar-signin__btn-icon"><img src="{{ asset('frontend/img/in-google-logo.png') }}" alt="Sign In with Google"></div>{{__('Sign In with Google')}}</a>
-
-                    <a href="{{ route('login-facebook') }}" class="inflanar-btn inflanar-btn__other" type="button"><div class="inflanar-signin__btn-icon"><img src="{{ asset('frontend/img/in-facebook-logo.png') }}"></div>{{__('Sign In with Facebook')}}</a> --}}
                     </div>
                     <p class="inflanar-signin__text mg-top-20">{{ __('Don’t have an account ?') }} <a
                             href="{{ route('register') }}">{{ __('Create Account') }}</a></p>

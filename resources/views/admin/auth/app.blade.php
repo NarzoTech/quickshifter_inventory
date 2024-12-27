@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/css/page-auth.css') }}">
     @include('admin.layouts.styles')
 
+    <style>
+        .template-customizer-open-btn {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,8 +41,8 @@
             <!-- /Left Text -->
             <div class="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-5">
                 <div class="w-100 d-flex justify-content-center">
-                    <img src="{{ asset('backend/assets/img/boy-with-rocket-light.png') }}" class="img-fluid"
-                        alt="Login image" width="700" data-app-dark-img="illustrations/boy-with-rocket-dark.png"
+                    <img src="{{ asset($setting->login) }}" class="img-fluid" alt="Login image" width="700"
+                        data-app-dark-img="illustrations/boy-with-rocket-dark.png"
                         data-app-light-img="illustrations/boy-with-rocket-light.png">
                 </div>
             </div>

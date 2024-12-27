@@ -20,60 +20,74 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-12">
+                                        <div class="col-md-4">
                                             <div id="logo-preview" class="image_preview"
                                                 @if (!empty($setting->logo)) style="background-image: url({{ asset($setting->logo) }}); background-size: cover; background-position: center center;" @endif>
                                                 <label for="logo-upload" id="logo-label">{{ __('Logo') }}</label>
                                                 <input type="file" name="logo" id="logo-upload" hidden>
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <div id="favicon-preview" class="image_preview"
+                                                @if (!empty($setting->favicon)) style="background-image: url({{ asset($setting->favicon) }}); background-size: cover; background-position: center center;" @endif>
+                                                <label for="favicon-upload" id="favicon-label">{{ __('Favicon') }}</label>
+                                                <input type="file" name="favicon" id="favicon-upload" hidden>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div id="login-preview" class="image_preview"
+                                                @if (!empty($setting->login)) style="background-image: url({{ asset($setting->login) }}); background-size: cover; background-position: center center;" @endif>
+                                                <label for="login-upload" id="login-label">{{ __('Login') }}</label>
+                                                <input type="file" name="login" id="login-upload" hidden>
+                                            </div>
+                                        </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="">Business Name</label>
                                                 <input type="text" name="app_name" value="{{ $setting->app_name }}"
-                                                    class="form-control" required autocomplete="off">
+                                                    class="form-control" autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Mobile Phone</label>
                                                 <input type="text" name="mobile" value="{{ $setting->mobile }}"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Email</label>
                                                 <input type="email" name="email" value="{{ $setting->email }}"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Address</label>
                                                 <input type="text" name="address" value="{{ $setting->address }}"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Business Type</label>
                                                 <input type="text" name="type" value="{{ $setting->type }}"
-                                                    class="form-control" readonly required>
+                                                    class="form-control" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">City</label>
                                                 <input type="text" name="city" value="{{ $setting->city }}"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Zip</label>
                                                 <input type="text" name="zip" value="{{ $setting->zip }}"
-                                                    class="form-control" required>
+                                                    class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
@@ -98,8 +112,9 @@
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Business Start Date</label>
-                                                <input type="date" name="start_date" value="{{ $setting->start_date }}"
-                                                    class="form-control" required>
+                                                <input type="text" name="start_date"
+                                                    value="{{ $setting->start_date }}" class="form-control datepicker"
+                                                    autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
@@ -141,7 +156,8 @@
                                                 <label for="">Timezone</label>
                                                 <select name="timezone" id="" class="form-control select2">
                                                     @foreach ($all_timezones as $timezone)
-                                                        <option value="{{ $timezone->name }}" @selected($setting->timezone == $timezone->name)>
+                                                        <option value="{{ $timezone->name }}"
+                                                            @selected($setting->timezone == $timezone->name)>
                                                             {{ $timezone->name }}</option>
                                                     @endforeach
                                                 </select>
@@ -178,22 +194,22 @@
                                             <div class="form-group">
                                                 <label for="">Color</label>
                                                 <input type="color" name="color" value="{{ $setting->color }}"
-                                                    class="form-control" required>
-                                                <input type="hidden" name="status" value="1" required>
+                                                    class="form-control">
+                                                <input type="hidden" name="status" value="1">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Currency</label>
                                                 <input type="text" name="currency" value="{{ $setting->currency }}"
-                                                    class="form-control" placeholder="Currency" required>
+                                                    class="form-control" placeholder="Currency">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
                                                 <label for="">Select Business Vat(%)</label>
                                                 <input type="number" name="vat" value="{{ $setting->vat }}"
-                                                    class="form-control" step=".01" placeholder="Ex: 10" required>
+                                                    class="form-control" step=".01" placeholder="Ex: 10">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
@@ -244,5 +260,7 @@
 @push('js')
     <script>
         prevImage('logo-upload', 'logo-preview', 'logo-label');
+        prevImage('favicon-upload', 'favicon-preview', 'favicon-label');
+        prevImage('login-upload', 'login-preview', 'login-label');
     </script>
 @endpush
