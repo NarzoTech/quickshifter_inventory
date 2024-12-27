@@ -157,6 +157,23 @@
                                 </td>
                             </tr>
                         @endforeach
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <b> {{ __('Total') }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['sale_amount']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['total_amount']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['paid_amount']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['due_amount']) }}</b>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

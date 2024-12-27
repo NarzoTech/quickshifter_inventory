@@ -23,7 +23,7 @@ class SaleService
     public function __construct(private Sale $sale) {}
     public function getSales()
     {
-        return $this->sale->with('products', 'user', 'services', 'details', 'payment');
+        return $this->sale->with('products', 'customer', 'services', 'details', 'payment', 'saleReturns');
     }
     public function createSale(Request $request, $user, $cart): Sale
     {

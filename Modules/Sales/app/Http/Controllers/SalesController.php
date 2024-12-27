@@ -54,12 +54,35 @@ class SalesController extends Controller
         if ($fromDate) {
             $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
         }
+        $sort = request()->order_by ? request()->order_by : 'desc';
+        $sales = $sales->orderBy('order_date', $sort);
 
+        $data['sale_amount'] = 0;
+        $data['total_amount'] = 0;
+        $data['paid_amount'] = 0;
+        $data['due_amount'] = 0;
 
-        $sales = $sales->orderBy('id', 'desc')->paginate(20);
-        $sales->appends(request()->query());
+        foreach ($sales->get() as $sale) {
+            $data['sale_amount'] += $sale->total_price;
+            $data['total_amount'] += $sale->grand_total;
+            $data['paid_amount'] += $sale->paid_amount;
+            $data['due_amount'] += $sale->due_amount;
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $sales = $sales->get();
+        } else {
+            $sales = $sales->paginate($parpage);
+            $sales->appends(request()->query());
+        }
+
         $title = 'Sales List';
-        return view('sales::index', compact('sales', 'title'));
+        return view('sales::index', compact('sales', 'title', 'data'));
     }
 
     /**

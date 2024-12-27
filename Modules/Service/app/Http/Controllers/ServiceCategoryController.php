@@ -25,7 +25,19 @@ class ServiceCategoryController extends Controller
     public function index()
     {
         $categories = $this->serviceCategoryService->all();
-        $categories->appends(request()->query());
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $categories = $categories->get();
+        } else {
+            $categories = $categories->paginate($parpage);
+            $categories->appends(request()->query());
+        }
+
 
         return view('service::index', compact('categories'));
     }
