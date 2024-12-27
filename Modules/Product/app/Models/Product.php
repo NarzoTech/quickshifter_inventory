@@ -48,9 +48,9 @@ class Product extends Model
     public function getSingleImageAttribute()
     {
 
-        $imageUrls =  $this->getImagesUrlAttribute();
-        if ($imageUrls) {
-            return $imageUrls[0];
+        $imageUrl =  $this->getImagesUrlAttribute();
+        if ($imageUrl && file_exists(public_path($imageUrl))) {
+            return asset($imageUrl);
         }
         return asset('backend/img/image_icon.png');
     }
@@ -228,7 +228,7 @@ class Product extends Model
         return $lastPurchase > 0 ? $lastPurchase : $this->attributes['cost'];
     }
 
-    // public function getPriceAttribute() {}
+
 
     public function getLastPurchasePriceAttribute()
     {
@@ -304,20 +304,12 @@ class Product extends Model
 
     public function getImagesUrlAttribute()
     {
-        $images = $this->images;
-        if ($images) {
-            $images = explode(',', $images[0]);
-
-            $media = Media::whereIn('id', $images)->select('path')->get()->toArray();
-
-            // flatten the array
-            $media = array_map(function ($item) {
-                return asset($item['path']);
-            }, $media);
-
-            return $media;
+        $image = $this->image;
+        if (gettype($image) == 'array') {
+            return false;
         }
-        return [];
+
+        return $image;
     }
 
     public function setImagesAttribute($value)

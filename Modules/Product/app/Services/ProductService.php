@@ -100,6 +100,7 @@ class ProductService
         if ($request->file('image')) {
             $data['image'] = file_upload($request->image);
         }
+
         $product->update(
             $data
         );
