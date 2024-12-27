@@ -15,6 +15,7 @@ class AreaService
 
     public function getArea()
     {
+
         return $this->area;
     }
 

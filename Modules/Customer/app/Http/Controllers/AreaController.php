@@ -23,7 +23,26 @@ class AreaController extends Controller
      */
     public function index()
     {
-        $areas = $this->areaService->getArea()->paginate(20);
+        $areas = $this->areaService->getArea();
+
+        if (request()->keyword) {
+            $areas = $areas->where(function ($q) {
+                $q->where('name', 'like', '%' . request()->keyword . '%');
+            });
+        }
+        if (request()->order_by) {
+            $areas = $areas->orderBy('name', request()->order_by);
+        } else {
+            $areas = $areas->orderBy('name', 'asc');
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+
+        $areas = $areas->paginate($parpage);
         $areas->appends(request()->query());
 
         return view('customer::area.index', compact('areas'));

@@ -24,7 +24,32 @@ class VehicleController extends Controller
      */
     public function index()
     {
-        $vehicles = Vehicle::paginate(20);
+        $vehicles = Vehicle::query();
+
+        if (request()->keyword) {
+            $vehicles->where(function ($q) {
+                $q->where('name', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('model', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('plate_number', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('color', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('year', 'like', '%' . request()->keyword . '%')
+                ;
+            });
+        }
+        if (request()->order_by) {
+            $vehicles->orderBy('name', request()->order_by);
+        } else {
+            $vehicles->orderBy('name', 'asc');
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+
+        $vehicles = $vehicles->paginate($parpage);
+        $vehicles->appends(request()->query());
 
         return view('customer::vehicle.index', compact('vehicles'));
     }
