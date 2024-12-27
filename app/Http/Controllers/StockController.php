@@ -40,13 +40,17 @@ class StockController extends Controller
                 $query = $query->where('stock', '=<', 0);
             }
         }
-        if ($request->get('par-page')) {
-            $products = $query->paginate($request->get('par-page'));
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
-            $products = $query->paginate(20);
+            $parpage = 20;
         }
-
-        $products->appends(request()->query());
+        if ($parpage === null) {
+            $products = $query->get();  // No pagination, return all results
+        } else {
+            $products = $query->paginate($parpage);  // Paginate results
+            $products->appends(request()->query());
+        }
 
         $brands = $this->brandService->getActiveBrands();
         $categories = $this->categoryService->getAllProductCategoriesForSelect();

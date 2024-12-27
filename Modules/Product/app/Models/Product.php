@@ -210,15 +210,14 @@ class Product extends Model
         return $toDayStock + $previousStockTotal;
     }
 
-
-
     public function getAvgPurchasePriceAttribute()
     {
-        $purchase = $this->purchaseDetails()->orderBy('id', 'desc')->get();
+        $purchase = $this->purchaseDetails->sortByDesc('id');
         $totalPrice = $purchase->sum('purchase_price');
         $totalQuantity = $purchase->count();
 
-        return $totalQuantity > 0 ? $totalPrice / $totalQuantity : 0;
+        $price = $totalQuantity > 0 ? $totalPrice / $totalQuantity : 0;
+        return (int) $price;
     }
 
 
