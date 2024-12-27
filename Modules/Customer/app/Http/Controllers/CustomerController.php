@@ -7,27 +7,20 @@ use App\Exports\CustomerExport;
 use App\Http\Controllers\Controller;
 use App\Imports\CustomersImport;
 use App\Models\Ledger;
-use App\Models\Payment;
 use App\Models\User;
-use App\Services\MailSenderService;
-use App\Traits\GetGlobalInformationTrait;
 use App\Traits\RedirectHelperTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
-use Modules\Customer\app\Jobs\SendBulkEmailToUser;
-use Modules\Customer\app\Jobs\SendUserBannedMailJob;
 use Modules\Customer\app\Models\BannedHistory;
 use Modules\Customer\app\Models\CustomerDue;
 use Modules\Customer\app\Models\CustomerPayment;
@@ -74,22 +67,29 @@ class CustomerController extends Controller
             switch (request()->order_type) {
                 case 'due':
                     $customers = $query->with(['sales', 'payment', 'saleReturn'])
-                        ->get()
-                        ->$orderBy(function ($customer) {
-                            $totalPurchase = $customer->sales->sum('grand_total');
-                            $totalPaid = $customer->payment->sum('amount');
-                            $totalReturn = $customer->saleReturn->sum('return_amount');
-                            $totalDue = $totalPurchase - $totalPaid - $totalReturn;
-                            return $totalDue;
-                        });
+                        ->get();
+                    $customers = $customers->filter(function ($customer) {
+                        return $customer->getTotalDueAttribute() > 0;
+                    });
+                    $customers = $customers->$orderBy(function ($customer) {
+                        $totalPurchase = $customer->sales->sum('grand_total');
+                        $totalPaid = $customer->payment->sum('amount');
+                        $totalReturn = $customer->saleReturn->sum('return_amount');
+                        $totalDue = $totalPurchase - $totalPaid - $totalReturn;
+                        return $totalDue;
+                    });
                     break;
 
                 case 'paid':
-                    $customers = $query->with(['payment'])
-                        ->get()
-                        ->$orderBy(function ($customer) {
-                            return $customer->payment->sum('amount');
-                        });
+                    $customers = $query->with(['payment', 'sales'])
+                        ->whereHas('sales')
+                        ->get();
+                    $customers = $customers->filter(function ($customer) {
+                        return $customer->sales->sum('grand_total') == $customer->getTotalPaidAttribute();
+                    });
+                    $customers = $customers->$orderBy(function ($customer) {
+                        return $customer->payment->sum('amount');
+                    });
                     break;
 
                 case 'total':
@@ -116,7 +116,8 @@ class CustomerController extends Controller
         $data['total_advance'] = 0;
         $data['total_due_dismiss'] = 0;
 
-        foreach ($query->get() as $index => $customer) {
+        $customerData = request()->order_type ? $customers : $query->get();
+        foreach ($customerData as $index => $customer) {
             $data['totalSale'] += $customer->sales->sum('grand_total');
             $data['pay'] += $customer->total_paid;
 
@@ -134,7 +135,7 @@ class CustomerController extends Controller
 
         if (request('export_pdf')) {
             $html = view('customer::pdf.customer', [
-                'users' => $query->get(),
+                'users' => $customerData,
                 'data' => $data
             ])->render();
 
@@ -157,32 +158,21 @@ class CustomerController extends Controller
         if (request()->order_type) {
             // Convert sorted collection to paginate manually
             $page = request('page', 1); // Default to page 1
-            $paginatedCustomers = $customers->slice(($page - 1) * $perPage, $perPage)->values();
+            $paginatedCustomers = $customerData->slice(($page - 1) * $perPage, $perPage)->values();
         }
-
-
-        if (request('par-page')) {
-            if (request('par-page') == 'all') {
-                $users = request()->order_type ? $paginatedCustomers : $query->paginate();
-            } else {
-                $users = request()->order_type ? $paginatedCustomers : $query->paginate(request('par-page'));
-            }
-        } else {
-            $users = request()->order_type ? $paginatedCustomers : $query->paginate(20);
-        }
-
 
         if (request()->order_type) {
             $users = new LengthAwarePaginator(
                 $paginatedCustomers,
-                $customers->count(),
+                $customerData->count(),
                 $perPage,
                 $page,
                 ['path' => request()->url(), 'query' => request()->query()]
             );
+        } else {
+            $users = $query->paginate($perPage);
         }
-
-        $users->appends(request()->query());
+        $users = $users->appends(request()->query());
 
         $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();

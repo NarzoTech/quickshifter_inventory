@@ -7,7 +7,7 @@
 
     <ul class="menu-sub">
         <li
-            class="menu-item {{ isRoute(['admin.suppliers.index', 'admin.suppliers.ledger', 'admin.suppliers.advance', 'admin.supplier.advance.pay', 'admin.suppliers.ledger-details'], 'active') }}">
+            class="menu-item {{ isRoute(['admin.suppliers.index', 'admin.suppliers.ledger', 'admin.suppliers.advance', 'admin.supplier.advance.pay', 'admin.suppliers.ledger-details', 'admin.suppliers.due-pay'], 'active') }}">
             <a href="{{ route('admin.suppliers.index') }}" class="menu-link">
                 <div class="text-truncate" data-i18n="Without menu">{{ __('Supplier List') }}</div>
             </a>
