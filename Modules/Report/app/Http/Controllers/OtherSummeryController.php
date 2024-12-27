@@ -120,6 +120,36 @@ class OtherSummeryController extends Controller
         return view('report::other-summery.customer-ledger', compact('summeries', 'data'));
     }
 
+    public function payDue(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required',
+            'customer_id' => 'required_if:supplier_id,null',
+            'supplier_id' => 'required_if:customer_id,null',
+        ]);
+
+        $summery = OtherSummery::where('customer_id', $request->customer_id)->where('supplier_id', $request->supplier_id)->get();
+
+        $amount = $request->amount;
+        foreach ($summery as $key => $value) {
+            if ($amount <= $value->due) {
+                if ($amount > 0) {
+                    $value->paid += $amount;
+                    $value->due -= $amount;
+                    $amount = 0;
+                }
+            } else {
+                if ($value->due > 0 && $amount > $value->due) {
+                    $value->paid += $value->due;
+                    $amount -= $value->due;
+                    $value->due = 0;
+                }
+            }
+            $value->save();
+        }
+
+        return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Due Pay successfully']);
+    }
     public function customerUpdate(Request $request, $id)
     {
         $request->validate([

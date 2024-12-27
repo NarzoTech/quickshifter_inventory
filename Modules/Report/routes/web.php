@@ -48,6 +48,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::put('other-summery/customer/{id}', [OtherSummeryController::class, 'customerUpdate'])->name('other-summery.customer.update');
 
     Route::delete('other-summery/customer/{id}', [OtherSummeryController::class, 'customerDelete'])->name('other-summery.customer.delete');
+    Route::put('other-summery/pay-due', [OtherSummeryController::class, 'payDue'])->name('other-summery.pay-due');
 
 
     // supplier
