@@ -30,7 +30,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                <a href="{{ route('admin.report.dts') }}" class="nav-link nav-link-lg">
                     <i class="fas fa-chart-bar"></i> {{ __('Today\'s Summery') }}</i>
                 </a>
             </li>

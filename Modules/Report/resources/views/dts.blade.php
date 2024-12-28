@@ -11,7 +11,7 @@
                 <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-md-6 col-lg-3">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -30,27 +30,22 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-md-6 col-lg-5">
                                 <div class="form-group">
-                                    <input type="text" placeholder="From Date" name="from_date"
-                                        value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date"
+                                            value="{{ request()->get('from_date') }}" autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <input type="text" placeholder="To Date" name="to_date"
-                                        value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                        autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-xxl-1 col-md-4">
-                                <div class="form-group">
-                                    <button type="button" class="btn bg-label-danger form-reset"><i
-                                            class='bx bx-rotate-right'></i></button>
-
-                                    <button type="submit" class="btn bg-label-primary"><i
-                                            class='bx bx-search'></i></button>
+                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="submit" class="btn bg-label-primary">Search</button>
                                 </div>
                             </div>
                         </div>
@@ -63,7 +58,7 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"><i class="fas fa-list"></i> {{ __('DTS') }}</h4>
+                <h4 class="section_title">{{ __('Daily Transaction Summary') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
 
@@ -136,6 +131,11 @@
                     </tbody>
                 </table>
             </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $data->onEachSide(0)->links() }}
+                </div>
+            @endif
         </div>
     </div>
 @endsection

@@ -35,12 +35,12 @@ class EmployeeController extends Controller
             });
         }
 
-        $sort = request()->order_by ? request()->order_by : 'desc';
+        $sort = request()->order_by ? request()->order_by : 'asc';
 
         if (request('order_type')) {
             $employees = $employees->orderBy(request('order_type'), $sort);
         } else {
-            $employees = $employees->orderBy('id', $sort);
+            $employees = $employees->orderBy('name', $sort);
         }
 
         if (request('par-page')) {

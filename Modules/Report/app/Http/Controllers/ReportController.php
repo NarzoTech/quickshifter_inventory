@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Employee\app\Models\EmployeeSalary;
@@ -375,6 +376,29 @@ class ReportController extends Controller
             $fileName = 'dts-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
             return Excel::download(new DTSExport($data), $fileName);
         }
+
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $perPage = count($data);
+            } else {
+
+                $perPage = request('par-page');
+            }
+        } else {
+            $perPage = 20;
+        }
+
+        $page = request('page', 1); // Default to page 1
+        $paginatedData = $data->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $data = new LengthAwarePaginator(
+            $paginatedData,
+            count($data),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
 
         return view('report::dts', compact('data', 'currentBalance', 'openingBalance'));
     }
