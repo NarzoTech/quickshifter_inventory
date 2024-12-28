@@ -188,6 +188,7 @@
             $(document).on('change', '.selectgroup-input', function() {
                 var id = $(this).closest('.selectgroup').data('id');
                 var value = $(this).val();
+
                 if ($('[data-checkboxes="mygroup"]:checked').length > 0) {
                     return;
                 }

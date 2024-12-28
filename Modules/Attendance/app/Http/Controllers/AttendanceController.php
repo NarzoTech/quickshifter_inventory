@@ -57,7 +57,7 @@ class AttendanceController extends Controller
             'employee_id' => 'required',
             'employee_id.*' => 'required|numeric',
             'attendance' => 'required',
-            'attendance.*' => 'required|in:absent,present',
+            'attendance.*' => 'required|in:absent,present,clear',
         ], [
             'date.required' => __('Date is required'),
             'employee_id.required' => __('Employee is required'),
@@ -74,6 +74,14 @@ class AttendanceController extends Controller
 
 
         foreach ($employees as $key => $employee) {
+
+            // check if attendance is clear
+            if ($attendances[$key] == 'clear') {
+                Attendance::where('date', now()->parse($date))->where('employee_id', $employee)->delete();
+                continue;
+            }
+
+
             // check if member has already taken attendance for the date
             if (in_array($employee, $attendancesList)) {
                 // update attendance
