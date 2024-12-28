@@ -75,7 +75,7 @@
             </div>
         </div>
     </div>
-    <div class="card mt-5 mb-5">
+    <div class="card mt-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Supplier Due Pay List') }}</h4>

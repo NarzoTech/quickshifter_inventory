@@ -1498,6 +1498,22 @@ td.sticky-2::after {
     text-align: center !important;
 }
 
+.content-footer {
+    background: #fff;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.content-footer .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3px;
+}
+
+.content-footer .footer-container .text-body b {
+    color: #696cff;
+}
 
 
 
