@@ -34,11 +34,37 @@ class QuotationController extends Controller
             });
         }
 
-        $quotations = $quotations->orderBy('id', 'desc')->paginate(20);
+
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->subDay()->format('Y-m-d') : '';
+        $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
+
+        // from date and to date
+        if ($fromDate) {
+            $quotations = $quotations->whereBetween('date', [$fromDate, $toDate]);
+        }
+        $sort = request()->order_by ? request()->order_by : 'desc';
+        $quotations = $quotations->orderBy('date', $sort);
+
+
+        $data['total'] = $quotations->sum('total');
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $quotations = $quotations->get();
+        } else {
+            $quotations = $quotations->paginate($parpage);
+            $quotations->appends(request()->query());
+        }
+
 
         $quotations->appends(request()->query());
 
-        return view('admin.pages.quotation.index', compact('quotations'));
+        return view('admin.pages.quotation.index', compact('quotations', 'data'));
     }
 
     /**

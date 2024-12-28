@@ -123,6 +123,15 @@
                                 </td>
                             </tr>
                         @endforeach
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <b> {{ __('Total') }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['total']) }}</b>
+                            </td>
+
+                        </tr>
                     </tbody>
                 </table>
             </div>
