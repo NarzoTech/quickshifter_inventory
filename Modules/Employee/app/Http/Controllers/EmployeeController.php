@@ -21,8 +21,39 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        $employees = $this->employee->all()->paginate(20);
-        $employees->appends(request()->query());
+        $employees = $this->employee->all();
+
+        if (request('keyword')) {
+            $keyword = request('keyword');
+            $employees = $employees->where(function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('designation', 'like', "%{$keyword}%")
+                    ->orWhere('email', 'like', "%{$keyword}%")
+                    ->orWhere('mobile', 'like', "%{$keyword}%")
+                    ->orWhere('address', 'like', "%{$keyword}%")
+                ;
+            });
+        }
+
+        $sort = request()->order_by ? request()->order_by : 'desc';
+
+        if (request('order_type')) {
+            $employees = $employees->orderBy(request('order_type'), $sort);
+        } else {
+            $employees = $employees->orderBy('id', $sort);
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $employees = $employees->get();
+        } else {
+            $employees = $employees->paginate($parpage);
+            $employees->appends(request()->query());
+        }
 
         return view('employee::index', compact('employees'));
     }

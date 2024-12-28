@@ -106,7 +106,7 @@
                                         <td>{{ ++$index }}</td>
                                         <td>{{ $employee->name }}</td>
                                         <td>
-                                            <img src="{{ $employee->image ? asset('storage/uploads/employee/' . $employee->image) : asset('storage/uploads/employee/default.png') }}"
+                                            <img src="{{ $employee->image ? asset($employee->image) : asset('/uploads/employee/default.png') }}"
                                                 alt="" width="50px" height="50px">
                                         </td>
                                         <td>{{ $employee->designation }}</td>
