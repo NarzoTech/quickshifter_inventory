@@ -122,6 +122,27 @@
                                 </td>
                             </tr>
                         @endforeach
+
+                        <tr>
+                            <td class="text-center" colspan="4">
+                                <b>{{ __('Total') }}</b>
+                            </td>
+                            <td>
+                                <b>{{ $data['quantity'] }}</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($data['sale_return']) }}</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($data['purchase_price']) }}</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($data['sale_price']) }}</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($data['total']) }}</b>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

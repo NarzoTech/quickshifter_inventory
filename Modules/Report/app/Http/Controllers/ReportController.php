@@ -46,10 +46,10 @@ class ReportController extends Controller
         $brands = $this->brandService->getActiveBrands();
 
         $sort = request()->order_by ? request()->order_by : 'desc';
-        $reports = ProductSale::where('source', 2)
+        $reports = ProductSale::with('product', 'sale')->where('source', 2)
             ->where(function ($query)  use ($from_date, $to_date, $sort) {
                 $query->whereHas('product', function ($q) {
-                    $q->where('name', 'like', '%' . request()->keyword . '%')
+                    $q->with(['brand'])->where('name', 'like', '%' . request()->keyword . '%')
 
                         ->orWhere('sku', 'like', '%' . request()->keyword . '%')
                         ->orWhere('barcode', 'like', '%' . request()->keyword . '%');
@@ -69,6 +69,20 @@ class ReportController extends Controller
             });
 
 
+        $data['quantity'] = 0;
+        $data['sale_return'] = 0;
+        $data['purchase_price'] = 0;
+        $data['sale_price'] = 0;
+        $data['total'] = 0;
+
+        foreach ($reports->get() as $key => $report) {
+            $data['quantity'] += $report->quantity;
+            $data['sale_return'] += $report->sale_return;
+            $data['purchase_price'] += $report->purchase_price;
+            $data['sale_price'] += $report->selling_price;
+            $data['total'] += $report->sub_total - $report->purchase_price * $report->quantity;
+        }
+
 
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
@@ -82,7 +96,7 @@ class ReportController extends Controller
             $reports->appends(request()->query());
         }
 
-        return view('report::other-income', compact('reports'));
+        return view('report::other-income', compact('reports', 'data'));
     }
 
     /**
