@@ -177,10 +177,17 @@
                                                                 data-date={{ $date->format('Y-m-d') }}
                                                                 data-value="present">{{ __('Present') }}</a>
                                                         </li>
-                                                        <li><a class="dropdown-item attendance" href="javascript:;"
+                                                        <li>
+                                                            <a class="dropdown-item attendance" href="javascript:;"
                                                                 data-employee-id={{ $employee->id }}
                                                                 data-date={{ $date->format('Y-m-d') }}
                                                                 data-value="absent">{{ __('Absent') }}</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item attendance" href="javascript:;"
+                                                                data-employee-id={{ $employee->id }}
+                                                                data-date={{ $date->format('Y-m-d') }}
+                                                                data-value="clear">{{ __('Clear') }}</a>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -236,7 +243,7 @@
                     if (a.hasClass('absent')) {
                         a.removeClass('absent');
                     }
-                } else {
+                } else if (value === 'absent') {
                     const a = $(this).parents('.dropdown-menu').siblings('a');
                     a.css({
                         'background': 'red',
@@ -247,6 +254,12 @@
                     if (a.hasClass('present')) {
                         a.removeClass('present');
                     }
+                } else {
+                    const a = $(this).parents('.dropdown-menu').siblings('a');
+                    a.css({
+                        'background': '#ddd',
+                        'color': 'black'
+                    }).removeClass('present absent');
                 }
 
                 updateStatus(data)

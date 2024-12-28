@@ -189,7 +189,6 @@
                 var id = $(this).closest('.selectgroup').data('id');
                 var value = $(this).val();
 
-                // check if closest [data-checkboxes="mygroup"]  is checked
                 if ($('[data-checkboxes="mygroup"]:checked').length > 0) {
                     return;
                 }
