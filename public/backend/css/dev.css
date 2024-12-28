@@ -1230,7 +1230,7 @@ body {
     margin-left: 3px;
 }
 
-.attendance-table a.dropdown-toggle.absent::after {
+.attendance-table a.dropdown-toggle.absent::before {
     content: "\f00d";
     font-size: 14px;
 }
