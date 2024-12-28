@@ -1473,6 +1473,38 @@ td.sticky-2::after {
     height: auto !important;
 }
 
+.auth-cover-brand .app-brand-logo {
+    max-width: 230px;
+    max-height: 70px;
+}
+
+.auth-cover-brand .app-brand-logo img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.ui-datepicker th {
+    padding: .7em .3em !important;
+}
+
+.ui-datepicker td {
+    padding: 1px !important;
+}
+
+.ui-datepicker td span,
+.ui-datepicker td a {
+    padding: .2em !important;
+    text-align: center !important;
+}
+
+
+
+
+
+
+
+
 
 
 @media (min-width: 1400px) {
