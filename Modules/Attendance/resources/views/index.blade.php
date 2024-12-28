@@ -184,10 +184,10 @@
                                                                 data-value="absent">{{ __('Absent') }}</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item attendance" href="javascript:;"
-                                                                data-employee-id={{ $employee->id }}
+                                                            <a class="dropdown-item attendance text-danger"
+                                                                href="javascript:;" data-employee-id={{ $employee->id }}
                                                                 data-date={{ $date->format('Y-m-d') }}
-                                                                data-value="clear">{{ __('Clear') }}</a>
+                                                                data-value="clear">{{ __('Clear Attendance') }}</a>
                                                         </li>
                                                     </ul>
                                                 </div>
