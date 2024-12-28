@@ -26,6 +26,7 @@ class SalesReturn extends Model
         'return_date',
         'return_amount',
         'return_due',
+        'invoice',
         'note',
         'status',
     ];

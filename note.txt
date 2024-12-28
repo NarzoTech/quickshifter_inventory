@@ -27,8 +27,8 @@ https://demo.24hourworx.com/hrm/weekend/setup
 
 
 
-
-
-Barcode will be omitted from the report.
+// sql
+ALTER TABLE `sales_return`
+ADD COLUMN `invoice` VARCHAR(45) NULL DEFAULT NULL AFTER `updated_at`;
 
 

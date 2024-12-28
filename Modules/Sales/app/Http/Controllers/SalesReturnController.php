@@ -32,6 +32,15 @@ class SalesReturnController extends Controller
     {
         $lists = SalesReturn::query();
 
+        if (request()->keyword) {
+            $returns = $lists->where(function ($q) {
+                $q->where('invoice', 'like', '%' . request()->keyword . '%')
+                    ->orWhereHas('customer', function ($q) {
+                        $q->where('name', 'like', '%' . request()->keyword . '%');
+                    })
+                ;
+            });
+        }
 
         $lists = $lists->orderBy('id', request()->order_by ? request()->order_by : 'desc');
 
@@ -115,6 +124,7 @@ class SalesReturnController extends Controller
                 'return_date' => now()->parse($request->return_date),
                 'return_amount' => $request->return_amount,
                 'return_due' => $due,
+                'invoice' => $this->returnInvoice(),
                 'note'  => $request->note,
                 'status' => 1,
             ]);
@@ -271,6 +281,27 @@ class SalesReturnController extends Controller
             if ($purchaseInvoice) {
                 // split the invoice number
                 $split_invoice = explode('-', $purchaseInvoice);
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
+        }
+
+        return $invoice_number;
+    }
+
+    public function returnInvoice()
+    {
+        $number = 1;
+        $prefix = 'INV-';
+        $invoice_number = $prefix . $number;
+
+        $return = SalesReturn::latest()->first();
+        if ($return) {
+            $purchaseInvoice = $return->invoice;
+
+            if ($purchaseInvoice) {
+                // split the invoice number
+                $split_invoice = explode($prefix, $purchaseInvoice);
                 $invoice_number = (int) $split_invoice[1] + 1;
                 $invoice_number = $prefix . $invoice_number;
             }

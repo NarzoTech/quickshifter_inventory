@@ -108,7 +108,7 @@
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $sale->return_date }}</td>
-                                <td>{{ $sale->sale->invoice }}</td>
+                                <td>{{ $sale->invoice }}</td>
                                 <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                 <td>{{ $sale->return_amount }}</td>
                                 <td>{{ $sale->return_amount - $sale->return_due }}</td>
