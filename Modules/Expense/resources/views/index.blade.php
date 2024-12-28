@@ -122,9 +122,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $start =
+                                        $expenses instanceof \Illuminate\Pagination\LengthAwarePaginator
+                                            ? $expenses->firstItem()
+                                            : 1;
+                                @endphp
                                 @forelse ($expenses as $index => $expense)
                                     <tr>
-                                        <td>{{ $expenses->firstItem() + $index }}</td>
+                                        <td>{{ $start + $index }}</td>
                                         <td>{{ $expense->date }}</td>
                                         <td>{{ $expense->createdBy->name }}</td>
                                         <td>{{ $expense->expenseType->name }}</td>

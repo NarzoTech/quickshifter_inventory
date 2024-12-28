@@ -48,10 +48,12 @@ class ExpenseController extends Controller
                     });
             });
         }
+        $sort = request()->order_by ? request()->order_by : 'desc';
+
         if (request('order_type')) {
-            $expenses = $expenses->orderBy(request('order_type'), request('order_by'));
+            $expenses = $expenses->orderBy(request('order_type'), $sort);
         } else {
-            $expenses = $expenses->orderBy('id', 'desc');
+            $expenses = $expenses->orderBy('id', $sort);
         }
         if (request('from_date') && request('to_date')) {
             $from = now()->parse(request('from_date'));
@@ -65,13 +67,17 @@ class ExpenseController extends Controller
         }
         $totalAmount = $expenses->sum('amount');
 
-        if (request('par_page')) {
-            $expenses = $expenses->paginate(request('par_page'));
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
-            $expenses = $expenses->paginate(20);
+            $parpage = 20;
         }
-
-        $expenses->appends(request()->query());
+        if ($parpage === null) {
+            $expenses = $expenses->get();
+        } else {
+            $expenses = $expenses->paginate($parpage);
+            $expenses->appends(request()->query());
+        }
 
         $types = ExpenseType::all();
         $accounts = Account::all();
