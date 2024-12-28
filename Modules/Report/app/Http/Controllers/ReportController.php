@@ -45,8 +45,9 @@ class ReportController extends Controller
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         $brands = $this->brandService->getActiveBrands();
 
+        $sort = request()->order_by ? request()->order_by : 'desc';
         $reports = ProductSale::where('source', 2)
-            ->where(function ($query)  use ($from_date, $to_date) {
+            ->where(function ($query)  use ($from_date, $to_date, $sort) {
                 $query->whereHas('product', function ($q) {
                     $q->where('name', 'like', '%' . request()->keyword . '%')
 
@@ -59,14 +60,15 @@ class ReportController extends Controller
                         $q->orWhere('category_id', request('category_id'));
                     }
                 })
-                    ->whereHas('sale', function ($q)  use ($from_date, $to_date) {
+                    ->whereHas('sale', function ($q)  use ($from_date, $to_date, $sort) {
                         $q->where('order_date', '>=', $from_date)
-                            ->where('order_date', '<=', $to_date);
+                            ->where('order_date', '<=', $to_date)
+                            ->orderBy('order_date', $sort)
+                        ;
                     });
             });
 
-        $sort = request()->order_by ? request()->order_by : 'desc';
-        $reports = $reports->orderBy('order_date', $sort);
+
 
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
