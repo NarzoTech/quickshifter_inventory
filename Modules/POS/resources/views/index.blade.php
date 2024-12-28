@@ -744,6 +744,13 @@
                 $("#customer_id").on("change", function() {
                     let customer_id = $(this).val();
                     $("#order_customer_id").val(customer_id ? customer_id : 'walk-in-customer');
+
+                    const discount = $('select#customer_id option:selected').data('discount');
+                    if (discount) {
+                        $('[name="discount_type"]').val(2).niceSelect('update');
+                        $('#discount_total_amount').val(discount);
+                        updateDiscountType(2);
+                    }
                 })
 
                 // add new customer modal
@@ -1011,6 +1018,9 @@
             });
         })(jQuery);
 
+        function updateDiscountType(newType) {
+            $('[name="discount_type"]').val(newType).niceSelect('update').trigger('change');
+        }
 
         function calculateExtra() {
             let total = 0;

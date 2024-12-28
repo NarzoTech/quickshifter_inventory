@@ -63,10 +63,22 @@ class ReportController extends Controller
                         $q->where('order_date', '>=', $from_date)
                             ->where('order_date', '<=', $to_date);
                     });
-            })
-            ->paginate(20);
+            });
 
-        $reports->appends(request()->query());
+        $sort = request()->order_by ? request()->order_by : 'desc';
+        $reports = $reports->orderBy('order_date', $sort);
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $reports = $reports->get();
+        } else {
+            $reports = $reports->paginate($parpage);
+            $reports->appends(request()->query());
+        }
 
         return view('report::other-income', compact('reports'));
     }
