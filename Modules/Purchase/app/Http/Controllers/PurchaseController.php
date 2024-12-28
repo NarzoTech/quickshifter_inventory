@@ -27,10 +27,34 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        $purchases = $this->purchaseService->all()->paginate(20);
-        $purchases->appends(request()->all());
+        $purchases = $this->purchaseService->all();
+
+
+        $data['total_amount'] = 0;
+        $data['paid_amount'] = 0;
+        $data['due_amount'] = 0;
+
+        foreach ($purchases->get() as $purchase) {
+
+            $data['total_amount'] += $purchase->total_amount;
+            $data['paid_amount'] += $purchase->paid_amount;
+            $data['due_amount'] += $purchase->due_amount;
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $purchases = $purchases->get();
+        } else {
+            $purchases = $purchases->paginate($parpage);
+            $purchases->appends(request()->query());
+        }
+
         $products = $this->purchaseService->getProducts(request());
-        return view('purchase::index', compact('purchases', 'products'));
+        return view('purchase::index', compact('purchases', 'products', 'data'));
     }
 
     /**
