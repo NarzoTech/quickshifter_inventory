@@ -72,10 +72,10 @@ class AttendanceController extends Controller
 
 
 
+
         foreach ($employees as $key => $employee) {
             // check if member has already taken attendance for the date
             if (in_array($employee, $attendancesList)) {
-
                 // update attendance
                 $attendance = Attendance::where('date', now()->parse($date))->where('employee_id', $employee)->first();
                 $attendance->update(['status' => $attendances[$key]]);
@@ -84,7 +84,7 @@ class AttendanceController extends Controller
 
             Attendance::create([
                 'date' => now()->parse($date),
-                'attendance' => $attendances[$key],
+                'status' => $attendances[$key],
                 'employee_id' => $employee
             ]);
         }
