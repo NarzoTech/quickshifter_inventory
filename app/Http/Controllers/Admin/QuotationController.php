@@ -62,8 +62,6 @@ class QuotationController extends Controller
         }
 
 
-        $quotations->appends(request()->query());
-
         return view('admin.pages.quotation.index', compact('quotations', 'data'));
     }
 
