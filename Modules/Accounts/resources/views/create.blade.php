@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Account List') }}</title>
+    <title>{{ __('Create Account') }}</title>
 @endsection
 
 
@@ -12,7 +12,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4 class="section_title">{{ __('Add Account') }}</h4>
+                                <h4 class="section_title">{{ __('Create Account') }}</h4>
                                 <div>
                                     <a href="{{ route('admin.accounts.index') }}" class="btn btn-primary"><i
                                             class="fas fa-arrow-left"></i>{{ __('Back') }}</a>
@@ -267,6 +267,14 @@
             // remove disabled attribute in side the selector
             $(selector).find('input, select').each(function() {
                 $(this).removeAttr('disabled');
+
+                // destroy nice select
+                $(this).niceSelect('destroy');
+
+                // check if tag is select
+                if ($(this).is('select')) {
+                    $(this).niceSelect();
+                }
             });
         }
     </script>
