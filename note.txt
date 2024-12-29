@@ -1,4 +1,4 @@
-ALTER TABLE `inventory`.`supplier_payments`
+ALTER TABLE `supplier_payments`
     Add column
     ledger_id unsigned bigint null;
 
@@ -32,3 +32,5 @@ ALTER TABLE `sales_return`
 ADD COLUMN `invoice` VARCHAR(45) NULL DEFAULT NULL AFTER `updated_at`;
 
 
+ALTER TABLE `employee_salaries`
+ADD COLUMN `payable_salary` VARCHAR(45) NULL AFTER `updated_at`;

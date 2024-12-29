@@ -42,6 +42,14 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
+                                                <label for="payable_salary"
+                                                    class="">{{ __('Employee Payable Salary') }}</label>
+                                                <input type="text" id="payable_salary" name="payable_salary"
+                                                    value="{{ $payableSalary }}" class="form-control" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
                                                 <label for="date"
                                                     class="col-form-label p-0">{{ __('Salary Date') }}</label>
                                                 <input type="text" name="date" id="date"
@@ -65,7 +73,7 @@
                                                 'December',
                                             ];
                                         @endphp
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="month"
                                                     class="col-form-label p-0">{{ __('Month') }}</label>
@@ -79,7 +87,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="salary" class="">{{ __('Salary Year') }}</label>
                                                 <input type="number" id="year" name="year"
@@ -87,18 +95,18 @@
                                                     class="form-control">
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="salary"
                                                     class="col-form-label p-0">{{ __('Already Taken') }}</label>
                                                 <input type="number" name="already_salary" id="already_salary"
-                                                    value="{{ $employee->advanceAmount }}" placeholder="0"
-                                                    class="form-control">
+                                                    value="{{ $paidAmount }}" placeholder="0" class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="">{{ __('Payment Type') }}</label>
+                                                <label for="">{{ __('Payment Type') }}<span
+                                                        class="text-danger">*</span></label>
                                                 <select name="payment_type" id="payment_type"
                                                     class="form-control payment_type" required>
                                                     <option value="" disabled selected>
@@ -122,7 +130,7 @@
                                             <div class="form-group">
                                                 <label for="salary" class="col-form-label">{{ __('Pay Amount') }}</label>
                                                 <input type="text" name="amount" id="amount"
-                                                    value="{{ old('amount', $employee->dueAmount) }}"
+                                                    value="{{ old('amount', $payableSalary - $employee->paidAmount) }}"
                                                     placeholder="Pay Amount" class="form-control">
                                             </div>
                                         </div>
@@ -208,6 +216,7 @@
                     success: function(data) {
                         $('#already_salary').val(data.advanceAmount);
                         $('#amount').val(data.dueAmount);
+                        $('#payable_salary').val(data.payableSalary);
                     }
                 })
             })

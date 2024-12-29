@@ -43,7 +43,7 @@
                             <tr>
                                 <td>0</td>
                                 <td>{{ currency(0) }}</td>
-                                <td>{{ currency($employee->salary) }}</td>
+                                <td>{{ currency($payableSalary) }}</td>
                                 <td>-</td>
                                 <td>-</td>
                                 <td>-</td>
@@ -59,7 +59,7 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ currency($payment->amount) }}</td>
-                                <td>{{ currency($employee->salary - $paidAmount) }}</td>
+                                <td>{{ currency($payableSalary - $paidAmount) }}</td>
                                 <td>{{ $payment->date }}</td>
                                 <td>{{ $payment->note }}</td>
                                 <td>
@@ -81,7 +81,7 @@
 
                             <td class="font-weight-bold">{{ currency($payments->sum('amount')) }}</td>
                             <td class="font-weight-bold">
-                                {{ currency($employee->salary - $payments->sum('amount')) }}</td>
+                                {{ currency($payableSalary - $payments->sum('amount')) }}</td>
                         </tr>
                     </tfoot>
                 </table>

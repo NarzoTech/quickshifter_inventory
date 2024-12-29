@@ -4,7 +4,8 @@
         <div class="text-truncate" data-i18n="{{ __('Employees') }}">{{ __('Employees') }}</div>
     </a>
     <ul class="menu-sub">
-        <li class="{{ isRoute('admin.employee.index', 'active') }} menu-item">
+        <li
+            class="{{ isRoute(['admin.employee.index', 'admin.employee.salary.view', 'admin.employee.salary.edit', 'admin.employee.salary.create'], 'active') }} menu-item">
             <a href="{{ route('admin.employee.index') }}" class="menu-link">
                 {{ __('Employee List') }}
             </a>

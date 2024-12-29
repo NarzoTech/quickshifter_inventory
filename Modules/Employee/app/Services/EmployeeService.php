@@ -53,6 +53,7 @@ class EmployeeService
         $data['year'] = now()->parse($request->date)->format('Y');
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
         $data['salary'] = $request->salary;
+        $data['payable_salary'] = $request->payable_salary;
         $data['payment_type'] = $request->payment_type;
         $data['amount'] = $request->amount;
         $data['note'] = $request->note;
@@ -180,6 +181,7 @@ class EmployeeService
         if ($totalWorkingDays != $totalAttendance) {
             $payableSalary = ($payableSalary / $totalDays) * ($totalWeekends + $totalHolidays + $totalAttendance);
         }
+        $payableSalary = (int) $payableSalary;
 
         return [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff];
     }

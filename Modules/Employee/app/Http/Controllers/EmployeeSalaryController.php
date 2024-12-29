@@ -40,7 +40,9 @@ class EmployeeSalaryController extends Controller
     {
         $accounts = $this->purchaseService->getAccounts();
         $employee = $this->employee->find($id);
-        return view('employee::salary.create', compact('accounts', 'employee'));
+        [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary(request(), $id);
+        $paidAmount = $employee->getPaidAmountAttribute();
+        return view('employee::salary.create', compact('accounts', 'employee', 'payableSalary', 'paidAmount'));
     }
 
     /**
@@ -108,8 +110,10 @@ class EmployeeSalaryController extends Controller
         $employee = $this->employee->find($id);
 
         $amount = $employee->getPaidAmountAttribute($request->month, $request->year);
-
-        return ['advanceAmount' => $amount, 'dueAmount' => $employee->getDueAmountAttribute($request->month, $request->year)];
+        // $employee->getDueAmountAttribute($request->month, $request->year)
+        // (,,,,) skipping destucturing
+        [,,, $payableSalary] = $this->employee->calculateSalary($request, $id);
+        return ['advanceAmount' => $amount, 'dueAmount' => $payableSalary - $amount, 'payableSalary' => $payableSalary];
     }
 
     public function salaryList()

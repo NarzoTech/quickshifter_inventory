@@ -41,6 +41,11 @@ class Employee extends Model
         // dd($month);
         return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id')->where('month', $month)->where('year', request('year'));
     }
+
+    public function currentSalary()
+    {
+        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id');
+    }
     public function getAdvanceAmountAttribute($month = null, $year = null)
     {
         $month = $month ?? now()->format('F');
@@ -68,7 +73,8 @@ class Employee extends Model
         $month = $month ?? now()->format('F');
         $year = $year ?? now()->format('Y');
 
-        return $this->employeeSalary->where('month', $month)->where('year', $year)->sum('amount');
+
+        return $this->currentSalary->where('month', $month)->where('year', $year)->sum('amount');
     }
 
     public function attendance()

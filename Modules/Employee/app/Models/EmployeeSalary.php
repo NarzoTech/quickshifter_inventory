@@ -20,7 +20,8 @@ class EmployeeSalary extends Model
         'account_id',
         'amount',
         'note',
-        'type'
+        'type',
+        'payable_salary'
     ];
 
     public function employee()
