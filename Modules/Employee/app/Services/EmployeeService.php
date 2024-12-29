@@ -126,12 +126,28 @@ class EmployeeService
         $startOfMonth = now()->month($monthNumber)->year($year)->startOfMonth();
         $endOfMonth = now()->month($monthNumber)->year($year)->endOfMonth();
 
-        for ($date = $startOfMonth; $date <= $endOfMonth; $date->addDay()) {
-            if (in_array($date->dayOfWeek, $weekendDays)) {
-                $totalWeekends++;
-            }
-        }
+        $currentDate = now();
+        $currentYear = $currentDate->year;
+        $currentMonth = $currentDate->month;
+        $searchMonth = $startOfMonth->month;
+        $searchYear = $startOfMonth->year;
 
+
+        if ($searchYear <= $currentYear || ($searchYear == $currentYear && $searchMonth <= $currentMonth)) {
+            $totalDaysOfTheMonth = $endOfMonth;
+            if ($endOfMonth->month == $currentMonth) {
+                $currentDay = $currentDate->day;
+                $endDay =  $endOfMonth->day;
+                $totalDaysOfTheMonth = $totalDaysOfTheMonth->subDays($endDay - $currentDay);
+            }
+            for ($date = $startOfMonth; $date <= $totalDaysOfTheMonth; $date->addDay()) {
+                if (in_array($date->dayOfWeek, $weekendDays)) {
+                    $totalWeekends++;
+                }
+            }
+        } else {
+            $totalWeekends = 0;
+        }
         $holidays = HolidaySetup::where(function ($query) use ($monthNumber, $year) {
             $query->whereMonth('start_date', $monthNumber)
                 ->whereYear('start_date', $year);
