@@ -174,7 +174,7 @@ class CustomerController extends Controller
         }
         $users = $users->appends(request()->query());
 
-        $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
+        $groups = $this->userGroup->getUserGroup('dropdown')->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
         $vehicles = $this->vehicle->get();
         return view('customer::customer')->with([

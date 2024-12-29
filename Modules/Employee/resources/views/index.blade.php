@@ -95,6 +95,7 @@
                                     <th>{{ __('Phone') }}</th>
                                     <th>{{ __('Email') }}</th>
                                     <th>{{ __('Salary') }}</th>
+                                    <th>{{ __('Payable Salary') }}</th>
                                     <th>{{ __('Status') }}</th>
                                     <th>{{ __('Joining Date') }}</th>
                                     <th>{{ __('Action') }}</th>
@@ -112,6 +113,7 @@
                                         <td>{{ $employee->designation }}</td>
                                         <td>{{ $employee->mobile }}</td>
                                         <td>{{ $employee->email }}</td>
+                                        <td>{{ $employee->salary }}</td>
                                         <td>{{ $employee->salary }}</td>
                                         <td>
                                             @if ($employee->status == 1)

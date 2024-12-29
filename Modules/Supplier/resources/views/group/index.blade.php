@@ -157,12 +157,6 @@
                                     <input type="text" class="form-control" id="name" name="name">
                                 </div>
                             </div>
-                            {{-- <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="discount">{{ __('Discount') }}(%)</label>
-                                    <input type="number" class="form-control" id="discount" name="discount">
-                                </div>
-                            </div> --}}
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status">{{ __('Status') }}</label>
@@ -216,13 +210,6 @@
                                             value="{{ $group->name }}">
                                     </div>
                                 </div>
-                                {{-- <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="discount">{{ __('Discount') }}(%)</label>
-                                        <input type="number" class="form-control" id="discount" name="discount"
-                                            value="{{ $group->discount }}">
-                                    </div>
-                                </div> --}}
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="status">{{ __('Status') }}</label>

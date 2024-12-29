@@ -2,7 +2,10 @@
 
 namespace Modules\Employee\app\Services;
 
+use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
+use Modules\Attendance\app\Models\HolidaySetup;
+use Modules\Attendance\app\Models\WeekendSetup;
 use Modules\Employee\app\Models\Employee;
 use Modules\Employee\app\Models\EmployeeSalary;
 
@@ -92,5 +95,76 @@ class EmployeeService
         $payment->update($data);
 
         return back()->with(['messege' => 'Salary updated successfully', 'alert-type' => 'success']);
+    }
+
+
+    public function calculateSalary(Request $request, $id)
+    {
+        $employee = $this->employee->find($id);
+        $month = $request->month ?? now()->format('F');
+        $monthNumber = now()->parse($month)->month;
+        $year = $request->year ?? now()->format('Y');
+
+        $payments = EmployeeSalary::where('employee_id', $id)->where('month', $month)->where('year', $year)
+            ->get();
+
+        $employee = $this->employee->find($id);
+
+        // total attendance of employee in that month
+        $totalAttendance = $employee->attendance()->whereMonth('date', $monthNumber)->whereYear('date', $year)->count();
+
+
+        // get the  weekend days
+        $weekends = WeekendSetup::where('is_weekend', 1)->pluck('name')->toArray();
+
+        $weekendDays = collect($weekends)->map(function ($day) {
+            return now()->parse($day)->dayOfWeek;
+        })->toArray();
+
+        $totalWeekends = 0;
+
+        $startOfMonth = now()->month($monthNumber)->year($year)->startOfMonth();
+        $endOfMonth = now()->month($monthNumber)->year($year)->endOfMonth();
+
+        for ($date = $startOfMonth; $date <= $endOfMonth; $date->addDay()) {
+            if (in_array($date->dayOfWeek, $weekendDays)) {
+                $totalWeekends++;
+            }
+        }
+
+        $holidays = HolidaySetup::where(function ($query) use ($monthNumber, $year) {
+            $query->whereMonth('start_date', $monthNumber)
+                ->whereYear('start_date', $year);
+        })->get();
+
+        // count total holidays
+        $totalHolidays = 0;
+
+        foreach ($holidays as $holiday) {
+            // defecrence between start date and end date
+            $difference = now()->parse($holiday->end_date)->diffInDays($holiday->start_date);
+
+            for ($date = now()->parse($holiday->start_date); $date <= now()->parse($holiday->end_date); $date->addDay()) {
+                if (in_array($date->dayOfWeek, $weekendDays)) {
+                    $difference--;
+                }
+            }
+
+            $totalHolidays += $difference + 1;
+        }
+
+        // current month total days
+        $totalDays = now()->month($monthNumber)->year($year)->daysInMonth;
+
+        $totalWorkingDays = $totalDays - ($totalWeekends + $totalHolidays);
+
+        $totalDayOff = $totalWeekends + $totalHolidays;
+
+        $payableSalary = $employee->salary;
+        if ($totalWorkingDays != $totalAttendance) {
+            $payableSalary = ($payableSalary / $totalDays) * ($totalWeekends + $totalHolidays + $totalAttendance);
+        }
+
+        return [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff];
     }
 }

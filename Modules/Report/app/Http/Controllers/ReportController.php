@@ -271,7 +271,6 @@ class ReportController extends Controller
         foreach ($purchases as $purchase) {
             if ($purchase->payments->count() > 0 && $purchase->payments->sum('amount')) {
                 foreach ($purchase->payments as $payment) {
-                    // dd($payment);
                     $newData = [];
                     $newData['date'] = now()->parse($purchase->purchase_date)->format('d-M');
                     $newData['mode'] = $payment->account_type;

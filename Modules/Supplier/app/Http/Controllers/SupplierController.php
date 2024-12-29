@@ -111,7 +111,7 @@ class SupplierController extends Controller
 
         $suppliers->appends(request()->query());
 
-        $groups = $this->userGroup->getUserGroup()->where('type', 'supplier')->where('status', 1)->get();
+        $groups = $this->userGroup->getUserGroup('dropdown')->where('type', 'supplier')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
 
 

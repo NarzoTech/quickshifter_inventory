@@ -13,16 +13,19 @@ class UserGroupService
         $this->userGroup = $userGroup;
     }
 
-    public function getUserGroup()
+    public function getUserGroup($type = 'list')
     {
         $user = $this->userGroup;
-        if (request()->keyword) {
-            $user =  $user->where(function ($q) {
-                $q->where('name', 'LIKE', '%' . request()->keyword . '%')
-                    ->orWhere('description', 'LIKE', '%' . request()->keyword . '%')
-                    ->orWhere('discount', 'LIKE', '%' . request()->keyword . '%');
-            });
+        if ($type == 'list') {
+            if (request()->keyword) {
+                $user =  $user->where(function ($q) {
+                    $q->where('name', 'LIKE', '%' . request()->keyword . '%')
+                        ->orWhere('description', 'LIKE', '%' . request()->keyword . '%')
+                        ->orWhere('discount', 'LIKE', '%' . request()->keyword . '%');
+                });
+            }
         }
+
         $sort = request('order_by') ? request('order_by') : 'asc';
         $user = $user->orderBy('name', $sort);
         return $user;

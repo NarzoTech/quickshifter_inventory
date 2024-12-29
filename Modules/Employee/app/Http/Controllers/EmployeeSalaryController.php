@@ -29,71 +29,72 @@ class EmployeeSalaryController extends Controller
     public function index(Request $request, $id)
     {
 
-        $employee = $this->employee->find($id);
-        $month = $request->month ?? now()->format('F');
-        $monthNumber = now()->parse($month)->month;
-        $year = $request->year ?? now()->format('Y');
+        // $employee = $this->employee->find($id);
+        // $month = $request->month ?? now()->format('F');
+        // $monthNumber = now()->parse($month)->month;
+        // $year = $request->year ?? now()->format('Y');
 
-        $payments = EmployeeSalary::where('employee_id', $id)->where('month', $month)->where('year', $year)
-            ->get();
+        // $payments = EmployeeSalary::where('employee_id', $id)->where('month', $month)->where('year', $year)
+        //     ->get();
 
-        $employee = $this->employee->find($id);
+        // $employee = $this->employee->find($id);
 
-        // total attendance of employee in that month
-        $totalAttendance = $employee->attendance()->whereMonth('date', $monthNumber)->whereYear('date', $year)->count();
+        // // total attendance of employee in that month
+        // $totalAttendance = $employee->attendance()->whereMonth('date', $monthNumber)->whereYear('date', $year)->count();
 
 
-        // get the  weekend days
-        $weekends = WeekendSetup::where('is_weekend', 1)->pluck('name')->toArray();
+        // // get the  weekend days
+        // $weekends = WeekendSetup::where('is_weekend', 1)->pluck('name')->toArray();
 
-        $weekendDays = collect($weekends)->map(function ($day) {
-            return now()->parse($day)->dayOfWeek;
-        })->toArray();
-        // dd($weekendDays);
+        // $weekendDays = collect($weekends)->map(function ($day) {
+        //     return now()->parse($day)->dayOfWeek;
+        // })->toArray();
 
-        $totalWeekends = 0;
+        // $totalWeekends = 0;
 
-        $startOfMonth = now()->month($monthNumber)->year($year)->startOfMonth();
-        $endOfMonth = now()->month($monthNumber)->year($year)->endOfMonth();
+        // $startOfMonth = now()->month($monthNumber)->year($year)->startOfMonth();
+        // $endOfMonth = now()->month($monthNumber)->year($year)->endOfMonth();
 
-        for ($date = $startOfMonth; $date <= $endOfMonth; $date->addDay()) {
-            if (in_array($date->dayOfWeek, $weekendDays)) {
-                $totalWeekends++;
-            }
-        }
+        // for ($date = $startOfMonth; $date <= $endOfMonth; $date->addDay()) {
+        //     if (in_array($date->dayOfWeek, $weekendDays)) {
+        //         $totalWeekends++;
+        //     }
+        // }
 
-        $holidays = HolidaySetup::where(function ($query) use ($monthNumber, $year) {
-            $query->whereMonth('start_date', $monthNumber)
-                ->whereYear('start_date', $year);
-        })->get();
+        // $holidays = HolidaySetup::where(function ($query) use ($monthNumber, $year) {
+        //     $query->whereMonth('start_date', $monthNumber)
+        //         ->whereYear('start_date', $year);
+        // })->get();
 
-        // count total holidays
-        $totalHolidays = 0;
+        // // count total holidays
+        // $totalHolidays = 0;
 
-        foreach ($holidays as $holiday) {
-            // defecrence between start date and end date
-            $difference = now()->parse($holiday->end_date)->diffInDays($holiday->start_date);
+        // foreach ($holidays as $holiday) {
+        //     // defecrence between start date and end date
+        //     $difference = now()->parse($holiday->end_date)->diffInDays($holiday->start_date);
 
-            for ($date = now()->parse($holiday->start_date); $date <= now()->parse($holiday->end_date); $date->addDay()) {
-                if (in_array($date->dayOfWeek, $weekendDays)) {
-                    $difference--;
-                }
-            }
+        //     for ($date = now()->parse($holiday->start_date); $date <= now()->parse($holiday->end_date); $date->addDay()) {
+        //         if (in_array($date->dayOfWeek, $weekendDays)) {
+        //             $difference--;
+        //         }
+        //     }
 
-            $totalHolidays += $difference + 1;
-        }
+        //     $totalHolidays += $difference + 1;
+        // }
 
-        // current month total days
-        $totalDays = now()->month($monthNumber)->year($year)->daysInMonth;
+        // // current month total days
+        // $totalDays = now()->month($monthNumber)->year($year)->daysInMonth;
 
-        $totalWorkingDays = $totalDays - ($totalWeekends + $totalHolidays);
+        // $totalWorkingDays = $totalDays - ($totalWeekends + $totalHolidays);
 
-        $totalDayOff = $totalWeekends + $totalHolidays;
+        // $totalDayOff = $totalWeekends + $totalHolidays;
 
-        $payableSalary = $employee->salary;
-        if ($totalWorkingDays != $totalAttendance) {
-            $payableSalary = ($payableSalary / $totalDays) * ($totalWeekends + $totalHolidays + $totalAttendance);
-        }
+        // $payableSalary = $employee->salary;
+        // if ($totalWorkingDays != $totalAttendance) {
+        //     $payableSalary = ($payableSalary / $totalDays) * ($totalWeekends + $totalHolidays + $totalAttendance);
+        // }
+
+        [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary($request, $id);
 
         return view('employee::salary.index', compact('payments', 'employee', 'month', 'payableSalary', 'totalAttendance', 'totalDayOff'));
     }
