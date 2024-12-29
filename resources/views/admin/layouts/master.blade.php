@@ -29,6 +29,12 @@
 
     @stack('css')
 
+
+    <style>
+        .template-customizer-open-btn {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
