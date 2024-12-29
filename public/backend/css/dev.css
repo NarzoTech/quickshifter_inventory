@@ -1515,9 +1515,19 @@ td.sticky-2::after {
     color: #696cff;
 }
 
+.attendance_table_scroll::-webkit-scrollbar {
+    height: 7px;
+    background: #ddd;
+}
 
+.attendance_table_scroll::-webkit-scrollbar-thumb {
+    width: 20px;
+    background: #696cff;
+}
 
-
+.attendance_table_scroll .attendance-table {
+    margin-bottom: 7px !important;
+}
 
 
 

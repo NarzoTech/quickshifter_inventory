@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 <div class="card-body pt-0">
-                    <div class="table-responsive">
+                    <div class="table-responsive attendance_table_scroll">
                         <table class="table attendance-table">
                             <thead>
                                 @php

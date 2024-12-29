@@ -8,7 +8,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0">
-                    <form action="" method="GET">
+                    <form method="GET">
                         <div class="row">
                             <div class="col-xxl-3 col-md-6">
                                 <div class="form-group search-wrapper">
@@ -80,8 +80,8 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive pb-12">
-                <table style="width: 100%;" class="table mb-12">
+            <div class="table-responsive">
+                <table style="width: 100%;" class="table">
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>
@@ -138,7 +138,6 @@
 
 
     {{-- add group --}}
-
     <div class="modal fade" id="addgroup" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -158,12 +157,12 @@
                                     <input type="text" class="form-control" id="name" name="name">
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="discount">{{ __('Discount') }}(%)</label>
                                     <input type="number" class="form-control" id="discount" name="discount">
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status">{{ __('Status') }}</label>
@@ -173,7 +172,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label for="description">{{ __('Description') }}</label>
                                     <input type="text" class="form-control" id="description" name="description">
@@ -201,7 +200,7 @@
                         <h5 class="modal-title" id="exampleModalLabel1">{{ __('Edit Supplier Group') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body py-0">
                         <form action="{{ route('admin.supplierGroup.update', $group->id) }}" method="POST"
                             id="edit-group-form{{ $group->id }}">
                             @csrf
@@ -217,14 +216,14 @@
                                             value="{{ $group->name }}">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                {{-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="discount">{{ __('Discount') }}(%)</label>
                                         <input type="number" class="form-control" id="discount" name="discount"
                                             value="{{ $group->discount }}">
                                     </div>
-                                </div>
-                                <div class="col-md-4">
+                                </div> --}}
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="status">{{ __('Status') }}</label>
                                         <select name="status" id="status" class="form-control">
@@ -235,7 +234,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-12">
                                     <div class="form-group">
                                         <label for="description">{{ __('Description') }}</label>
                                         <input type="text" class="form-control" id="description" name="description"
@@ -246,7 +245,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary"
                             form="edit-group-form{{ $group->id }}">{{ __('Update') }}</button>
                     </div>
