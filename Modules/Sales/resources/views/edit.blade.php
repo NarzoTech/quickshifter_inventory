@@ -1074,11 +1074,14 @@
         }
 
         function loadPagination(url) {
+            $('.preloader_area').removeClass('d-none');
             $.ajax({
                 type: 'get',
                 url: url,
                 success: function(response) {
-                    $(".product_body").html(response)
+                    $(".product_body").html(response.productView)
+                    $(".service_body").html(response.serviceView)
+                    $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
                     toastr.error("{{ __('Server error occurred') }}")

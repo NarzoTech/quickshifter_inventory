@@ -1176,6 +1176,7 @@
                 url: "{{ route('admin.load-products') }}",
                 data: data,
                 success: function(response) {
+
                     $("#products .product_body").html(response.productView)
                     $("#favoriteProducts .product_body").html(response.favProductView)
                     $(".service_body").html(response.serviceView)
@@ -1189,11 +1190,15 @@
         }
 
         function loadPagination(url) {
+            $('.preloader_area').removeClass('d-none');
             $.ajax({
                 type: 'get',
                 url: url,
                 success: function(response) {
-                    $(".product_body").html(response)
+                    $("#products .product_body").html(response.productView)
+                    $("#favoriteProducts .product_body").html(response.favProductView)
+                    $(".service_body").html(response.serviceView)
+                    $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
                     toastr.error("{{ __('Server error occurred') }}")
