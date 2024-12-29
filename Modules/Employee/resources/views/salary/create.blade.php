@@ -1,6 +1,9 @@
+@php
+    $type = request()->pay;
+@endphp
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Create Employee') }}</title>
+    <title>{{ $type == 1 ? __('Pay Salary') : __('Pay Advance') }}</title>
 @endsection
 
 
@@ -12,7 +15,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4 class="section_title">{{ __('Add Employee') }}</h4>
+                                <h4 class="section_title">{{ $type == 1 ? __('Pay Salary') : __('Pay Advance') }}</h4>
                                 <div>
                                     <a href="{{ route('admin.employee.index') }}" class="btn btn-primary"><i
                                             class="fas fa-arrow-left"></i>{{ __('Back') }}</a>
