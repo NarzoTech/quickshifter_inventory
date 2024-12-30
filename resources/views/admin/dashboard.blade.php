@@ -139,16 +139,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
+                <div class="col-md-12 mb-6">
                     <div class="card h-100 mt-5">
                         <div class="card-body pb-2">
+                            <h5 class="card-title mb-1">{{ __('Current Month Sales') }}</h5>
                             <div id="salesChart"></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
+                <div class="col-md-12 mb-6">
                     <div class="card h-100 mt-5">
                         <div class="card-body pb-2">
+                            <h5 class="card-title mb-1">{{ __('Year Wise Sales & Purchase') }}</h5>
                             <div id="profitChart"></div>
                         </div>
                     </div>
