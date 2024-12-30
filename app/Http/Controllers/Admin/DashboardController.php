@@ -104,7 +104,7 @@ class DashboardController extends Controller
         if ($chart['currentMonthExpense'] > $chart['lastMonthExpense']) {
             $chart['expensePercentage'] = ($chart['currentMonthExpense'] - $chart['lastMonthExpense']) / $chart['lastMonthExpense'] * 100;
         } elseif ($chart['currentMonthExpense'] < $chart['lastMonthExpense']) {
-            $chart['expensePercentage'] = ($chart['lastMonthExpense'] - $chart['currentMonthExpense']) / $chart['lastMonthExpense'] * 100;
+            $chart['expensePercentage'] = - ($chart['lastMonthExpense'] - $chart['currentMonthExpense']) / $chart['lastMonthExpense'] * 100;
         } else {
             $chart['expensePercentage'] = 0;
         }
@@ -119,10 +119,12 @@ class DashboardController extends Controller
             now()->subMonthsNoOverflow()->endOfMonth(),
         ])->sum('grand_total');
 
+
         if ($chart['currentSales'] > $lastSales) {
             $chart['salePercentage'] = ($chart['currentSales'] - $lastSales) / $lastSales * 100;
         } elseif ($chart['currentSales'] < $lastSales) {
-            $chart['salePercentage'] = ($lastSales - $chart['currentSales']) / $lastSales * 100;
+
+            $chart['salePercentage'] = - ($lastSales - $chart['currentSales']) / $lastSales * 100;
         } else {
             $chart['salePercentage'] = 0;
         }
@@ -138,7 +140,7 @@ class DashboardController extends Controller
         if ($chart['currentPurchases'] > $lastPurchases) {
             $chart['purchasePercentage'] = ($chart['currentPurchases'] - $lastPurchases) / $lastPurchases * 100;
         } elseif ($chart['currentPurchases'] < $lastPurchases) {
-            $chart['purchasePercentage'] = ($lastPurchases - $chart['currentPurchases']) / $lastPurchases * 100;
+            $chart['purchasePercentage'] = - ($lastPurchases - $chart['currentPurchases']) / $lastPurchases * 100;
         } else {
             $chart['purchasePercentage'] = 0;
         }

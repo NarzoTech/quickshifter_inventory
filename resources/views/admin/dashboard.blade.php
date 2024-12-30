@@ -74,12 +74,13 @@
                                     <p class="mb-1">{{ 'Expense' }} ({{ now()->format('F') }})</p>
                                     <h4 class="card-title mb-3">{{ currency($chart['currentMonthExpense']) }}</h4>
                                     <small
-                                        class="{{ $chart['expensePercentage'] > 0 ? 'text-success' : ($chart['expensePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium"><i
-                                            class="bx bx-up-arrow-alt"></i>
+                                        class="{{ $chart['expensePercentage'] > 0 ? 'text-success' : ($chart['expensePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
                                         @if ($chart['expensePercentage'] > 0)
-                                            +{{ $chart['expensePercentage'] }}%
+                                            <i class="bx bx-up-arrow-alt"></i>
+                                            {{ $chart['expensePercentage'] }}%
                                         @elseif($chart['expensePercentage'] < 0)
-                                            -{{ $chart['expensePercentage'] }}%
+                                            <i class="bx bx-down-arrow-alt"></i>
+                                            {{ $chart['expensePercentage'] }}%
                                         @else
                                             0%
                                         @endif
@@ -99,12 +100,13 @@
                                     <p class="mb-1">{{ 'Sales' }} ({{ now()->format('F') }})</p>
                                     <h4 class="card-title mb-3">{{ currency($chart['currentSales']) }}</h4>
                                     <small
-                                        class="{{ $chart['salePercentage'] > 0 ? 'text-success' : ($chart['salePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium"><i
-                                            class="bx bx-up-arrow-alt"></i>
+                                        class="{{ $chart['salePercentage'] > 0 ? 'text-success' : ($chart['salePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
                                         @if ($chart['salePercentage'] > 0)
-                                            +{{ $chart['salePercentage'] }}%
+                                            <i class="bx bx-up-arrow-alt"></i>
+                                            {{ $chart['salePercentage'] }}%
                                         @elseif($chart['salePercentage'] < 0)
-                                            -{{ $chart['salePercentage'] }}%
+                                            <i class="bx bx-down-arrow-alt"></i>
+                                            {{ $chart['salePercentage'] }}%
                                         @else
                                             0%
                                         @endif
@@ -124,12 +126,13 @@
                                     <p class="mb-1">{{ 'Purchase' }} ({{ now()->format('F') }})</p>
                                     <h4 class="card-title mb-3">{{ currency($chart['currentPurchases']) }}</h4>
                                     <small
-                                        class="{{ $chart['purchasePercentage'] > 0 ? 'text-success' : ($chart['purchasePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium"><i
-                                            class="bx bx-up-arrow-alt"></i>
+                                        class="{{ $chart['purchasePercentage'] > 0 ? 'text-success' : ($chart['purchasePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
                                         @if ($chart['purchasePercentage'] > 0)
-                                            +{{ $chart['purchasePercentage'] }}%
+                                            <i class="bx bx-up-arrow-alt"></i>
+                                            {{ $chart['purchasePercentage'] }}%
                                         @elseif($chart['purchasePercentage'] < 0)
-                                            -{{ $chart['purchasePercentage'] }}%
+                                            <i class="bx bx-down-arrow-alt"></i>
+                                            {{ $chart['purchasePercentage'] }}%
                                         @else
                                             0%
                                         @endif
