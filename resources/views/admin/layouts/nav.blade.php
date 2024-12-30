@@ -8,10 +8,19 @@
     <div class="navbar-nav-right d-flex flex-wrap align-items-center" id="navbar-collapse">
         <!-- Search -->
         <div class="navbar-nav align-items-center">
-            <div class="nav-item d-flex align-items-center navbar_search">
+            <div class="nav-item d-flex align-items-center navbar_search position-relative">
                 <i class="bx bx-search bx-md"></i>
                 <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Search..."
-                    aria-label="Search...">
+                    aria-label="Search..." id="search_menu">
+
+                <div id="admin_menu_list" class="d-flex flex-column position-absolute d-none rounded-2">
+                    @foreach (routeList() as $route_item)
+                        {{-- @if (checkAdminHasPermission($route_item?->permission) || empty($route_item?->permission)) --}}
+                        <a class="border-bottom {{ isRoute('admin.' . $route_item?->route, 'active') }}"
+                            href="{{ route('admin.' . $route_item?->route, $route_item?->param ?? []) }}{{ $route_item?->fragment ?? '' }}">{{ $route_item?->name }}</a>
+                        {{-- @endif --}}
+                    @endforeach
+                </div>
             </div>
         </div>
         <!-- /Search -->

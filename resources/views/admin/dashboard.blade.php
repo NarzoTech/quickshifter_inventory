@@ -223,7 +223,6 @@
         let currentMonthData = @json($chart['currentMonthSaleData']);
         const currentMonthKeys = Object.keys(currentMonthData).map(key => new Date(key).toISOString());
         currentMonthData = Object.values(currentMonthData).map(value => parseInt(value, 10)).filter(value => !isNaN(value));
-        console.log([...currentMonthKeys])
         // sales chart by date
         var salesOptions = {
             series: [{

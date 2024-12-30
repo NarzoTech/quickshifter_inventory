@@ -190,5 +190,31 @@
         })
     </script>
 
+    <script>
+        // admin search option
+        const inputSelector = "#search_menu";
+        const listSelector = "#admin_menu_list";
+
+        function filterMenuList() {
+            const query = $(inputSelector).val().toLowerCase();
+            $(listSelector + " a").each(function() {
+                const areaName = $(this).text().toLowerCase();
+                $(this).toggle(areaName.includes(query));
+            });
+        }
+
+        $(inputSelector).on("input focus", function() {
+            filterMenuList();
+            $(listSelector).removeClass("d-none");
+        });
+        $(document).on("click", function(e) {
+            if (
+                !$(e.target).closest(inputSelector).length &&
+                !$(e.target).closest(listSelector).length
+            ) {
+                $(listSelector).addClass("d-none");
+            }
+        });
+    </script>
 
     @stack('js')
