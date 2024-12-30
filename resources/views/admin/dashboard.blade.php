@@ -61,6 +61,92 @@
                     </div>
                 </div>
                 <div class="col-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card dashboard_card mt-5">
+                                <div class="card-body">
+                                    <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                        <div class="avatar flex-shrink-0">
+                                            <img src="{{ asset('backend/assets/img/illustrations/wallet-info.png') }}"
+                                                alt="wallet info" class="rounded">
+                                        </div>
+                                    </div>
+                                    <p class="mb-1">{{ 'Expense' }} ({{ now()->format('F') }})</p>
+                                    <h4 class="card-title mb-3">{{ currency($chart['currentMonthExpense']) }}</h4>
+                                    <small
+                                        class="{{ $chart['expensePercentage'] > 0 ? 'text-success' : ($chart['expensePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium"><i
+                                            class="bx bx-up-arrow-alt"></i>
+                                        @if ($chart['expensePercentage'] > 0)
+                                            +{{ $chart['expensePercentage'] }}%
+                                        @elseif($chart['expensePercentage'] < 0)
+                                            -{{ $chart['expensePercentage'] }}%
+                                        @else
+                                            0%
+                                        @endif
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card dashboard_card mt-5">
+                                <div class="card-body">
+                                    <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                        <div class="avatar flex-shrink-0">
+                                            <img src="{{ asset('backend/assets/img/illustrations/wallet-info.png') }}"
+                                                alt="wallet info" class="rounded">
+                                        </div>
+                                    </div>
+                                    <p class="mb-1">{{ 'Sales' }} ({{ now()->format('F') }})</p>
+                                    <h4 class="card-title mb-3">{{ currency($chart['currentSales']) }}</h4>
+                                    <small
+                                        class="{{ $chart['salePercentage'] > 0 ? 'text-success' : ($chart['salePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium"><i
+                                            class="bx bx-up-arrow-alt"></i>
+                                        @if ($chart['salePercentage'] > 0)
+                                            +{{ $chart['salePercentage'] }}%
+                                        @elseif($chart['salePercentage'] < 0)
+                                            -{{ $chart['salePercentage'] }}%
+                                        @else
+                                            0%
+                                        @endif
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card dashboard_card mt-5">
+                                <div class="card-body">
+                                    <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                        <div class="avatar flex-shrink-0">
+                                            <img src="{{ asset('backend/assets/img/illustrations/wallet-info.png') }}"
+                                                alt="wallet info" class="rounded">
+                                        </div>
+                                    </div>
+                                    <p class="mb-1">{{ 'Purchase' }} ({{ now()->format('F') }})</p>
+                                    <h4 class="card-title mb-3">{{ currency($chart['currentPurchases']) }}</h4>
+                                    <small
+                                        class="{{ $chart['purchasePercentage'] > 0 ? 'text-success' : ($chart['purchasePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium"><i
+                                            class="bx bx-up-arrow-alt"></i>
+                                        @if ($chart['purchasePercentage'] > 0)
+                                            +{{ $chart['purchasePercentage'] }}%
+                                        @elseif($chart['purchasePercentage'] < 0)
+                                            -{{ $chart['purchasePercentage'] }}%
+                                        @else
+                                            0%
+                                        @endif
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card h-100 mt-5">
+                        <div class="card-body pb-2">
+                            <div id="salesChart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
                     <div class="card h-100 mt-5">
                         <div class="card-body pb-2">
                             <div id="profitChart"></div>
@@ -101,7 +187,7 @@
                 },
             },
             dataLabels: {
-                enabled: false
+                enabled: true
             },
             stroke: {
                 show: true,
@@ -124,6 +210,48 @@
         };
 
         var chart = new ApexCharts(document.querySelector("#profitChart"), chartOptions);
+        chart.render();
+    </script>
+
+
+    <script>
+        let currentMonthData = @json($chart['currentMonthSaleData']);
+        const currentMonthKeys = Object.keys(currentMonthData).map(key => new Date(key).toISOString());
+        currentMonthData = Object.values(currentMonthData).map(value => parseInt(value, 10)).filter(value => !isNaN(value));
+        console.log([...currentMonthKeys])
+        // sales chart by date
+        var salesOptions = {
+            series: [{
+                name: 'Sales',
+                data: [...currentMonthData]
+            }],
+            chart: {
+                height: 350,
+                type: 'area'
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            xaxis: {
+                type: 'datetime',
+                categories: [...currentMonthKeys],
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM'
+                },
+                y: {
+                    formatter: function(val) {
+                        return "{{ currency_icon() }} " + val
+                    }
+                }
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#salesChart"), salesOptions);
         chart.render();
     </script>
 @endpush

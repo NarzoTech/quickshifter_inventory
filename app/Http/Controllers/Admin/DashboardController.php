@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
 use Modules\Customer\app\Models\CustomerDue;
+use Modules\Expense\app\Models\Expense;
 use Modules\Language\app\Models\Language;
 use Modules\Product\app\Models\Product;
+use Modules\Purchase\app\Models\Purchase;
 use Modules\Purchase\app\Services\PurchaseService;
 use Modules\Sales\app\Models\Sale;
 use Modules\Supplier\app\Services\SupplierService;
@@ -71,7 +73,77 @@ class DashboardController extends Controller
             ->merge($salesData)
             ->sortKeys();
 
-        return view('admin.dashboard', compact('data', 'purchaseData', 'saleData'));
+        // current month sales with dates
+        $currentMonthSales = Sale::selectRaw('DATE_FORMAT(order_date, "%Y-%m-%d") as date, SUM(grand_total) as total')
+            ->where('order_date', '>=', now()->startOfMonth())
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $currentMonthSalesData = $currentMonthSales->mapWithKeys(function ($sale) {
+            return [$sale->date => $sale->total];
+        });
+
+        $currentMonthDates = collect(Carbon::now()->startOfMonth()->daysUntil(Carbon::now()->endOfMonth()))
+            ->mapWithKeys(fn($date) => [$date->format('Y-m-d') => 0]);
+        $chart['currentMonthSaleData'] = $currentMonthDates
+            ->merge($currentMonthSalesData)
+            ->sortKeys();
+
+        // current month expense
+        $chart['currentMonthExpense'] = Expense::where('date', '>=', now()->startOfMonth())->sum('amount');
+
+        // last month expense
+        $chart['lastMonthExpense'] = Expense::whereBetween('date', [
+            now()->subMonthsNoOverflow()->startOfMonth(),
+            now()->subMonthsNoOverflow()->endOfMonth(),
+        ])->sum('amount');
+
+
+        // calculate if current month expense is greater/smaller than last month expense and calculate percentage
+        if ($chart['currentMonthExpense'] > $chart['lastMonthExpense']) {
+            $chart['expensePercentage'] = ($chart['currentMonthExpense'] - $chart['lastMonthExpense']) / $chart['lastMonthExpense'] * 100;
+        } elseif ($chart['currentMonthExpense'] < $chart['lastMonthExpense']) {
+            $chart['expensePercentage'] = ($chart['lastMonthExpense'] - $chart['currentMonthExpense']) / $chart['lastMonthExpense'] * 100;
+        } else {
+            $chart['expensePercentage'] = 0;
+        }
+        $chart['expensePercentage'] = number_format($chart['expensePercentage'], 2);
+
+
+
+        // current month sales
+        $chart['currentSales'] = Sale::where('order_date', '>=', now()->startOfMonth())->sum('grand_total');
+        $lastSales = Sale::whereBetween('order_date', [
+            now()->subMonthsNoOverflow()->startOfMonth(),
+            now()->subMonthsNoOverflow()->endOfMonth(),
+        ])->sum('grand_total');
+
+        if ($chart['currentSales'] > $lastSales) {
+            $chart['salePercentage'] = ($chart['currentSales'] - $lastSales) / $lastSales * 100;
+        } elseif ($chart['currentSales'] < $lastSales) {
+            $chart['salePercentage'] = ($lastSales - $chart['currentSales']) / $lastSales * 100;
+        } else {
+            $chart['salePercentage'] = 0;
+        }
+        $chart['salePercentage'] = number_format($chart['salePercentage'], 2);
+
+        // current month purchase
+        $chart['currentPurchases'] = Purchase::where('purchase_date', '>=', now()->startOfMonth())->sum('total_amount');
+        $lastPurchases = Purchase::whereBetween('purchase_date', [
+            now()->subMonthsNoOverflow()->startOfMonth(),
+            now()->subMonthsNoOverflow()->endOfMonth(),
+        ])->sum('total_amount');
+
+        if ($chart['currentPurchases'] > $lastPurchases) {
+            $chart['purchasePercentage'] = ($chart['currentPurchases'] - $lastPurchases) / $lastPurchases * 100;
+        } elseif ($chart['currentPurchases'] < $lastPurchases) {
+            $chart['purchasePercentage'] = ($lastPurchases - $chart['currentPurchases']) / $lastPurchases * 100;
+        } else {
+            $chart['purchasePercentage'] = 0;
+        }
+        $chart['purchasePercentage'] = number_format($chart['purchasePercentage'], 2);
+        return view('admin.dashboard', compact('data', 'purchaseData', 'saleData', 'chart'));
     }
 
     public function setLanguage()
