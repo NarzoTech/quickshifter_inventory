@@ -60,7 +60,70 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-12">
+                    <div class="card h-100 mt-5">
+                        <div class="card-body pb-2">
+                            <div id="profitChart"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 @endsection
+
+@push('js')
+    <script>
+        const purchase = @json($purchaseData);
+        const purchaseVal = Object.values(purchase).map(value => parseInt(value, 10)).filter(value => !isNaN(value));
+
+        const sales = @json($saleData);
+        const salesVal = Object.values(sales).map(value => parseInt(value, 10)).filter(value => !isNaN(value));
+
+        var chartOptions = {
+            series: [{
+                name: 'Purchase',
+                data: purchaseVal
+            }, {
+                name: 'Sales',
+                data: salesVal
+            }],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    borderRadius: 5,
+                    borderRadiusApplication: 'end'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function(val) {
+                        return "{{ currency_icon() }} " + val
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#profitChart"), chartOptions);
+        chart.render();
+    </script>
+@endpush

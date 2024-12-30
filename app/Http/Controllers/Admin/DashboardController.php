@@ -4,15 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Modules\Customer\app\Models\CustomerDue;
 use Modules\Language\app\Models\Language;
 use Modules\Product\app\Models\Product;
+use Modules\Purchase\app\Services\PurchaseService;
 use Modules\Sales\app\Models\Sale;
 use Modules\Supplier\app\Services\SupplierService;
 
 class DashboardController extends Controller
 {
-    public function __construct(private SupplierService $supplierService)
+
+    public function __construct(private SupplierService $supplierService, private PurchaseService $purchaseService)
     {
         $this->middleware('auth:admin');
     }
@@ -31,7 +34,44 @@ class DashboardController extends Controller
         }
 
         $data['suppliersDues'] = 0;
-        return view('admin.dashboard', compact('data'));
+
+
+
+        $purchases = $this->purchaseService->all()
+            ->selectRaw('DATE_FORMAT(purchase_date, "%Y-%m") as month, SUM(total_amount) as total')
+            ->where('purchase_date', '>=', now()->subMonths(12))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $purchasesData = $purchases->mapWithKeys(function ($purchase) {
+            return [$purchase->month => $purchase->total];
+        });
+
+
+
+        $purchaseData = collect(Carbon::today()->startOfMonth()->subMonths(11)->monthsUntil(Carbon::today()->startOfMonth()))
+            ->mapWithKeys(fn($date) => [$date->format('Y-m') => 0])
+            ->merge($purchasesData)
+            ->sortKeys();
+
+
+        $sales = Sale::selectRaw('DATE_FORMAT(order_date, "%Y-%m") as month, SUM(grand_total) as total')
+            ->where('order_date', '>=', now()->subMonths(12))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $salesData = $sales->mapWithKeys(function ($sale) {
+            return [$sale->month => $sale->total];
+        });
+
+        $saleData = collect(Carbon::today()->startOfMonth()->subMonths(11)->monthsUntil(Carbon::today()->startOfMonth()))
+            ->mapWithKeys(fn($date) => [$date->format('Y-m') => 0])
+            ->merge($salesData)
+            ->sortKeys();
+
+        return view('admin.dashboard', compact('data', 'purchaseData', 'saleData'));
     }
 
     public function setLanguage()
