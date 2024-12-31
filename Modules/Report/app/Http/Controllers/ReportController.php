@@ -739,7 +739,7 @@ class ReportController extends Controller
 
     public function  receivedReport()
     {
-        $totalReceive = CustomerPayment::with(['account', 'sale', 'customer'])->where('is_received', 1);
+        $totalReceive = CustomerPayment::with(['account', 'sale', 'customer'])->where('is_received', 1)->where('amount', '>', 0);
 
         if (request('from_date') || request('to_date')) {
             $totalReceive = $totalReceive->whereBetween('created_at', [request('from_date'), request('to_date')]);
@@ -780,15 +780,36 @@ class ReportController extends Controller
 
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-        // ->whereBetween('order_date', [$fromDate, $toDate])
-        $purchases = Purchase::with('supplier');
+
+        $purchases = Purchase::with(['supplier', 'purchaseDetails', 'createdBy']);
         if (request('from_date') || request('to_date')) {
             $purchases = $purchases->whereBetween('date', [$fromDate, $toDate]);
         }
         $totalAmount = $purchases->sum('total_amount');
-        $purchases = $purchases->paginate(20);
-        $purchases->appends(request()->query());
-        return view('report::purchase', compact('purchases', 'totalAmount'));
+
+        $data['total_amount'] = 0;
+        $data['paid_amount'] = 0;
+        $data['due_amount'] = 0;
+
+        foreach ($purchases->get() as $purchase) {
+
+            $data['total_amount'] += $purchase->total_amount;
+            $data['paid_amount'] += $purchase->paid_amount;
+            $data['due_amount'] += $purchase->due_amount;
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $purchases = $purchases->get();
+        } else {
+            $purchases = $purchases->paginate($parpage);
+            $purchases->appends(request()->query());
+        }
+        return view('report::purchase', compact('purchases', 'data'));
     }
 
     public function supplier()

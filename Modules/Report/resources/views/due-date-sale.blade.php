@@ -103,9 +103,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($sales as $sale)
+                        @php
+                            $start = checkPaginate($sales) ? $sales->firstItem() : 1;
+                        @endphp
+                        @foreach ($sales as $index => $sale)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $index + $start }}</td>
                                 <td>{{ $sale->order_date->format('d-m-Y') }}</td>
                                 <td>{{ $sale->due_date }}</td>
                                 <td>{{ $sale->invoice }}</td>

@@ -99,10 +99,13 @@
 
                     </thead>
                     <tbody>
-                        @foreach ($totalReceive as $receive)
+                        @php
+                            $start = checkPaginate($totalReceive) ? $totalReceive->firstItem() : 1;
+                        @endphp
+                        @foreach ($totalReceive as $index => $receive)
                             <tr>
                                 <td>
-                                    {{ $totalReceive->firstItem() + $loop->index }}
+                                    {{ $start + $index }}
                                 </td>
                                 <td>
                                     {{ $receive->payment_date }}

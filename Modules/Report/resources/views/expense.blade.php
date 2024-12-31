@@ -96,9 +96,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $start = checkPaginate($expenses) ? $expenses->firstItem() : 1;
+                        @endphp
                         @foreach ($expenses as $key => $expense)
                             <tr>
-                                <td>{{ $expenses->firstItem() + $key }}</td>
+                                <td>{{ $start + $key }}</td>
                                 <td>{{ now()->parse($expense->date)->format('d-m-Y') }}</td>
                                 <td>{{ $expense->createdBy->name }}</td>
                                 <td>{{ $expense->expenseType->name }}</td>
