@@ -543,6 +543,13 @@ if (!function_exists('numberToWord')) {
     }
 }
 
+if (!function_exists('checkPaginate')) {
+    function checkPaginate($list)
+    {
+        return $list instanceof \Illuminate\Pagination\LengthAwarePaginator;
+    }
+}
+
 if (!function_exists('routeList')) {
     function routeList(): object
     {

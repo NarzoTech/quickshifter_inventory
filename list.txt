@@ -1,0 +1,277 @@
+$route_list = [
+            (object) ['name' => __('Dashboard'), 'route' => 'dashboard', 'permission' => 'dashboard.view'],
+            (object) ['name' => 'Supplier List', 'route' => 'suppliers.index', 'permission' => 'suppliers.view'],
+            (object) ['name' => 'Supplier Due Paid List', 'route' => 'suppliers.due-pay-history', 'permission' => 'suppliers.due-pay.view'],
+            (object) ['name' => 'Supplier Group', 'route' => 'supplierGroup.index', 'permission' => 'supplierGroup.view'],
+            (object) ['name' => 'Customers', 'route' => 'customers.index', 'permission' => 'customers.view'],
+            (object) ['name' => 'Due Receive List', 'route' => 'customers.due-receive.list', 'permission' => 'customers.due-receive.view'],
+            (object) ['name' => 'Customer Group', 'route' => 'customerGroup.index', 'permission' => 'customerGroup.view'],
+            (object) ['name' => 'Vehicle List', 'route' => 'vehicle.index', 'permission' => 'vehicle.view'],
+            (object) ['name' => 'Area List', 'route' => 'area.index', 'permission' => 'area.view'],
+            (object) [
+                'name' => 'Product List',
+                'route' => 'product.index',
+                'permission' => 'product.view',
+                'children' => ['product.edit', 'product.show'],
+            ],
+            (object) [
+                'name' => 'Add Product',
+                'route' => 'product.create',
+                'permission' => 'product.create',
+            ],
+            (object) [
+                'name' => 'Unit Type',
+                'route' => 'unit.index',
+                'permission' => 'unit.view',
+            ],
+            (object) [
+                'name' => 'Category',
+                'route' => 'category.index',
+                'permission' => 'category.view',
+            ],
+            (object) [
+                'name' => 'Brand',
+                'route' => 'brand.index',
+                'permission' => 'brand.view',
+            ],
+            (object) [
+                'name' => 'Print Barcode / Label',
+                'route' => 'product.barcode',
+                'permission' => 'product.barcode',
+            ],
+            (object) [
+                'name' => 'Add Purchase',
+                'route' => 'purchase.create',
+                'permission' => 'purchase.create',
+            ],
+            (object) [
+                'name' => 'Manage Purchase',
+                'route' => 'purchase.index',
+                'permission' => 'purchase.view',
+            ],
+            (object) [
+                'name' => 'Purchases Return List',
+                'route' => 'purchase.return.index',
+                'permission' => 'purchase.return.view',
+            ],
+            (object) [
+                'name' => 'Purchases Return Type',
+                'route' => 'purchase.return.type.list',
+                'permission' => 'purchase.return.type.view',
+            ],
+            (object) [
+                'name' => __('Stock'),
+                'route' => 'stock.index',
+                'permission' => 'stock.view',
+            ],
+            (object) [
+                'name' => __('Service List'),
+                'route' => 'service.index',
+                'permission' => 'service.view',
+            ],
+            (object) [
+                'name' => __('Service Category'),
+                'route' => 'serviceCategory.index',
+                'permission' => 'serviceCategory.view',
+            ],
+            (object) [
+                'name' => __('POS'),
+                'route' => 'pos',
+                'permission' => 'pos.view',
+            ],
+            (object) [
+                'name' => __('Manage Sales'),
+                'route' => 'sales.index',
+                'permission' => 'sales.view',
+            ],
+            (object) [
+                'name' => __('Sales Return List'),
+                'route' => 'sales.return.list',
+                'permission' => 'salesReturn.view',
+            ],
+            (object) [
+                'name' => __('Cash Flow'),
+                'route' => 'cashflow',
+                'permission' => 'cashflow.view',
+            ],
+            (object) [
+                'name' => __('Create Account'),
+                'route' => 'accounts.create',
+                'permission' => 'accounts.create',
+            ],
+            (object) [
+                'name' => __('Account List'),
+                'route' => 'accounts.index',
+                'permission' => 'accounts.view',
+            ],
+            (object) [
+                'name' => __('Balance Transfer'),
+                'route' => 'balance.transfer',
+                'permission' => 'balance.transfer',
+            ],
+            (object) [
+                'name' => __('Deposit') . '/' . __('Withdraw'),
+                'route' => 'opening-balance',
+                'permission' => 'opening-balance.manage',
+            ],
+            (object) [
+                'name' => __('Bank'),
+                'route' => 'bank.index',
+                'permission' => 'bank.view',
+            ],
+            (object) [
+                'name' => __('Add Quotation'),
+                'route' => 'quotation.create',
+                'permission' => 'quotation.create',
+            ],
+            (object) [
+                'name' => __('Quotation Manage'),
+                'route' => 'quotation.index',
+                'permission' => 'quotation.manage',
+            ],
+            (object) [
+                'name' => __('Other Income'),
+                'route' => 'report.other-income',
+                'permission' => 'report.other-income',
+            ],
+            (object) [
+                'name' => __('DTS'),
+                'route' => 'report.dts',
+                'permission' => 'report.dts',
+            ],
+            (object) [
+                'name' => __('Customer Other Due'),
+                'route' => 'other-summery.customer',
+                'permission' => 'other-summery.customer',
+            ],
+            (object) [
+                'name' => __('Supplier Other Due'),
+                'route' => 'other-summery.supplier',
+                'permission' => 'other-summery.supplier',
+            ],
+            (object) [
+                'name' => __('Barcode Wise Product Report'),
+                'route' => 'report.barcode-wise-product',
+            ],
+            (object) [
+                'name' => __('Barcode Wise Sale Report'),
+                'route' => 'report.barcode-sale',
+            ],
+            (object) [
+                'name' => __('Categories Report'),
+                'route' => 'report.categories',
+            ],
+            (object) [
+                'name' => __('Customers Report'),
+                'route' => 'report.customers',
+            ],
+            (object) [
+                'name' => __('Due Report'),
+                'route' => 'report.receivable',
+            ],
+            (object) [
+                'name' => __('Detail Sales Report'),
+                'route' => 'report.details-sale',
+
+            ],
+            (object) [
+                'name' => __('Due Date Sales Report'),
+                'route' => 'report.due-date-sale',
+            ],
+            (object) [
+                'name' => __('Expense Report'),
+                'route' => 'report.expense',
+            ],
+            (object) [
+                'name' => __('Payment Received Report'),
+                'route' => 'report.received-report',
+            ],
+            (object) [
+                'name' => __('Purchases Report'),
+                'route' => 'report.purchase',
+            ],
+            (object) [
+                'name' => __('Suppliers Report'),
+                'route' => 'report.supplier',
+            ],
+            (object) [
+                'name' => __('Suppliers Payment'),
+                'route' => 'report.supplier-payment',
+            ],
+            (object) [
+                'name' => __('Salary Report'),
+                'route' => 'report.salary',
+            ],
+            (object) [
+                'name' => __('New Expense'),
+                'route' => 'expense.create',
+                'query' => '?type=new',
+            ],
+            (object) [
+                'name' => __('Expense List'),
+                'route' => 'expense.index',
+                'query' => '',
+            ],
+            (object) [
+                'name' => __('Expense Type'),
+                'route' => 'expense.type.index',
+                'query' => '',
+            ],
+            (object) [
+                'name' => __('Asset List'),
+                'route' => 'assets.index',
+                'query' => '',
+            ],
+            (object) [
+                'name' => __('Asset Type'),
+                'route' => 'asset-category.index',
+                'query' => '',
+            ],
+            (object) [
+                'name' => __('Employee List'),
+                'route' => 'employee.index',
+            ],
+            (object) [
+                'name' => __('Add New Employee'),
+                'route' => 'employee.create',
+
+            ],
+            (object) [
+                'name' => __('All Paid Salary'),
+                'route' => 'salary.list',
+            ],
+            (object) [
+                'name' => __('Settings'),
+                'route' => 'javascript:void(0);',
+            ],
+            (object) [
+                'name' => __('Attendance'),
+                'route' => 'attendance.create',
+                'sub_menu' => []
+            ],
+            (object) [
+                'name' => __('Attendance Sheet'),
+                'route' => 'attendance.index',
+                'sub_menu' => []
+            ],
+            (object) [
+                'name' => __('Weekend Setup'),
+                'route' => 'attendance.settings.weekdays',
+            ],
+            (object) [
+                'name' => __('Holiday Setup'),
+                'route' => 'attendance.settings.holidays.index',
+            ],
+            (object) [
+                'name' => __('Business Settings'),
+                'route' => 'settings',
+            ],
+            (object) [
+                'name' => __('Reset Database'),
+                'route' => 'reset.database',
+            ],
+            (object) [
+                'name' => __('Clear Cache'),
+                'route' => 'cache.clear',
+            ]
+        ];

@@ -408,8 +408,19 @@ class ReportController extends Controller
         $products = $this->productService->getProducts();
         $products = $products->where('status', 1);
 
-        $products = $products->paginate(20);
-        $products->appends(request()->query());
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $products = $products->get();
+        } else {
+            $products = $products->paginate($parpage);
+            $products->appends(request()->query());
+        }
+
+
 
         return view('report::barcode-wise-product', compact('products'));
     }
@@ -438,8 +449,17 @@ class ReportController extends Controller
             return;
         });
 
-        $products = $products->paginate(20);
-        $products = $products->appends(request()->query());
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $products = $products->get();
+        } else {
+            $products = $products->paginate($parpage);
+            $products->appends(request()->query());
+        }
 
         return view('report::barcode-sale', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
     }
@@ -450,8 +470,17 @@ class ReportController extends Controller
         $categories = $this->categoryService->getCategories();
 
 
-        $categories = $categories->paginate(20);
-        $categories->appends(request()->query());
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $categories = $categories->get();
+        } else {
+            $categories = $categories->paginate($parpage);
+            $categories->appends(request()->query());
+        }
 
         return view('report::categories', compact('categories'));
     }

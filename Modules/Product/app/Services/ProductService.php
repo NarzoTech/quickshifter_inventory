@@ -30,7 +30,7 @@ class ProductService
     }
     public function getProducts()
     {
-        $query = $this->product;
+        $query = $this->product->with(['salesDetails', 'salesReturnDetails', 'purchaseReturnDetails', 'stockDetails', 'orders', 'brand', 'purchaseDetails.purchase']);
 
         if (request('keyword')) {
             $query = $query->where(function ($q) {
