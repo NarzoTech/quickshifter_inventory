@@ -605,11 +605,26 @@ class ReportController extends Controller
     {
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-        // ->whereBetween('order_date', [$fromDate, $toDate])
-        $sales = Sale::with('customer')->where('due_amount', '>', 0);
-        $sales = $sales->paginate(20);
-        $sales->appends(request()->query());
-        return view('report::due-date-sale', compact('sales'));
+        $sales = Sale::with('customer')->where('due_amount', '>', 0)->whereBetween('order_date', [$fromDate, $toDate]);
+
+        $data['due'] = 0;
+        foreach ($sales->get() as $sale) {
+            $data['due'] += $sale->due_amount;
+        }
+
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $sales = $sales->get();
+        } else {
+            $sales = $sales->paginate($parpage);
+            $sales->appends(request()->query());
+        }
+        return view('report::due-date-sale', compact('sales', 'data'));
     }
 
     public function expense()
