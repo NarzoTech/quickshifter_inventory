@@ -532,11 +532,28 @@ class ReportController extends Controller
 
         $sales = Sale::with('customer')->where('payment_status', 1)->where('due_amount', '>', 0);
 
+        if (request()->keyword) {
+            $sales = $sales->whereHas('customer', function ($q) {
+                $q->where('name', 'like', '%' . request()->keyword . '%');
+            })
+                ->orWhere('invoice', request()->keyword);
+        }
+
         $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
 
         $totalDues = $sales->sum('due_amount');
-        $sales = $sales->paginate(20);
-        $sales->appends(request()->query());
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $sales = $sales->get();
+        } else {
+            $sales = $sales->paginate($parpage);
+            $sales->appends(request()->query());
+        }
 
         return view('report::receiveable', compact('sales', 'totalDues'));
     }
