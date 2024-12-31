@@ -605,7 +605,14 @@ class ReportController extends Controller
     {
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-        $sales = Sale::with('customer')->where('due_amount', '>', 0)->whereBetween('order_date', [$fromDate, $toDate]);
+        $sales = Sale::with(['customer', 'payment', 'payment.account', 'saleReturns'])->where('due_amount', '>', 0)->whereBetween('order_date', [$fromDate, $toDate]);
+
+        if (request()->keyword) {
+            $sales = $sales->whereHas('customer', function ($q) {
+                $q->where('name', 'like', '%' . request()->keyword . '%');
+            })
+                ->orWhere('invoice', request()->keyword);
+        }
 
         $data['due'] = 0;
         foreach ($sales->get() as $sale) {
@@ -632,14 +639,33 @@ class ReportController extends Controller
 
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-        // ->whereBetween('order_date', [$fromDate, $toDate])
         $expenses = Expense::with('createdBy', 'expenseType');
+
+        if (request()->keyword) {
+            $expenses = $expenses->where(function ($q) {
+                $q->where('note', 'like', '%' . request()->keyword . '%')
+                    ->orWhereHas('expenseType', function ($query) {
+                        $query->where('name', 'like', '%' . request()->keyword . '%');
+                    });
+            });
+        }
+
         if (request('from_date') || request('to_date')) {
             $expenses = $expenses->whereBetween('date', [$fromDate, $toDate]);
         }
         $totalAmount = $expenses->sum('amount');
-        $expenses = $expenses->paginate(20);
-        $expenses->appends(request()->query());
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $expenses = $expenses->get();
+        } else {
+            $expenses = $expenses->paginate($parpage);
+            $expenses->appends(request()->query());
+        }
         return view('report::expense', compact('expenses', 'totalAmount'));
     }
 
