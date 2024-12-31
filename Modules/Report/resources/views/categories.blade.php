@@ -12,7 +12,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="form-group search-wrapper">
                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}" class="form-control"
-                                placeholder="Product Name, SKU, Barcode...">
+                                placeholder="Search">
                             <button type="submit">
                                 <i class='bx bx-search'></i>
                             </button>

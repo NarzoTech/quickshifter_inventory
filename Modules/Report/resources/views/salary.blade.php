@@ -19,7 +19,7 @@
                                     <div class="row">
                                         <div class="col-md-4 form-group search-wrapper">
                                             <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="Product Name, SKU, Barcode...">
+                                                class="form-control" placeholder="Search">
                                             <button type="submit">
                                                 <i class="far fa-arrow-alt-circle-right"></i>
                                             </button>
@@ -57,11 +57,13 @@
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <input type="text" placeholder="From Date" name="from_date"
-                                                value="{{ request()->get('from_date') }}" class="form-control datepicker" autocomplete="off">
+                                                value="{{ request()->get('from_date') }}" class="form-control datepicker"
+                                                autocomplete="off">
                                         </div>
                                         <div class="col-md-2 form-group">
                                             <input type="text" placeholder="To Date" name="to_date"
-                                                value="{{ request()->get('to_date') }}" class="form-control datepicker" autocomplete="off">
+                                                value="{{ request()->get('to_date') }}" class="form-control datepicker"
+                                                autocomplete="off">
                                         </div>
                                     </div>
                                     {{-- excel  buttons --}}

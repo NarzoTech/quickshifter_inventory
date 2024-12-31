@@ -739,15 +739,41 @@ class ReportController extends Controller
 
     public function  receivedReport()
     {
-        $totalReceive = CustomerPayment::where('is_received', 1);
+        $totalReceive = CustomerPayment::with(['account', 'sale', 'customer'])->where('is_received', 1);
 
         if (request('from_date') || request('to_date')) {
             $totalReceive = $totalReceive->whereBetween('created_at', [request('from_date'), request('to_date')]);
         }
-        $totalReceive = $totalReceive->paginate(20);
-        $totalReceive->appends(request()->query());
 
-        return view('report::received-report', compact('totalReceive'));
+        if (request()->keyword) {
+            $totalReceive = $totalReceive->where(function ($q) {
+                $q->whereHas('customer', function ($query) {
+                    $query->where('name', 'like', '%' . request()->keyword . '%');
+                });
+            });
+        }
+
+        $data['receive'] = 0;
+
+        foreach ($totalReceive->get() as $receive) {
+            $data['receive'] += $receive->amount;
+        }
+
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $totalReceive = $totalReceive->get();
+        } else {
+            $totalReceive = $totalReceive->paginate($parpage);
+            $totalReceive->appends(request()->query());
+        }
+
+
+        return view('report::received-report', compact('totalReceive', 'data'));
     }
     public function purchase()
     {
