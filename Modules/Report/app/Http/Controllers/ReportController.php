@@ -488,7 +488,7 @@ class ReportController extends Controller
     {
         $query = User::query();
 
-        $query = $query->with('sales');
+        $query = $query->with(['sales', 'payment']);
 
         $query->when($request->filled('keyword'), function ($q) use ($request) {
             $q->where('name', 'like', '%' . $request->keyword . '%')
@@ -510,8 +510,17 @@ class ReportController extends Controller
             $totalDue += $customer->total_due;
         }
 
-        $customers = $query->paginate(20);
-        $customers->appends(request()->query());
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $customers = $query->get();
+        } else {
+            $customers = $query->paginate($parpage);
+            $customers->appends(request()->query());
+        }
 
         return view('report::customer', compact('customers', 'totalSales', 'totalAmount', 'totalPaid', 'totalDue'));
     }

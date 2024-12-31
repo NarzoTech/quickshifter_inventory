@@ -62,7 +62,7 @@
                             </div>
                         </div>
                     </div>
-                    {{-- excel  buttons --}}
+
                     <div class="col-xxl-2 col-md-6 col-lg-4">
                         <div class="form-group">
                             <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
