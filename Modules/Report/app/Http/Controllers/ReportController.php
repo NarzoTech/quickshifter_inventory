@@ -783,8 +783,18 @@ class ReportController extends Controller
 
         $purchases = Purchase::with(['supplier', 'purchaseDetails', 'createdBy']);
         if (request('from_date') || request('to_date')) {
-            $purchases = $purchases->whereBetween('date', [$fromDate, $toDate]);
+            $purchases = $purchases->whereBetween('purchase_date', [$fromDate, $toDate]);
         }
+
+        if (request()->keyword) {
+            $purchases = $purchases->where(function ($q) {
+                $q->whereHas('supplier', function ($query) {
+                    $query->where('name', 'like', '%' . request()->keyword . '%');
+                })
+                    ->orWhere('invoice_number', request()->keyword);
+            });
+        }
+
         $totalAmount = $purchases->sum('total_amount');
 
         $data['total_amount'] = 0;
