@@ -1,136 +1,146 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Suppliers Payment') }}</title>
+    <title>{{ __('Suppliers Payment List') }}</title>
 @endsection
 
 
 @section('content')
-    <div class="main-content">
-        <section class="section">
-
-
-            <div class="section-body">
+    <div class="card">
+        <div class="card-body">
+            <form class="search_form" action="" method="GET">
                 <div class="row">
-                    {{-- Search filter --}}
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="" method="GET" class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4 form-group search-wrapper">
-                                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                                class="form-control" placeholder="Search">
-                                            <button type="submit">
-                                                <i class="far fa-arrow-alt-circle-right"></i>
-                                            </button>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="order_by" id="order_by" class="form-control">
-                                                <option value="">{{ __('Order By') }}</option>
-                                                <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
-                                                    {{ __('ASC') }}
-                                                </option>
-                                                <option value="desc"
-                                                    {{ request('order_by') == 'desc' ? 'selected' : '' }}>
-                                                    {{ __('DESC') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <select name="par-page" id="par-page" class="form-control">
-                                                <option value="">{{ __('Per Page') }}</option>
-                                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('10') }}
-                                                </option>
-                                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('50') }}
-                                                </option>
-                                                <option value="100"
-                                                    {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('100') }}
-                                                </option>
-                                                <option value="all"
-                                                    {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                                    {{ __('All') }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="From Date" name="from_date"
-                                                value="{{ request()->get('from_date') }}" class="form-control datepicker"
-                                                autocomplete="off">
-                                        </div>
-                                        <div class="col-md-2 form-group">
-                                            <input type="text" placeholder="To Date" name="to_date"
-                                                value="{{ request()->get('to_date') }}" class="form-control datepicker"
-                                                autocomplete="off">
-                                        </div>
-                                    </div>
-                                    {{-- excel  buttons --}}
-                                    <div class="row">
-                                        <div class="col-md-4 form-group mx-auto">
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                                <button type="button" class="btn btn-secondary export"><i
-                                                        class="far fa-file-excel"></i>
-                                                    Excel</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="form-group search-wrapper">
+                            <input type="text" name="keyword" value="{{ request()->get('keyword') }}" class="form-control"
+                                placeholder="Search">
+                            <button type="submit">
+                                <i class='bx bx-search'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <div class="form-group">
+                            <select name="order_by" id="order_by" class="form-control">
+                                <option value="">{{ __('Order By') }}</option>
+                                <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                    {{ __('ASC') }}
+                                </option>
+                                <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                    {{ __('DESC') }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <div class="form-group">
+                            <select name="par-page" id="par-page" class="form-control">
+                                <option value="">{{ __('Per Page') }}</option>
+                                <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                    {{ __('10') }}
+                                </option>
+                                <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                    {{ __('50') }}
+                                </option>
+                                <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                    {{ __('100') }}
+                                </option>
+                                <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                    {{ __('All') }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-group">
+                            <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                <input type="text" id="dateRangePicker" placeholder="From Date"
+                                    class="form-control datepicker" name="from_date"
+                                    value="{{ request()->get('from_date') }}" autocomplete="off">
+                                <span class="input-group-text">to</span>
+                                <input type="text" placeholder="To Date" class="form-control datepicker" name="to_date"
+                                    value="{{ request()->get('to_date') }}" autocomplete="off">
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>
-                                    {{ __('Suppliers Payment') }}
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive table-invoice">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                            <tr>
-                                                <th>{{ __('Sl') }}</th>
-                                                <th>{{ __('Date') }}</th>
-                                                <th>{{ __('Invoice') }}</th>
-                                                <th>{{ __('Suppliers') }}</th>
-                                                <th>{{ __('Total') }}</th>
-                                                <th>{{ __('Paid') }}</th>
-                                                <th>{{ __('Due') }}</th>
-                                                <th>{{ __('Return') }}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($supplierPayments as $key => $supplierPayment)
-                                                <tr>
-                                                    <td>{{ $supplierPayments->firstItem() + $key }}</td>
-                                                    <td>{{ $supplierPayment->purchase_date }}</td>
-                                                    <td>{{ $supplierPayment->invoice_number }}</td>
-                                                    <td>{{ $supplierPayment->supplier->name }}</td>
-                                                    <td>{{ $supplierPayment->total_amount }}</td>
-                                                    <td>{{ $supplierPayment->paid_amount }}</td>
-                                                    <td>{{ $supplierPayment->due_amount - $supplierPayment->purchaseReturn->sum('return_amount') + $supplierPayment->purchaseReturn->sum('received_amount') }}
-                                                    </td>
-                                                    <td>{{ $supplierPayment->purchaseReturn->sum('return_amount') }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                @if (request()->get('par-page') !== 'all')
-                                    <div class="float-right">
-                                        {{ $supplierPayments->onEachSide(0)->links() }}
-                                    </div>
-                                @endif
-                            </div>
+                    <div class="col-xxl-2 col-md-6 col-lg-4">
+                        <div class="form-group">
+                            <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
+                            <button type="submit" class="btn bg-label-primary">{{ __('Search') }}</button>
                         </div>
                     </div>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-header">
+            <h4 class="section_title">{{ __('Suppliers Payment List') }}</h4>
+            <div class="btn-actions-pane-right actions-icon-btn">
+                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                    Excel</button>
+                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                    PDF</button>
             </div>
-        </section>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table-invoice">
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <tr>
+                            <th>{{ __('Sl') }}</th>
+                            <th>{{ __('Date') }}</th>
+                            <th>{{ __('Invoice') }}</th>
+                            <th>{{ __('Suppliers') }}</th>
+                            <th>{{ __('Total') }}</th>
+                            <th>{{ __('Paid') }}</th>
+                            <th>{{ __('Due') }}</th>
+                            <th>{{ __('Return') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $start = checkPaginate($supplierPayments) ? $supplierPayments->firstItem() : 1;
+                        @endphp
+                        @foreach ($supplierPayments as $key => $supplierPayment)
+                            <tr>
+                                <td>{{ $start + $key }}</td>
+                                <td>{{ $supplierPayment->purchase_date }}</td>
+                                <td>{{ $supplierPayment->invoice_number }}</td>
+                                <td>{{ $supplierPayment->supplier->name }}</td>
+                                <td>{{ $supplierPayment->total_amount }}</td>
+                                <td>{{ $supplierPayment->paid_amount }}</td>
+                                <td>{{ $supplierPayment->due_amount - $supplierPayment->purchaseReturn->sum('return_amount') + $supplierPayment->purchaseReturn->sum('received_amount') }}
+                                </td>
+                                <td>{{ $supplierPayment->purchaseReturn->sum('return_amount') }}</td>
+                            </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <b> {{ __('Total') }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['total']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['paid_amount']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['due_amount']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['return_amount']) }}</b>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @if (request()->get('par-page') !== 'all')
+                <div class="float-right">
+                    {{ $supplierPayments->onEachSide(0)->links() }}
+                </div>
+            @endif
+        </div>
     </div>
 @endsection

@@ -72,7 +72,7 @@ class PurchaseReturn extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault();
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault(['name' => 'Guest']);
     }
 
     public function stock()

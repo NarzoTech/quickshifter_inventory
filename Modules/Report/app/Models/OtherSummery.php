@@ -30,11 +30,11 @@ class OtherSummery extends Model
 
     public function customer()
     {
-        return $this->belongsTo(User::class, 'customer_id', 'id')->withDefault();
+        return $this->belongsTo(User::class, 'customer_id', 'id')->withDefault(['name' => 'Guest']);
     }
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class, 'supplier_id')->withDefault();
+        return $this->belongsTo(Supplier::class, 'supplier_id')->withDefault(['name' => 'Guest']);
     }
 }

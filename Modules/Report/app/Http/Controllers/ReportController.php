@@ -882,14 +882,47 @@ class ReportController extends Controller
 
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-        $supplierPayments = Purchase::with('supplier');
+        $supplierPayments = Purchase::with(['supplier', 'purchaseReturn']);
+
+        if (request()->keyword) {
+            $supplierPayments = $supplierPayments->where(function ($q) {
+                $q->whereHas('supplier', function ($query) {
+                    $query->where('name', 'like', '%' . request()->keyword . '%');
+                })
+                    ->orWhere('invoice_number', request()->keyword);
+            });
+        }
         if (request('from_date') || request('to_date')) {
             $supplierPayments = $supplierPayments->whereBetween('purchase_date', [$fromDate, $toDate]);
         }
-        $totalAmount = $supplierPayments->sum('total_amount');
-        $supplierPayments = $supplierPayments->paginate(20);
-        $supplierPayments->appends(request()->query());
 
-        return view('report::supplier-payment', compact('supplierPayments', 'totalAmount'));
+
+        $data['total'] = $supplierPayments->sum('total_amount');
+        $data['paid_amount'] = 0;
+        $data['due_amount'] = 0;
+        $data['return_amount'] = 0;
+
+        foreach ($supplierPayments->get() as $payment) {
+            $data['paid_amount'] += $payment->paid_amount;
+            $data['due_amount'] += $payment->due_amount - $payment->purchaseReturn->sum('return_amount') + $payment->purchaseReturn->sum('received_amount');
+            $data['return_amount'] += $payment->purchaseReturn->sum('return_amount');
+        }
+
+        $totalAmount = $supplierPayments->sum('total_amount');
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $supplierPayments = $supplierPayments->get();
+        } else {
+            $supplierPayments = $supplierPayments->paginate($parpage);
+            $supplierPayments->appends(request()->query());
+        }
+
+
+        return view('report::supplier-payment', compact('supplierPayments', 'totalAmount', 'data'));
     }
 }

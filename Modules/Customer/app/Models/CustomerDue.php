@@ -30,7 +30,7 @@ class CustomerDue extends Model
 
     public function customer()
     {
-        return $this->belongsTo(User::class, 'customer_id')->withDefault();
+        return $this->belongsTo(User::class, 'customer_id')->withDefault(['name' => 'Guest']);
     }
 
     public function sale()
