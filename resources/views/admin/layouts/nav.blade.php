@@ -29,7 +29,7 @@
         <ul class="navbar-nav flex-wrap flex-row align-items-center ms-auto">
 
             <li class="nav-item">
-                <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                <a href="{{ route('admin.report.details-sale') }}" class="nav-link nav-link-lg">
                     <i class="fa fa-money"></i> {{ __('Sale Report') }}</i>
                 </a>
             </li>
