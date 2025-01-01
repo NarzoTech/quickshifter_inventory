@@ -11,7 +11,7 @@
                 <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
                         <div class="row">
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-xxl-3 col-md-4 ">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search..." autocomplete="off">
@@ -20,7 +20,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -52,7 +52,19 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-xxl-3 col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group input-daterange" id="bs-datepicker-daterange">
+                                        <input type="text" id="dateRangePicker" placeholder="From Date"
+                                            class="form-control datepicker" name="from_date"
+                                            value="{{ request()->get('from_date') }}" autocomplete="off">
+                                        <span class="input-group-text">to</span>
+                                        <input type="text" placeholder="To Date" class="form-control datepicker"
+                                            name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
                                     <button type="button" class="btn bg-danger form-reset">Reset</button>
                                     <button type="submit" class="btn bg-primary">Search</button>
