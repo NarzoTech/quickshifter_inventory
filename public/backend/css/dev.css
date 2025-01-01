@@ -1,5 +1,5 @@
 .btn,
-.form-group>label {
+.form-group > label {
     font-size: 14px !important;
 }
 
@@ -236,7 +236,7 @@ img.mr-3.ml-3.rounded-circle {
     object-fit: cover;
 }
 
-#toast-container>.toast:before {
+#toast-container > .toast:before {
     display: none !important;
 }
 
@@ -450,9 +450,12 @@ img.mr-3.ml-3.rounded-circle {
     padding: 8px;
 }
 
-.select2-container--default .select2-selection--multiple .select2-selection__choice,
+.select2-container--default
+    .select2-selection--multiple
+    .select2-selection__choice,
 .select2-container--default .select2-results__option[aria-selected="true"],
-.select2-container--default .select2-results__option--highlighted[aria-selected] {
+.select2-container--default
+    .select2-results__option--highlighted[aria-selected] {
     color: #6777ef !important;
     background-color: #f6f6f6;
 }
@@ -755,13 +758,17 @@ table tr td {
     padding-right: 0;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
     color: #384551;
     line-height: 23px;
     padding: 0;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__arrow {
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
     top: 8px;
     right: 10px;
 }
@@ -846,7 +853,7 @@ table tr td {
     color: #5f61e6;
 }
 
-.switch-input:checked~.switch-toggle-slider {
+.switch-input:checked ~ .switch-toggle-slider {
     background: #696cff;
     color: #fff;
     box-shadow: 0 2px 6px 0 rgba(105, 108, 255, 0.3);
@@ -1048,7 +1055,10 @@ table tr td {
     border-bottom-left-radius: 0;
 }
 
-.create_product_table .input-group .select2-container .select2-selection--single {
+.create_product_table
+    .input-group
+    .select2-container
+    .select2-selection--single {
     border-radius: 5px 0px 0px 5px;
     -webkit-border-radius: 5px 0px 0px 5px;
     -moz-border-radius: 5px 0px 0px 5px;
@@ -1134,7 +1144,7 @@ body {
     left: 0;
 }
 
-.selectgroup-input:checked+.selectgroup-button {
+.selectgroup-input:checked + .selectgroup-button {
     background-color: #6777ef;
     color: #fff;
     z-index: 1;
@@ -1795,4 +1805,6 @@ td.sticky-2::after {
     gap: 5px;
 }
 
-.navbar-nav .nav-item a.nav-link.nav-link-lg i {}
+.navbar-nav .nav-item a.nav-link.nav-link-lg i {
+    margin-bottom: 2px;
+}
