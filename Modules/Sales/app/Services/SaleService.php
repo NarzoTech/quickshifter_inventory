@@ -149,7 +149,8 @@ class SaleService
         // if user is exists
 
         if ($user) {
-            $this->updateLedger($request, $sale->id, $user, 'sale');
+            // $this->updateLedger($request, $sale->id, $user, 'sale');
+            $this->salesLedger($request, $sale, array_sum($request->paying_amount), $request->total_amount, 'sale', 1, $due);
         }
         return $sale;
     }
@@ -250,6 +251,9 @@ class SaleService
             $sale->quantity = $totalQty;
             $sale->save();
 
+            $ledger = $this->getLedger($request, $id, 1, 'sale');
+
+            $this->salesLedger($request, $sale, array_sum($request->paying_amount), $request->total_amount, 'sale', 1, $due, $ledger);
 
             // create payments
             foreach ($request->payment_type as $key => $item) {
@@ -392,31 +396,30 @@ class SaleService
         return [$cart_contents, $sale];
     }
 
-    public function updateLedger($request, $id, $user, $type = 'sale', $isReceive = 1)
+    public function getLedger($request, $id, $isPaid = 1, $type)
     {
         $sale = $this->sale->find($id);
-
-        // check if ledger already exist
-
-        $ledger = Ledger::where('customer_id', $request->supplier_id)
-            ->where('invoice_type', 'sale')
+        $ledger = Ledger::where('customer_id', $request->order_customer_id)
+            ->where('invoice_type', $type)
             ->where('invoice_no', $sale->invoice)
-            ->where('is_received', $isReceive)
+            ->where('is_received', $isPaid)
             ->first();
 
-        if (!$ledger) {
-            $ledger = new Ledger();
-        }
+        return $ledger;
+    }
 
-
-        $ledger->customer_id = $user->id;
-        $ledger->amount = $sale->paid_amount;
+    public function salesLedger($request, $sale, $paid, $total_amount = 0, $type = 'sale', $isPaid = 1, $dueAmount = 0, $ledger = null)
+    {
+        if ($ledger == null) $ledger = new Ledger();
+        $ledger->customer_id = $request->order_customer_id;
+        $ledger->amount = $paid;
         $ledger->invoice_type = $type;
-        $ledger->is_received = 1;
+        $ledger->is_received = $isPaid;
         $ledger->invoice_url = route('admin.sales.invoice', $sale->id);
         $ledger->invoice_no = $sale->invoice;
         $ledger->note = $request->note;
-        $ledger->due_amount = $sale->due_amount;
+        $ledger->due_amount = $dueAmount;
+        $ledger->total_amount = $total_amount;
         $ledger->date = now()->parse($request->sale_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();

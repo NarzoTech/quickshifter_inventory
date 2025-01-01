@@ -1,6 +1,7 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ $title }}</title>
+    <title>
+        {{ $title }}</title>
 @endsection
 
 @section('content')
@@ -80,7 +81,7 @@
     <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title">Supplier Ledger</h4>
+                <h4 class="section_title">{{ $title }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
@@ -99,9 +100,24 @@
                             <th title="Invoice No">{{ __('Invoice No') }}</th>
                             <th title="Date">{{ __('Date') }}</th>
                             <th title="Note">{{ __('Description') }}</th>
-                            <th title="Invoice No">{{ __('Paid') }}({{ __('CREDIT') }})</th>
-                            <th title="Amount">{{ __('Product') }}({{ __('DEBIT') }})</th>
-                            <th title="Due">{{ __('Balance') }}({{ __('DUE') }})</th>
+                            <th title="Invoice No">
+                                @if ($title == 'Supplier Ledger')
+                                    {{ __('Paid') }}({{ __('CREDIT') }})
+                                @else
+                                    {{ __('Received') }}({{ __('DEBIT') }})
+                                @endif
+                            </th>
+                            <th title="Amount">
+                                @if ($title == 'Supplier Ledger')
+                                    {{ __('Product') }}({{ __('DEBIT') }})
+                                @else
+                                    {{ __('Sales') }}({{ __('CREDIT') }})
+                                @endif
+                            </th>
+                            <th title="Due">{{ __('Balance') }} @if ($title == 'Supplier Ledger')
+                                    ({{ __('DUE') }})
+                                @endif
+                            </th>
                         </tr>
                     </thead>
                     <tbody>

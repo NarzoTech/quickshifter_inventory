@@ -136,7 +136,8 @@
                                 <td>{{ currency($user->total_paid) }}</td>
                                 <td>{{ currency($user->total_due) }}</td>
                                 <td>{{ currency($user->advances()) }}</td>
-                                <td>{{ currency($user->total_due - $user->total_sale_return_due) }}</td>
+                                <td>{{ currency($user->total_due - $user->total_sale_return_due - $user->advances()) }}
+                                </td>
 
                                 <td>
                                     <div class="btn-group" role="group">

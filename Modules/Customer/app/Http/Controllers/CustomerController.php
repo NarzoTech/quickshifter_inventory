@@ -563,8 +563,8 @@ class CustomerController extends Controller
             'customer_id' => $id,
             'account_id' => $account->id,
             'payment_type' => $request->refund_amount != null ? 'advance_refund' : 'advance_receive',
-            'is_paid' => $request->refund_amount != null ? 0 : 1,
-            'is_received' => $request->refund_amount != null ? 1 : 0,
+            'is_paid' => $request->refund_amount == null ? 0 : 1,
+            'is_received' => $request->refund_amount == null ? 0 : 1,
             'amount' => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
             'account_type' => accountList()[$account->account_type],
             'note' => $request->note,
@@ -580,15 +580,19 @@ class CustomerController extends Controller
         $ledger = new Ledger();
         $ledger->customer_id = $id;
         $ledger->amount = $request->paying_amount ?? $request->refund_amount;
-        $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
+        $ledger->invoice_type = $request->refund_amount == null ? 'Advance Received' : 'Payment Return';
         $ledger->is_paid = $request->refund_amount != null ? 1 : 0;
         $ledger->is_received = $request->refund_amount != null ? 0 : 1;
         $ledger->invoice_no = $this->genLedgerInvoiceNumber($ledger->invoice_type);
         $ledger->note = $request->note;
+
+
         if ($request->refund_amount != null) {
             $ledger->due_amount += $request->refund_amount;
+            $ledger->amount = -$request->refund_amount;
         } else {
-            $ledger->due_amount -= $request->paying_amount;
+            $ledger->due_amount = -$request->paying_amount;
+            $ledger->amount = $request->paying_amount;
         }
         $ledger->date = now()->parse($request->date);
         $ledger->created_by = auth('admin')->user()->id;
