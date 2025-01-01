@@ -3,6 +3,7 @@
 namespace Modules\Employee\app\Services;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Modules\Accounts\app\Models\Account;
 use Modules\Attendance\app\Models\HolidaySetup;
 use Modules\Attendance\app\Models\WeekendSetup;
@@ -15,7 +16,7 @@ class EmployeeService
 
     public function all()
     {
-        return $this->employee->with('employeeSalary');
+        return $this->employee->with(['employeeSalary', 'attendance', 'currentSalary']);
     }
 
     public function find($id)
@@ -101,32 +102,41 @@ class EmployeeService
 
     public function calculateSalary(Request $request, $id)
     {
+
+        // check if weekend days is in cache
+        if (!Cache::has('weekends')) {
+            $weekends = WeekendSetup::where('is_weekend', 1)->pluck('name')->toArray();
+            Cache::put('weekends', $weekends);
+        }
+
+        // get the  weekend days
+        $weekends = cache('weekends');
+
         $employee = $this->employee->find($id);
         $month = $request->month ?? now()->format('F');
         $monthNumber = now()->parse($month)->month;
         $year = $request->year ?? now()->format('Y');
 
-        $payments = EmployeeSalary::where('employee_id', $id)->where('month', $month)->where('year', $year)
+
+        $payments = EmployeeSalary::with(['employee', 'account'])->where('employee_id', $id)->where('month', $month)->where('year', $year)
             ->get();
 
-        $employee = $this->employee->find($id);
 
         // total attendance of employee in that month
         $totalAttendance = $employee->attendance()->whereMonth('date', $monthNumber)->whereYear('date', $year)->count();
 
 
-        // get the  weekend days
-        $weekends = WeekendSetup::where('is_weekend', 1)->pluck('name')->toArray();
 
         $weekendDays = collect($weekends)->map(function ($day) {
             return now()->parse($day)->dayOfWeek;
         })->toArray();
 
+
+
         $totalWeekends = 0;
 
         $startOfMonth = now()->month($monthNumber)->year($year)->startOfMonth();
         $endOfMonth = now()->month($monthNumber)->year($year)->endOfMonth();
-
         $currentDate = now();
         $currentYear = $currentDate->year;
         $currentMonth = $currentDate->month;
@@ -134,7 +144,7 @@ class EmployeeService
         $searchYear = $startOfMonth->year;
 
 
-        if ($searchYear <= $currentYear || ($searchYear == $currentYear && $searchMonth <= $currentMonth)) {
+        if ($searchYear <= $currentYear && ($searchYear <= $currentYear && $searchMonth <= $currentMonth)) {
             $totalDaysOfTheMonth = $endOfMonth;
             if ($endOfMonth->month == $currentMonth) {
                 $currentDay = $currentDate->day;

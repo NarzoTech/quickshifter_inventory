@@ -5,6 +5,7 @@ namespace Modules\Report\app\Http\Controllers;
 use App\Exports\DTSExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -866,16 +867,7 @@ class ReportController extends Controller
         return view('report::supplier', compact('suppliers', 'data'));
     }
 
-    public function salary()
-    {
-        $month = request('month') ? now()->parse(request('month')) : now()->month;
 
-
-        $employees = $this->employeeService->all()->get();
-
-
-        return view('report::salary', compact('employees'));
-    }
 
     public function supplierPayment()
     {
@@ -924,5 +916,72 @@ class ReportController extends Controller
 
 
         return view('report::supplier-payment', compact('supplierPayments', 'totalAmount', 'data'));
+    }
+
+    public function salary()
+    {
+        $months = [];
+        $years = [];
+        if (request('from_date') && request('to_date')) {
+            $fromDate = Carbon::createFromFormat('d/m/Y', '01/' . request('from_date'));
+            $toDate = Carbon::createFromFormat('d/m/Y', '01/' . request('to_date'));
+            while ($fromDate <= $toDate) {
+                $months[] = $fromDate->format('F');
+                $years[] = $fromDate->year;
+                $fromDate->addMonth();
+            }
+        } else {
+            for ($month = 1; $month <= 12; $month++) {
+                $months[] = Carbon::createFromDate(null, $month)->format('F');
+                $years[] = now()->year;
+            }
+        }
+
+        $employees = $this->employeeService->all();
+
+        if (request()->keyword) {
+            $employees = $employees->where('name', 'like', '%' . request()->keyword . '%');
+        }
+        if (request()->order_by) {
+            $employees = $employees->orderBy('name', request()->order_by);
+        } else {
+            $employees = $employees->orderBy('name');
+        }
+
+
+        $employees = $employees->get()->map(function ($employee) use ($months, $years) {
+            $totalSalary = 0;
+            $paidSalary = 0;
+
+            foreach ($months as $index => $month) {
+
+                $year = $years[$index];
+
+                $requestData = [
+                    'month' => $month,
+                    'year' => $year
+                ];
+
+                $newRequest = new Request($requestData);
+
+
+                [,,,
+                    $payableSalary
+                ] = $this->employeeService->calculateSalary($newRequest, $employee->id);
+
+
+                $totalSalary += $payableSalary;
+                $paidSalary += $employee->currentSalary->where('month', $month)->where('year', $year)->sum('amount');
+            }
+
+            $employee->total_salary = $totalSalary;
+            $employee->paid_salary = $paidSalary;
+
+            return $employee;
+        });
+
+
+
+        return view('report::salary', compact('employees'));
     }
 }
