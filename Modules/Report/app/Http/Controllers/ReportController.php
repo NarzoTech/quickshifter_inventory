@@ -270,11 +270,12 @@ class ReportController extends Controller
 
         // purchase
         foreach ($purchases as $purchase) {
+
             if ($purchase->payments->count() > 0 && $purchase->payments->sum('amount')) {
                 foreach ($purchase->payments as $payment) {
                     $newData = [];
                     $newData['date'] = now()->parse($purchase->purchase_date)->format('d-M');
-                    $newData['mode'] = $payment->account_type;
+                    $newData['mode'] = ucfirst($payment->account->account_type);
                     $newData['category'] = "Inventory";
                     $newData['particular'] = $purchase->supplier->name ?? 'Guest';
                     $newData['debit'] = (int)$payment->amount;
