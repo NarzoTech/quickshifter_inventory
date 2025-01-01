@@ -94,52 +94,56 @@
                 <table style="width: 100%;" class="table">
                     <thead>
                         <tr>
+
                             <th title="Sl">{{ __('Sl') }}</th>
-                            <th title="Date">{{ __('Date') }}</th>
-                            <th title="Name">{{ __('Name') }}</th>
-                            <th title="Mobile">{{ __('Mobile') }}</th>
-                            <th title="Type">{{ __('Type') }}</th>
                             <th title="Invoice No">{{ __('Invoice No') }}</th>
-                            <th title="Note">{{ __('Note') }}</th>
-                            <th title="Amount">{{ __('Amount') }}</th>
-                            <th title="Due">{{ __('Due') }}</th>
+                            <th title="Date">{{ __('Date') }}</th>
+                            <th title="Note">{{ __('Description') }}</th>
+                            <th title="Invoice No">{{ __('Paid') }}({{ __('CREDIT') }})</th>
+                            <th title="Amount">{{ __('Product') }}({{ __('DEBIT') }})</th>
+                            <th title="Due">{{ __('Balance') }}({{ __('DUE') }})</th>
                         </tr>
                     </thead>
                     <tbody>
                         @php
-                            $due = 0;
+                            $opening = 0;
+                            $credit = 0;
+                            $debit = 0;
                         @endphp
+                        <tr>
+                            <td colspan="5" class="text-center fw-bold">{{ __('Opening Balance') }}</td>
+                            <td></td>
+                            <td colspan="1" class="text-end fw-bold">{{ $opening }}</td>
+                        </tr>
+
+                        {{-- @dd($ledgers) --}}
                         @foreach ($ledgers as $index => $ledger)
                             @php
-                                $due += $ledger->amount;
+                                $opening += $ledger->due_amount;
+                                $credit += $ledger->amount;
+                                $debit += $ledger->total_amount;
                             @endphp
 
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $ledger->date }}</td>
-                                <td>
-                                    {{ $ledger->supplier->name ?? $ledger->customer->name }}
-
-                                </td>
-                                <td>{{ $ledger->supplier->phone ?? $ledger->customer->phone }}</td>
-                                <td>{{ ucwords(str_replace('_', ' ', $ledger->invoice_type)) }}</td>
                                 <td><a href="{{ $ledger->invoice_url }}">{{ $ledger->invoice_no }}</a>
-                                </td>
-                                <td>{{ $ledger->note }}</td>
-
+                                <td>{{ $ledger->date }}</td>
+                                <td class="text-capitalize">{{ $ledger->invoice_type }}</td>
                                 <td>
-                                    {{ currency($ledger->amount) }}
+                                    {{ $ledger->amount }}
                                 </td>
-                                <td>{{ currency($due) }}</td>
+                                <td>{{ $ledger->total_amount }}</td>
+                                <td class="text-end">{{ $opening }}</td>
                             </tr>
                         @endforeach
 
                         <tr>
-                            <td colspan="8" class="text-center fw-bold">
+                            <td colspan="4" class="text-center fw-bold">
                                 {{ __('Total') }}
                             </td>
-                            <td colspan="2" class="fw-bold">
-                                {{ currency($due) }}
+                            <td colspan="1" class="fw-bold">{{ currency($credit) }}</td>
+                            <td colspan="1" class="fw-bold">
+                                {{ currency($debit) }}
                             </td>
                         </tr>
                     </tbody>

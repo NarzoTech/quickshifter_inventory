@@ -15,6 +15,7 @@ class Ledger extends Model
         'sale_return_id',
         'supplier_id',
         'amount',
+        'total_amount',
         'is_paid',
         'is_received',
         'due_amount',

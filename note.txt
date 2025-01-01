@@ -34,3 +34,7 @@ ADD COLUMN `invoice` VARCHAR(45) NULL DEFAULT NULL AFTER `updated_at`;
 
 ALTER TABLE `employee_salaries`
 ADD COLUMN `payable_salary` VARCHAR(45) NULL AFTER `updated_at`;
+
+
+ALTER TABLE `ledgers` 
+ADD COLUMN `total_amount` DOUBLE(8,2) NULL DEFAULT 0 AFTER `amount`;

@@ -185,12 +185,13 @@ class SupplierService
         // create Ledger
         $ledger = new Ledger();
         $ledger->supplier_id = $id;
-        $ledger->amount = -$request->paying_amount;
+        $ledger->amount = $request->paying_amount;
         $ledger->invoice_type = 'Due Payment';
         $ledger->is_paid = 1;
         $ledger->invoice_no = $this->genLedgerInvoiceNumber();
         $ledger->note = $request->note;
         $ledger->due_amount = -$request->paying_amount;
+        $ledger->total_amount = 0;
         $ledger->date = now()->parse($request->payment_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
@@ -321,7 +322,6 @@ class SupplierService
 
     public function advancePay(Request $request, $id)
     {
-
         $account = $request->account_id;
 
         // create ledger
@@ -337,9 +337,10 @@ class SupplierService
 
         if ($request->refund_amount != null) {
             $ledger->due_amount += $request->refund_amount;
+            $ledger->amount = -$request->refund_amount;
         } else {
             $ledger->due_amount = -$request->paying_amount;
-            $ledger->amount = -$request->paying_amount;
+            $ledger->amount = $request->paying_amount;
         }
         $ledger->date = now()->parse($request->date);
         $ledger->created_by = auth('admin')->user()->id;
