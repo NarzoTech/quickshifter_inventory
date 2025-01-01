@@ -67,8 +67,7 @@
                                 <div class="card-body">
                                     <div class="card-title d-flex align-items-start justify-content-between mb-0">
                                         <div class="avatar flex-shrink-0">
-                                            <img src="{{ asset('backend/assets/img/illustrations/wallet-info.png') }}"
-                                                alt="wallet info" class="rounded">
+                                            <i class='bx bx-dollar'></i>
                                         </div>
                                     </div>
                                     <p class="mb-1">{{ 'Expense' }} ({{ now()->format('F') }})</p>
@@ -93,8 +92,7 @@
                                 <div class="card-body">
                                     <div class="card-title d-flex align-items-start justify-content-between mb-0">
                                         <div class="avatar flex-shrink-0">
-                                            <img src="{{ asset('backend/assets/img/illustrations/wallet-info.png') }}"
-                                                alt="wallet info" class="rounded">
+                                            <i class='bx bx-basket'></i>
                                         </div>
                                     </div>
                                     <p class="mb-1">{{ 'Sales' }} ({{ now()->format('F') }})</p>
@@ -119,8 +117,7 @@
                                 <div class="card-body">
                                     <div class="card-title d-flex align-items-start justify-content-between mb-0">
                                         <div class="avatar flex-shrink-0">
-                                            <img src="{{ asset('backend/assets/img/illustrations/wallet-info.png') }}"
-                                                alt="wallet info" class="rounded">
+                                            <i class='bx bx-cart-add'></i>
                                         </div>
                                     </div>
                                     <p class="mb-1">{{ 'Purchase' }} ({{ now()->format('F') }})</p>
