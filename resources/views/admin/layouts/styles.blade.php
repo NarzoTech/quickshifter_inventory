@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="{{ asset('backend/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
 <!-- Page CSS -->
-
+<script src="{{ asset('backend/assets/vendor/libs/jquery/jquery.js') }}"></script>
 
 <!-- Helpers -->
 <script src="{{ asset('backend/assets/vendor/js/helpers.js') }}"></script>
