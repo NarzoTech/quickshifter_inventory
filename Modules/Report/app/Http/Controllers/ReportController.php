@@ -824,12 +824,46 @@ class ReportController extends Controller
 
     public function supplier()
     {
-
         $suppliers = $this->supplierService->allSupplier();
-        $suppliers = $suppliers->paginate(20);
-        $suppliers->appends(request()->query());
 
-        return view('report::supplier', compact('suppliers'));
+
+        $data['totalPurchase'] = 0;
+        $data['pay'] = 0;
+        $data['total_return'] = 0;
+        $data['total_return_pay'] = 0;
+        $data['total_due'] = 0;
+        $data['purchase_count'] = 0;
+
+        $supplierData = request()->order_type ? $suppliers : $suppliers->get();
+
+        foreach ($supplierData as $supplier) {
+            $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
+            $data['pay'] += $supplier->payments->sum('amount');
+
+            $totalReturn = $supplier->purchaseReturn->sum('return_amount');
+            $data['total_return'] += $totalReturn;
+
+            $data['total_return_pay'] += $supplier->purchaseReturn->sum(
+                'received_amount',
+            );
+
+            $data['total_due'] += $supplier->total_due - $totalReturn;
+            $data['purchase_count'] += $supplier->purchases->count();
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $suppliers = $suppliers->get();
+        } else {
+            $suppliers = $suppliers->paginate($parpage);
+            $suppliers->appends(request()->query());
+        }
+
+        return view('report::supplier', compact('suppliers', 'data'));
     }
 
     public function salary()
