@@ -30,27 +30,27 @@
 
             <li class="nav-item">
                 <a href="{{ route('admin.report.details-sale') }}" class="nav-link nav-link-lg">
-                    <i class="fa fa-money"></i> {{ __('Sale Report') }}</i>
+                    <i class='bx bx-dollar-circle'></i> {{ __('Sale Report') }}</i>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('admin.stock.index') }}" class="nav-link nav-link-lg">
-                    <i class="fas fa-box"></i> {{ __('Stock') }}</i>
+                    <i class='bx bx-package'></i> {{ __('Stock') }}</i>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('admin.report.dts') }}" class="nav-link nav-link-lg">
-                    <i class="fas fa-chart-bar"></i> {{ __('Today\'s Summery') }}</i>
+                    <i class='bx bx-line-chart'></i> {{ __('Today\'s Summery') }}</i>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('admin.sales.return.list') }}" class="nav-link nav-link-lg">
-                    <i class="fas fa-shopping-bag"></i> {{ __('Return Orders') }}</i>
+                    <i class='bx bx-cart-download'></i> {{ __('Return Orders') }}</i>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
-                    <i class="fas fa-cart-plus"></i> {{ __('POS') }}</i>
+                    <i class='bx bx-basket'></i> {{ __('POS') }}</i>
                 </a>
             </li>
             <!-- User -->
