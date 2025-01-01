@@ -135,7 +135,7 @@
                 url: route,
                 type: 'post',
                 success: function(res) {
-                    toastr.success(res.message);
+                    toastr.success(res.message, '', options);
                 },
                 error: function(err) {
                     handleError(err)

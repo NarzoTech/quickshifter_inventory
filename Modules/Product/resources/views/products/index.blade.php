@@ -133,13 +133,13 @@
                                 <td>{{ $product->category->name }}</td>
                                 <td>
                                     @if ($product->status == 1)
-                                        <a href="javascript:;" onclick="changeProductStatus({{ $product->id }})">
+                                        <a href="javascript:;" onclick="status({{ $product->id }})">
                                             <input id="status_toggle" type="checkbox" checked data-bs-toggle="toggle"
                                                 data-on="{{ __('Active') }}" data-off="{{ __('InActive') }}"
                                                 data-onstyle="success" data-offstyle="danger">
                                         </a>
                                     @else
-                                        <a href="javascript:;" onclick="changeProductStatus({{ $product->id }})">
+                                        <a href="javascript:;" onclick="status({{ $product->id }})">
                                             <input id="status_toggle" type="checkbox" data-bs-toggle="toggle"
                                                 data-on="{{ __('Active') }}" data-off="{{ __('InActive') }}"
                                                 data-onstyle="success" data-offstyle="danger">

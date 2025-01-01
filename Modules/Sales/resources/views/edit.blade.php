@@ -531,7 +531,7 @@
                                             </td>
                                             <td colspan="3">
                                                 <div class="form-group mb-0">
-                                                    <input type="date" class="form-control" name="due_date"
+                                                    <input type="text" class="form-control datepicker" name="due_date"
                                                         value="{{ $sale->due_date }}">
                                                 </div>
                                             </td>

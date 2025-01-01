@@ -50,6 +50,7 @@ class SaleService
         $sale->return_amount = $request->return_amount;
         $due = $request->total_amount - array_sum($request->paying_amount);
         $sale->due_amount = $due < 0 ? 0 : $due;
+        $sale->due_date = now()->parse($request->due_date);
         $sale->sale_note = $request->remark;
         $sale->created_by = auth('admin')->id();
         $sale->save();
@@ -180,6 +181,7 @@ class SaleService
 
             $due = $request->total_amount - array_sum($request->paying_amount);
             $sale->due_amount = $due < 0 ? 0 : $due;
+            $sale->due_date = now()->parse($request->due_date);
             $sale->sale_note = $request->remark;
             $sale->receive_amount = $request->receive_amount;
             $sale->return_amount = $request->return_amount;
