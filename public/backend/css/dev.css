@@ -1787,3 +1787,12 @@ td.sticky-2::after {
     text-decoration: none;
     padding: 8px 15px;
 }
+
+.navbar-nav .nav-item a.nav-link.nav-link-lg {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.navbar-nav .nav-item a.nav-link.nav-link-lg i {}
