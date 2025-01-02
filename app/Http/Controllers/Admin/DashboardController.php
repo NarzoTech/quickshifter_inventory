@@ -42,6 +42,7 @@ class DashboardController extends Controller
         $purchases = $this->purchaseService->all()
             ->selectRaw('DATE_FORMAT(purchase_date, "%Y-%m") as month, SUM(total_amount) as total')
             ->where('purchase_date', '>=', now()->subMonths(12))
+            ->whereYear('purchase_date', now()->year)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
@@ -52,7 +53,8 @@ class DashboardController extends Controller
 
 
 
-        $purchaseData = collect(Carbon::today()->startOfMonth()->subMonths(11)->monthsUntil(Carbon::today()->startOfMonth()))
+        $purchaseData = collect(Carbon::today()->startOfYear()->monthsUntil(Carbon::today()->endOfYear()))
+
             ->mapWithKeys(fn($date) => [$date->format('Y-m') => 0])
             ->merge($purchasesData)
             ->sortKeys();
@@ -60,15 +62,17 @@ class DashboardController extends Controller
 
         $sales = Sale::selectRaw('DATE_FORMAT(order_date, "%Y-%m") as month, SUM(grand_total) as total')
             ->where('order_date', '>=', now()->subMonths(12))
+            ->whereYear('order_date', now()->year)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
+
 
         $salesData = $sales->mapWithKeys(function ($sale) {
             return [$sale->month => $sale->total];
         });
 
-        $saleData = collect(Carbon::today()->startOfMonth()->subMonths(11)->monthsUntil(Carbon::today()->startOfMonth()))
+        $saleData = collect(Carbon::today()->startOfYear()->monthsUntil(Carbon::today()->endOfYear()))
             ->mapWithKeys(fn($date) => [$date->format('Y-m') => 0])
             ->merge($salesData)
             ->sortKeys();
@@ -101,13 +105,33 @@ class DashboardController extends Controller
 
 
         // calculate if current month expense is greater/smaller than last month expense and calculate percentage
-        if ($chart['currentMonthExpense'] > $chart['lastMonthExpense']) {
-            $chart['expensePercentage'] = ($chart['currentMonthExpense'] - $chart['lastMonthExpense']) / $chart['lastMonthExpense'] * 100;
-        } elseif ($chart['currentMonthExpense'] < $chart['lastMonthExpense']) {
-            $chart['expensePercentage'] = - ($chart['lastMonthExpense'] - $chart['currentMonthExpense']) / $chart['lastMonthExpense'] * 100;
+        // if ($chart['currentMonthExpense'] > $chart['lastMonthExpense']) {
+        //     $chart['expensePercentage'] = ($chart['currentMonthExpense'] - $chart['lastMonthExpense']) / $chart['lastMonthExpense'] * 100;
+        // } elseif ($chart['currentMonthExpense'] < $chart['lastMonthExpense']) {
+        //     $chart['expensePercentage'] = - ($chart['lastMonthExpense'] - $chart['currentMonthExpense']) / $chart['lastMonthExpense'] * 100;
+        // } else {
+        //     $chart['expensePercentage'] = 0;
+        // }
+
+        if ($chart['lastMonthExpense'] > 0) {
+            if ($chart['currentMonthExpense'] > $chart['lastMonthExpense']) {
+                $chart['expensePercentage'] = ($chart['currentMonthExpense'] - $chart['lastMonthExpense']) / $chart['lastMonthExpense'] * 100;
+            } elseif ($chart['currentMonthExpense'] < $chart['lastMonthExpense']) {
+                $chart['expensePercentage'] = - ($chart['lastMonthExpense'] - $chart['currentMonthExpense']) / $chart['lastMonthExpense'] * 100;
+            } else {
+                $chart['expensePercentage'] = 0;
+            }
         } else {
-            $chart['expensePercentage'] = 0;
+            // Handle case where last month's expense is zero
+            if ($chart['currentMonthExpense'] > 0) {
+                $chart['expensePercentage'] = 100;
+            } elseif ($chart['currentMonthExpense'] < 0) {
+                $chart['expensePercentage'] = -100;
+            } else {
+                $chart['expensePercentage'] = 0;
+            }
         }
+
         $chart['expensePercentage'] = number_format($chart['expensePercentage'], 2);
 
 

@@ -691,6 +691,26 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="invoiceModal" tabindex="-1" role="dialog" aria-labelledby="invoiceModal"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-body invoice_modal_body">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="submit" class="btn btn-success stockModalSave"
+                        form="stockUpdateModalForm">{{ __('Save') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 @endsection
 
 @push('js')

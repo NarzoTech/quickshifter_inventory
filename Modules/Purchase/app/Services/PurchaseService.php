@@ -201,7 +201,7 @@ class PurchaseService
         $purchase->updated_by = Auth::id();
         $purchase->save();
 
-        $ledger = $this->getLedger($request, $id, 1, 'purchase');
+        $ledger = $this->getLedger($request, $id, 'purchase', 1);
 
         $this->purchaseLedger($request, $purchase->id, $paidAmount, $request->total_amount, 'purchase', 1, $request->due_amount, $ledger);
 
@@ -542,7 +542,7 @@ class PurchaseService
 
         return $ledger;
     }
-    public function getLedger($request, $id, $isPaid = 1, $type)
+    public function getLedger($request, $id, $type, $isPaid = 1)
     {
         $purchase = $this->purchase->find($id);
         $ledger = Ledger::where('supplier_id', $request->supplier_id)
