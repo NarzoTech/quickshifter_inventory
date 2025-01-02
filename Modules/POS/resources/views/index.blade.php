@@ -6,6 +6,7 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/pos.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/css/jquery-ui.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/backend/css/invoice.css') }}">
     <style>
         .ui-autocomplete {
             z-index: 215000000 !important;
@@ -703,8 +704,8 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                    <button type="submit" class="btn btn-success stockModalSave"
-                        form="stockUpdateModalForm">{{ __('Save') }}</button>
+                    <button type="submit" class="btn btn-success" onclick="window.print()">
+                        {{ __('Print') }}</button>
                 </div>
             </div>
         </div>
@@ -1516,6 +1517,7 @@
                 data: formData,
                 url: "{{ route('admin.place-order') }}",
                 success: function(response) {
+
                     console.log(response);
                     $(".product-table tbody").html('')
                     if (response['alert-type'] == 'success') {
@@ -1532,6 +1534,19 @@
 
                         // reset customer select
                         $("#customer_id").val('').trigger('change')
+
+                        // reset discount type
+                        $('#discount_type').val(0).trigger('change')
+
+                        // reset form
+                        $('#checkoutForm').trigger('reset');
+
+                        // reset payment type
+                        $('[name="payment_type[]"]').val('cash').trigger('change').niceSelect('update');
+
+                        $('.invoice_modal_body').html(response.invoice);
+
+                        $('#invoiceModal').modal('show');
 
                     } else {
                         toastr.error(response.message)

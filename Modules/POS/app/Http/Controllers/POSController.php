@@ -438,9 +438,15 @@ class POSController extends Controller
         DB::beginTransaction();
         try {
             $order_result = $this->orderStore($user, $request);
+            $sale = $this->saleService->getSales()->find($order_result->id);
+
+            $invoiceBlade = view('sales::invoice-content')->with([
+                'sale' => $sale,
+            ])->render();
             DB::commit();
             return response()->json([
                 'order' => $order_result,
+                'invoice' => $invoiceBlade,
                 'message' => 'Sale created successfully',
                 'alert-type' => 'success',
             ], 200);
