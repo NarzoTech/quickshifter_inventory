@@ -65,12 +65,13 @@ e .page * {
         display: none !important;
     }
 
-    .section {
-        background: #fff !important;
+    .layout-navbar-fixed
+        .layout-wrapper:not(.layout-horizontal):not(.layout-without-menu)
+        .layout-page {
+        padding-top: 0 !important;
     }
-    .section-body,
-    .modal-footer {
-        display: none !important;
+    .container-p-y:not([class^="pt-"]):not([class*=" pt-"]) {
+        padding-top: 0 !important;
     }
 }
 

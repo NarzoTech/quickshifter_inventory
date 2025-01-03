@@ -119,7 +119,7 @@
                         Quantity
                     </th>
                     <th style="width: 15%; border-left: none !important; border-right: none !important;"
-                        class="text-right pr-2">
+                        class="text-right">
                         Total
                     </th>
                 </tr>
@@ -146,7 +146,7 @@
                             {{ $details->product->warranty ?? 'N/A' }}
                         </td>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                            class="text-center pr-2">
+                            class="text-center">
                             {{ $details->price }}
                         </td>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
@@ -154,7 +154,7 @@
                             {{ $details->quantity }} {{ $details->product?->unit->name ?? '' }}
                         </td>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                            class="text-right pr-2" id="totalPriceInvoice1">
+                            class="text-right" id="totalPriceInvoice1">
                             {{ $details->sub_total }}
                         </td>
                     </tr>
@@ -180,7 +180,7 @@
                             N/A
                         </td>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                            class="text-center pr-2">
+                            class="text-center">
                             {{ $details->price }}
                         </td>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
@@ -188,7 +188,7 @@
                             {{ $details->quantity }}
                         </td>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
-                            class="text-right pr-2" id="totalPriceInvoice1">
+                            class="text-right" id="totalPriceInvoice1">
                             {{ $details->sub_total }}
                         </td>
                     </tr>
@@ -220,37 +220,37 @@
                         <tr>
                             <td colspan="5" style="border: none !important">
                             </td>
-                            <td class="text-right pe-5"
+                            <td class="text-right ps-0 pb-0"
                                 style="border:none !important; border-bottom: 1px solid #fff !important">
-                                Subtotal :
+                                <b>Subtotal :</b>
                             </td>
                             @php
                                 $subTotal = array_sum($sale->details->pluck('sub_total')->toArray());
                             @endphp
-                            <td class="text-right pr-2"
+                            <td class="text-right pb-0"
                                 style="border:none !important; border-bottom: 1px solid #fff !important;">
-                                TK
-                                {{ $subTotal }}
+                                <b>TK
+                                    {{ $subTotal }}</b>
                             </td>
                         </tr>
 
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
-                            <td class="text-right pe-5"
-                                style="border:none !important; border-bottom: 1px solid #fff !important">
+                            <td class="text-right  ps-0"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important ">
                                 Discount:</td>
-                            <td class="text-right pr-2"
-                                style="border:none !important; border-bottom: 1px solid #fff !important;">
+                            <td class="text-right"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important ">
                                 TK
                                 {{ $sale->order_discount }}
                             </td>
                         </tr>
                         {{-- <tr>
                                         <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right pe-5"
+                                        <td class="text-right  ps-0"
                                             style="border:none !important; border-bottom: 1px solid #fff !important">
                                             Previous Due:</td>
-                                        <td class="text-right pr-2"
+                                        <td class="text-right"
                                             style="border:none !important; border-bottom: 1px solid #fff !important;">
                                             TK
                                             {{ $sale->customer->due->sum('due_amount') }}
@@ -260,23 +260,25 @@
 
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
-                            <td class="text-right pe-5"
+                            <td class="text-right ps-0 pb-0"
                                 style="border:none !important; border-bottom: 1px solid #fff !important">
-                                Total:
+                                <b>Total:</b>
                             </td>
-                            <td class="text-right pr-2"
+                            <td class="text-right pb-0"
                                 style="border:none !important; border-bottom: 1px solid #fff !important;">
 
-                                TK
-                                {{ $subTotal - $sale->order_discount }}
+                                <b>TK
+                                    {{ $subTotal - $sale->order_discount }}</b>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
-                            <td class="text-right pe-5" style="border:none !important; ">
+                            <td class="text-right ps-0"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important ">
                                 Paid:
                             </td>
-                            <td class="text-right pr-2" style="border:none !important;">
+                            <td class="text-right"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
                                 TK
                                 {{ $sale->paid_amount }}
                             </td>
@@ -285,52 +287,32 @@
                         <tr>
                             <td colspan="5" style="border: none !important">
                             </td>
-                            <td class="text-right pe-5"
-                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
-                            </td>
-                            <td class="text-right pr-2"
-                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important;">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="5" style="border: none !important">
-                            </td>
-                            <td class="text-right pe-5"
-                                style="border:none !important; border-bottom: 1px solid #fff !important">
+                            <td class="text-right ps-0">
 
                                 Due:
                             </td>
 
-                            <td class="text-right pr-2"
-                                style="border:none !important; border-bottom: 1px solid #fff !important;">
+                            <td class="text-right">
                                 TK {{ $sale->due_amount }}
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="5" style="border: none !important">
-                            </td>
-                            <td class="text-right pe-5"
-                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
-                            </td>
-                            <td class="text-right pr-2"
-                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important;">
-                            </td>
-                        </tr>
-                        @if ($sale->customer)
+
+
+                        {{-- @if ($sale->customer->due->count())
                             <tr>
                                 <td colspan="5" style="border: none !important">
                                 </td>
-                                <td class="text-right pe-5"
+                                <td class="text-right ps-0"
                                     style="border:none !important; border-bottom: 1px solid #fff !important">
-                                    Due Left/Due Remaining:
+                                    Due Remaining:
                                 </td>
 
-                                <td class="text-right pr-2"
+                                <td class="text-right"
                                     style="border:none !important; border-bottom: 1px solid #fff !important;">
                                     TK {{ $sale->customer->due->sum('due_amount') }}
                                 </td>
                             </tr>
-                        @endif
+                        @endif --}}
                     </tbody>
                 </table>
             </div>
