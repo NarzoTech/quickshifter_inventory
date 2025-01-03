@@ -12,11 +12,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
-                                <h4 class="section_title">{{ __('Add Employee') }}</h4>
-                                <div>
-                                    <a href="{{ route('admin.employee.index') }}" class="btn btn-primary"><i
-                                            class="fas fa-arrow-left"></i>{{ __('Back') }}</a>
-                                </div>
+                                <h4 class="section_title">{{ __('Create Employee') }}</h4>
                             </div>
                             <div class="card-body">
                                 <form action="{{ route('admin.employee.store') }}" method="post" id="add-employee-form"
