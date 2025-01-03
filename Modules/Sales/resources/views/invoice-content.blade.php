@@ -90,7 +90,7 @@
     </div>
 
     <div class="mt-3">
-        <table class="table table-bordered">
+        <table class="table">
             <thead>
                 <tr>
                     <th style="width: 5%; border-left: none !important; border-right: none !important;"

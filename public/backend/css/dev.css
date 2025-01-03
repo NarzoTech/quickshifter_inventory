@@ -1808,3 +1808,8 @@ td.sticky-2::after {
 .navbar-nav .nav-item a.nav-link.nav-link-lg i {
     margin-bottom: 2px;
 }
+
+.btn-primary svg,
+.btn-primary i {
+    margin-right: 5px;
+}
