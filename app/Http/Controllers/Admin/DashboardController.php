@@ -144,15 +144,31 @@ class DashboardController extends Controller
         ])->sum('grand_total');
 
 
-        if ($chart['currentSales'] > $lastSales) {
-            $chart['salePercentage'] = ($chart['currentSales'] - $lastSales) / $lastSales * 100;
-        } elseif ($chart['currentSales'] < $lastSales) {
+        // if ($chart['currentSales'] > $lastSales) {
+        //     $chart['salePercentage'] = ($chart['currentSales'] - $lastSales) / $lastSales * 100;
+        // } elseif ($chart['currentSales'] < $lastSales) {
 
-            $chart['salePercentage'] = - ($lastSales - $chart['currentSales']) / $lastSales * 100;
+        //     $chart['salePercentage'] = - ($lastSales - $chart['currentSales']) / $lastSales * 100;
+        // } else {
+        //     $chart['salePercentage'] = 0;
+        // }
+        // $chart['salePercentage'] = number_format($chart['salePercentage'], 2);
+
+        if ($lastSales > 0) {
+            if ($chart['currentSales'] > $lastSales) {
+                $chart['salePercentage'] = ($chart['currentSales'] - $lastSales) / $lastSales * 100;
+            } elseif ($chart['currentSales'] < $lastSales) {
+                $chart['salePercentage'] = - ($lastSales - $chart['currentSales']) / $lastSales * 100;
+            } else {
+                $chart['salePercentage'] = 0;
+            }
         } else {
-            $chart['salePercentage'] = 0;
+            // Handle case when last sales is zero
+            $chart['salePercentage'] = $chart['currentSales'] > 0 ? 100 : 0;
         }
+
         $chart['salePercentage'] = number_format($chart['salePercentage'], 2);
+
 
         // current month purchase
         $chart['currentPurchases'] = Purchase::where('purchase_date', '>=', now()->startOfMonth())->sum('total_amount');
@@ -161,13 +177,28 @@ class DashboardController extends Controller
             now()->subMonthsNoOverflow()->endOfMonth(),
         ])->sum('total_amount');
 
-        if ($chart['currentPurchases'] > $lastPurchases) {
-            $chart['purchasePercentage'] = ($chart['currentPurchases'] - $lastPurchases) / $lastPurchases * 100;
-        } elseif ($chart['currentPurchases'] < $lastPurchases) {
-            $chart['purchasePercentage'] = - ($lastPurchases - $chart['currentPurchases']) / $lastPurchases * 100;
+        // if ($chart['currentPurchases'] > $lastPurchases) {
+        //     $chart['purchasePercentage'] = ($chart['currentPurchases'] - $lastPurchases) / $lastPurchases * 100;
+        // } elseif ($chart['currentPurchases'] < $lastPurchases) {
+        //     $chart['purchasePercentage'] = - ($lastPurchases - $chart['currentPurchases']) / $lastPurchases * 100;
+        // } else {
+        //     $chart['purchasePercentage'] = 0;
+        // }
+
+        if ($lastPurchases > 0) {
+            if ($chart['currentPurchases'] > $lastPurchases) {
+                $chart['purchasePercentage'] = ($chart['currentPurchases'] - $lastPurchases) / $lastPurchases * 100;
+            } elseif ($chart['currentPurchases'] < $lastPurchases) {
+                $chart['purchasePercentage'] = - ($lastPurchases - $chart['currentPurchases']) / $lastPurchases * 100;
+            } else {
+                $chart['purchasePercentage'] = 0;
+            }
         } else {
-            $chart['purchasePercentage'] = 0;
+            // Handle the zero case: if there were no previous purchases
+            $chart['purchasePercentage'] = $chart['currentPurchases'] > 0 ? 100 : 0;
         }
+
+
         $chart['purchasePercentage'] = number_format($chart['purchasePercentage'], 2);
         return view('admin.dashboard', compact('data', 'purchaseData', 'saleData', 'chart'));
     }
