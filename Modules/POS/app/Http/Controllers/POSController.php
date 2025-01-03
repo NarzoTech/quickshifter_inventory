@@ -443,10 +443,13 @@ class POSController extends Controller
             $invoiceBlade = view('sales::invoice-content')->with([
                 'sale' => $sale,
             ])->render();
+
+            $invoiceRoute = route('admin.sales.invoice', $order_result->id) . '?print=true';
             DB::commit();
             return response()->json([
                 'order' => $order_result,
                 'invoice' => $invoiceBlade,
+                'invoiceRoute' => $invoiceRoute,
                 'message' => 'Sale created successfully',
                 'alert-type' => 'success',
             ], 200);

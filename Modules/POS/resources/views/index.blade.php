@@ -704,8 +704,8 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                    <button type="submit" class="btn btn-success" onclick="window.print()">
-                        {{ __('Print') }}</button>
+                    <a type="submit" class="btn btn-primary print-redirect" href=""
+                        target="_blank">{{ __('Print') }}</a>
                 </div>
             </div>
         </div>
@@ -1147,6 +1147,7 @@
                     $(".product-table-container").html(response)
                     $('[name="source"]').niceSelect();
                     totalSummery();
+                    scrollToCurrent()
                     toastr.success("{{ __('Remove successfully') }}")
                 },
                 error: function(response) {
@@ -1305,6 +1306,7 @@
                     toastr.success("{{ __('Item added successfully') }}")
                     totalSummery();
                     $('.preloader_area').addClass('d-none');
+                    scrollToCurrent();
                 },
                 error: function(response) {
                     if (response.status == 500) {
@@ -1449,7 +1451,6 @@
 
             let totalAmount = $('#total_amountModal').text();
             totalAmount = parseFloat(totalAmount);
-            console.log(totalAmount, amountVal);
             if (totalAmount > amountVal) {
                 $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
                 $(".due-date").removeClass('d-none');
@@ -1545,6 +1546,7 @@
                         $('[name="payment_type[]"]').val('cash').trigger('change').niceSelect('update');
 
                         $('.invoice_modal_body').html(response.invoice);
+                        $('.print-redirect').attr('href', response.invoiceRoute);
 
                         $('#invoiceModal').modal('show');
 
@@ -1671,6 +1673,21 @@
                     }
                 }
             });
+        }
+
+
+        function scrollToCurrent() {
+            const $current = $('.pos_pro_list_table tbody tr:last-child');
+            if ($current.length) {
+                const sidebar = $('.product-table .table-responsive');
+                const sidebarOffset = sidebar.offset().top;
+                const currentOffset = $current.offset().top;
+
+                sidebar.animate({
+                    scrollTop: sidebar.scrollTop() + (currentOffset - sidebarOffset -
+                        50) // Adjust offset if
+                }, 300);
+            }
         }
     </script>
 @endpush

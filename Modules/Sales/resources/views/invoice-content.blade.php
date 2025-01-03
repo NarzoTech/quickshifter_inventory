@@ -371,3 +371,11 @@
         </div>
     @endif
 </section>
+
+
+
+@if (request()->print)
+    <script>
+        window.print();
+    </script>
+@endif
