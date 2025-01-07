@@ -19,7 +19,7 @@
         <li class="menu-item {{ Route::is('admin.dashboard') ? 'active' : '' }}">
             <a href="{{ route('admin.dashboard') }}" class="menu-link">
                 <i class='menu-icon tf-icons bx bx-home-smile'></i>
-                <div class="text-truncate" data-i18n="Basic">Dashboard</div>
+                <div class="text-truncate" data-i18n="Basic">{{ __('Dashboard') }}</div>
             </a>
         </li>
 

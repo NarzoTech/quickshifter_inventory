@@ -70,13 +70,16 @@
                 <h4 class="section_title">{{ __('Suppliers List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addgroup" class="btn btn-primary"> <i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Supplier Group') }}</a>
+                @adminCan('supplier.group.create')
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addgroup" class="btn btn-primary"> <i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Supplier Group') }}</a>
+                @endadminCan
+
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
+                    {{ __('Excel') }}</button>
                 <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                    {{ __('PDF') }}</button>
             </div>
         </div>
         <div class="card-body">
@@ -105,18 +108,24 @@
                                     @endif
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $group->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            {{ __('Action') }}
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editGroup{{ $group->id }}">{{ __('Edit') }}</a>
-                                            <a href="javascript:;"class="dropdown-item"
-                                                onclick="deleteData({{ $group->id }})">
-                                                {{ __('Delete') }}</a>
-                                        </div>
+                                        @if (checkAdminHasPermission('supplier.group.edit') || checkAdminHasPermission('supplier.group.delete'))
+                                            <button id="btnGroupDrop{{ $group->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                {{ __('Action') }}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
+                                                @adminCan('supplier.group.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editGroup{{ $group->id }}">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('supplier.group.delete')
+                                                    <a href="javascript:;"class="dropdown-item"
+                                                        onclick="deleteData({{ $group->id }})">
+                                                        {{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

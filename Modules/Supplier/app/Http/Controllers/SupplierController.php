@@ -33,11 +33,14 @@ class SupplierController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('supplier.view');
         $suppliers = $this->supplierService->allSupplier();
 
-        if (request('export')) {
-            $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-            return Excel::download(new SupplierExport($suppliers), $fileName);
+        if (checkAdminHasPermission('supplier.excel.download')) {
+            if (request('export')) {
+                $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SupplierExport($suppliers), $fileName);
+            }
         }
 
 
@@ -67,11 +70,13 @@ class SupplierController extends Controller
             $data['total_due_dismiss'] += $supplier->total_due_dismiss;
         }
 
-        if (request('export_pdf')) {
-            $html = view('supplier::pdf.supplier', ['suppliers' => $supplierData,  'data' => $data])->render();
-            $pdf = $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
-            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
-            return $pdf->download($fileName);
+        if (checkAdminHasPermission('supplier.pdf.download')) {
+            if (request('export_pdf')) {
+                $html = view('supplier::pdf.supplier', ['suppliers' => $supplierData,  'data' => $data])->render();
+                $pdf = $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+                $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+                return $pdf->download($fileName);
+            }
         }
 
 
@@ -131,6 +136,7 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('supplier.store');
         $request->validate(['name' => 'required']);
 
         try {
@@ -164,6 +170,7 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.update');
         $request->validate(['name' => 'required']);
 
         try {
@@ -180,6 +187,7 @@ class SupplierController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.delete');
         try {
             $this->supplierService->deleteSupplier($id);
             return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier deleted successfully.', 'alert-type' => 'success']);
@@ -192,6 +200,7 @@ class SupplierController extends Controller
 
     public function duePay($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.due.pay');
         $supplier = $this->supplierService->find($id);
         $accounts = $this->accountsService->all()->with('bank')->get();
         return view('supplier::due-pay', compact('supplier', 'accounts'));
@@ -199,6 +208,7 @@ class SupplierController extends Controller
 
     public function duePayStore(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.due.pay');
         $rule = [
             'invoice_no' => 'required|array',
             'invoice_no.*' => 'required',
@@ -233,6 +243,7 @@ class SupplierController extends Controller
 
     public function duePayHistory()
     {
+        checkAdminHasPermissionAndThrowException('supplier.due.pay.list');
         $payments = $this->supplierService->duePayHistory();
 
         if (request('export')) {
@@ -266,6 +277,7 @@ class SupplierController extends Controller
 
     public function dueReceiveDelete($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.due.pay.delete');
 
         $payments = $this->supplierService->dueReceiveDelete($id);
 
@@ -274,6 +286,7 @@ class SupplierController extends Controller
 
     public function changeStatus($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.status');
         $supplier = $this->supplierService->find($id);
 
         $status = $supplier->status == 1 ? 0 : 1;
@@ -288,6 +301,7 @@ class SupplierController extends Controller
 
     public function advance($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.advance');
         $supplier = $this->supplierService->find($id);
         $accounts = $this->accountsService->all()->with('bank')->get();
         return view('supplier::advance', compact('supplier', 'accounts'));
@@ -295,6 +309,7 @@ class SupplierController extends Controller
 
     public function advanceStore(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.advance');
         $validator = Validator::make($request->all(), [
             'advance' => 'nullable',
             'paying_amount' => 'nullable',
@@ -332,6 +347,7 @@ class SupplierController extends Controller
 
     public function ledger($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.ledger');
         $supplier = $this->supplierService->find($id);
 
         $ledgers = Ledger::where('supplier_id', $supplier->id)->orderBy('date', 'desc')->paginate(20);
@@ -343,18 +359,21 @@ class SupplierController extends Controller
 
     public function ledgerDetails($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.ledger');
         $ledger = Ledger::with('details', 'supplier')->find($id);
         return view('supplier::ledger-details', compact('ledger'));
     }
-    public function export() {}
+
 
     public function bulkImport()
     {
+        checkAdminHasPermissionAndThrowException('supplier.bulk.import');
         return view('supplier::bulk-import');
     }
 
     public function bulkImportStore(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('supplier.bulk.import');
         $request->validate(['file' => 'required']);
         try {
             $this->supplierService->bulkImport($request);

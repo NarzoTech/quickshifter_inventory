@@ -4,8 +4,6 @@
     <title>{{ __('Suppliers List') }}</title>
 @endsection
 
-
-
 @section('content')
     <div class="row">
         <div class="col-12">
@@ -82,8 +80,8 @@
                             </div>
                             <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
-                                    <button type="submit" class="btn bg-label-primary">Search</button>
+                                    <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn bg-label-primary">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -96,13 +94,21 @@
     <div class="card mt-5 mb-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title">Suppliers List</h4>
+                <h4 class="section_title">{{ __('Suppliers List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn bg-label-primary"> <i
-                        class="fa fa-plus"></i> {{ __('Add Supplier') }}</a>
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i> Excel</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i> PDF</button>
+                @adminCan('supplier.create')
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn bg-label-primary"> <i
+                            class="fa fa-plus"></i> {{ __('Add Supplier') }}</a>
+                @endadminCan
+                @adminCan('supplier.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        {{ __('Excel') }}</button>
+                @endadminCan
+                @adminCan('supplier.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        {{ __('PDF') }}</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -116,7 +122,6 @@
                             <th>{{ __('Area') }}</th>
                             <th>{{ __('Purchase Total') }}</th>
                             <th>{{ __('Purchase Payment') }}</th>
-
                             <th>{{ __('Total Due') }}</th>
                             <th>{{ __('Advance') }}</th>
                             <th>{{ __('Due Dismiss') }}</th>
@@ -142,39 +147,57 @@
                                 <td>{{ currency($supplier->total_due_dismiss) }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $supplier->id }}" type="button"
-                                            class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $supplier->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#showSupplier{{ $supplier->id }}">Show</a>
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editSupplier{{ $supplier->id }}">Edit</a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.suppliers.advance', $supplier->id) }}">{{ __('Advance') }}</a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.suppliers.ledger', $supplier->id) }}">{{ __('Ledger') }}</a>
-
-                                            <a class="dropdown-item" href="javascript:;"
-                                                onclick="status('{{ $supplier->id }}')"
-                                                data-status="{{ $supplier->id }}">
-                                                {{ $supplier->status == 1 ? 'Deactivated' : 'Activate' }}
-                                            </a>
-
-                                            @if ($supplier->total_due - $totalReturn)
-                                                <a class="dropdown-item"
-                                                    href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
-                                            @endif
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.purchase.index') }}?supplier_id={{ $supplier->id }}">{{ __('Purchase') }}</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $supplier->id }})">
-                                                Delete</a>
-                                        </div>
+                                        @if (checkAdminHasPermission('supplier.edit') ||
+                                                checkAdminHasPermission('supplier.delete') ||
+                                                checkAdminHasPermission('supplier.advance') ||
+                                                checkAdminHasPermission('supplier.ledger') ||
+                                                checkAdminHasPermission('supplier.status') ||
+                                                checkAdminHasPermission('supplier.due.pay') ||
+                                                checkAdminHasPermission('supplier.purchase.list'))
+                                            <button id="btnGroupDrop{{ $supplier->id }}" type="button"
+                                                class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                {{ __('Action') }}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $supplier->id }}">
+                                                <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                    data-bs-target="#showSupplier{{ $supplier->id }}">{{ __('Show') }}</a>
+                                                @adminCan('supplier.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editSupplier{{ $supplier->id }}">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('supplier.advance')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.suppliers.advance', $supplier->id) }}">{{ __('Advance') }}</a>
+                                                @endadminCan
+                                                @adminCan('supplier.ledger')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.suppliers.ledger', $supplier->id) }}">{{ __('Ledger') }}</a>
+                                                @endadminCan
+                                                @adminCan('supplier.status')
+                                                    <a class="dropdown-item" href="javascript:;"
+                                                        onclick="status('{{ $supplier->id }}')"
+                                                        data-status="{{ $supplier->id }}">
+                                                        {{ $supplier->status == 1 ? 'Deactivated' : 'Activate' }}
+                                                    </a>
+                                                @endadminCan
+                                                @adminCan('supplier.due.pay')
+                                                    @if ($supplier->total_due - $totalReturn)
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
+                                                    @endif
+                                                @endadminCan
+                                                @adminCan('supplier.purchase.list')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.purchase.index') }}?supplier_id={{ $supplier->id }}">{{ __('Purchase') }}</a>
+                                                @endadminCan
+                                                @adminCan('supplier.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $supplier->id }})">
+                                                        {{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
+                                            @endadminCan
                                     </div>
                                 </td>
                             </tr>

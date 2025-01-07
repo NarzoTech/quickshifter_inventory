@@ -57,7 +57,7 @@
                                         <input type="text" id="dateRangePicker" placeholder="From Date"
                                             class="form-control datepicker" name="from_date"
                                             value="{{ request()->get('from_date') }}" autocomplete="off">
-                                        <span class="input-group-text">to</span>
+                                        <span class="input-group-text">{{ __('to') }}</span>
                                         <input type="text" placeholder="To Date" class="form-control datepicker"
                                             name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
                                     </div>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
+                                    <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
                                     <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
                                 </div>
                             </div>
@@ -82,9 +82,9 @@
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
+                    {{ __('Excel') }}</button>
                 <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                    {{ __('PDF') }}</button>
             </div>
         </div>
         <div class="card-body">
@@ -102,7 +102,6 @@
                             <th>{{ __('Paid By') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
-
                     </thead>
                     <tbody>
                         @foreach ($payments as $payment)
@@ -115,12 +114,14 @@
                                 <td>{{ currency($payment->amount) }}</td>
                                 <td>{{ $payment->createdBy->name }}</td>
                                 <td>
-                                    <div class="btn-group">
-                                        <a href="javascript:;" class="btn btn-danger btn-sm"
-                                            onclick="deleteData({{ $payment->id }})">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
+                                    @adminCan('supplier.due.pay.delete')
+                                        <div class="btn-group">
+                                            <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                onclick="deleteData({{ $payment->id }})">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    @endadminCan
                                 </td>
                             </tr>
                         @endforeach
