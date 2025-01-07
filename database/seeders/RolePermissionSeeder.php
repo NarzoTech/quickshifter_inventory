@@ -6,6 +6,7 @@ use App\Traits\PermissionsTrait;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -18,6 +19,11 @@ class RolePermissionSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('role_has_permissions')->truncate();
+        Permission::truncate();
+        Role::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         $roleSuperAdmin = Role::updateOrCreate(['name' => 'Super Admin', 'guard_name' => 'admin']);
 
         $permissions = self::getSuperAdminPermissions();
