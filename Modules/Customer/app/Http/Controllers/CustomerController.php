@@ -38,7 +38,7 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-        // checkAdminHasPermissionAndThrowException('customer.view');
+        checkAdminHasPermissionAndThrowException('customer.view');
 
         $query = User::query();
 
@@ -51,9 +51,11 @@ class CustomerController extends Controller
                 ->orWhere('address', 'like', '%' . $request->keyword . '%');
         });
 
-        if (request('export')) {
-            $fileName = 'customers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-            return Excel::download(new CustomerExport($query->get()), $fileName);
+        if (checkAdminHasPermission('customer.excel.download')) {
+            if (request('export')) {
+                $fileName = 'customers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new CustomerExport($query->get()), $fileName);
+            }
         }
         $orderBy = $request->filled('order_by') ? $request->order_by : 'asc';
 
@@ -133,15 +135,17 @@ class CustomerController extends Controller
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
         }
 
-        if (request('export_pdf')) {
-            $html = view('customer::pdf.customer', [
-                'users' => $customerData,
-                'data' => $data
-            ])->render();
+        if (checkAdminHasPermission('customer.pdf.download')) {
+            if (request('export_pdf')) {
+                $html = view('customer::pdf.customer', [
+                    'users' => $customerData,
+                    'data' => $data
+                ])->render();
 
-            $pdf = $fileName = 'customer-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
-            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
-            return $pdf->download($fileName);
+                $pdf = $fileName = 'customer-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+                $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+                return $pdf->download($fileName);
+            }
         }
 
         if (request('par-page')) {
@@ -189,7 +193,7 @@ class CustomerController extends Controller
     // store
     public function store(Request $request)
     {
-        // checkAdminHasPermissionAndThrowException('customer.create');
+        checkAdminHasPermissionAndThrowException('customer.create');
 
         $this->saveUser($request);
 
@@ -208,7 +212,7 @@ class CustomerController extends Controller
     }
     public function show($id)
     {
-        // checkAdminHasPermissionAndThrowException('customer.view');
+        checkAdminHasPermissionAndThrowException('customer.view');
 
         $user = User::findOrFail($id);
 
@@ -224,7 +228,7 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        // checkAdminHasPermissionAndThrowException('customer.update');
+        checkAdminHasPermissionAndThrowException('customer.edit');
 
         $request->validate([
             'name' => 'required',
@@ -253,14 +257,14 @@ class CustomerController extends Controller
 
     public function destroy($id)
     {
-
+        checkAdminHasPermissionAndThrowException('customer.delete');
         $user = User::findOrFail($id);
 
-        // $user->due()->delete();
-        // $user->payment()->delete();
-        // $user->sales()->details()->delete();
-        // $user->sales()->stock()->delete();
-        // $user->sales()->delete();
+        $user->due()->delete();
+        $user->payment()->delete();
+        $user->sales()->details()->delete();
+        $user->sales()->stock()->delete();
+        $user->sales()->delete();
         $user->delete();
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customers.index', [], ['messege' => 'Customer deleted successfully.', 'alert-type' => 'success']);
     }
@@ -301,6 +305,7 @@ class CustomerController extends Controller
 
     public function dueReceiveForm(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('customer.due.receive');
         if (!$request->customer) {
             return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Customer Not Found', 'alert-type' => 'error']);
         }
@@ -313,6 +318,7 @@ class CustomerController extends Controller
 
     public function dueReceive(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('customer.due.receive');
         $request->validate([
             'receiving_amount' => 'required',
         ]);
@@ -400,6 +406,7 @@ class CustomerController extends Controller
 
     public function dueReceiveList()
     {
+        checkAdminHasPermissionAndThrowException('customer.due.receive.list');
         $payments  = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->where('amount', '>', 0);
         // Date filtering
         if (request()->from_date && request()->to_date) {
@@ -445,6 +452,7 @@ class CustomerController extends Controller
 
     public function dueReceiveEdit($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.due.receive.edit');
         $payment = CustomerPayment::findOrFail($id);
         $accounts = $this->account->all()->get();
         return view('customer::due-receive-edit', compact('payment', 'accounts'));
@@ -452,6 +460,7 @@ class CustomerController extends Controller
 
     public function dueReceiveUpdate(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('customer.due.receive.edit');
         $payment = CustomerPayment::findOrFail($id);
         $payment->update($request->except('_token'));
         return to_route('admin.customer.due-receive.list')->with([
@@ -462,6 +471,7 @@ class CustomerController extends Controller
 
     public function dueReceiveDelete($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.due.receive.delete');
         $payment = CustomerPayment::findOrFail($id);
 
         // update customer due amount
@@ -490,6 +500,7 @@ class CustomerController extends Controller
 
     public function changeStatus($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.status');
         $user = User::find($id);
 
         $status = $user->status == 1 ? 0 : 1;
@@ -504,6 +515,7 @@ class CustomerController extends Controller
 
     public function advance($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.advance');
         $customer = User::find($id);
         $accounts = $this->account->all()->with('bank')->get();
         return view('customer::advance', compact('customer', 'accounts'));
@@ -511,6 +523,7 @@ class CustomerController extends Controller
 
     public function advanceStore(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('customer.advance');
         $validator = Validator::make($request->all(), [
             'advance' => 'nullable',
             'paying_amount' => 'nullable',
@@ -549,6 +562,7 @@ class CustomerController extends Controller
 
     public function advancePay(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('customer.advance');
         $account = $request->account_id;
 
         if ($account == 'cash' || $account == 'advance') {
@@ -646,6 +660,7 @@ class CustomerController extends Controller
 
     public function ledger($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.ledger');
         $user = User::findOrFail($id);
         $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'asc')->paginate(20);
         $title = __('Customer Ledger');
@@ -654,6 +669,7 @@ class CustomerController extends Controller
 
     public function ledgerDetails($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.ledger');
         $ledger = Ledger::with('details', 'customer')->find($id);
         $title = __('Customer Ledger Details');
         return view('supplier::ledger-details', compact('ledger', 'title'));
@@ -661,10 +677,12 @@ class CustomerController extends Controller
 
     public function bulkImport()
     {
+        checkAdminHasPermissionAndThrowException('customer.bulk.import');
         return view('customer::import');
     }
     public function bulkImportStore(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('customer.bulk.import');
         $request->validate(['file' => 'required']);
         try {
             $file = $request->file('file');
@@ -679,7 +697,7 @@ class CustomerController extends Controller
 
     public function deleteAllCustomer(Request $request)
     {
-
+        checkAdminHasPermissionAndThrowException('customer.bulk.delete');
         $request->validate([
             'password' => 'required',
         ]);

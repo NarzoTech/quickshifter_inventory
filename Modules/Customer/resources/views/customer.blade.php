@@ -95,17 +95,28 @@
                 <h4 class="section_title"> {{ __('Customers List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
-                    {{ __('Import Customers') }}</a>
-                <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()" data-bs-toggle="modal"
-                    data-bs-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer" class="btn btn-primary"> <i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Customer') }}</a>
-                <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+
+                @adminCan('customer.bulk.import')
+                    <a href="{{ route('admin.customers.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
+                        {{ __('Import Customers') }}</a>
+                @endadminCan
+                @adminCan('customer.bulk.delete')
+                    <a href="javascript:;" class="btn btn-danger" onclick="deleteAllCustomers()" data-bs-toggle="modal"
+                        data-bs-target="#deleteAllCustomers">{{ __('Delete All Customer') }}</a>
+                @endadminCan
+                @adminCan('customer.create')
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addCustomer" class="btn btn-primary"> <i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Customer') }}</a>
+                @endadminCan
+                @adminCan('customer.excel.download')
+                    <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
+                        Excel</button>
+                @endadminCan
+                @adminCan('customer.pdf.download')
+                    <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
+                        PDF</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -148,49 +159,60 @@
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $user->id }}">
 
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#showCustomer{{ $user->id }}">Show</a>
+                                            @adminCan('customer.view')
+                                                <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                    data-bs-target="#showCustomer{{ $user->id }}">Show</a>
+                                            @endadminCan
+                                            @adminCan('customer.edit')
+                                                <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                    data-bs-target="#editCustomer{{ $user->id }}">Edit</a>
+                                            @endadminCan
 
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editCustomer{{ $user->id }}">Edit</a>
-
-
-                                            @if ($user->total_due)
+                                            @adminCan('customer.due.receive')
+                                                @if ($user->total_due)
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
+                                                        Receive</a>
+                                                @endif
+                                            @endadminCan
+                                            @adminCan('customer.due.receive.list')
                                                 <a class="dropdown-item"
-                                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
-                                                    Receive</a>
-                                            @endif
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.customers.due-receive.list') }}?customer={{ $user->id }}">Due
-                                                Receive List</a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.sales.return.list') }}?customer={{ $user->id }}">Sales
-                                                Return</a>
-
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Dismiss</a>
-
-
-                                            <a class="dropdown-item" href="javascript:;"
-                                                onclick="status('{{ $user->id }}')"
-                                                data-status="{{ $user->id }}">
-                                                {{ $user->status == 1 ? 'Deactivated' : 'Activate' }}
-                                            </a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
-
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $user->id }})">
-                                                Delete</a>
+                                                    href="{{ route('admin.customers.due-receive.list') }}?customer={{ $user->id }}">Due
+                                                    Receive List</a>
+                                            @endadminCan
+                                            @adminCan('sales.return')
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.sales.return.list') }}?customer={{ $user->id }}">Sales
+                                                    Return</a>
+                                            @endadminCan
+                                            @adminCan('customer.due.receive')
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Dismiss</a>
+                                            @endadminCan
+                                            @adminCan('customer.status')
+                                                <a class="dropdown-item" href="javascript:;"
+                                                    onclick="status('{{ $user->id }}')"
+                                                    data-status="{{ $user->id }}">
+                                                    {{ $user->status == 1 ? 'Deactivated' : 'Activate' }}
+                                                </a>
+                                            @endadminCan
+                                            @adminCan('customer.sales.list')
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
+                                            @endadminCan
+                                            @adminCan('customer.ledger')
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
+                                            @endadminCan
+                                            @adminCan('customer.advance')
+                                                <a class="dropdown-item"
+                                                    href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
+                                            @endadminCan
+                                            @adminCan('customer.delete')
+                                                <a href="javascript:;" class="dropdown-item"
+                                                    onclick="deleteData({{ $user->id }})">
+                                                    Delete</a>
+                                            @endadminCan
                                         </div>
                                     </div>
                                 </td>

@@ -89,12 +89,33 @@ trait PermissionsTrait
         'group_name' => 'customer',
         'permissions' => [
             'customer.view',
-            'customer.bulk.mail',
             'customer.create',
-            'customer.store',
             'customer.edit',
-            'customer.update',
             'customer.delete',
+            'customer.bulk.import',
+            'customer.bulk.delete',
+            'customer.status',
+            'customer.advance',
+            'customer.ledger',
+            'customer.due.receive.list',
+            'customer.due.receive',
+            'customer.due.receive.edit',
+            'customer.due.receive.delete',
+            'customer.sales.list',
+            'customer.excel.download',
+            'customer.pdf.download',
+        ],
+    ];
+    public static array $salesPermissions = [
+        'group_name' => 'Sales',
+        'permissions' => [
+            'sales.view',
+            'sales.create',
+            'sales.edit',
+            'sales.delete',
+            'sales.return',
+            'sales.return.list',
+            'sales.return.delete',
         ],
     ];
 
