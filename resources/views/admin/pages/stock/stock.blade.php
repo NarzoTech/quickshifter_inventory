@@ -120,14 +120,20 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title">Stock List</h4>
+                <h4 class="section_title">{{ __('Stock List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" class="btn btn-danger reset-button">{{ __('Reset Stock') }}</a>
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                @adminCan('stock.reset')
+                    <a href="javascript:;" class="btn btn-danger reset-button">{{ __('Reset Stock') }}</a>
+                @endadminCan
+                @adminCan('stock.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        {{ __('Excel') }}</button>
+                @endadminCan
+                @adminCan('stock.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        {{ __('PDF') }}</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -178,21 +184,28 @@
                                         <button id="btnGroupDrop{{ $product->id }}" type="button"
                                             class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                                             aria-haspopup="true" aria-expanded="false">
-                                            Action
+                                            {{ __('Action') }}
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $product->id }}">
-                                            <a href="{{ route('admin.product.show', $product->id) }}"
-                                                class="dropdown-item"
-                                                title="Product Details">{{ __('Product Details') }}</a>
-                                            <a href="{{ route('admin.stock.ledger', $product->id) }}"
-                                                class="dropdown-item" title="Stock Ledger">
-                                                {{ __('Stock Ledger') }}
-                                            </a>
-                                            <a href="javascript:;" class="dropdown-item" title="Reset Stock"
-                                                onclick="resetStock({{ $product->id }})" data-bs-target="#stockModal"
-                                                data-bs-toggle="modal">
-                                                {{ __('Reset Stock') }}
-                                            </a>
+
+                                            @adminCan('product.view')
+                                                <a href="{{ route('admin.product.show', $product->id) }}"
+                                                    class="dropdown-item"
+                                                    title="Product Details">{{ __('Product Details') }}</a>
+                                            @endadminCan
+                                            @adminCan('stock.ledger')
+                                                <a href="{{ route('admin.stock.ledger', $product->id) }}"
+                                                    class="dropdown-item" title="Stock Ledger">
+                                                    {{ __('Stock Ledger') }}
+                                                </a>
+                                            @endadminCan
+                                            @adminCan('stock.reset')
+                                                <a href="javascript:;" class="dropdown-item" title="Reset Stock"
+                                                    onclick="resetStock({{ $product->id }})" data-bs-target="#stockModal"
+                                                    data-bs-toggle="modal">
+                                                    {{ __('Reset Stock') }}
+                                                </a>
+                                            @endadminCan
                                         </div>
                                     </div>
                                 </td>

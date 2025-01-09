@@ -195,6 +195,17 @@ trait PermissionsTrait
 
         ],
     ];
+    public static array $stockPermissions = [
+        'group_name' => 'stock',
+        'permissions' => [
+            'stock.view',
+            'stock.ledger',
+            'stock.reset',
+            'stock.excel.download',
+            'stock.pdf.download',
+
+        ],
+    ];
 
     public static array $salesPermissions = [
         'group_name' => 'Sales',

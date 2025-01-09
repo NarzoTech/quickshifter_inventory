@@ -14,6 +14,7 @@ class StockController extends Controller
 
     public function index(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('stock.view');
         $query = $this->product->allActiveProducts($request);
 
         if (request('keyword')) {
@@ -59,6 +60,7 @@ class StockController extends Controller
 
     public function ledger($id)
     {
+        checkAdminHasPermissionAndThrowException('stock.ledger');
         $product = $this->product->getProduct($id);
         $stocks = Stock::where('product_id', $id)->orderBy('date', 'asc')->paginate(20);
 
@@ -68,6 +70,7 @@ class StockController extends Controller
 
     public function reset($id)
     {
+        checkAdminHasPermissionAndThrowException('stock.reset');
         $this->resetStock($id);
 
         return redirect()->back()->with(['messege' => 'Stock Reset Successfully', 'alert-type' => 'success']);
@@ -75,6 +78,7 @@ class StockController extends Controller
 
     public function resetAll()
     {
+        checkAdminHasPermissionAndThrowException('stock.reset');
         Stock::truncate();
 
         $products = $this->product->getProducts()->get();
