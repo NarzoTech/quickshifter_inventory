@@ -24,6 +24,7 @@ class ServiceCategoryController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('service.category.view');
         $categories = $this->serviceCategoryService->all();
 
         if (request('par-page')) {
@@ -47,6 +48,7 @@ class ServiceCategoryController extends Controller
      */
     public function store(Request $request): RedirectResponse|JsonResponse
     {
+        checkAdminHasPermissionAndThrowException('service.category.create');
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -60,28 +62,12 @@ class ServiceCategoryController extends Controller
             return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.serviceCategory.index', [], ['messege' => 'Service Category creation failed', 'alert-type' => 'error']);
         }
     }
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('service::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('service::edit');
-    }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('service.category.edit');
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -99,6 +85,7 @@ class ServiceCategoryController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('service.category.delete');
         $this->serviceCategoryService->delete($id);
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.serviceCategory.index', [], ['messege' => 'Service Category deleted successfully', 'alert-type' => 'success']);
     }

@@ -206,6 +206,24 @@ trait PermissionsTrait
 
         ],
     ];
+    public static array $servicePermissions = [
+        'group_name' => 'service',
+        'permissions' => [
+            'service.view',
+            'service.create',
+            'service.edit',
+            'service.delete',
+        ],
+    ];
+    public static array $serviceCategoryPermissions = [
+        'group_name' => 'service category',
+        'permissions' => [
+            'service.category.view',
+            'service.category.create',
+            'service.category.edit',
+            'service.category.delete',
+        ],
+    ];
 
     public static array $salesPermissions = [
         'group_name' => 'Sales',

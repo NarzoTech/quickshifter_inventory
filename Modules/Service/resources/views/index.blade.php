@@ -68,8 +68,15 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"> Service Category List</h4>
+                <h4 class="section_title">{{ __('Service Category List') }}</h4>
             </div>
+            @adminCan('service.category.create')
+                <div class="btn-actions-pane-right actions-icon-btn">
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addcategory" class="btn btn-primary"><i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Service Category') }}</a>
+                </div>
+            @endadminCan
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
@@ -87,20 +94,26 @@
                                 <td>{{ $loop->first + $index }}</td>
                                 <td>{{ $category->name }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $category->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $category->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editcategory{{ $category->id }}">Edit</a>
-                                            <a href="javascript:;"class="dropdown-item"
-                                                onclick="deleteData({{ $category->id }})">
-                                                Delete</a>
+                                    @if (checkAdminHasPermission('service.category.edit') || checkAdminHasPermission('service.category.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $category->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                {{ __('Action') }}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $category->id }}">
+                                                @adminCan('service.category.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editcategory{{ $category->id }}">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('service.category.delete')
+                                                    <a href="javascript:;"class="dropdown-item"
+                                                        onclick="deleteData({{ $category->id }})">
+                                                        {{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

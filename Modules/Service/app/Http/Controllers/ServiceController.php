@@ -24,6 +24,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('service.view');
         $categories = $this->category->all()->get();
         $services = $this->service->all();
 
@@ -42,19 +43,13 @@ class ServiceController extends Controller
         return view('service::service', compact('categories', 'services'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('service::create');
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(ServiceRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('service.create');
         $this->service->store($request);
         return $this->redirectWithMessage(RedirectType::CREATE->value, null, [], ['messege' => 'Service created successfully', 'alert-type' => 'success']);
     }
@@ -80,6 +75,7 @@ class ServiceController extends Controller
      */
     public function update(ServiceRequest $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('service.edit');
         $this->service->update($id, $request);
         return $this->redirectWithMessage(RedirectType::UPDATE->value, null, [], ['messege' => 'Service updated successfully', 'alert-type' => 'success']);
     }
@@ -89,6 +85,7 @@ class ServiceController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('service.delete');
         $this->service->destroy($id);
         return $this->redirectWithMessage(RedirectType::DELETE->value, null, [], ['messege' => 'Service deleted successfully', 'alert-type' => 'success']);
     }
