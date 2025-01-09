@@ -68,15 +68,19 @@
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Brand List') }}</h4>
             </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="{{ route('admin.brand.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
-                    {{ __('Add Brand') }}</a>
-            </div>
+            @adminCan('product.brand.create')
+                <div class="btn-actions-pane-right actions-icon-btn">
+                    <a href="{{ route('admin.brand.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                        {{ __('Add Brand') }}</a>
+                </div>
+            @endadminCan
         </div>
         <div class="card-body">
             <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
                 <span><span class="number">0 </span> rows selected</span>
-                <button class="btn btn-danger delete-button">Delete</button>
+                @adminCan('product.brand.delete')
+                    <button class="btn btn-danger delete-button">Delete</button>
+                @endadminCan
             </div>
             <div class="table-responsive">
                 <table style="width: 100%;" class="table mb-5">
@@ -111,22 +115,27 @@
                                         style="width: 80px"></td>
                                 <td class="text-left">{{ $brand->name }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $brand->id }}" type="button"
-                                            class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $brand->id }}">
-                                            <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
-                                                class="dropdown-item" data-bs-toggle="tooltip"
-                                                title="Edit">{{ __('Edit') }}</a>
-
-                                            <a href="javascript:;" data-bs-target="#deleteModal" data-bs-toggle="modal"
-                                                class="dropdown-item"
-                                                onclick="deleteData({{ $brand->id }})">{{ __('Delete') }}</a>
+                                    @if (checkAdminHasPermission('product.brand.edit') || checkAdminHasPermission('product.brand.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $brand->id }}" type="button"
+                                                class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $brand->id }}">
+                                                @adminCan('product.brand.edit')
+                                                    <a href="{{ route('admin.brand.edit', ['brand' => $brand->id, 'lang_code' => getSessionLanguage()]) }}"
+                                                        class="dropdown-item" data-bs-toggle="tooltip"
+                                                        title="Edit">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('product.brand.delete')
+                                                    <a href="javascript:;" data-bs-target="#deleteModal" data-bs-toggle="modal"
+                                                        class="dropdown-item"
+                                                        onclick="deleteData({{ $brand->id }})">{{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

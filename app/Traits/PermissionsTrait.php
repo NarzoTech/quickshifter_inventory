@@ -124,6 +124,45 @@ trait PermissionsTrait
             'customer.area.delete',
         ],
     ];
+    public static array $productPermissions = [
+        'group_name' => 'product',
+        'permissions' => [
+            'product.view',
+            'product.create',
+            'product.edit',
+            'product.delete',
+            'product.status',
+            'product.bulk.import',
+            'product.barcode.print'
+        ],
+    ];
+    public static array $productUnitTypePermissions = [
+        'group_name' => 'product unit type',
+        'permissions' => [
+            'product.unit.view',
+            'product.unit.create',
+            'product.unit.edit',
+            'product.unit.delete',
+        ],
+    ];
+    public static array $productCategoryPermissions = [
+        'group_name' => 'product category',
+        'permissions' => [
+            'product.category.view',
+            'product.category.create',
+            'product.category.edit',
+            'product.category.delete',
+        ],
+    ];
+    public static array $productBrandPermissions = [
+        'group_name' => 'product brand',
+        'permissions' => [
+            'product.brand.view',
+            'product.brand.create',
+            'product.brand.edit',
+            'product.brand.delete',
+        ],
+    ];
     public static array $salesPermissions = [
         'group_name' => 'Sales',
         'permissions' => [

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Milon\Barcode\DNS1D;
 use Modules\Product\app\Http\Requests\ProductRequest;
-use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\AttributeService;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductCategoryService;
@@ -41,6 +40,7 @@ class ProductController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('product.view');
         try {
             $products = $this->productService->getProducts();
 
@@ -74,6 +74,7 @@ class ProductController extends Controller
      */
     public function create()
     {
+        checkAdminHasPermissionAndThrowException('product.create');
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         $brands = $this->brandService->getActiveBrands();
         $units = $this->unitService->getParentUnits();
@@ -86,6 +87,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+        checkAdminHasPermissionAndThrowException('product.create');
         DB::beginTransaction();
         try {
             $product = $this->productService->storeProduct($request);
@@ -116,6 +118,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.view');
         try {
             $product = $this->productService->getProduct($id);
 
@@ -137,6 +140,7 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.edit');
         try {
             $product = $this->productService->getProduct($id);
             $categories = $this->categoryService->getAllProductCategoriesForSelect();
@@ -154,6 +158,7 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.edit');
         try {
             DB::beginTransaction();
             $product = $this->productService->getProduct($id);
@@ -191,6 +196,7 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.delete');
         try {
             $product = $this->productService->getProduct($id);
             if (!$product) {
@@ -396,18 +402,14 @@ class ProductController extends Controller
     // bulk product import
     public function bulkImport()
     {
+        checkAdminHasPermissionAndThrowException('product.bulk.import');
         return view('product::products.import');
     }
 
     // store bulk product
     public function bulkImportStore(Request $request)
     {
-        // disable foreign key check
-        // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        // Product::truncate();
-
-        // // enable foreign key check
-        // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        checkAdminHasPermissionAndThrowException('product.bulk.import');
 
         DB::beginTransaction();
         try {
@@ -460,12 +462,13 @@ class ProductController extends Controller
     }
     public function barcode()
     {
+        checkAdminHasPermissionAndThrowException('product.barcode.print');
         return view('product::products.barcode-table');
     }
 
     public function barcodePrint(Request $request)
     {
-
+        checkAdminHasPermissionAndThrowException('product.barcode.print');
         $setting = cache()->get('setting');
         $products = $this->productService->getProducts()->whereIn('id', $request->product_id)->get();
         $d = new DNS1D();
@@ -489,6 +492,7 @@ class ProductController extends Controller
 
     public function status($id)
     {
+        checkAdminHasPermissionAndThrowException('product.status');
         $product = $this->productService->getProduct($id);
         $status = $product->status == 1 ? 0 : 1;
 

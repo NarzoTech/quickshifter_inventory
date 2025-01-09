@@ -8,78 +8,80 @@
     <div class="row">
         <div class="col-xxl-3 col-lg-4">
             <div class="card mb-5">
-                <div class="card-header d-flex justify-content-between">
-                    <h4 class="section_title">{{ __('Create Unit Type') }}</h4>
-                    <div>
+                @adminCan('product.unit.create')
+                    <div class="card-header d-flex justify-content-between">
+                        <h4 class="section_title">{{ __('Create Unit Type') }}</h4>
+                        <div>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body pb-0">
-                    <form class="search_form" action="{{ route('admin.unit.store') }}" method="POST"
-                        enctype="multipart/form-data" id="form">
-                        @csrf
-                        <div class="row">
-                            <div class="col-xl-12">
-                                <div class="form-group">
-                                    <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                    <input type="text" id="name" class="form-control" name="name">
+                    <div class="card-body pb-0">
+                        <form class="search_form" action="{{ route('admin.unit.store') }}" method="POST"
+                            enctype="multipart/form-data" id="form">
+                            @csrf
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>{{ __('Name') }} <span class="text-danger">*</span></label>
+                                        <input type="text" id="name" class="form-control" name="name">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-12">
-                                <div class="form-group">
-                                    <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
-                                    <input type="text" id="ShortName" class="form-control" name="ShortName">
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
+                                        <input type="text" id="ShortName" class="form-control" name="ShortName">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-12">
-                                <div class="form-group">
-                                    <label>{{ __('Base Unit') }}</label>
-                                    <select name="base_unit" id="base_unit" class="form-control">
-                                        <option value="">{{ __('Select Base Unit') }}</option>
-                                        @foreach ($parentUnits as $parentUnit)
-                                            <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-xl-12">
+                                    <div class="form-group">
+                                        <label>{{ __('Base Unit') }}</label>
+                                        <select name="base_unit" id="base_unit" class="form-control">
+                                            <option value="">{{ __('Select Base Unit') }}</option>
+                                            @foreach ($parentUnits as $parentUnit)
+                                                <option value="{{ $parentUnit->id }}">{{ $parentUnit->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-12 operator d-none">
-                                <div class="form-group">
-                                    <label>{{ __('Operator') }}</label>
-                                    <select name="operator" id="operator" class="form-control">
-                                        <option value="*">{{ __('Multiply') }} (*)</option>
-                                        <option value="/">{{ __('Divide') }} (/)</option>
-                                    </select>
+                                <div class="col-xl-12 operator d-none">
+                                    <div class="form-group">
+                                        <label>{{ __('Operator') }}</label>
+                                        <select name="operator" id="operator" class="form-control">
+                                            <option value="*">{{ __('Multiply') }} (*)</option>
+                                            <option value="/">{{ __('Divide') }} (/)</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-12 operator_value d-none">
-                                <div class="form-group">
-                                    <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
-                                    <input type="text" id="operator_value" class="form-control" name="operator_value"
-                                        value="1">
+                                <div class="col-xl-12 operator_value d-none">
+                                    <div class="form-group">
+                                        <label>{{ __('Operator Value') }} <span class="text-danger">*</span></label>
+                                        <input type="text" id="operator_value" class="form-control" name="operator_value"
+                                            value="1">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-12">
-                                <div class="form-group mb-1">
-                                    <label>{{ __('Status') }} </label>
-                                    <div class="d-flex flex-wrap gap-3 border rounded py-2 px-4">
-                                        <div class="d-flex gap-2 align-items-center py-1">
-                                            <input id="active" type="radio" name='status' value="1" checked />
-                                            <label for="active" class="mb-0">{{ __('Active') }} </label>
-                                        </div>
-                                        <div class="d-flex gap-2 align-items-center py-1">
-                                            <input id="inactive" type="radio" name='status' value="0" />
-                                            <label for="inactive" class="mb-0">{{ __('Inactive') }} </label>
+                                <div class="col-xl-12">
+                                    <div class="form-group mb-1">
+                                        <label>{{ __('Status') }} </label>
+                                        <div class="d-flex flex-wrap gap-3 border rounded py-2 px-4">
+                                            <div class="d-flex gap-2 align-items-center py-1">
+                                                <input id="active" type="radio" name='status' value="1" checked />
+                                                <label for="active" class="mb-0">{{ __('Active') }} </label>
+                                            </div>
+                                            <div class="d-flex gap-2 align-items-center py-1">
+                                                <input id="inactive" type="radio" name='status' value="0" />
+                                                <label for="inactive" class="mb-0">{{ __('Inactive') }} </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-12 mt-5">
-                                <div class="form-group mt-1">
-                                    <x-admin.save-button :text="__('Save')" />
+                                <div class="col-xl-12 mt-5">
+                                    <div class="form-group mt-1">
+                                        <x-admin.save-button :text="__('Save')" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                @endadminCan
             </div>
         </div>
 
@@ -117,22 +119,30 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $unit->id }}" type="button"
-                                                    class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $unit->id }}">
-                                                    <a href="{{ route('admin.unit.edit', $unit->id) }}"
-                                                        class="dropdown-item">{{ __('Edit') }}</a>
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $unit->id }})">
-                                                        {{ __('Delete') }}
-                                                    </a>
+                                            @if (checkAdminHasPermission('product.unit.edit') || checkAdminHasPermission('product.unit.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $unit->id }}" type="button"
+                                                        class="btn bg-label-primary dropdown-toggle"
+                                                        data-bs-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                        Action
+                                                    </button>
+
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $unit->id }}">
+                                                        @adminCan('product.unit.edit')
+                                                            <a href="{{ route('admin.unit.edit', $unit->id) }}"
+                                                                class="dropdown-item">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('product.unit.delete')
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $unit->id }})">
+                                                                {{ __('Delete') }}
+                                                            </a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

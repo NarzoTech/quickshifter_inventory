@@ -94,7 +94,7 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $area->name }}</td>
                                 <td>
-                                    @if (checkAdminHasPermission)
+                                    @if (checkAdminHasPermission('customer.area.edit') || checkAdminHasPermission('customer.area.delete'))
                                         <div class="btn-group" role="group">
 
                                             <button id="btnGroupDrop{{ $area->id }}" type="button"

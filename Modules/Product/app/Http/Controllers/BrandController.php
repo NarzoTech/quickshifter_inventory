@@ -26,6 +26,7 @@ class BrandController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('product.brand.view');
         $brands = $this->brandService->getPaginateBrands();
 
         if (request('par-page')) {
@@ -45,6 +46,7 @@ class BrandController extends Controller
      */
     public function create()
     {
+        checkAdminHasPermissionAndThrowException('product.brand.create');
         try {
             return view('product::products.brand.create');
         } catch (\Exception $ex) {
@@ -58,6 +60,7 @@ class BrandController extends Controller
      */
     public function store(BrandRequest $request)
     {
+        checkAdminHasPermissionAndThrowException('product.brand.create');
         try {
             $brand = $this->brandService->store($request);
 
@@ -85,18 +88,11 @@ class BrandController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.brand.edit');
         $brand = $this->brandService->find($id);
         try {
             return view('product::products.brand.edit', compact('brand'));
@@ -111,6 +107,7 @@ class BrandController extends Controller
      */
     public function update(BrandRequest $request, string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.brand.edit');
         try {
             $brand = $this->brandService->update($request, $id);
 
@@ -139,6 +136,7 @@ class BrandController extends Controller
      */
     public function destroy(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.brand.delete');
         try {
             $brand = $this->brandService->delete($id);
 
@@ -164,6 +162,7 @@ class BrandController extends Controller
 
     public function deleteAll(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('product.brand.delete');
         try {
             $brand = $this->brandService->deleteAll($request);
 

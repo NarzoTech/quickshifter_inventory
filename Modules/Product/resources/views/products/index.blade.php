@@ -95,10 +95,14 @@
                 <h4 class="section_title"> {{ __('Product List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="{{ route('admin.product.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
-                    {{ __('Add Product') }}</a>
-                <a href="{{ route('admin.product.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
-                    {{ __('Import Products') }}</a>
+                @adminCan('product.create')
+                    <a href="{{ route('admin.product.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                        {{ __('Add Product') }}</a>
+                @endadminCan
+                @adminCan('product.bulk.import')
+                    <a href="{{ route('admin.product.import') }}" class="btn btn-primary"><i class="fa fa-upload"></i>
+                        {{ __('Import Products') }}</a>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -115,7 +119,9 @@
                             <th>{{ __('After Disc. P.') }}</th>
                             <th>{{ __('Brand') }}</th>
                             <th>{{ __('Category') }}</th>
-                            <th>{{ __('Status') }}</th>
+                            @adminCan('product.status')
+                                <th>{{ __('Status') }}</th>
+                            @endadminCan
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -131,21 +137,23 @@
                                 <td>{{ $product->current_price }}</td>
                                 <td>{{ $product->brand->name }}</td>
                                 <td>{{ $product->category->name }}</td>
-                                <td>
-                                    @if ($product->status == 1)
-                                        <a href="javascript:;" onclick="status({{ $product->id }})">
-                                            <input id="status_toggle" type="checkbox" checked data-bs-toggle="toggle"
-                                                data-on="{{ __('Active') }}" data-off="{{ __('InActive') }}"
-                                                data-onstyle="success" data-offstyle="danger">
-                                        </a>
-                                    @else
-                                        <a href="javascript:;" onclick="status({{ $product->id }})">
-                                            <input id="status_toggle" type="checkbox" data-bs-toggle="toggle"
-                                                data-on="{{ __('Active') }}" data-off="{{ __('InActive') }}"
-                                                data-onstyle="success" data-offstyle="danger">
-                                        </a>
-                                    @endif
-                                </td>
+                                @adminCan('product.status')
+                                    <td>
+                                        @if ($product->status == 1)
+                                            <a href="javascript:;" onclick="status({{ $product->id }})">
+                                                <input id="status_toggle" type="checkbox" checked data-bs-toggle="toggle"
+                                                    data-on="{{ __('Active') }}" data-off="{{ __('InActive') }}"
+                                                    data-onstyle="success" data-offstyle="danger">
+                                            </a>
+                                        @else
+                                            <a href="javascript:;" onclick="status({{ $product->id }})">
+                                                <input id="status_toggle" type="checkbox" data-bs-toggle="toggle"
+                                                    data-on="{{ __('Active') }}" data-off="{{ __('InActive') }}"
+                                                    data-onstyle="success" data-offstyle="danger">
+                                            </a>
+                                        @endif
+                                    </td>
+                                @endadminCan
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
@@ -164,19 +172,24 @@
                                                 class="dropdown-item"></i>
                                                 {{ __('Details') }}</a>
 
-                                            <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
-                                                class="dropdown-item">
+                                            @adminCan('product.edit')
+                                                <a href="{{ route('admin.product.edit', ['product' => $product->id]) }}"
+                                                    class="dropdown-item">
 
-                                                {{ __('Edit') }}</a>
-
-                                            <a class="dropdown-item" href="javascript:;"
-                                                onclick="status('{{ $product->id }}')"
-                                                data-status="{{ $product->id }}">
-                                                {{ $product->status == 1 ? 'Disable' : 'Enable' }}
-                                            </a>
-                                            <a class="dropdown-item" href="javascript:;"
-                                                @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
+                                                    {{ __('Edit') }}</a>
+                                            @endadminCan
+                                            @adminCan('product.status')
+                                                <a class="dropdown-item" href="javascript:;"
+                                                    onclick="status('{{ $product->id }}')"
+                                                    data-status="{{ $product->id }}">
+                                                    {{ $product->status == 1 ? 'Disable' : 'Enable' }}
+                                                </a>
+                                            @endadminCan
+                                            @adminCan('product.delete')
+                                                <a class="dropdown-item" href="javascript:;"
+                                                    @if ($product->orders->count() > 0) data-bs-target="#canNotDeleteModal"
                                             @else onclick="deleteData({{ $product->id }})" @endif>{{ __('Delete') }}</a>
+                                            @endadminCan
                                         </div>
                                     </div>
                                 </td>

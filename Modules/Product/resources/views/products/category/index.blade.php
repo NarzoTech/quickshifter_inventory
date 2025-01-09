@@ -68,15 +68,19 @@
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Category List') }}</h4>
             </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="{{ route('admin.category.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
-                    {{ __('Add Category') }}</a>
-            </div>
+            @adminCan('product.category.create')
+                <div class="btn-actions-pane-right actions-icon-btn">
+                    <a href="{{ route('admin.category.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                        {{ __('Add Category') }}</a>
+                </div>
+            @endadminCan
         </div>
         <div class="card-body">
             <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
                 <span><span class="number">0 </span> rows selected</span>
-                <button class="btn btn-danger delete-button">Delete</button>
+                @adminCan('product.category.delete')
+                    <button class="btn btn-danger delete-button">Delete</button>
+                @endadminCan
             </div>
             <div class="table-responsive">
                 <table style="width: 100%;" class="table">
@@ -117,25 +121,31 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $category->id }}" type="button"
-                                            class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $category->id }}">
-                                            <a href="{{ route('admin.category.edit', $category->id) }}"
-                                                class=" dropdown-item" data-bs-toggle="tooltip"
-                                                title="{{ __('Edit') }}">{{ __('Edit') }}</a>
-
-                                            <a href="javascript:void(0)"
-                                                class="trigger--fire-modal-1 deleteForm dropdown-item"
-                                                data-bs-toggle="tooltip" title="{{ __('Delete') }}"
-                                                data-url="{{ route('admin.category.destroy', $category->id) }}"
-                                                data-form="deleteForm">{{ __('Delete') }}</a>
+                                    @if (checkAdminHasPermission('product.category.edit') || checkAdminHasPermission('product.category.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $category->id }}" type="button"
+                                                class="btn bg-label-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $category->id }}">
+                                                @adminCan('product.category.edit')
+                                                    <a href="{{ route('admin.category.edit', $category->id) }}"
+                                                        class=" dropdown-item" data-bs-toggle="tooltip"
+                                                        title="{{ __('Edit') }}">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('product.category.delete')
+                                                    <a href="javascript:void(0)"
+                                                        class="trigger--fire-modal-1 deleteForm dropdown-item"
+                                                        data-bs-toggle="tooltip" title="{{ __('Delete') }}"
+                                                        data-url="{{ route('admin.category.destroy', $category->id) }}"
+                                                        data-form="deleteForm">{{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
+
                             </tr>
                         @endforeach
                     </tbody>

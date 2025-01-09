@@ -25,6 +25,7 @@ class ProductCategoryController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('product.category.view');
         $categories = $this->category->getAllProductCategories();
         return view('product::products.category.index', compact('categories'));
     }
@@ -34,6 +35,7 @@ class ProductCategoryController extends Controller
      */
     public function create()
     {
+        checkAdminHasPermissionAndThrowException('product.category.create');
         $categories = $this->category->getAllProductCategoriesForSelect();
         return view('product::products.category.create', compact('categories'));
     }
@@ -43,6 +45,7 @@ class ProductCategoryController extends Controller
      */
     public function store(ProductCategoryRequest $request)
     {
+        checkAdminHasPermissionAndThrowException('product.category.create');
         DB::beginTransaction();
         try {
             $category = $this->category->storeProductCategory($request);
@@ -59,15 +62,11 @@ class ProductCategoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id) {}
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.category.edit');
         $cat = $this->category->getProductCategory($id);
         $categories = $this->category->getAllProductCategoriesForSelect();
         return view('product::products.category.edit', compact('categories', 'cat'));
@@ -78,6 +77,7 @@ class ProductCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.category.edit');
         DB::beginTransaction();
 
         try {
@@ -96,6 +96,7 @@ class ProductCategoryController extends Controller
      */
     public function destroy(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.category.delete');
         try {
             $category = $this->category->deleteProductCategory($id);
             if (!$category) {
@@ -114,6 +115,7 @@ class ProductCategoryController extends Controller
 
     public function deleteAll(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('product.category.delete');
         try {
             $this->category->deleteAll($request);
             return response()->json(['success' => true, 'message' => 'Deleted successfully'], 200);

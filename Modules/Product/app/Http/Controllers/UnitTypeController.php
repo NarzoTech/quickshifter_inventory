@@ -25,17 +25,10 @@ class UnitTypeController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('product.unit.view');
         $units = $this->unitTypeService->getAll();
         $parentUnits = $this->unitTypeService->getParentUnits();
         return view('product::unit-types.index', compact('units', "parentUnits"));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -43,6 +36,7 @@ class UnitTypeController extends Controller
      */
     public function store(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('product.unit.create');
         $request->validate([
             'name' => 'required|unique:unit_types,name',
             'ShortName' => 'required',
@@ -63,18 +57,11 @@ class UnitTypeController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.unit.edit');
         $unit = $this->unitTypeService->findById($id);
         return $unit;
     }
@@ -84,6 +71,7 @@ class UnitTypeController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.unit.edit');
         $request->validate([
             'name' => 'required|unique:unit_types,name,' . $id,
             'ShortName' => 'required',
@@ -104,6 +92,7 @@ class UnitTypeController extends Controller
      */
     public function destroy(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.unit.delete');
         try {
             $result = $this->unitTypeService->delete($id);
             if ($result == "not_possible") {
