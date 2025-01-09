@@ -98,13 +98,18 @@
                 <h4 class="section_title"> {{ __('Purchase List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
-                    {{ __('Add Purchase') }}</a>
-
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    {{ __('Excel') }}</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    {{ __('PDF') }}</button>
+                @adminCan('purchase.create')
+                    <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                        {{ __('Add Purchase') }}</a>
+                @endadminCan
+                @adminCan('purchase.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        {{ __('Excel') }}</button>
+                @endadminCan
+                @adminCan('purchase.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        {{ __('PDF') }}</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -133,27 +138,42 @@
                                 <td>{{ currency($purchase->paid_amount) }}</td>
                                 <td>{{ currency($purchase->due_amount) }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $purchase->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $purchase->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#showCustomer{{ $purchase->id }}">Show</a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.purchase.invoice', $purchase->id) }}">Invoice</a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.purchase.edit', $purchase->id) }}">Edit</a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.purchase.return', $purchase->id) }}">Purchase
-                                                Return</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $purchase->id }})">
-                                                Delete</a>
+                                    @if (checkAdminHasPermission('purchase.view') ||
+                                            checkAdminHasPermission('purchase.edit') ||
+                                            checkAdminHasPermission('purchase.delete') ||
+                                            checkAdminHasPermission('purchase.invoice') ||
+                                            checkAdminHasPermission('purchase.return'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $purchase->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                {{ __('Action') }}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $purchase->id }}">
+                                                @adminCan('purchase.view')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#showCustomer{{ $purchase->id }}">{{ __('Show') }}</a>
+                                                @endadminCan
+                                                @adminCan('purchase.invoice')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.purchase.invoice', $purchase->id) }}">{{ __('Invoice') }}</a>
+                                                @endadminCan
+                                                @adminCan('purchase.edit')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.purchase.edit', $purchase->id) }}">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('purchase.return.view')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.purchase.return', $purchase->id) }}">{{ __('Purchase Return') }}</a>
+                                                @endadminCan
+                                                @adminCan('purchase.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $purchase->id }})">
+                                                        {{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

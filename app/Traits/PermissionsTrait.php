@@ -163,6 +163,39 @@ trait PermissionsTrait
             'product.brand.delete',
         ],
     ];
+    public static array $purchasePermissions = [
+        'group_name' => 'purchase',
+        'permissions' => [
+            'purchase.view',
+            'purchase.create',
+            'purchase.edit',
+            'purchase.delete',
+            'purchase.invoice',
+            'purchase.excel.download',
+            'purchase.pdf.download',
+        ],
+    ];
+    public static array $purchaseReturnPermissions = [
+        'group_name' => 'purchase return',
+        'permissions' => [
+            'purchase.return.view',
+            'purchase.return.create',
+            'purchase.return.edit',
+            'purchase.return.delete',
+
+        ],
+    ];
+    public static array $purchaseReturnTypePermissions = [
+        'group_name' => 'purchase return type',
+        'permissions' => [
+            'purchase.return.type.view',
+            'purchase.return.type.create',
+            'purchase.return.type.edit',
+            'purchase.return.type.delete',
+
+        ],
+    ];
+
     public static array $salesPermissions = [
         'group_name' => 'Sales',
         'permissions' => [

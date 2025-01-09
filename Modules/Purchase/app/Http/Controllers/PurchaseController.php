@@ -27,6 +27,7 @@ class PurchaseController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('purchase.view');
         $purchases = $this->purchaseService->all();
 
 
@@ -62,6 +63,7 @@ class PurchaseController extends Controller
      */
     public function create(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('purchase.create');
         $suppliers = $this->purchaseService->getSuppliers();
         $warehouses = $this->purchaseService->getWarehouses();
         $products = $this->purchaseService->getProducts($request);
@@ -76,6 +78,7 @@ class PurchaseController extends Controller
      */
     public function store(PurchaseRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('purchase.create');
         DB::beginTransaction();
         try {
             $this->purchaseService->store($request);
@@ -103,6 +106,7 @@ class PurchaseController extends Controller
      */
     public function edit(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('purchase.edit');
         $suppliers = $this->purchaseService->getSuppliers();
         $warehouses = $this->purchaseService->getWarehouses();
         $products = $this->purchaseService->getProducts($request);
@@ -117,6 +121,7 @@ class PurchaseController extends Controller
      */
     public function update(PurchaseRequest $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('purchase.edit');
         DB::beginTransaction();
         try {
             $this->purchaseService->update($request, $id);
@@ -135,6 +140,7 @@ class PurchaseController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('purchase.delete');
         try {
             $this->purchaseService->destroy($id);
 
@@ -149,6 +155,7 @@ class PurchaseController extends Controller
 
     public function invoice($id)
     {
+        checkAdminHasPermissionAndThrowException('purchase.invoice');
         $purchase = $this->purchaseService->getPurchase($id);
         return view('purchase::invoice', compact('purchase'));
     }

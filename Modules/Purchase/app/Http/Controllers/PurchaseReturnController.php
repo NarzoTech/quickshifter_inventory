@@ -26,6 +26,7 @@ class PurchaseReturnController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.view');
         $returns = $this->purchaseService->allReturn();
 
         if (request()->keyword) {
@@ -61,6 +62,7 @@ class PurchaseReturnController extends Controller
      */
     public function create($id)
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.create');
         $purchase = $this->purchaseService->getPurchase($id);
         $returnTypes = $this->purchaseService->getReturnTypes();
         return view('purchase::return.create', compact('purchase', 'returnTypes'));
@@ -71,6 +73,7 @@ class PurchaseReturnController extends Controller
      */
     public function store(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.create');
         $request->validate([
             'supplier_id' => 'required',
             'return_date' => 'required',
@@ -90,19 +93,13 @@ class PurchaseReturnController extends Controller
         }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('purchase::show');
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.edit');
         $return = $this->purchaseService->getPurchaseReturn($id);
         $purchase = $return->purchase;
         $returnTypes = $this->purchaseService->getReturnTypes();
@@ -116,7 +113,7 @@ class PurchaseReturnController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
-        dd($request->all());
+        checkAdminHasPermissionAndThrowException('purchase.return.edit');
         $request->validate([
             'supplier_id' => 'required',
             'return_date' => 'required',
@@ -141,6 +138,7 @@ class PurchaseReturnController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.delete');
         // delete ledger
 
         $this->purchaseService->deleteReturn($id);

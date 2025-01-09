@@ -19,7 +19,7 @@ class PurchaseReturnTypeController extends Controller
      */
     public function index()
     {
-
+        checkAdminHasPermissionAndThrowException('purchase.return.type.view');
         $lists = PurchaseReturnType::query();
 
         if (request()->keyword) {
@@ -43,18 +43,11 @@ class PurchaseReturnTypeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('purchase::create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.type.create');
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -66,27 +59,13 @@ class PurchaseReturnTypeController extends Controller
         return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.type.list', [], ['messege' => 'Purchase Return Type Created Successfully.', 'alert-type' => 'success']);
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('purchase::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('purchase::edit');
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.type.edit');
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -103,6 +82,7 @@ class PurchaseReturnTypeController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('purchase.return.type.delete');
         PurchaseReturnType::find($id)->delete();
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.purchase.return.type.list', [], ['messege' => 'Purchase Return Type Deleted Successfully.', 'alert-type' => 'success']);
     }

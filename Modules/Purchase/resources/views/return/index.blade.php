@@ -113,21 +113,27 @@
                                         <td>{{ $list->createdBy->name }}</td>
                                         <td>{{ $list->updatedBy->name }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $list->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $list->id }}">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.purchase.return.edit', $list->id) }}">Edit</a>
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $list->id }})">
-                                                        Delete</a>
+                                            @if (checkAdminHasPermission('purchase.return.edit') || checkAdminHasPermission('purchase.return.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $list->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        {{ __('Action') }}
+                                                    </button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $list->id }}">
+                                                        @adminCan('purchase.return.edit')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.purchase.return.edit', $list->id) }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('purchase.return.delete')
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $list->id }})">
+                                                                {{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

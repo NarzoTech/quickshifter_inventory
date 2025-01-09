@@ -13,7 +13,7 @@
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                        class="form-control" placeholder="{{ __('Search') }}..." autocomplete="off">
                                     <button type="submit">
                                         <i class='bx bx-search'></i>
                                     </button>
@@ -53,8 +53,8 @@
                             </div>
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
-                                    <button type="submit" class="btn bg-primary">Search</button>
+                                    <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn bg-primary">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -66,9 +66,11 @@
     <div class="card mt-5">
         <div class="card-header">
             <h4 class="section_title">{{ __('Purchases Return Type') }}</h4>
-            <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addType" class="btn btn-primary"><i
-                    class="fa fa-plus"></i>
-                {{ __('Add Purchases Return Type') }}</a>
+            @adminCan('purchase.return.type.create')
+                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addType" class="btn btn-primary"><i
+                        class="fa fa-plus"></i>
+                    {{ __('Add Purchases Return Type') }}</a>
+            @endadminCan
         </div>
         <div class="card-body">
             <div class="row">
@@ -90,21 +92,27 @@
                                         <td>{{ $list->name }}</td>
                                         <td>{{ $list->createdBy?->name }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $list->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $list->id }}">
-                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                        data-bs-target="#editType{{ $list->id }}">Edit</a>
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $list->id }})">
-                                                        Delete</a>
+                                            @if (checkAdminHasPermission('purchase.return.type.edit') || checkAdminHasPermission('purchase.return.type.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $list->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        {{ __('Action') }}
+                                                    </button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $list->id }}">
+                                                        @adminCan('purchase.return.type.edit')
+                                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                                data-bs-target="#editType{{ $list->id }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('purchase.return.type.delete')
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $list->id }})">
+                                                                {{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
