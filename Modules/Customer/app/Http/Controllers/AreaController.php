@@ -23,6 +23,7 @@ class AreaController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('customer.area.view');
         $areas = $this->areaService->getArea();
 
         if (request()->keyword) {
@@ -54,6 +55,7 @@ class AreaController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('customer.area.create');
         $request->validate([
             'name' => 'required|string',
         ]);
@@ -74,6 +76,7 @@ class AreaController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('customer.area.edit');
         $request->validate([
             'name' => 'required|string',
         ]);
@@ -92,6 +95,7 @@ class AreaController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.area.delete');
         try {
             $this->areaService->deleteArea($id);
             return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.area.index', [], ['messege' => 'Area deleted successfully', 'alert-type' => 'success']);

@@ -69,11 +69,13 @@
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Area List') }}</h4>
             </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addarea" class="btn btn-primary"><i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Area') }}</a>
-            </div>
+            @adminCan('customer.area.create')
+                <div class="btn-actions-pane-right actions-icon-btn">
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addarea" class="btn btn-primary"><i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Area') }}</a>
+                </div>
+            @endadminCan
         </div>
         <div class="card-body">
 
@@ -92,20 +94,27 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $area->name }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $area->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $area->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editarea{{ $area->id }}">Edit</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $area->id }})">
-                                                Delete</a>
+                                    @if (checkAdminHasPermission)
+                                        <div class="btn-group" role="group">
+
+                                            <button id="btnGroupDrop{{ $area->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $area->id }}">
+                                                @adminCan('customer.area.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editarea{{ $area->id }}">Edit</a>
+                                                @endadminCan
+                                                @adminCan('customer.area.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $area->id }})">
+                                                        Delete</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

@@ -106,6 +106,24 @@ trait PermissionsTrait
             'customer.pdf.download',
         ],
     ];
+    public static array $customerGroupPermissions = [
+        'group_name' => 'customer group',
+        'permissions' => [
+            'customer.group.view',
+            'customer.group.create',
+            'customer.group.edit',
+            'customer.group.delete',
+        ],
+    ];
+    public static array $customerAreaPermissions = [
+        'group_name' => 'customer area',
+        'permissions' => [
+            'customer.area.view',
+            'customer.area.create',
+            'customer.area.edit',
+            'customer.area.delete',
+        ],
+    ];
     public static array $salesPermissions = [
         'group_name' => 'Sales',
         'permissions' => [

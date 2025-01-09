@@ -23,6 +23,7 @@ class CustomerGroupController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('customer.group.view');
         $customerGroups = $this->userGroup->getUserGroup()->where('type', 'customer')->paginate(request()->get('par-page') ? request()->get('par-page') : 20);
 
         $customerGroups->appends(request()->query());
@@ -31,18 +32,11 @@ class CustomerGroupController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('customer::create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(UserGroupRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('customer.group.create');
         try {
             $this->userGroup->store($request->validated());
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.customerGroup.index', [], ['messege' => 'Customer group created successfully', 'alert-type' => 'success']);
@@ -56,6 +50,7 @@ class CustomerGroupController extends Controller
      */
     public function update(UserGroupRequest $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('customer.group.edit');
         try {
             $this->userGroup->update($request->validated(), $id);
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.customerGroup.index', [], ['messege' => 'Customer group updated successfully', 'alert-type' => 'success']);
@@ -69,6 +64,7 @@ class CustomerGroupController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.group.delete');
         try {
             $this->userGroup->destroy($id);
             return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customerGroup.index', [], ['messege' => 'Customer group deleted successfully', 'alert-type' => 'success']);

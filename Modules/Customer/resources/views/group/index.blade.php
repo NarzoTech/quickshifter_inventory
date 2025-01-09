@@ -70,11 +70,13 @@
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Customer Group List') }}</h4>
             </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addgroup" class="btn btn-primary"><i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Customer Group') }}</a>
-            </div>
+            @adminCan('customer.group.create')
+                <div class="btn-actions-pane-right actions-icon-btn">
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addgroup" class="btn btn-primary"><i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Customer Group') }}</a>
+                </div>
+            @endadminCan
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -101,20 +103,28 @@
                                         <span class="badge badge-danger">{{ __('Inactive') }}</span>
                                     @endif
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $group->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editGroup{{ $group->id }}">Edit</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $group->id }})">
-                                                Delete</a>
+                                    @if (checkAdminHasPermission('customer.group.edit') || checkAdminHasPermission('customer.group.delete'))
+                                        <div class="btn-group" role="group">
+
+
+                                            <button id="btnGroupDrop{{ $group->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $group->id }}">
+                                                @adminCan('customer.group.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editGroup{{ $group->id }}">Edit</a>
+                                                @endadminCan
+                                                @adminCan('customer.group.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $group->id }})">
+                                                        Delete</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
