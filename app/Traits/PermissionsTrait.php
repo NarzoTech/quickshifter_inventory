@@ -228,13 +228,19 @@ trait PermissionsTrait
     public static array $salesPermissions = [
         'group_name' => 'Sales',
         'permissions' => [
+            'pos.view',
             'sales.view',
             'sales.create',
             'sales.edit',
             'sales.delete',
+            'sales.invoice',
             'sales.return',
             'sales.return.list',
             'sales.return.delete',
+            'sales.return.excel.download',
+            'sales.return.pdf.download',
+            'sales.excel.download',
+            'sales.pdf.download',
         ],
     ];
 

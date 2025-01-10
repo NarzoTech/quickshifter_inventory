@@ -50,6 +50,7 @@ class POSController extends Controller
      */
     public function index(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('pos.view');
         if ($request->quotation_id) {
             $quotation = Quotation::find($request->quotation_id);
 
@@ -416,6 +417,7 @@ class POSController extends Controller
 
     public function place_order(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('sales.create');
         if (session('POSCART') != null && count(session('POSCART')) == 0) {
             $notification = trans('Your cart is empty!');
             $notification = array('messege' => $notification, 'alert-type' => 'error');

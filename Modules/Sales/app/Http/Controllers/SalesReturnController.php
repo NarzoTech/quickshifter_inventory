@@ -30,6 +30,7 @@ class SalesReturnController extends Controller
      */
     public function returnList()
     {
+        checkAdminHasPermissionAndThrowException('sales.return.list');
         $lists = SalesReturn::query();
 
         if (request()->keyword) {
@@ -87,6 +88,7 @@ class SalesReturnController extends Controller
      */
     public function create($id)
     {
+        checkAdminHasPermissionAndThrowException('sales.return');
         $sale = Sale::find($id);
         $accounts = $this->service->all()->get();
         return view('sales::return.create', compact('sale', 'accounts'));
@@ -97,7 +99,7 @@ class SalesReturnController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // validation
+        checkAdminHasPermissionAndThrowException('sales.return');
 
         $request->validate([
             'sale_id' => 'required',
@@ -212,34 +214,11 @@ class SalesReturnController extends Controller
     }
 
     /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('sales::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('sales::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id): RedirectResponse
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('sales.return.delete');
         $return = SalesReturn::find($id);
 
         // delete return details

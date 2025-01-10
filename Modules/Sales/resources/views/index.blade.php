@@ -78,13 +78,17 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title">Sales List</h4>
+                <h4 class="section_title">{{ __('Sales List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                @adminCan('sales.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        {{ __('Excel') }}</button>
+                @endadminCan
+                @adminCan('sales.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        {{ __('PDF') }}</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -127,33 +131,43 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="btn-group mb-2">
-                                        <button class="btn btn-primary dropdown-toggle" type="button"
-                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">{{ __('Action') }}</button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item view-sale" href="javascript:;"
-                                                data-id="{{ $sale->id }}">{{ __('View') }}</a>
-
-
-                                            <a class="dropdown-item"
-                                                href="{{ route('admin.sales.invoice', $sale->id) }}">{{ __('Invoice') }}</a>
-
-
-                                            @if ($sale->saleReturns->count() == 0)
-                                                <a class="dropdown-item"
-                                                    href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>
-                                            @endif
-
-
-                                            <a class="dropdown-item" href="javascript:void(0)"
-                                                onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
-                                            @if ($sale?->customer?->name)
-                                                <a class="dropdown-item"
-                                                    href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
-                                            @endif
+                                    @if (checkAdminHasPermission('sales.delete') ||
+                                            checkAdminHasPermission('sales.edit') ||
+                                            checkAdminHasPermission('sales.view') ||
+                                            checkAdminHasPermission('sales.invoice') ||
+                                            checkAdminHasPermission('sales.return'))
+                                        <div class="btn-group mb-2">
+                                            <button class="btn btn-primary dropdown-toggle" type="button"
+                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">{{ __('Action') }}</button>
+                                            <div class="dropdown-menu">
+                                                @adminCan('sales.view')
+                                                    <a class="dropdown-item view-sale" href="javascript:;"
+                                                        data-id="{{ $sale->id }}">{{ __('View') }}</a>
+                                                @endadminCan
+                                                @adminCan('sales.invoice')
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.sales.invoice', $sale->id) }}">{{ __('Invoice') }}</a>
+                                                @endadminCan
+                                                @adminCan('sales.edit')
+                                                    @if ($sale->saleReturns->count() == 0)
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('admin.sales.edit', $sale->id) }}">{{ __('Edit') }}</a>
+                                                    @endif
+                                                @endadminCan
+                                                @adminCan('sales.delete')
+                                                    <a class="dropdown-item" href="javascript:void(0)"
+                                                        onclick="deleteData({{ $sale->id }})">{{ __('Delete') }}</a>
+                                                @endadminCan
+                                                @adminCan('sales.return')
+                                                    @if ($sale?->customer?->name)
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('admin.sales.return.create', $sale->id) }}">{{ __('Sale Return') }}</a>
+                                                    @endif
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

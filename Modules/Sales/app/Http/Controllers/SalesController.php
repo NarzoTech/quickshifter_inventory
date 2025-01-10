@@ -34,6 +34,7 @@ class SalesController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('sales.view');
         $sales = $this->saleService->getSales();
 
         if (request()->keyword !== null) {
@@ -90,6 +91,7 @@ class SalesController extends Controller
      */
     public function show($id)
     {
+        checkAdminHasPermissionAndThrowException('sales.view');
         $sale = $this->saleService->getSales()->find($id);
         return view('sales::view-modal', compact('sale'));
     }
@@ -99,6 +101,8 @@ class SalesController extends Controller
      */
     public function edit(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('sales.edit');
+
         session()->forget('UPDATE_CART');
         [$cart_contents, $sale] = $this->saleService->editSale($id);
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
@@ -157,6 +161,7 @@ class SalesController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
+        checkAdminHasPermissionAndThrowException('sales.edit');
         $user = null;
         if ($request->order_customer_id && $request->order_customer_id !=  'walk-in-customer') {
 
@@ -197,6 +202,7 @@ class SalesController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('sales.delete');
         try {
             $this->saleService->deleteSale($id);
             return back()->with(['alert-type' => 'success', 'messege' => 'Sale deleted successfully']);
@@ -208,6 +214,7 @@ class SalesController extends Controller
 
     public function invoice($id)
     {
+        checkAdminHasPermissionAndThrowException('sales.invoice');
         $sale = $this->saleService->getSales()->find($id);
         return view('sales::invoice', compact('sale'));
     }
