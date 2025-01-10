@@ -243,6 +243,35 @@ trait PermissionsTrait
             'sales.pdf.download',
         ],
     ];
+    public static array $accountPermissions = [
+        'group_name' => 'Account',
+        'permissions' => [
+            'cash.flow.view',
+            'account.view',
+            'account.create',
+            'account.edit',
+            'account.delete',
+            'balance.transfer.view',
+            'balance.transfer.create',
+            'balance.transfer.edit',
+            'balance.transfer.delete',
+            'balance.transfer.excel.download',
+            'balance.transfer.pdf.download',
+            'deposit.withdraw.view',
+            'deposit.withdraw.create',
+            'deposit.withdraw.edit',
+            'deposit.withdraw.delete',
+        ],
+    ];
+    public static array $bankPermissions = [
+        'group_name' => 'bank',
+        'permissions' => [
+            'bank.view',
+            'bank.create',
+            'bank.edit',
+            'bank.delete',
+        ],
+    ];
 
 
     // return super admin permission aka 'all permissions'

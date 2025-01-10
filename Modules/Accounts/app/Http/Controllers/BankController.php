@@ -23,6 +23,7 @@ class BankController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('bank.view');
         $banks = $this->bankService->all()->paginate(20);
         $banks->appends(request()->query());
 
@@ -34,6 +35,7 @@ class BankController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('bank.create');
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -53,6 +55,7 @@ class BankController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('bank.edit');
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -72,6 +75,7 @@ class BankController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('bank.delete');
         try {
             $bank = $this->bankService->find($id);
             $this->bankService->delete($bank);

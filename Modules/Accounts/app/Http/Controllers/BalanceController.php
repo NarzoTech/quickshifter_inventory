@@ -24,6 +24,7 @@ class BalanceController extends Controller
      */
     public function openingBalance()
     {
+        checkAdminHasPermissionAndThrowException('deposit.withdraw.view');
         $accounts = $this->account->all()->get();
         $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
         $deposits->appends(request()->query());
@@ -49,6 +50,7 @@ class BalanceController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('deposit.withdraw.create');
         try {
             if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
                 $account = $this->account->all()->where('account_type', 'cash')->first();
@@ -90,6 +92,7 @@ class BalanceController extends Controller
      */
     public function edit($id)
     {
+        checkAdminHasPermissionAndThrowException('deposit.withdraw.edit');
         $accounts = $this->account->all()->orderBy('id', 'desc')->get();
         $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
         $deposits->appends(request()->query());
@@ -114,6 +117,7 @@ class BalanceController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('deposit.withdraw.edit');
         if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
             $account = $this->account->all()->where('account_type', 'cash')->first();
         } else {
@@ -137,6 +141,7 @@ class BalanceController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('deposit.withdraw.delete');
         $balance = Balance::find($id);
         $balance->delete();
         return back()->with(['messege' => 'Balance deleted successfully.', 'alert-type' => 'success']);
@@ -144,6 +149,7 @@ class BalanceController extends Controller
 
     public function transfer()
     {
+        checkAdminHasPermissionAndThrowException('balance.transfer.view');
         $accounts = $this->account->all()->get();
 
         $transfers = BalanceTransfer::paginate(20);
@@ -153,7 +159,7 @@ class BalanceController extends Controller
 
     public function transferStore(Request $request)
     {
-
+        checkAdminHasPermissionAndThrowException('balance.transfer.create');
         $data = $request->except('_token');
         $data['created_by'] = auth('admin')->id();
         $data['date'] = now()->parse($request->date);
@@ -189,6 +195,7 @@ class BalanceController extends Controller
 
     public function transferUpdate(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('balance.transfer.edit');
         $data = $request->except('_token');
 
         $data['date'] = now()->parse($request->date);
@@ -218,5 +225,14 @@ class BalanceController extends Controller
 
         $balance->update($data);
         return back()->with(['messege' => 'Balance transfer updated successfully.', 'alert-type' => 'success']);
+    }
+
+
+    public function transferDestroy($id)
+    {
+        checkAdminHasPermissionAndThrowException('balance.transfer.delete');
+        $balance = BalanceTransfer::find($id);
+        $balance->delete();
+        return back()->with(['messege' => 'Balance transfer deleted successfully.', 'alert-type' => 'success']);
     }
 }

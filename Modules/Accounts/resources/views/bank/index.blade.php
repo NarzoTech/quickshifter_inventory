@@ -70,10 +70,12 @@
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Bank List') }}</h4>
             </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addbank" class="btn btn-primary"><i
-                        class="fa fa-plus"></i> {{ __('Add Bank') }}</a>
-            </div>
+            @adminCan('bank.create')
+                <div class="btn-actions-pane-right actions-icon-btn">
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addbank" class="btn btn-primary"><i
+                            class="fa fa-plus"></i> {{ __('Add Bank') }}</a>
+                </div>
+            @endadminCan
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
@@ -91,20 +93,26 @@
                                 <td>{{ $loop->first + $index }}</td>
                                 <td>{{ $bank->name }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $bank->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $bank->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editbank{{ $bank->id }}">Edit</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $bank->id }})">
-                                                Delete</a>
+                                    @if (checkAdminHasPermission('bank.edit') || checkAdminHasPermission('bank.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $bank->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                {{ __('Action') }}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $bank->id }}">
+                                                @adminCan('bank.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editbank{{ $bank->id }}">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('bank.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $bank->id }})">
+                                                        {{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

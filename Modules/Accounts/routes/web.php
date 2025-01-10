@@ -26,6 +26,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('balance/transfer', [BalanceController::class, 'transfer'])->name('balance.transfer');
     Route::post('balance/transfer/store', [BalanceController::class, 'transferStore'])->name('balance.transfer.store');
     Route::patch('balance/transfer/update/{id}', [BalanceController::class, 'transferUpdate'])->name('balance.transfer.update');
+    Route::delete('balance/transfer/destroy/{id}', [BalanceController::class, 'transferDestroy'])->name('balance.transfer.destroy');
     Route::resource('bank', BankController::class)->names('bank');
     Route::get('cashflow', [AccountsController::class, 'cashflow'])->name('cashflow');
 });

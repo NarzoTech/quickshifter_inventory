@@ -63,7 +63,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/1.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/1.png') }}" class="icon-img" />
                                 Product Sale
                             </td>
                             <td>
@@ -72,7 +72,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/12.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/12.png') }}" class="icon-img" />
                                 Sale Return
                             </td>
                             <td>
@@ -83,7 +83,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/4.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/4.png') }}" class="icon-img" />
                                 Balance Deposit
                             </td>
                             <td>
@@ -92,7 +92,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/13.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/13.png') }}" class="icon-img" />
                                 Balance Withdraw
                             </td>
                             <td>
@@ -104,7 +104,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/3.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/3.png') }}" class="icon-img" />
                                 Customer Due
                             </td>
                             <td>
@@ -113,7 +113,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/3.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/3.png') }}" class="icon-img" />
                                 Customer Due Send
                             </td>
                             <td>
@@ -125,7 +125,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/15.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/15.png') }}" class="icon-img" />
                                 Customer Advance
                             </td>
                             <td>
@@ -134,7 +134,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/6.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/6.png') }}" class="icon-img" />
                                 Customer Advance Refund
                             </td>
                             <td>
@@ -146,7 +146,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/10.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/10.png') }}" class="icon-img" />
                                 Supplier Due Receive
                             </td>
                             <td>
@@ -155,7 +155,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/10.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/10.png') }}" class="icon-img" />
                                 Supplier Due Pay
                             </td>
                             <td>
@@ -167,7 +167,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/15.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/15.png') }}" class="icon-img" />
                                 Supplier Advance Refund
                             </td>
                             <td>
@@ -176,7 +176,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/15.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/15.png') }}" class="icon-img" />
                                 Supplier Advance
                             </td>
                             <td>
@@ -188,7 +188,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/6.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/6.png') }}" class="icon-img" />
                                 Purchase Return
                             </td>
                             <td>
@@ -197,7 +197,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/6.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/6.png') }}" class="icon-img" />
                                 Purchase
                             </td>
                             <td>
@@ -209,7 +209,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/7.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/7.png') }}" class="icon-img" />
                                 Service
                             </td>
                             <td>
@@ -218,7 +218,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/11.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/11.png') }}" class="icon-img" />
                                 Expense
                             </td>
                             <td>
@@ -230,7 +230,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/1.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/1.png') }}" class="icon-img" />
                                 Installment
                             </td>
                             <td>
@@ -239,7 +239,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/14.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/14.png') }}" class="icon-img" />
                                 Salary
                             </td>
                             <td>
@@ -251,7 +251,7 @@
 
                         <tr>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/8.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/8.png') }}" class="icon-img" />
                                 Balance Transfer
                             </td>
                             <td>
@@ -260,7 +260,7 @@
                                 </span>
                             </td>
                             <td>
-                                <img src="https://amarsolution.com/backend/images/cash-flow-icon/17.png" class="icon-img" />
+                                <img src="{{ asset('backend/img/cash-flow/17.png') }}" class="icon-img" />
                                 Balance Transfer
                             </td>
                             <td>

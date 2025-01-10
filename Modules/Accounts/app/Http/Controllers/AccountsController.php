@@ -34,6 +34,7 @@ class AccountsController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('account.view');
         $accounts = $this->accountsService->all()->paginate(20);
         $bankAccounts = $this->accountsService->all()->where('account_type', 'bank')->with('payments')->get();
         $cashAccount = $this->accountsService->all()->where('account_type', 'cash')->with('payments')->first();
@@ -57,6 +58,7 @@ class AccountsController extends Controller
      */
     public function create()
     {
+        checkAdminHasPermissionAndThrowException('account.create');
         $accounts = $this->bankService->all()->get();
         return view('accounts::create', compact('accounts'));
     }
@@ -66,6 +68,7 @@ class AccountsController extends Controller
      */
     public function store(AccountRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('account.create');
         try {
             $this->accountsService->create($request->except('_token'));
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.accounts.create', [], ['messege' => 'Account created successfully', 'alert-type' => 'success']);
@@ -88,6 +91,7 @@ class AccountsController extends Controller
      */
     public function edit($id)
     {
+        checkAdminHasPermissionAndThrowException('account.edit');
         $account = $this->accountsService->find($id);
         $accounts = $this->bankService->all()->get();
         return view('accounts::edit', compact('account', 'accounts'));
@@ -98,6 +102,7 @@ class AccountsController extends Controller
      */
     public function update(AccountRequest $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('account.edit');
         try {
             $account = $this->accountsService->find($id);
             $this->accountsService->update($account, $request->except('_token'));
@@ -113,6 +118,7 @@ class AccountsController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('account.delete');
         $account = $this->accountsService->find($id);
         $this->accountsService->delete($account);
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.accounts.index', [], ['messege' => 'Account deleted successfully', 'alert-type' => 'success']);
@@ -120,6 +126,7 @@ class AccountsController extends Controller
 
     public function cashflow()
     {
+        checkAdminHasPermissionAndThrowException('cash.flow.view');
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
         $data = [];

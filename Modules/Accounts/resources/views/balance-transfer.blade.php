@@ -71,28 +71,33 @@
                 <h4 class="section_title"> {{ __('Balance Transfer List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#transferModal" class="btn btn-primary"><i
-                        class="fa fa-plus"></i>
-                    {{ __('Add New') }}</a>
-
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                @adminCan('balance.transfer.create')
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#transferModal" class="btn btn-primary"><i
+                            class="fa fa-plus"></i>
+                        {{ __('Add New') }}</a>
+                @endadminCan
+                @adminCan('balance.transfer.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        {{ __('Excel') }}</button>
+                @endadminCan
+                @adminCan('balance.transfer.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        {{ __('PDF') }}</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">
-                <table style="width: 100%;" class="table common_table">
+                <table style="width: 100%;" class="table">
                     <thead>
-                        <th style=""> # </th>
-                        <th style=""> From Account </th>
-                        <th style=""> To Account </th>
-                        <th style=""> Amount </th>
-                        <th style=""> Added By </th>
-                        <th style=""> Date </th>
-                        <th style=""> Remark </th>
-                        <th>Action</th>
+                        <th> # </th>
+                        <th>{{ __('From Account') }}</th>
+                        <th>{{ __('To Account') }}</th>
+                        <th>{{ __('Amount') }}</th>
+                        <th>{{ __('Added By') }}</th>
+                        <th>{{ __('Date') }}</th>
+                        <th>{{ __('Remark') }}</th>
+                        <th>{{ __('Action') }}</th>
                     </thead>
                     <tbody>
                         @foreach ($transfers as $key => $balanceTransfer)
@@ -106,10 +111,27 @@
                                 <td>{{ $balanceTransfer->date }}</td>
                                 <td>{{ $balanceTransfer->note }}</td>
                                 <td>
-                                    <a class="btn btn-primary" href="javascript:;" data-bs-toggle="modal"
-                                        data-bs-target="#editTransferModal-{{ $balanceTransfer->id }}">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
+                                    @if (checkAdminHasPermission('balance.transfer.edit') || checkAdminHasPermission('balance.transfer.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $balanceTransfer->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                {{ __('Action') }}
+                                            </button>
+                                            <div class="dropdown-menu"
+                                                aria-labelledby="btnGroupDrop{{ $balanceTransfer->id }}">
+                                                @adminCan('balance.transfer.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editTransferModal-{{ $balanceTransfer->id }}">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('balance.transfer.delete')
+                                                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                        class="dropdown-item" onclick="deleteData({{ $balanceTransfer->id }})">
+                                                        {{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -413,5 +435,12 @@
                 accountInput.niceSelect();
             })
         })
+
+        function deleteData(id) {
+            let url = "{{ route('admin.balance.transfer.destroy', ':id') }}"
+            url = url.replace(':id', id);
+            $("#deleteForm").attr("action", url);
+            $('#deleteModal').modal('show');
+        }
     </script>
 @endpush

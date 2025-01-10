@@ -53,187 +53,211 @@
                 <div class="row">
                     <div class="col-xl-5 mb-5">
                         <div class="card-box">
-                            <div class="card card-statistic-1">
-                                <div class="card-header">
-                                    <h4 class="section_title">Balance</h4>
-                                </div>
+                            @adminCan('deposit.withdraw.create')
+                                <div class="card card-statistic-1">
+                                    <div class="card-header">
+                                        <h4 class="section_title">{{ __('Balance') }}</h4>
+                                    </div>
 
-                                <div class="card-body">
-                                    <form method="POST" action="{{ route('admin.opening-balance.store') }}" class="">
-                                        @csrf
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Balance Type</label>
-                                                    <select name="balance_type" class="form-control" required>
-                                                        <option value="deposit">Deposit</option>
-                                                        <option value="withdraw">Withdraw</option>
-                                                    </select>
+                                    <div class="card-body">
+                                        <form method="POST" action="{{ route('admin.opening-balance.store') }}" class="">
+                                            @csrf
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">Balance Type</label>
+                                                        <select name="balance_type" class="form-control" required>
+                                                            <option value="deposit">Deposit</option>
+                                                            <option value="withdraw">Withdraw</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="">Date</label>
-                                                    <input type="date" class="form-control" name="date"
-                                                        value="{{ now()->format('Y-m-d') }}" required>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="">Date</label>
+                                                        <input type="date" class="form-control" name="date"
+                                                            value="{{ now()->format('Y-m-d') }}" required>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="">Account Type</label>
-                                                    <select name="payment_type" id="" class="form-control">
-                                                        <option value="">{{ __('Payment Type') }}</option>
-                                                        @foreach (accountList() as $key => $list)
-                                                            <option value="{{ $key }}">
-                                                                {{ $list }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="">Account Type</label>
+                                                        <select name="payment_type" id="" class="form-control">
+                                                            <option value="">{{ __('Payment Type') }}</option>
+                                                            @foreach (accountList() as $key => $list)
+                                                                <option value="{{ $key }}">
+                                                                    {{ $list }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="accounts">
+                                                <div class="col-12">
+                                                    <div class="accounts">
 
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="">Amount</label>
+                                                        <input type="text" class="form-control" name="amount" required
+                                                            placeholder="Amount" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="">Remark</label>
+                                                        <textarea name="note" rows="2" class="form-control" placeholder="Note"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="text-right">
+                                                        <button class="btn btn-primary" type="submit">Save</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="">Amount</label>
-                                                    <input type="text" class="form-control" name="amount" required
-                                                        placeholder="Amount" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="">Remark</label>
-                                                    <textarea name="note" rows="2" class="form-control" placeholder="Note"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="text-right">
-                                                    <button class="btn btn-primary" type="submit">Save</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
+                            @endadminCan
                         </div>
                     </div>
 
                     <div class="col-xl-7">
-                        <div class="card">
-                            <div class="card-header">
-                                <ul class="nav nav-tabs gap-2 pb-1">
+                        <div class="card mb-6">
+                            <div class="card-header p-0 nav-align-top">
+                                <ul class="nav nav-tabs" role="tablist">
                                     <li class="nav-item">
-                                        <a href="#home1" class="btn btn-success" data-bs-toggle="tab" aria-expanded="false"
-                                            class="nav-link active">
-                                            Deposit
-                                        </a>
+                                        <button class="nav-link active" data-bs-toggle="tab"
+                                            data-bs-target="#form-tabs-personal" role="tab"
+                                            aria-selected="true">{{ __('Deposit') }}</button>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#profile1" class="btn btn-primary ml-2" data-bs-toggle="tab"
-                                            aria-expanded="true" class="nav-link">
-                                            Withdraw
-                                        </a>
+                                        <button class="nav-link " data-bs-toggle="tab" data-bs-target="#form-tabs-account"
+                                            role="tab" aria-selected="false">{{ __('Withdraw') }}</button>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="card-body pt-0">
-                                <div class="tab-content p-0">
-                                    <div role="tabpanel" class="tab-pane fade active show" id="home1">
-                                        <div class="card-box">
-                                            <h4 class="section_title mb-3">Deposit History</h4>
-                                            <div class="table-responsive table-invoice table_x_scroll">
-                                                <table class="table common_table">
-                                                    <thead>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade active show" id="form-tabs-personal" role="tabpanel">
+                                    <div class="card-box">
+                                        <h4 class="section_title mb-3">{{ __('Deposit History') }}</h4>
+                                        <div class="table-responsive table-invoice table_x_scroll">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{{ __('SN') }}</th>
+                                                        <th>{{ __('Date') }}</th>
+                                                        <th>{{ __('Note') }}</th>
+                                                        <th>{{ __('Amount') }}</th>
+                                                        <th>{{ __('Action') }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($deposits as $deposit)
                                                         <tr>
-                                                            <th>{{ __('SN') }}</th>
-                                                            <th>{{ __('Date') }}</th>
-                                                            <th>{{ __('Note') }}</th>
-                                                            <th>{{ __('Amount') }}</th>
-                                                            <th>{{ __('Action') }}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($deposits as $deposit)
-                                                            <tr>
-                                                                <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ $deposit->date }}</td>
-                                                                <td>{{ $deposit->note }}</td>
-                                                                <td>{{ currency($deposit->amount) }}</td>
-                                                                <td>
-                                                                    <div class="d-flex gap-2">
-                                                                        <a href="{{ route('admin.opening-balance.edit', $deposit->id) }}"
-                                                                            class="btn btn-primary btn-sm">
-                                                                            <i class="fas fa-edit"></i>
-                                                                        </a>
-                                                                        <a href="javascript:void(0)"
-                                                                            onclick="deleteData({{ $deposit->id }})"
-                                                                            class="btn btn-danger btn-sm"
-                                                                            data-bs-toggle="modal"
-                                                                            data-bs-target="#deleteModal">
-                                                                            <i class="fas fa-trash"></i>
-                                                                        </a>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $deposit->date }}</td>
+                                                            <td>{{ $deposit->note }}</td>
+                                                            <td>{{ currency($deposit->amount) }}</td>
+                                                            <td>
+                                                                @if (checkAdminHasPermission('deposit.withdraw.edit') || checkAdminHasPermission('deposit.withdraw.delete'))
+                                                                    <div class="btn-group" role="group">
+                                                                        <button id="btnGroupDrop{{ $deposit->id }}"
+                                                                            type="button"
+                                                                            class="btn btn-primary dropdown-toggle"
+                                                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                            aria-expanded="false">
+                                                                            {{ __('Action') }}
+                                                                        </button>
+                                                                        <div class="dropdown-menu"
+                                                                            aria-labelledby="btnGroupDrop{{ $deposit->id }}">
+                                                                            @adminCan('deposit.withdraw.edit')
+                                                                                <a class="dropdown-item"
+                                                                                    href="{{ route('admin.opening-balance.edit', $deposit->id) }}">{{ __('Edit') }}</a>
+                                                                            @endadminCan
+                                                                            @adminCan('deposit.withdraw.delete')
+                                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                                    data-bs-target="#deleteModal"
+                                                                                    class="dropdown-item"
+                                                                                    onclick="deleteData({{ $deposit->id }})">
+                                                                                    {{ __('Delete') }}</a>
+                                                                            @endadminCan
+                                                                        </div>
                                                                     </div>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            @if (request()->get('par-page') !== 'all')
-                                                <div class="float-right">
-                                                    {{ $deposits->onEachSide(0)->links() }}
-                                                </div>
-                                            @endif
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
+                                        @if (request()->get('par-page') !== 'all')
+                                            <div class="float-right">
+                                                {{ $deposits->onEachSide(0)->links() }}
+                                            </div>
+                                        @endif
                                     </div>
-                                    <div role="tabpanel" class="tab-pane fade" id="profile1">
-                                        <div class="card-box">
-                                            <h4 class="section_title mb-3">Withdraw History</h4>
-                                            <div class="table-responsive table-invoice table_x_scroll">
-                                                <table class="table common_table">
-                                                    <thead>
+                                </div>
+                                <div class="tab-pane fade" id="form-tabs-account" role="tabpanel">
+                                    <div class="card-box">
+                                        <h4 class="section_title mb-3">{{ __('Withdraw History') }}</h4>
+                                        <div class="table-responsive table-invoice table_x_scroll">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{{ __('SN') }}</th>
+                                                        <th>{{ __('Date') }}</th>
+                                                        <th>{{ __('Note') }}</th>
+                                                        <th>{{ __('Amount') }}</th>
+                                                        <th>{{ __('Action') }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($withdraws as $withdraw)
                                                         <tr>
-                                                            <th>{{ __('SN') }}</th>
-                                                            <th>{{ __('Date') }}</th>
-                                                            <th>{{ __('Note') }}</th>
-                                                            <th>{{ __('Amount') }}</th>
-                                                            <th>{{ __('Action') }}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($withdraws as $withdraw)
-                                                            <tr>
-                                                                <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ $withdraw->date }}</td>
-                                                                <td>{{ $withdraw->note }}</td>
-                                                                <td>{{ $withdraw->amount }}</td>
-                                                                <td>
-                                                                    <div class="d-flex gap-2">
-                                                                        <a href="{{ route('admin.opening-balance.edit', $withdraw->id) }}"
-                                                                            class="btn btn-primary btn-sm">
-                                                                            <i class="fas fa-edit"></i>
-                                                                        </a>
-                                                                        <a href="javascript:void(0)"
-                                                                            onclick="deleteData({{ $withdraw->id }})"
-                                                                            class="btn btn-danger btn-sm">
-                                                                            <i class="fas fa-trash"></i>
-                                                                        </a>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $withdraw->date }}</td>
+                                                            <td>{{ $withdraw->note }}</td>
+                                                            <td>{{ $withdraw->amount }}</td>
+                                                            <td>
+                                                                @if (checkAdminHasPermission('deposit.withdraw.edit') || checkAdminHasPermission('deposit.withdraw.delete'))
+                                                                    <div class="btn-group" role="group">
+                                                                        <button id="btnGroupDrop{{ $withdraw->id }}"
+                                                                            type="button"
+                                                                            class="btn btn-primary dropdown-toggle"
+                                                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                            aria-expanded="false">
+                                                                            {{ __('Action') }}
+                                                                        </button>
+                                                                        <div class="dropdown-menu"
+                                                                            aria-labelledby="btnGroupDrop{{ $withdraw->id }}">
+                                                                            @adminCan('deposit.withdraw.edit')
+                                                                                <a class="dropdown-item"
+                                                                                    href="{{ route('admin.opening-balance.edit', $withdraw->id) }}">{{ __('Edit') }}</a>
+                                                                            @endadminCan
+                                                                            @adminCan('deposit.withdraw.delete')
+                                                                                <a href="javascript:;" data-bs-toggle="modal"
+                                                                                    data-bs-target="#deleteModal"
+                                                                                    class="dropdown-item"
+                                                                                    onclick="deleteData({{ $withdraw->id }})">
+                                                                                    {{ __('Delete') }}</a>
+                                                                            @endadminCan
+                                                                        </div>
                                                                     </div>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            @if (request()->get('par-page') !== 'all')
-                                                <div class="float-right">
-                                                    {{ $withdraws->onEachSide(0)->links() }}
-                                                </div>
-                                            @endif
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
+                                        @if (request()->get('par-page') !== 'all')
+                                            <div class="float-right">
+                                                {{ $withdraws->onEachSide(0)->links() }}
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

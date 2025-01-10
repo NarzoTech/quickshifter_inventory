@@ -14,7 +14,7 @@
                             <div class="col-xxl-3 col-md-4 ">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                        class="form-control" placeholder="Search..." autocomplete="off">
+                                        class="form-control" placeholder="{{ __('Search') }}..." autocomplete="off">
                                     <button type="submit">
                                         <i class='bx bx-search'></i>
                                     </button>
@@ -66,8 +66,8 @@
                             </div>
                             <div class="col-xxl-2 col-md-4">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-danger form-reset">Reset</button>
-                                    <button type="submit" class="btn bg-primary">Search</button>
+                                    <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
+                                    <button type="submit" class="btn bg-primary">{{ __('Search') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                         <table style="width: 100%;" class="table mb-0">
                             <thead>
                                 <tr>
-                                    <th class="text-center"><b>Cash Amount</b></th>
+                                    <th class="text-center"><b>{{ __('Cash Amount') }}</b></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,7 +109,7 @@
                         <table style="width: 100%;" class="table mb-0">
                             <thead>
                                 <tr>
-                                    <th class="text-center"><b>Total Amount</b></th>
+                                    <th class="text-center"><b>{{ __('Total Amount') }}</b></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -161,22 +161,28 @@
                                         <td>{{ $account->bank_account_branch }}</td>
                                         <td>{{ currency($account->getBalanceBetween()) }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $account->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $account->id }}">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.accounts.edit', $account->id) }}">Edit</a>
-                                                    <a href="javascript:;" data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal" class="dropdown-item"
-                                                        onclick="deleteData({{ $account->id }})">
-                                                        Delete</a>
+                                            @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $account->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        {{ __('Action') }}
+                                                    </button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                        @adminCan('account.edit')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('account.delete')
+                                                            <a href="javascript:;" data-bs-toggle="modal"
+                                                                data-bs-target="#deleteModal" class="dropdown-item"
+                                                                onclick="deleteData({{ $account->id }})">
+                                                                {{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -218,22 +224,28 @@
                                         <td>{{ $account->mobile_number }}</td>
                                         <td>{{ currency($account->getBalanceBetween()) }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $account->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $account->id }}">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.accounts.edit', $account->id) }}">Edit</a>
-                                                    <a href="javascript:;" data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal" class="dropdown-item"
-                                                        onclick="deleteData({{ $account->id }})">
-                                                        Delete</a>
+                                            @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $account->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        {{ __('Action') }}
+                                                    </button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                        @adminCan('account.edit')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('account.delete')
+                                                            <a href="javascript:;" data-bs-toggle="modal"
+                                                                data-bs-target="#deleteModal" class="dropdown-item"
+                                                                onclick="deleteData({{ $account->id }})">
+                                                                {{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -278,21 +290,27 @@
                                         <td>{{ $account->card_number }}</td>
                                         <td>{{ currency($account->getBalanceBetween()) }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $account->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $account->id }}">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.accounts.edit', $account->id) }}">Edit</a>
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $account->id }})">
-                                                        Delete</a>
+                                            @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $account->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        {{ __('Action') }}
+                                                    </button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                        @adminCan('account.edit')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('account.delete')
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $account->id }})">
+                                                                {{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
