@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Supplier Other Due') }}</title>
+    <title>{{ __('Supplier Other Due List') }}</title>
 @endsection
 
 
@@ -79,17 +79,22 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title">
-                <h4 class="section_title"> Supplier Other Due List</h4>
+                <h4 class="section_title">{{ __('Supplier Other Due List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"><i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Supplier Other Due') }}</a>
-
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                @adminCan('supplier.other.due.create')
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addSupplier" class="btn btn-primary"><i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Supplier Other Due') }}</a>
+                @endadminCan
+                @adminCan('supplier.other.due.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        Excel</button>
+                @endadminCan
+                @adminCan('supplier.other.due.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        PDF</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -118,23 +123,28 @@
                                 <td>{{ $summery->otherSummery->sum('paid') }}</td>
                                 <td>{{ $summery->otherSummery->sum('due') }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $summery->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $summery->id }}">
-
-                                            @if ($summery->otherSummery->sum('due'))
-                                                <a href="javascript:void(0);"
-                                                    onclick="payDueModal({{ $summery->id }},{{ $summery->otherSummery->sum('due') }})"
-                                                    class="dropdown-item">{{ __('Pay') }}</a>
-                                            @endif
-                                            <a href="{{ route('admin.other-summery.supplier.ledger', $summery->id) }}"
-                                                class="dropdown-item">{{ __('Ledger') }}</a>
+                                    @if (checkAdminHavePermission('supplier.other.due.ledger') || checkAdminHavePermission('supplier.other.due.pay'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $summery->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $summery->id }}">
+                                                @adminCan('supplier.other.due.pay')
+                                                    @if ($summery->otherSummery->sum('due'))
+                                                        <a href="javascript:void(0);"
+                                                            onclick="payDueModal({{ $summery->id }},{{ $summery->otherSummery->sum('due') }})"
+                                                            class="dropdown-item">{{ __('Pay') }}</a>
+                                                    @endif
+                                                @endadminCan
+                                                @adminCan('supplier.other.due.ledger')
+                                                    <a href="{{ route('admin.other-summery.supplier.ledger', $summery->id) }}"
+                                                        class="dropdown-item">{{ __('Ledger') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

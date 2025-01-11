@@ -294,6 +294,27 @@ trait PermissionsTrait
             'other.income.pdf.download',
         ],
     ];
+    public static array $otherSummeryPermissions = [
+        'group_name' => 'other summery',
+        'permissions' => [
+            'customer.other.due.view',
+            'customer.other.due.create',
+            'customer.other.due.edit',
+            'customer.other.due.delete',
+            'customer.other.due.pay',
+            'customer.other.due.ledger',
+            'customer.other.due.excel.download',
+            'customer.other.due.pdf.download',
+            'supplier.other.due.view',
+            'supplier.other.due.create',
+            'supplier.other.due.edit',
+            'supplier.other.due.delete',
+            'supplier.other.due.pay',
+            'supplier.other.due.ledger',
+            'supplier.other.due.excel.download',
+            'supplier.other.due.pdf.download',
+        ],
+    ];
 
 
     // return super admin permission aka 'all permissions'

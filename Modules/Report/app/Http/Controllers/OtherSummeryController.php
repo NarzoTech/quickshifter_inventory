@@ -17,6 +17,7 @@ class OtherSummeryController extends Controller
      */
     public function customer()
     {
+        checkAdminHasPermissionAndThrowException('customer.other.due.view');
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $customers = User::all();
@@ -54,6 +55,7 @@ class OtherSummeryController extends Controller
 
     public function customerStore(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('customer.other.due.create');
         $request->validate([
             'customer_id' => 'required',
             'date' => 'required|date',
@@ -84,6 +86,7 @@ class OtherSummeryController extends Controller
 
     public function customerLedger($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.other.due.ledger');
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $customers = User::all();
@@ -119,6 +122,7 @@ class OtherSummeryController extends Controller
     }
     public function supplierLedger($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.other.due.ledger');
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $customers = User::all();
@@ -155,6 +159,9 @@ class OtherSummeryController extends Controller
 
     public function payDue(Request $request)
     {
+        if (!checkAdminHasPermission('customer.other.due.pay') || !checkAdminHasPermission('supplier.other.due.pay')) {
+            return abort(403);
+        }
         $request->validate([
             'amount' => 'required',
             'customer_id' => 'required_if:supplier_id,null',
@@ -186,6 +193,7 @@ class OtherSummeryController extends Controller
     }
     public function customerUpdate(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('customer.other.due.edit');
         $request->validate([
             'customer_id' => 'required',
             'date' => 'required|date',
@@ -203,6 +211,7 @@ class OtherSummeryController extends Controller
 
     public function customerDelete($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.other.due.delete');
         $summery =  OtherSummery::find($id);
         $summery->delete();
         return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Customer due summery deleted successfully']);
@@ -210,7 +219,7 @@ class OtherSummeryController extends Controller
 
     public function supplier()
     {
-
+        checkAdminHasPermissionAndThrowException('supplier.other.due.view');
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : '';
         $suppliers = Supplier::all();
@@ -248,6 +257,7 @@ class OtherSummeryController extends Controller
 
     public function supplierStore(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('supplier.other.due.create');
         $request->validate([
             'supplier_id' => 'required',
             'date' => 'required|date',
@@ -278,6 +288,7 @@ class OtherSummeryController extends Controller
 
     public function supplierUpdate(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.other.due.edit');
         $request->validate([
             'supplier_id' => 'required',
             'date' => 'required|date',
@@ -295,6 +306,7 @@ class OtherSummeryController extends Controller
 
     public function  supplierDelete($id)
     {
+        checkAdminHasPermissionAndThrowException('supplier.other.due.delete');
         $summery =  OtherSummery::find($id);
         $summery->delete();
         return redirect()->back()->with(['alert-type' => 'success', 'messege' => 'Supplier due summery deleted successfully']);

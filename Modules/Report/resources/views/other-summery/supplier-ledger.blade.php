@@ -82,10 +82,14 @@
                 <h4 class="section_title"> {{ __('Supplier Other Due Ledger') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    {{ __('Excel') }}</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    {{ __('PDF') }}</button>
+                @adminCan('supplier.other.due.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        {{ __('Excel') }}</button>
+                @endadminCan
+                @adminCan('supplier.other.due.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        {{ __('PDF') }}</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -116,22 +120,27 @@
                                 <td>{{ $summery->paid }}</td>
                                 <td>{{ $summery->due }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $summery->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $summery->id }}">
+                                    @if (checkAdminHasPermission('supplier.other.due.edit') || checkAdminHasPermission('supplier.other.due.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $summery->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $summery->id }}">
 
-                                            <a href="javascript:void(0);" data-bs-toggle="modal"
-                                                data-bs-target="#editsupplier-{{ $summery->id }}"
-                                                class="dropdown-item">{{ __('Edit') }}</a>
-
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $summery->id }})">{{ __('Delete') }}</a>
+                                                @adminCan('supplier.other.due.edit')
+                                                    <a href="javascript:void(0);" data-bs-toggle="modal"
+                                                        data-bs-target="#editsupplier-{{ $summery->id }}"
+                                                        class="dropdown-item">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('supplier.other.due.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $summery->id }})">{{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
