@@ -136,14 +136,6 @@
                                     {{ $subTotal }}</b>
                             </td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #000 !important">
-                            <td>
-                                Other Cost:
-                            </td>
-                            <td>
-                                TK 0.00
-                            </td>
-                        </tr>
                         <tr>
                             <td>
                                 <b>Total:</b>

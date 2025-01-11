@@ -194,15 +194,22 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="4"
+                    <td colspan="5"
                         style="border-left: none !important; border-right: none !important; border-top: none !important"
                         class="text-right">
                         Total Qty:
                     </td>
-                    <td colspan="2"
+                    <td colspan="1"
                         style="border-left: none !important; border-right: none !important; border-top: none !important"
                         class="text-left">
-                        {{ $sale->quantity }}
+                        @php
+                            $unitName = $details->product->unit->name;
+                            $unitQty = isset($unit[$unitName]) ? $unit[$unitName] : 0;
+                            $newQty = $details->quantity + $unitQty;
+                            $unit[$unitName] = $newQty;
+
+                        @endphp
+                        {{ $sale->quantity }} {{ $unitName }}
                     </td>
                 </tr>
             </tbody>
