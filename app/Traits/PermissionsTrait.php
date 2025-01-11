@@ -339,6 +339,28 @@ trait PermissionsTrait
             'expense.type.ledger',
         ],
     ];
+    public static array $assetsPermissions = [
+        'group_name' => 'assets',
+        'permissions' => [
+            'asset.view',
+            'asset.create',
+            'asset.edit',
+            'asset.delete',
+            'asset.pay',
+            'asset.ledger',
+        ],
+    ];
+    public static array $assetsTypePermissions = [
+        'group_name' => 'assets type',
+        'permissions' => [
+            'asset.type.view',
+            'asset.type.create',
+            'asset.type.edit',
+            'asset.type.delete',
+            'asset.type.pay',
+            'asset.type.ledger',
+        ],
+    ];
 
 
     // return super admin permission aka 'all permissions'

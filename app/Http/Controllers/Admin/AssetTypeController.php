@@ -13,24 +13,17 @@ class AssetTypeController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('asset.type.view');
         $types = AssetType::paginate(20);
 
         return view('admin.pages.asset.type', compact('types'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('asset.type.create');
         $request->validate([
             'name' => 'required',
         ]);
@@ -43,26 +36,11 @@ class AssetTypeController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
+        checkAdminHasPermissionAndThrowException('asset.type.edit');
         $request->validate([
             'name' => 'required',
         ]);
@@ -81,6 +59,7 @@ class AssetTypeController extends Controller
      */
     public function destroy(string $id)
     {
+        checkAdminHasPermissionAndThrowException('asset.type.delete');
         $type = AssetType::find($id);
 
         if ($type) {

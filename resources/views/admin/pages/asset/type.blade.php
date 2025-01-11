@@ -78,9 +78,11 @@
                         <h4 class="section_title"> {{ __('Asset Type List') }}</h4>
                     </div>
                     <div class="btn-actions-pane-right actions-icon-btn">
-                        <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType"
-                            class="btn btn-primary"><i class="fa fa-plus"></i>
-                            {{ __('Add Asset Type') }}</a>
+                        @adminCan('asset.type.create')
+                            <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType"
+                                class="btn btn-primary"><i class="fa fa-plus"></i>
+                                {{ __('Add Asset Type') }}</a>
+                        @endadminCan
                     </div>
                 </div>
                 <div class="card-body">
@@ -107,17 +109,21 @@
                                                 </button>
                                                 <div class="dropdown-menu"
                                                     aria-labelledby="btnGroupDrop{{ $type->id }}">
-                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                        data-bs-target="#editType{{ $type->id }}">Edit</a>
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $type->id }})">
-                                                        Delete</a>
+                                                    @adminCan('asset.type.edit')
+                                                        <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                            data-bs-target="#editType{{ $type->id }}">Edit</a>
+                                                    @endadminCan
+                                                    @adminCan('asset.type.delete')
+                                                        <a href="javascript:;" class="dropdown-item"
+                                                            onclick="deleteData({{ $type->id }})">
+                                                            Delete</a>
+                                                    @endadminCan
                                                 </div>
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                    <x-empty-table :name="__('Asset Type')" route="" create="no" :message="__('No data found!')"
                                         colspan="3"></x-empty-table>
                                 @endforelse
                             </tbody>

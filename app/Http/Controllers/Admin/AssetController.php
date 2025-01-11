@@ -17,7 +17,10 @@ class AssetController extends Controller
      * Display a listing of the resource.
      */
     public function index()
+
     {
+        checkAdminHasPermissionAndThrowException('asset.view');
+
         $lists = Asset::paginate(20);
         $types = AssetType::all();
         $accounts = $this->account->all()->get();
@@ -25,18 +28,12 @@ class AssetController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
+
     {
+        checkAdminHasPermissionAndThrowException('asset.create');
         try {
             if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
                 $account = $this->account->all()->where('account_type', 'cash')->first();
@@ -65,27 +62,14 @@ class AssetController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
+
     {
+        checkAdminHasPermissionAndThrowException('asset.edit');
         // update assets
         try {
             if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
@@ -120,7 +104,9 @@ class AssetController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
+
     {
+        checkAdminHasPermissionAndThrowException('asset.delete');
         $asset = Asset::find($id);
         $asset->delete();
         return back()->with(['messege' => 'Asset deleted successfully.', 'alert-type' => 'success']);

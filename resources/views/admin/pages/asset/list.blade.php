@@ -79,9 +79,11 @@
                         <h4 class="section_title"> {{ __('Asset List') }}</h4>
                     </div>
                     <div class="btn-actions-pane-right actions-icon-btn">
-                        <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType"
-                            class="btn btn-primary"><i class="fa fa-plus"></i>
-                            {{ __('Add Asset') }}</a>
+                        @adminCan('asset.create')
+                            <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addAssetType"
+                                class="btn btn-primary"><i class="fa fa-plus"></i>
+                                {{ __('Add Asset') }}</a>
+                        @endadminCan
                     </div>
                 </div>
                 <div class="card-body">
@@ -116,22 +118,29 @@
                                             {{ currency($type->amount) }}
                                         </td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $type->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">{{ __('Action') }}</button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $type->id }}">
-                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                        data-bs-target="#editType{{ $type->id }}">{{ __('Edit') }}</a>
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $type->id }})">{{ __('Delete') }}</a>
+                                            @if (checkAdminHasPermission('asset.edit') || checkAdminHasPermission('asset.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $type->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false">{{ __('Action') }}</button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $type->id }}">
+                                                        @adminCan('asset.edit')
+                                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                                data-bs-target="#editType{{ $type->id }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('asset.delete')
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $type->id }})">{{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                    <x-empty-table :name="__('Asset')" route="" create="no" :message="__('No data found!')"
                                         colspan="8"></x-empty-table>
                                 @endforelse
                             </tbody>
