@@ -106,10 +106,23 @@
             </div>
         </div>
         <div class="card-body">
+            <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
+                <span><span class="number">0 </span> rows selected</span>
+                @adminCan('product.delete')
+                    <button class="btn btn-danger delete-button">Delete</button>
+                @endadminCan
+            </div>
             <div class="table-responsive">
                 <table style="width: 100%;" class="table product_list_table">
                     <thead>
                         <tr>
+                            <th>
+                                <div class="custom-checkbox custom-control">
+                                    <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
+                                        class="custom-control-input" id="checkbox-all">
+                                    <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                </div>
+                            </th>
                             <th>{{ __('SN') }}</th>
                             <th>{{ __('Photo') }}</th>
                             <th>{{ __('Name') }}</th>
@@ -126,9 +139,20 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $start = checkPaginate($products) ? $products->firstItem() : 1;
+                        @endphp
                         @foreach ($products as $index => $product)
                             <tr>
-                                <td>{{ ++$index }}</td>
+                                <td>
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
+                                            id="checkbox-{{ $product->id }}" name="select">
+                                        <label for="checkbox-{{ $product->id }}"
+                                            class="custom-control-label">&nbsp;</label>
+                                    </div>
+                                </td>
+                                <td>{{ $start + $index }}</td>
                                 <td> <img class="rounded-circle" src="{{ $product->singleImage }}"></td>
                                 <td>{{ $product->name }} </td>
                                 <td>{{ $product->barcode }}</td>
@@ -262,6 +286,91 @@
 
                 window.location.href = fullUrl;
             })
+
+
+            //check all checkboxes
+            $('#checkbox-all').on('click', function() {
+                var $this = $(this);
+                var check = $this.prop('checked');
+                $('input[name="select"]').each(function() {
+                    $(this).prop('checked', check);
+
+                    // change the count number
+                    if (check) {
+                        $('.number').text($('input[name="select"]').length);
+                        $('.delete-section').removeClass('d-none');
+                        $('.delete-section').addClass('d-flex');
+
+                    } else {
+                        $('.number').text(0);
+                        $('.delete-section').addClass('d-none');
+                        $('.delete-section').removeClass('d-flex');
+                    }
+                });
+            });
+
+            $('input[name="select"]').on('click', function() {
+                var total = $('input[name="select"]').length;
+                var number = $('input[name="select"]:checked').length;
+                if (total == number) {
+                    $('#checkbox-all').prop('checked', true);
+                } else {
+                    $('#checkbox-all').prop('checked', false);
+                }
+                $('.number').text(number);
+
+                if (number > 0) {
+                    $('.delete-section').removeClass('d-none');
+                    $('.delete-section').addClass('d-flex');
+                } else {
+                    $('.delete-section').addClass('d-none');
+                    $('.delete-section').removeClass('d-flex');
+                }
+            });
+
+            // delete all selected
+            $('.delete-button').on('click', function() {
+                var ids = [];
+                $('input[name="select"]:checked').each(function() {
+                    ids.push($(this).attr('id').split('-')[1]);
+                });
+
+
+                // fire swal
+                swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You will not be able to recover this data!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, keep it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('admin.product.bulk.delete') }}",
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                ids: ids
+                            },
+                            beforeSend: function() {
+                                // disable button
+                                $('.delete-button').prop('disabled', true);
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    toastr.success(response.message);
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
+                                } else {
+                                    toastr.error(response.message);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
         });
 
         function deleteData(id) {

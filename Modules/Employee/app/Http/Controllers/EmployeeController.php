@@ -21,7 +21,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        // checkAdminHasPermissionAndThrowException('employee.view');
+        checkAdminHasPermissionAndThrowException('employee.view');
         $employees = $this->employee->all();
 
         if (request('keyword')) {

@@ -125,6 +125,13 @@ class ProductService
         }
         return $product->delete();
     }
+    public function bulkDelete($ids)
+    {
+        foreach ($ids as $id) {
+            $this->deleteProduct($this->getActiveProductById($id));
+        }
+        return true;
+    }
 
     public function storeRelatedProducts($request, $product)
     {

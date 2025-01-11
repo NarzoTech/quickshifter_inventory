@@ -32,6 +32,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
     Route::get('product/search', [ProductController::class, 'search'])->name('product.search');
     Route::post('product/status/{id}', [ProductController::class, 'status'])->name('product.status');
     Route::get('product/view/{id}', [ProductController::class, 'singleProduct'])->name('product.view');
+    Route::post('product/delete', [ProductController::class, 'bulkDelete'])->name('product.bulk.delete');
     Route::resource('product', ProductController::class);
 
 

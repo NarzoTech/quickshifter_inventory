@@ -53,12 +53,12 @@ class ProductController extends Controller
                     $products = $products->get();
                 } else {
                     $products = $products->paginate(request('par-page'));
+                    $products->appends(request()->query());
                 }
             } else {
                 $products = $products->paginate(20);
             }
 
-            $products->appends(request()->query());
 
             $brands = $this->brandService->getActiveBrands();
             $categories = $this->categoryService->getAllProductCategoriesForSelect();
@@ -502,5 +502,13 @@ class ProductController extends Controller
         $notification = $status == 1 ? 'Product Enabled' : 'Product Disabled';
 
         return response()->json(['status' => 'success', 'message' => $notification]);
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        checkAdminHasPermissionAndThrowException('product.bulk.delete');
+        $ids = $request->ids;
+        $this->productService->bulkDelete($ids);
+        return response()->json(['status' => 'success', 'message' => 'Product Deleted Successfully']);
     }
 }
