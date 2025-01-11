@@ -83,10 +83,14 @@
                 <h4 class="section_title">{{ __('Other Income List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                @adminCan('other.income.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        Excel</button>
+                @endadminCan
+                @adminCan('other.income.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        PDF</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">

@@ -42,6 +42,7 @@ class ReportController extends Controller
      */
     public function otherIncome()
     {
+        checkAdminHasPermissionAndThrowException('other.income.view');
         $from_date = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : date('Y-m-d');
         $to_date = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
@@ -106,6 +107,7 @@ class ReportController extends Controller
      */
     public function dts()
     {
+        checkAdminHasPermissionAndThrowException('dts.view');
         $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
 

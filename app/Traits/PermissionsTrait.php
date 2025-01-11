@@ -283,6 +283,17 @@ trait PermissionsTrait
             'quotation.pdf.download',
         ],
     ];
+    public static array $dtsPermissions = [
+        'group_name' => 'dts',
+        'permissions' => [
+            'dts.view',
+            'dts.excel.download',
+            'dts.pdf.download',
+            'other.income.view',
+            'other.income.excel.download',
+            'other.income.pdf.download',
+        ],
+    ];
 
 
     // return super admin permission aka 'all permissions'
