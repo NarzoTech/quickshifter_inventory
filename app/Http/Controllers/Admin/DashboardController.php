@@ -208,7 +208,37 @@ class DashboardController extends Controller
         })->orderByDesc('stock_alert')
             ->take(10)
             ->get();
-        // dd($data['low_stock_products']);
+
+        $customers = User::with(['sales', 'payment', 'saleReturn'])->get();
+
+        $customers = $customers->filter(function ($customer) {
+            return $customer->getTotalDueAttribute() > 0;
+        });
+
+        $customers = $customers->sortByDesc(function ($customer) {
+            $totalPurchase = $customer->sales->sum('grand_total');
+            $totalPaid = $customer->payment->sum('amount');
+            $totalReturn = $customer->saleReturn->sum('return_amount');
+            $totalDue = $totalPurchase - $totalPaid - $totalReturn;
+            return $totalDue;
+        });
+
+        $data['customers'] = $customers->take(10);
+
+        $suppliers = $this->supplierService->allSupplier()->get();
+
+        $suppliers = $suppliers->filter(function ($supplier) {
+            // Check if the supplier has any purchases with due amount greater than 0
+            return $supplier->purchases->where('due_amount', '>', 0)->isNotEmpty();
+        })->sortByDesc(function ($supplier) {
+            $totalPurchase = $supplier->purchases->sum('total_amount');
+            $totalPaid = $supplier->payments->sum('amount');
+            $totalReturn = $supplier->purchaseReturn->sum('return_amount');
+            $totalDue = $totalPurchase - $totalPaid - $totalReturn;
+            return $totalDue;
+        });
+
+        $data['suppliers'] = $suppliers->take(10);
         return view('admin.dashboard', compact('data', 'purchaseData', 'saleData', 'chart'));
     }
 
