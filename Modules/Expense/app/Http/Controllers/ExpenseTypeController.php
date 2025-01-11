@@ -19,6 +19,7 @@ class ExpenseTypeController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('expense.type.view');
         $types = ExpenseType::query();
 
         if (request('keyword')) {
@@ -43,19 +44,13 @@ class ExpenseTypeController extends Controller
         return view('expense::type', compact('types'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('expense::create');
-    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('expense.type.create');
         try {
             $type = new ExpenseType();
             $type->name = $request->name;
@@ -67,27 +62,13 @@ class ExpenseTypeController extends Controller
         }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('expense::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('expense::edit');
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('expense.type.edit');
         try {
             $type = ExpenseType::find($id);
             $type->name = $request->name;
@@ -104,6 +85,7 @@ class ExpenseTypeController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('expense.type.delete');
         try {
             $type = ExpenseType::find($id);
             $type->delete();

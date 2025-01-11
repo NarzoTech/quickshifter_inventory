@@ -81,9 +81,11 @@
                 <h4 class="section_title"> {{ __('Expense Type List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense" class="btn btn-primary"><i
-                        class="fa fa-plus"></i>
-                    {{ __('Add Expense Type') }}</a>
+                @adminCan('expense.type.create')
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense" class="btn btn-primary"><i
+                            class="fa fa-plus"></i>
+                        {{ __('Add Expense Type') }}</a>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -102,24 +104,30 @@
                                 <td>{{ $loop->first + $index }}</td>
                                 <td>{{ $type->name }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $type->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $type->id }}">
-                                            <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editType{{ $type->id }}">Edit</a>
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $type->id }})">
-                                                Delete</a>
+                                    @if (checkAdminHasPermission('expense.type.edit') || checkAdminHasPermission('expense.type.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $type->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $type->id }}">
+                                                @adminCan('expense.type.edit')
+                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editType{{ $type->id }}">Edit</a>
+                                                @endadminCan
+                                                @adminCan('expense.type.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $type->id }})">
+                                                        Delete</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
-                            <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                            <x-empty-table :name="__('Expense Type')" route="" create="no" :message="__('No data found!')"
                                 colspan="6"></x-empty-table>
                         @endforelse
                     </tbody>

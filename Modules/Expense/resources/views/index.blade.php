@@ -96,14 +96,19 @@
                         <h4 class="section_title"> Expenses List</h4>
                     </div>
                     <div class="btn-actions-pane-right actions-icon-btn">
-                        <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense"
-                            class="btn btn-primary"><i class="fa fa-plus"></i>
-                            {{ __('Add Expense') }}</a>
-
-                        <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                            Excel</button>
-                        <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                            PDF</button>
+                        @adminCan('expense.create')
+                            <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addExpense"
+                                class="btn btn-primary"><i class="fa fa-plus"></i>
+                                {{ __('Add Expense') }}</a>
+                        @endadminCan
+                        @adminCan('expense.excel.download')
+                            <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                                Excel</button>
+                        @endadminCan
+                        @adminCan('expense.pdf.download')
+                            <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                                PDF</button>
+                        @endadminCan
                     </div>
                 </div>
                 <div class="card-body">
@@ -138,24 +143,31 @@
                                         <td>{{ ucfirst($expense->payment_type) }}</td>
                                         <td>{{ $expense->note }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $expense->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true"
-                                                    aria-expanded="false">{{ __('Action') }}</button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $expense->id }}">
-                                                    <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                        data-bs-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
+                                            @if (checkAdminHasPermission('expense.edit') || checkAdminHasPermission('expense.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $expense->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false">{{ __('Action') }}</button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $expense->id }}">
+                                                        @adminCan('expense.edit')
+                                                            <a class="dropdown-item" href="javascript:;"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('expense.delete')
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $expense->id }})">{{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
-                                        colspan="6"></x-empty-table>
+                                    <x-empty-table :name="__('Expense')" route="" create="no" :message="__('No data found!')"
+                                        colspan="8"></x-empty-table>
                                 @endforelse
 
                                 @if ($expenses->count() > 0)

@@ -315,6 +315,30 @@ trait PermissionsTrait
             'supplier.other.due.pdf.download',
         ],
     ];
+    public static array $expensePermissions = [
+        'group_name' => 'expense',
+        'permissions' => [
+            'expense.view',
+            'expense.create',
+            'expense.edit',
+            'expense.delete',
+            'expense.pay',
+            'expense.ledger',
+            'expense.excel.download',
+            'expense.pdf.download',
+        ],
+    ];
+    public static array $expenseTypePermissions = [
+        'group_name' => 'expense type',
+        'permissions' => [
+            'expense.type.view',
+            'expense.type.create',
+            'expense.type.edit',
+            'expense.type.delete',
+            'expense.type.pay',
+            'expense.type.ledger',
+        ],
+    ];
 
 
     // return super admin permission aka 'all permissions'

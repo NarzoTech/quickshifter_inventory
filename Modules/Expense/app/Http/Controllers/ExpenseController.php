@@ -30,6 +30,7 @@ class ExpenseController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('expense.view');
         $expenses = Expense::query();
 
         if (request('keyword')) {
@@ -89,6 +90,7 @@ class ExpenseController extends Controller
      */
     public function store(ExpenseRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('expense.create');
         try {
             $this->expense->store($request);
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.expense.index', [], ['messege' => 'Expense created successfully', 'alert-type' => 'success']);
@@ -103,6 +105,7 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('expense.edit');
         try {
             $this->expense->update($request, $id);
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.index', [], ['messege' => 'Expense updated successfully', 'alert-type' => 'success']);
@@ -117,6 +120,7 @@ class ExpenseController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('expense.delete');
         $this->expense->destroy($id);
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.expense.index', [], ['messege' => 'Expense deleted successfully', 'alert-type' => 'success']);
     }
