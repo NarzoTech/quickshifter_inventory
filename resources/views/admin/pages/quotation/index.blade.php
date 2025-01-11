@@ -68,13 +68,17 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"> Quotation List</h4>
+                <h4 class="section_title"> {{ __('Quotation List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
-                <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                    Excel</button>
-                <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                    PDF</button>
+                @adminCan('quotation.excel.download')
+                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                        {{ __('Excel') }}</button>
+                @endadminCan
+                @adminCan('quotation.pdf.download')
+                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                        PDF</button>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -100,26 +104,36 @@
                                 <td>{{ $quotation->customer->name }}</td>
                                 <td>{{ currency($quotation->total) }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $quotation->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $quotation->id }}">
-                                            <a href="{{ route('admin.quotation.show', $quotation->id) }}"
-                                                class="dropdown-item">{{ __('View') }}</a>
-
-                                            <a href="{{ route('admin.quotation.edit', $quotation->id) }}"
-                                                class="dropdown-item">{{ __('Edit') }}</a>
-
-                                            <a href="{{ route('admin.pos') }}?quotation_id={{ $quotation->id }}"
-                                                class="dropdown-item">{{ __('Sale') }}</a>
-
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $quotation->id }})">{{ __('Delete') }}</a>
+                                    @if (checkAdminHasPermission('quotation.delete') ||
+                                            checkAdminHasPermission('quotation.edit') ||
+                                            checkAdminHasPermission('quotation.view') ||
+                                            checkAdminHasPermission('pos.view'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $quotation->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $quotation->id }}">
+                                                @adminCan('quotation.view')
+                                                    <a href="{{ route('admin.quotation.show', $quotation->id) }}"
+                                                        class="dropdown-item">{{ __('View') }}</a>
+                                                @endadminCan
+                                                @adminCan('quotation.edit')
+                                                    <a href="{{ route('admin.quotation.edit', $quotation->id) }}"
+                                                        class="dropdown-item">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('pos.view')
+                                                    <a href="{{ route('admin.pos') }}?quotation_id={{ $quotation->id }}"
+                                                        class="dropdown-item">{{ __('Sale') }}</a>
+                                                @endadminCan
+                                                @adminCan('quotation.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $quotation->id }})">{{ __('Delete') }}</a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

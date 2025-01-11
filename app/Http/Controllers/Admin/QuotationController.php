@@ -22,6 +22,7 @@ class QuotationController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('quotation.view');
         $quotations = Quotation::query();
 
         if (request()->keyword) {
@@ -70,6 +71,7 @@ class QuotationController extends Controller
      */
     public function create()
     {
+        checkAdminHasPermissionAndThrowException('quotation.create');
         $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
@@ -82,6 +84,7 @@ class QuotationController extends Controller
      */
     public function store(QuotationRequest $request)
     {
+        checkAdminHasPermissionAndThrowException('quotation.create');
         $request->validate([
             'customer_id' => 'required',
             'date' => 'required',
@@ -151,6 +154,7 @@ class QuotationController extends Controller
      */
     public function show(string $id)
     {
+        checkAdminHasPermissionAndThrowException('quotation.view');
         $quotation = Quotation::find($id);
         return view('admin.pages.quotation.show', compact('quotation'));
     }
@@ -160,6 +164,7 @@ class QuotationController extends Controller
      */
     public function edit(string $id)
     {
+        checkAdminHasPermissionAndThrowException('quotation.edit');
         $quotation = Quotation::find($id);
         $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
@@ -173,6 +178,7 @@ class QuotationController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        checkAdminHasPermissionAndThrowException('quotation.edit');
         $request->validate([
             'customer_id' => 'required',
             'date' => 'required',
@@ -233,6 +239,7 @@ class QuotationController extends Controller
      */
     public function destroy(string $id)
     {
+        checkAdminHasPermissionAndThrowException('quotation.delete');
         $quotation = Quotation::find($id);
         $quotation->details()->delete();
         $quotation->delete();

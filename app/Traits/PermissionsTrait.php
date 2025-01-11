@@ -272,6 +272,17 @@ trait PermissionsTrait
             'bank.delete',
         ],
     ];
+    public static array $quotationPermissions = [
+        'group_name' => 'quotation',
+        'permissions' => [
+            'quotation.view',
+            'quotation.create',
+            'quotation.edit',
+            'quotation.delete',
+            'quotation.excel.download',
+            'quotation.pdf.download',
+        ],
+    ];
 
 
     // return super admin permission aka 'all permissions'
