@@ -36,5 +36,10 @@ ALTER TABLE `employee_salaries`
 ADD COLUMN `payable_salary` VARCHAR(45) NULL AFTER `updated_at`;
 
 
-ALTER TABLE `ledgers` 
+ALTER TABLE `ledgers`
 ADD COLUMN `total_amount` DOUBLE(8,2) NULL DEFAULT 0 AFTER `amount`;
+
+
+//  new sql
+ALTER TABLE `inventory`.`attendances`
+CHANGE COLUMN `status` `status` ENUM('present', 'absent', 'late', 'weekend') NOT NULL ;

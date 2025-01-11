@@ -87,6 +87,6 @@ class Employee extends Model
         $year = $date->year;
 
 
-        return $this->hasMany(Attendance::class, 'employee_id', 'id')->whereMonth('date', $month)->whereYear('date', $year)->where('status', 'present');
+        return $this->hasMany(Attendance::class, 'employee_id', 'id')->whereMonth('date', $month)->whereYear('date', $year)->where('status', 'present')->orWhere('status', 'weekend');
     }
 }

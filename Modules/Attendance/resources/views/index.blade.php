@@ -122,7 +122,7 @@
                                 <tr>
                                     <th rowspan="2" class="text-bottom sticky-1">{{ __('Name') }}</th>
                                     <th rowspan="2" class="sticky-2">{{ __('Mobile') }}</th>
-                                    <th rowspan="1" colspan="2" class="text-center">
+                                    <th rowspan="1" colspan="3" class="text-center">
                                         {{ __('Total') }}
                                     </th>
                                     <th rowspan="1" colspan="{{ $totalDays }}" class="text-center">
@@ -132,6 +132,8 @@
                                     <td colspan="1" class="text-white bg-green text-center th-present">P
                                     </td>
                                     <td colspan="1" class="text-white  bg-red  text-center th-absent">A
+                                    </td>
+                                    <td colspan="1" class="text-white  bg-warning  text-center th-absent">W
                                     </td>
                                     @for ($i = 1; $i <= $totalDays; $i++)
                                         <td class="text-center  border-top">{{ $i }}</td>
@@ -144,6 +146,8 @@
                                         $attendance = $employee->attendance;
                                         $present = $attendance->where('status', 'present');
                                         $absent = $attendance->where('status', 'absent');
+                                        $weekend = $attendance->where('status', 'weekend');
+
                                     @endphp
 
                                     <tr>
@@ -151,10 +155,12 @@
                                         <td class="sticky-2">{{ $employee->mobile }}</td>
                                         <td class="text-center ">{{ $present->count() }}</td>
                                         <td class="text-center">{{ $absent->count() }}</td>
+                                        <td class="text-center">{{ $weekend->count() }}</td>
                                         @for ($i = 1; $i <= $totalDays; $i++)
                                             @php
                                                 $date = "$year-$month-$i";
                                                 $date = now()->parse($date);
+
                                                 $isPresent = $attendance
                                                     ->where('status', 'present')
                                                     ->where('date', $date->format('Y-m-d'))
@@ -163,13 +169,18 @@
                                                     ->where('status', 'absent')
                                                     ->where('date', $date->format('Y-m-d'))
                                                     ->first();
+                                                $isWeekend = $attendance
+                                                    ->where('status', 'weekend')
+                                                    ->where('date', $date->format('Y-m-d'))
+                                                    ->first();
+
                                             @endphp
                                             <td class="text-center">
                                                 <div class="dropdown">
-                                                    <a class="btn  dropdown-toggle {{ $isPresent ? 'present' : ($isAbsent ? 'absent' : '') }}"
+                                                    <a class="btn  dropdown-toggle {{ $isPresent ? 'present' : ($isAbsent ? 'absent' : ($isWeekend ? 'weekend' : '')) }}"
                                                         href="javascript:;" role="button" data-bs-toggle="dropdown"
                                                         aria-expanded="false"
-                                                        style="background:{{ $isPresent ? 'green' : ($isAbsent ? 'red' : '') }}; color:{{ $isPresent || $isAbsent ? 'white' : 'black' }}">
+                                                        style="background:{{ $isPresent ? 'green' : ($isAbsent ? 'red' : ($isWeekend ? 'yellow' : '')) }}; color:{{ $isPresent || $isAbsent ? 'white' : 'black' }}">
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li><a class="dropdown-item attendance" href="javascript:;"
@@ -182,6 +193,12 @@
                                                                 data-employee-id={{ $employee->id }}
                                                                 data-date={{ $date->format('Y-m-d') }}
                                                                 data-value="absent">{{ __('Absent') }}</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item attendance" href="javascript:;"
+                                                                data-employee-id={{ $employee->id }}
+                                                                data-date={{ $date->format('Y-m-d') }}
+                                                                data-value="weekend">{{ __('Weekend') }}</a>
                                                         </li>
                                                         <li>
                                                             <a class="dropdown-item attendance text-danger"
@@ -254,6 +271,11 @@
                     if (a.hasClass('present')) {
                         a.removeClass('present');
                     }
+                } else if (value === 'weekend') {
+                    const a = $(this).parents('.dropdown-menu').siblings('a');
+                    a.css({
+                        'background': 'yellow',
+                    }).addClass('weekend');
                 } else {
                     const a = $(this).parents('.dropdown-menu').siblings('a');
                     a.css({
