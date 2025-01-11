@@ -78,10 +78,12 @@
                     <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                         <h4 class="section_title"> {{ __('Employee List') }}</h4>
                     </div>
-                    <div class="btn-actions-pane-right actions-icon-btn">
-                        <a href="{{ route('admin.employee.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
-                            {{ __('Add New Employee') }}</a>
-                    </div>
+                    @adminCan('employee.create')
+                        <div class="btn-actions-pane-right actions-icon-btn">
+                            <a href="{{ route('admin.employee.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
+                                {{ __('Add New Employee') }}</a>
+                        </div>
+                    @endadminCan
                 </div>
                 <div class="card-body">
                     <div class="table-responsive list_table">
@@ -126,35 +128,49 @@
                                         </td>
                                         <td>{{ $employee->join_date }}</td>
                                         <td>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop{{ $employee->id }}" type="button"
-                                                    class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">{{ __('Action') }}</button>
-                                                <div class="dropdown-menu"
-                                                    aria-labelledby="btnGroupDrop{{ $employee->id }}">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
-
-                                                    <a class="dropdown-item view-payment" href="javascript:;"
-                                                        data-id="{{ $employee->id }}">{{ __('View Payments') }}</a>
-
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
-
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
-
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
-
-                                                    <a href="javascript:;" class="dropdown-item"
-                                                        onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
+                                            @if (checkAdminHasPermission('employee.view.payment') ||
+                                                    checkAdminHasPermission('employee.pay.salary') ||
+                                                    checkAdminHasPermission('employee.pay.advance') ||
+                                                    checkAdminHasPermission('employee.status') ||
+                                                    checkAdminHasPermission('employee.delete'))
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop{{ $employee->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false">{{ __('Action') }}</button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $employee->id }}">
+                                                        @adminCan('employee.edit')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('employee.view.payment')
+                                                            <a class="dropdown-item view-payment" href="javascript:;"
+                                                                data-id="{{ $employee->id }}">{{ __('View Payments') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('employee.pay.salary')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=1">{{ __('Pay Salary') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('employee.pay.advance')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.salary.create', $employee->id) }}?pay=2">{{ __('Pay Advance') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('employee.status')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.employee.status', $employee->id) }}">{{ $employee->status == 1 ? __('Inactive') : __('Active') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('employee.delete')
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $employee->id }})">{{ __('Delete') }}</a>
+                                                        @endadminCan
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
+                                    <x-empty-table :name="__('Employee List')" route="" create="no" :message="__('No data found!')"
                                         colspan="10"></x-empty-table>
                                 @endforelse
                             </tbody>

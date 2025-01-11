@@ -357,8 +357,21 @@ trait PermissionsTrait
             'asset.type.create',
             'asset.type.edit',
             'asset.type.delete',
-            'asset.type.pay',
-            'asset.type.ledger',
+        ],
+    ];
+    public static array $employeePermissions = [
+        'group_name' => 'employee',
+        'permissions' => [
+            'employee.view',
+            'employee.create',
+            'employee.edit',
+            'employee.delete',
+            'employee.status',
+            'employee.view.payment',
+            'employee.pay.salary',
+            'employee.pay.advance',
+            'employee.edit.salary',
+            'employee.delete.salary',
         ],
     ];
 

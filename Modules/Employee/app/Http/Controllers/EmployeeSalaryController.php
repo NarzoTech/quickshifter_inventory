@@ -28,6 +28,7 @@ class EmployeeSalaryController extends Controller
      */
     public function index(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('employee.view.payment');
         [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary($request, $id);
 
         return view('employee::salary.index', compact('payments', 'employee', 'month', 'payableSalary', 'totalAttendance', 'totalDayOff'));
@@ -38,6 +39,10 @@ class EmployeeSalaryController extends Controller
      */
     public function create($id)
     {
+        if (!checkAdminHasPermission('employee.pay.salary') || !checkAdminHasPermission('employee.pay.advance')) {
+            abort(403);
+        }
+
         $accounts = $this->purchaseService->getAccounts();
         $employee = $this->employee->find($id);
         [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary(request(), $id);
@@ -50,6 +55,9 @@ class EmployeeSalaryController extends Controller
      */
     public function store(EmployeeSalaryRequest $request, $id): RedirectResponse
     {
+        if (!checkAdminHasPermission('employee.pay.salary') || !checkAdminHasPermission('employee.pay.advance')) {
+            abort(403);
+        }
         try {
             $employee = $this->employee->find($id);
             $this->employee->addSalary($request, $employee);
@@ -61,19 +69,13 @@ class EmployeeSalaryController extends Controller
         }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('employee::show');
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
     {
+        checkAdminHasPermissionAndThrowException('employee.edit.salary');
         $payment = EmployeeSalary::with('account')->find($id);
         $employee = $this->employee->find($payment->employee_id);
         $accounts = $this->purchaseService->getAccounts();
@@ -85,6 +87,7 @@ class EmployeeSalaryController extends Controller
      */
     public function update(Request $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('employee.edit.salary');
         try {
             $payment = EmployeeSalary::with('account')->find($id);
             $this->employee->updateSalary($request, $payment);
@@ -100,6 +103,7 @@ class EmployeeSalaryController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('employee.delete.salary');
         $salary = EmployeeSalary::find($id);
         $salary->delete();
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['messege' => 'Employee salary deleted successfully', 'alert-type' => 'success']);
@@ -111,13 +115,14 @@ class EmployeeSalaryController extends Controller
 
         $amount = $employee->getPaidAmountAttribute($request->month, $request->year);
         // $employee->getDueAmountAttribute($request->month, $request->year)
-        // (,,,,) skipping destucturing
+        // (,,,,) skipping destructuring
         [,,, $payableSalary] = $this->employee->calculateSalary($request, $id);
         return ['advanceAmount' => $amount, 'dueAmount' => $payableSalary - $amount, 'payableSalary' => $payableSalary];
     }
 
     public function salaryList()
     {
+        checkAdminHasPermissionAndThrowException('employee.view.payment');
         $payments = EmployeeSalary::with('employee')->paginate(20);
         $payments->appends(request()->query());
 

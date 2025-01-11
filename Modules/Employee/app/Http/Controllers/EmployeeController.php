@@ -21,6 +21,7 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        // checkAdminHasPermissionAndThrowException('employee.view');
         $employees = $this->employee->all();
 
         if (request('keyword')) {
@@ -63,6 +64,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
+        checkAdminHasPermissionAndThrowException('employee.create');
         return view('employee::create');
     }
 
@@ -71,6 +73,7 @@ class EmployeeController extends Controller
      */
     public function store(EmployeeRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('employee.create');
         try {
             $data = $request->validated();
             $data['join_date'] = now()->parse($request->join_date);
@@ -87,19 +90,13 @@ class EmployeeController extends Controller
         }
     }
 
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('employee::show');
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
     {
+        checkAdminHasPermissionAndThrowException('employee.edit');
         $employee = $this->employee->find($id);
         return view('employee::edit', compact('employee'));
     }
@@ -109,6 +106,7 @@ class EmployeeController extends Controller
      */
     public function update(EmployeeRequest $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('employee.edit');
         try {
             $data = $request->validated();
             $data['join_date'] = now()->parse($request->join_date);
@@ -130,12 +128,14 @@ class EmployeeController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('employee.delete');
         $this->employee->destroy($id);
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['messege' => 'Employee deleted successfully', 'alert-type' => 'success']);
     }
 
     public function status($id)
     {
+        checkAdminHasPermissionAndThrowException('employee.status');
         $this->employee->changeStatus($id);
         return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee status updated successfully', 'alert-type' => 'success']);
     }
