@@ -48,11 +48,12 @@ class SalesController extends Controller
             });
         }
 
-        $fromDate = request('from_date') ? now()->parse(request('from_date'))->subDay()->format('Y-m-d') : '';
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
 
+
         // from date and to date
-        if ($fromDate) {
+        if (request('from_date') || request('to_date')) {
             $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
         }
         $sort = request()->order_by ? request()->order_by : 'desc';
