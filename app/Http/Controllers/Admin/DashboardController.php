@@ -200,6 +200,15 @@ class DashboardController extends Controller
 
 
         $chart['purchasePercentage'] = number_format($chart['purchasePercentage'], 2);
+
+        // low stock products
+        $data['low_stock_products'] = Product::where(function ($q) {
+            $q->where('stock_alert', '!=', 0)
+                ->whereColumn('stock', '<=', 'stock_alert');
+        })->orderByDesc('stock_alert')
+            ->take(10)
+            ->get();
+        // dd($data['low_stock_products']);
         return view('admin.dashboard', compact('data', 'purchaseData', 'saleData', 'chart'));
     }
 
