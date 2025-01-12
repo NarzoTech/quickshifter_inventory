@@ -7,16 +7,16 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h4 class="section_title">Employee Name: {{ $employee->name }}</h4>
+            <h4 class="section_title">{{ __('Employee Name') }}: {{ $employee->name }}</h4>
         </div>
         <div class="card-body">
-            <p><b class="me-2">Salary:</b> {{ currency($employee->salary) }}</p>
-            <p><b class="me-2">Payable Salary:</b> {{ currency($payableSalary) }}</p>
-            <p><b class="me-2">Total Working Day:</b> {{ $totalAttendance }} Days</p>
-            <p><b class="me-2">Total Weekend & Holiday:</b> {{ $totalDayOff }} Days</p>
-            <p><b class="me-2">Phone:</b> {{ $employee->phone }}</p>
-            <p><b class="me-2">Paid Amount:</b> {{ currency($payments->sum('amount')) }}</p>
-            <p><b class="me-2">Payment Month:</b> {{ $month }}</p>
+            <p><b class="me-2">{{ __('Salary') }}:</b> {{ currency($employee->salary) }}</p>
+            <p><b class="me-2">{{ __('Payable Salary') }}:</b> {{ currency($payableSalary) }}</p>
+            <p><b class="me-2">{{ __('Total Working Day & Weekend') }}:</b> {{ $totalAttendance }} {{ __('Days') }}</p>
+            <p><b class="me-2">{{ __('Total Holiday') }}:</b> {{ $totalDayOff }} {{ __('Days') }}</p>
+            <p><b class="me-2">{{ __('Phone') }}:</b> {{ $employee->phone }}</p>
+            <p><b class="me-2">{{ __('Paid Amount') }}:</b> {{ currency($payments->sum('amount')) }}</p>
+            <p><b class="me-2">{{ __('Payment Month') }}:</b> {{ $month }}</p>
         </div>
     </div>
 

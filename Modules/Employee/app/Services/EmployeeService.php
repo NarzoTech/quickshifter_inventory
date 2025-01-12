@@ -123,7 +123,7 @@ class EmployeeService
 
 
         // total attendance of employee in that month
-        $totalAttendance = $employee->attendance()->whereMonth('date', $monthNumber)->whereYear('date', $year)->count();
+        $totalAttendance = $employee->attendance()->whereMonth('date', $monthNumber)->where('employee_id', $id)->whereYear('date', $year)->count();
 
 
 
