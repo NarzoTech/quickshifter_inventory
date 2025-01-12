@@ -3,17 +3,6 @@
     <title>{{ __('Create Role') }}</title>
 @endsection
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <div class="section-header-back">
-                    <a href="{{ route('admin.role.index') }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
-                </div>
-
-
-
-            </div>
-    </div>
 
     <div class="section-body">
         <div class="row">
@@ -23,8 +12,8 @@
                         <h4>{{ __('Create Role') }}</h4>
                         <div>
                             @adminCan('role.view')
-                                <a href="{{ route('admin.role.index') }}" class="btn btn-primary"><i
-                                        class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                                <a href="{{ route('admin.role.index') }}" class="btn btn-primary"><i class="fa fa-arrow-left"></i>
+                                    {{ __('Back') }}</a>
                             @endadminCan
                         </div>
                     </div>
@@ -35,7 +24,7 @@
                                     @csrf
                                     <div class="card-body">
                                         <div class="form-group">
-                                            <label for="name">{{ __('Name') }}</label>
+                                            <label for="name" class="form-label">{{ __('Name') }}</label>
                                             <input name="name" type="text"
                                                 class="form-control @error('name') is-invalid @enderror" id="role_name"
                                                 placeholder="{{ __('Enter name') }}">
@@ -44,59 +33,74 @@
                                                     role="alert"><strong>{{ $message }}</strong></span>
                                             @enderror
                                         </div>
-                                        <div class="form-group">
-                                            <label for="permission">{{ __('Permission') }}</label>
-                                            <div class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" type="checkbox" id="permission_all"
+                                        <div class="form-group permission_form">
+                                            <label for="permission" class="form-label">{{ __('Permission') }}</label>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="permission_all"
                                                     value="1">
                                                 <label for="permission_all"
-                                                    class="custom-control-label">{{ __('All') }}</label>
+                                                    class="form-check-label permission_all">{{ __('All Permissions') }}</label>
                                             </div>
                                             <hr>
-                                            <div class="row">
-                                                @php $i=1; @endphp
-                                                @foreach ($permission_groups as $group)
-                                                    <div class="mb-2 col-md-6 row bottom-border">
-                                                        <div class="col-3">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input class="custom-control-input" type="checkbox"
-                                                                    id="{{ $i }}management"
-                                                                    onclick="CheckPermissionByGroup('role-{{ $i }}-management-checkbox',this)"
-                                                                    value="2" name="permession_group">
-                                                                <label for="{{ $i }}management"
-                                                                    class="custom-control-label text-capitalize">{{ $group->name }}</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-9 role-{{ $i }}-management-checkbox">
+                                            <div class="admin_role_border">
+                                                <div class="row">
+                                                    <div class="col-12 px-2">
+                                                        <div class="row">
                                                             @php
-                                                                $permissionss = App\Models\Admin::getpermissionsByGroupName(
-                                                                    $group->name,
-                                                                );
-                                                                $j = 1;
+                                                                $i = 1;
                                                             @endphp
-                                                            @foreach ($permissionss as $permission)
-                                                                <div class="custom-control custom-checkbox">
-                                                                    <input name="permissions[]" class="custom-control-input"
-                                                                        type="checkbox"
-                                                                        id="permission_checkbox_{{ $permission->id }}"
-                                                                        value="{{ $permission->name }}"
-                                                                        data-role-id="{{ $i }}">
-                                                                    <label for="permission_checkbox_{{ $permission->id }}"
-                                                                        class="custom-control-label">{{ implode(' ', array_map('ucfirst', explode('.', $permission->name))) }}</label>
+                                                            @foreach ($permission_groups as $group)
+                                                                <div class="py-2 col-lg-6 border-bottom">
+                                                                    <div class="row">
+                                                                        <div class="col-12 col-md-5 col-lg-5 col-xl-4 ">
+                                                                            <div class="form-check mb-2">
+                                                                                <input class="form-check-input"
+                                                                                    type="checkbox"
+                                                                                    id="{{ $i }}management"
+                                                                                    onclick="CheckPermissionByGroup('role-{{ $i }}-management-checkbox',this)"
+                                                                                    value="2" name="permession_group">
+                                                                                <label for="{{ $i }}management"
+                                                                                    class="form-check-label text-capitalize">{{ $group->name }}</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div
+                                                                            class="col-12 col-md-7 col-lg-7 col-xl-8 role-{{ $i }}-management-checkbox">
+                                                                            @php
+                                                                                $permissionss = App\Models\Admin::getpermissionsByGroupName(
+                                                                                    $group->name,
+                                                                                );
+                                                                                $j = 1;
+                                                                            @endphp
+                                                                            @foreach ($permissionss as $permission)
+                                                                                <div class="form-check mb-2">
+                                                                                    <input name="permissions[]"
+                                                                                        class="form-check-input"
+                                                                                        type="checkbox"
+                                                                                        id="permission_checkbox_{{ $permission->id }}"
+                                                                                        value="{{ $permission->name }}"
+                                                                                        data-role-id="{{ $i }}">
+                                                                                    <label
+                                                                                        for="permission_checkbox_{{ $permission->id }}"
+                                                                                        class="form-check-label">{{ implode(' ', array_map('ucfirst', explode('.', $permission->name))) }}</label>
+                                                                                </div>
+                                                                                @php $j++; @endphp
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                @php $j++; @endphp
+
+                                                                @php $i++; @endphp
                                                             @endforeach
                                                         </div>
                                                     </div>
-                                                    <hr>
-                                                    @php $i++; @endphp
-                                                @endforeach
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="text-center col-md-8 offset-md-2">
-                                            <x-admin.save-button :text="__('Save')"></x-admin.save-button>
+                                        <div class="col-md-12">
+                                            <x-admin.save-button :text="__('Save')" />
                                         </div>
                                     </div>
                                 </form>
@@ -106,8 +110,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    </section>
     </div>
 @endsection
 

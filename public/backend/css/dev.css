@@ -1820,3 +1820,8 @@ textarea.select2-search__field {
 
     height: 40px !important;
 }
+
+
+.permission_form.form-group input {
+    padding: 0 !important;
+}
