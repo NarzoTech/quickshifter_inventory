@@ -39,7 +39,7 @@
                                                 <input class="form-check-input" type="checkbox" id="permission_all"
                                                     value="1">
                                                 <label for="permission_all"
-                                                    class="form-check-label permission_all">{{ __('All Permissions') }}</label>
+                                                    class="form-check-label permission_all">{{ __('All') }}</label>
                                             </div>
                                             <hr>
                                             <div class="admin_role_border">
@@ -92,12 +92,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <x-admin.save-button :text="__('Save')" />
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <x-admin.save-button :text="__('Save')" />
-                                        </div>
-                                    </div>
+
                                 </form>
                             </div>
                         </div>

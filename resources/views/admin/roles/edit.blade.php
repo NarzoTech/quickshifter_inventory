@@ -30,71 +30,58 @@
                                     <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                                 @enderror
                             </div>
-                            <div class="form-group">
+                            <div class="form-group permission_form">
                                 <label for="permission" class="form-label">{{ __('Permission') }}</label>
                                 <div class="form-check mb-2">
                                     <input {{ App\Models\Admin::roleHasPermission($role, $permissions) ? 'checked' : '' }}
                                         class="form-check-input" type="checkbox" id="permission_all" value="1">
                                     <label for="permission_all"
-                                        class="form-check-label permission_all">{{ __('All Permissions') }}</label>
+                                        class="form-check-label permission_all">{{ __('All') }}</label>
                                 </div>
                                 <hr>
                                 <div class="admin_role_border">
                                     <div class="row">
                                         @php
                                             $i = 1;
-                                            $except = ['product', 'tax', 'shipping', 'order'];
                                         @endphp
                                         @foreach ($permissions as $group_name => $permissions_in_group)
-                                            @php
-                                                $check = false;
-                                                foreach ($except as $item) {
-                                                    if (str_contains(strtolower($group_name), $item)) {
-                                                        $i++;
-                                                        $check = true;
-                                                        continue;
-                                                    }
-                                                }
-                                                if ($check) {
-                                                    $i++;
-                                                    continue;
-                                                }
-                                            @endphp
                                             @php $j = 1; @endphp
-                                            <div class="py-2 mb-2 col-lg-6 border-bottom">
-                                                <div class="row">
-                                                    <div class="col-12 col-md-5 col-lg-5 col-xl-4">
-                                                        <div class="form-check mb-2">
-                                                            <input
-                                                                {{ App\Models\Admin::roleHasPermission($role, $permissions_in_group) ? 'checked' : '' }}
-                                                                class="form-check-input permission_group" type="checkbox"
-                                                                id="{{ $i }}management"
-                                                                onclick="CheckPermissionByGroup('role-{{ $i }}-management-checkbox',this)"
-                                                                value="2" name="permission_group"
-                                                                data-role-id="{{ $i }}">
-                                                            <label for="{{ $i }}management"
-                                                                class="custom-control-label text-capitalize">{{ $group_name }}</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div
-                                                        class="col-12 col-md-7 col-lg-7 col-xl-8 role-{{ $i }}-management-checkbox">
-                                                        @foreach ($permissions_in_group as $permission)
+                                            <div class="col-lg-6">
+                                                <div class="border-bottom">
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-5 col-lg-5 col-xl-4">
                                                             <div class="form-check mb-2">
                                                                 <input
-                                                                    {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}
-                                                                    name="permissions[]" class="form-check-input"
-                                                                    type="checkbox"
-                                                                    id="permission_checkbox_{{ $permission->id }}"
-                                                                    value="{{ $permission->name }}"
+                                                                    {{ App\Models\Admin::roleHasPermission($role, $permissions_in_group) ? 'checked' : '' }}
+                                                                    class="form-check-input permission_group"
+                                                                    type="checkbox" id="{{ $i }}management"
+                                                                    onclick="CheckPermissionByGroup('role-{{ $i }}-management-checkbox',this)"
+                                                                    value="2" name="permission_group"
                                                                     data-role-id="{{ $i }}">
-                                                                <label for="permission_checkbox_{{ $permission->id }}"
-                                                                    class="custom-control-label">
-                                                                    {{ implode(' ', array_map('ucfirst', explode('.', $permission->name))) }}
-                                                                </label>
+                                                                <label for="{{ $i }}management"
+                                                                    class="custom-control-label text-capitalize">{{ $group_name }}</label>
                                                             </div>
-                                                            @php $j++; @endphp
-                                                        @endforeach
+                                                        </div>
+
+                                                        <div
+                                                            class="col-12 col-md-7 col-lg-7 col-xl-8 role-{{ $i }}-management-checkbox">
+                                                            @foreach ($permissions_in_group as $permission)
+                                                                <div class="form-check mb-2">
+                                                                    <input
+                                                                        {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}
+                                                                        name="permissions[]" class="form-check-input"
+                                                                        type="checkbox"
+                                                                        id="permission_checkbox_{{ $permission->id }}"
+                                                                        value="{{ $permission->name }}"
+                                                                        data-role-id="{{ $i }}">
+                                                                    <label for="permission_checkbox_{{ $permission->id }}"
+                                                                        class="custom-control-label">
+                                                                        {{ implode(' ', array_map('ucfirst', explode('.', $permission->name))) }}
+                                                                    </label>
+                                                                </div>
+                                                                @php $j++; @endphp
+                                                            @endforeach
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -103,12 +90,9 @@
                                     </div>
                                 </div>
                             </div>
+                            <x-admin.update-button :text="__('Update')" />
                         </div>
-                        <div class="row">
-                            <div class="text-center col-md-8 offset-md-2">
-                                <x-admin.update-button :text="__('Update')" />
-                            </div>
-                        </div>
+
                     </form>
                 </div>
             </div>

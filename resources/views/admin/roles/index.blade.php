@@ -53,7 +53,8 @@
                                 @endadminCan
                             </tr>
                         @empty
-                            <x-admin.update-button :text="__('Update')"></x-admin.update-button>
+                            <x-empty-table name="Role" route="admin.role.create" create="no" colspan="4"
+                                message="No data found!"></x-empty-table>
                         @endforelse
                     </tbody>
                 </table>
