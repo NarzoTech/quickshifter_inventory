@@ -1812,7 +1812,6 @@ td.sticky-2::after {
 
 .attendance-table .bg-warning {
     background: #e69500 !important;
-
 }
 
 textarea.select2-search__field {
@@ -1821,7 +1820,11 @@ textarea.select2-search__field {
     height: 40px !important;
 }
 
-
 .permission_form.form-group input {
     padding: 0 !important;
+}
+
+.admin_role_border .border-bottom {
+    height: 100%;
+    padding: 15px 0px 0px 0px;
 }

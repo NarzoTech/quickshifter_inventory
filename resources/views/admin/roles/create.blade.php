@@ -9,7 +9,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <h4>{{ __('Create Role') }}</h4>
+                        <h4 class="section_title">{{ __('Create Role') }}</h4>
                         <div>
                             @adminCan('role.view')
                                 <a href="{{ route('admin.role.index') }}" class="btn btn-primary"><i class="fa fa-arrow-left"></i>
@@ -44,56 +44,51 @@
                                             <hr>
                                             <div class="admin_role_border">
                                                 <div class="row">
-                                                    <div class="col-12 px-2">
-                                                        <div class="row">
-                                                            @php
-                                                                $i = 1;
-                                                            @endphp
-                                                            @foreach ($permission_groups as $group)
-                                                                <div class="py-2 col-lg-6 border-bottom">
-                                                                    <div class="row">
-                                                                        <div class="col-12 col-md-5 col-lg-5 col-xl-4 ">
-                                                                            <div class="form-check mb-2">
-                                                                                <input class="form-check-input"
-                                                                                    type="checkbox"
-                                                                                    id="{{ $i }}management"
-                                                                                    onclick="CheckPermissionByGroup('role-{{ $i }}-management-checkbox',this)"
-                                                                                    value="2" name="permession_group">
-                                                                                <label for="{{ $i }}management"
-                                                                                    class="form-check-label text-capitalize">{{ $group->name }}</label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div
-                                                                            class="col-12 col-md-7 col-lg-7 col-xl-8 role-{{ $i }}-management-checkbox">
-                                                                            @php
-                                                                                $permissionss = App\Models\Admin::getpermissionsByGroupName(
-                                                                                    $group->name,
-                                                                                );
-                                                                                $j = 1;
-                                                                            @endphp
-                                                                            @foreach ($permissionss as $permission)
-                                                                                <div class="form-check mb-2">
-                                                                                    <input name="permissions[]"
-                                                                                        class="form-check-input"
-                                                                                        type="checkbox"
-                                                                                        id="permission_checkbox_{{ $permission->id }}"
-                                                                                        value="{{ $permission->name }}"
-                                                                                        data-role-id="{{ $i }}">
-                                                                                    <label
-                                                                                        for="permission_checkbox_{{ $permission->id }}"
-                                                                                        class="form-check-label">{{ implode(' ', array_map('ucfirst', explode('.', $permission->name))) }}</label>
-                                                                                </div>
-                                                                                @php $j++; @endphp
-                                                                            @endforeach
+                                                    @php
+                                                        $i = 1;
+                                                    @endphp
+                                                    @foreach ($permission_groups as $group)
+                                                        <div class="col-lg-6">
+                                                            <div class="border-bottom">
+                                                                <div class="row">
+                                                                    <div class="col-12 col-md-5 col-lg-5 col-xl-4 ">
+                                                                        <div class="form-check mb-2">
+                                                                            <input class="form-check-input" type="checkbox"
+                                                                                id="{{ $i }}management"
+                                                                                onclick="CheckPermissionByGroup('role-{{ $i }}-management-checkbox',this)"
+                                                                                value="2" name="permession_group">
+                                                                            <label for="{{ $i }}management"
+                                                                                class="form-check-label text-capitalize">{{ $group->name }}</label>
                                                                         </div>
                                                                     </div>
+                                                                    <div
+                                                                        class="col-12 col-md-7 col-lg-7 col-xl-8 role-{{ $i }}-management-checkbox">
+                                                                        @php
+                                                                            $permissionss = App\Models\Admin::getpermissionsByGroupName(
+                                                                                $group->name,
+                                                                            );
+                                                                            $j = 1;
+                                                                        @endphp
+                                                                        @foreach ($permissionss as $permission)
+                                                                            <div class="form-check mb-2">
+                                                                                <input name="permissions[]"
+                                                                                    class="form-check-input" type="checkbox"
+                                                                                    id="permission_checkbox_{{ $permission->id }}"
+                                                                                    value="{{ $permission->name }}"
+                                                                                    data-role-id="{{ $i }}">
+                                                                                <label
+                                                                                    for="permission_checkbox_{{ $permission->id }}"
+                                                                                    class="form-check-label">{{ implode(' ', array_map('ucfirst', explode('.', $permission->name))) }}</label>
+                                                                            </div>
+                                                                            @php $j++; @endphp
+                                                                        @endforeach
+                                                                    </div>
                                                                 </div>
-
-                                                                @php $i++; @endphp
-                                                            @endforeach
+                                                            </div>
                                                         </div>
-                                                    </div>
 
+                                                        @php $i++; @endphp
+                                                    @endforeach
                                                 </div>
                                             </div>
                                         </div>
