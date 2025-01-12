@@ -159,10 +159,12 @@ class EmployeeService
         } else {
             $totalWeekends = 0;
         }
+
         $holidays = HolidaySetup::where(function ($query) use ($monthNumber, $year) {
             $query->whereMonth('start_date', $monthNumber)
                 ->whereYear('start_date', $year);
         })->get();
+
 
         // count total holidays
         $totalHolidays = 0;
@@ -180,10 +182,12 @@ class EmployeeService
             $totalHolidays += $difference + 1;
         }
 
+
         // current month total days
         $totalDays = now()->month($monthNumber)->year($year)->daysInMonth;
 
         $totalWorkingDays = $totalDays - ($totalWeekends + $totalHolidays);
+
 
         $totalDayOff = $totalWeekends + $totalHolidays;
 

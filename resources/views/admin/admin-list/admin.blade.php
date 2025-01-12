@@ -3,26 +3,14 @@
     <title>{{ __('Manage Admin') }}</title>
 @endsection
 @section('content')
-    <!-- Main Content -->
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <div class="section-header-back">
-                    <a href="{{ route('admin.settings') }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
-                </div>
 
-
-            </div>
-
-    </div>
-    </div>
 
     <div class="section-body">
-        <div class="mt-4 row">
+        <div class="row">
             <div class="col">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <h4>{{ __('Manage Admin') }}</h4>
+                        <h4 class="section_title">{{ __('Manage Admin') }}</h4>
                         <div>
                             @adminCan('admin.create')
                                 <a href="{{ route('admin.admin.create') }}" class="btn btn-primary"><i class="fa fa-plus"></i>
@@ -32,7 +20,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>{{ __('SN') }}</th>
@@ -73,14 +61,14 @@
                                                 @endif
                                             </td>
                                             @adminCan('admin.delete')
-                                                <td>
+                                                <td class="common_table">
                                                     @adminCan('admin.edit')
                                                         <a href="{{ route('admin.admin.edit', $admin->id) }}"
-                                                            class="btn btn-warning btn-sm"><i class="fa fa-edit"
+                                                            class="btn btn-primary"><i class="fa fa-edit me-0"
                                                                 aria-hidden="true"></i></a>
                                                     @endadminCan
                                                     @adminCan('admin.delete')
-                                                        <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                        <a href="javascript:;" class="btn btn-danger"
                                                             onclick="deleteData({{ $admin->id }})"><i class="fa fa-trash"
                                                                 aria-hidden="true"></i></a>
                                                     @endadminCan

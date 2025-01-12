@@ -121,7 +121,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table style="width: 100%;" class="table mb-5">
+                <table style="width: 100%;" class="table mb-5 customer-table">
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>

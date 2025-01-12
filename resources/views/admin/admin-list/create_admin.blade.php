@@ -3,28 +3,16 @@
     <title>{{ __('Add Admin') }}</title>
 @endsection
 @section('content')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <div class="section-header-back">
-                    <a href="{{ route('admin.admin.index') }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
-                </div>
-
-
-
-            </div>
-    </div>
-
     <div class="section-body">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between">
-                        <h3>{{ __('Add Admin') }}</h3>
+                        <h3 class="section_title">{{ __('Add Admin') }}</h3>
                         <div>
                             @adminCan('admin.view')
-                                <a href="{{ route('admin.admin.index') }}" class="btn btn-primary"><i
-                                        class="fa fa-arrow-left"></i> {{ __('Back') }}</a>
+                                <a href="{{ route('admin.admin.index') }}" class="btn btn-primary"><i class="fa fa-arrow-left"></i>
+                                    {{ __('Back') }}</a>
                             @endadminCan
                         </div>
                     </div>
@@ -90,7 +78,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    </section>
     </div>
 @endsection

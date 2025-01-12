@@ -26,6 +26,7 @@ use Modules\Customer\app\Models\CustomerDue;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Customer\app\Models\Vehicle;
 use Modules\Sales\app\Models\Sale;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
@@ -164,6 +165,7 @@ class CustomerController extends Controller
             $page = request('page', 1); // Default to page 1
             $paginatedCustomers = $customerData->slice(($page - 1) * $perPage, $perPage)->values();
         }
+
 
         if (request()->order_type) {
             $users = new LengthAwarePaginator(

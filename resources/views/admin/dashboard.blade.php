@@ -141,9 +141,9 @@
                 </div>
 
                 <div class="col-md-12 my-5">
-                    <div class="card text-center h-100">
+                    <div class="card h-100">
                         <div class="card-header nav-align-top">
-                            <ul class="nav nav-pills flex-wrap row-gap-2" role="tablist">
+                            <ul class="nav nav-pills flex-wrap row-gap-2 me-auto" role="tablist">
                                 <li class="nav-item">
                                     <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
                                         data-bs-target="#navs-pills-browser" aria-controls="navs-pills-browser"

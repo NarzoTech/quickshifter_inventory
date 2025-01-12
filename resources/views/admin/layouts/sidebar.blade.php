@@ -137,6 +137,16 @@
                         {{ __('Business Settings') }}
                     </a>
                 </li>
+                <li class="{{ isRoute('admin.admin*', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.admin.index') }}">
+                        {{ __('Users') }}
+                    </a>
+                </li>
+                <li class="{{ isRoute('admin.role*', 'active') }} menu-item ">
+                    <a class="menu-link" href="{{ route('admin.role.index') }}">
+                        {{ __('Roles & Permissions') }}
+                    </a>
+                </li>
                 {{-- <li class="{{ isRoute('admin.print.settings', 'active') }} menu-item ">
                     <a class="menu-link" href="{{ route('admin.print.settings') }}">
                         {{ __('Print Settings') }}

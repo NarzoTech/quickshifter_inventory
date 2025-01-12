@@ -28,6 +28,7 @@ class EmployeeSalaryController extends Controller
      */
     public function index(Request $request, $id)
     {
+
         checkAdminHasPermissionAndThrowException('employee.view.payment');
         [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary($request, $id);
 

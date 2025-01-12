@@ -133,7 +133,7 @@
                                     </td>
                                     <td colspan="1" class="text-white  bg-red  text-center th-absent">A
                                     </td>
-                                    <td colspan="1" class="text-white  bg-warning  text-center th-absent">W
+                                    <td colspan="1" class="bg-warning  text-center th-absent text-white">W
                                     </td>
                                     @for ($i = 1; $i <= $totalDays; $i++)
                                         <td class="text-center  border-top">{{ $i }}</td>
@@ -180,7 +180,7 @@
                                                     <a class="btn  dropdown-toggle {{ $isPresent ? 'present' : ($isAbsent ? 'absent' : ($isWeekend ? 'weekend' : '')) }}"
                                                         href="javascript:;" role="button" data-bs-toggle="dropdown"
                                                         aria-expanded="false"
-                                                        style="background:{{ $isPresent ? 'green' : ($isAbsent ? 'red' : ($isWeekend ? 'yellow' : '')) }}; color:{{ $isPresent || $isAbsent ? 'white' : 'black' }}">
+                                                        style="background:{{ $isPresent ? 'green' : ($isAbsent ? 'red' : ($isWeekend ? '#e69500' : '')) }}; color:{{ $isPresent || $isAbsent ? 'white' : 'black' }}">
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li><a class="dropdown-item attendance" href="javascript:;"
@@ -274,7 +274,7 @@
                 } else if (value === 'weekend') {
                     const a = $(this).parents('.dropdown-menu').siblings('a');
                     a.css({
-                        'background': 'yellow',
+                        'background': '#e69500',
                     }).addClass('weekend');
                 } else {
                     const a = $(this).parents('.dropdown-menu').siblings('a');

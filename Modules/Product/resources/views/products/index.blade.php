@@ -106,8 +106,10 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
-                <span><span class="number">0 </span> rows selected</span>
+            <div
+                class="alert alert-danger d-none justify-content-between delete-section danger-bg flex-wrap align-items-center">
+                <span>
+                    <span class="number">0 </span> rows selected</span>
                 @adminCan('product.delete')
                     <button class="btn btn-danger delete-button">Delete</button>
                 @endadminCan
@@ -148,8 +150,8 @@
                                     <div class="custom-checkbox custom-control">
                                         <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
                                             id="checkbox-{{ $product->id }}" name="select">
-                                        <label for="checkbox-{{ $product->id }}"
-                                            class="custom-control-label">&nbsp;</label>
+                                        {{-- <label for="checkbox-{{ $product->id }}"
+                                            class="custom-control-label">&nbsp;</label> --}}
                                     </div>
                                 </td>
                                 <td>{{ $start + $index }}</td>
