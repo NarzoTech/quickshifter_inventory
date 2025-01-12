@@ -41,5 +41,9 @@ ADD COLUMN `total_amount` DOUBLE(8,2) NULL DEFAULT 0 AFTER `amount`;
 
 
 //  new sql
-ALTER TABLE `inventory`.`attendances`
+ALTER TABLE `attendances`
 CHANGE COLUMN `status` `status` ENUM('present', 'absent', 'late', 'weekend') NOT NULL ;
+
+ALTER TABLE `admins` 
+ADD COLUMN `is_super_admin` TINYINT(1) NULL AFTER `forget_password_token`;
+

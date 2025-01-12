@@ -15,17 +15,22 @@ class RolesController extends Controller
 {
     use RedirectHelperTrait;
 
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
     public function index()
     {
-        checkAdminHasPermissionAndThrowException('role.view');
-        $roles = Role::paginate(15);
+        // checkAdminHasPermissionAndThrowException('role.view');
+        $roles = Role::where('name', '!=', 'Super Admin')->paginate(15);
+        $admins_exists = Admin::notSuperAdmin()->whereStatus('active')->count();
 
-        return view('admin.roles.index', compact('roles'));
+        return view('admin.roles.index', compact('roles', 'admins_exists'));
     }
 
     public function create()
     {
-        checkAdminHasPermissionAndThrowException('role.create');
+        // checkAdminHasPermissionAndThrowException('role.create');
         $permissions = Permission::all();
         $permission_groups = Admin::getPermissionGroup();
 
@@ -34,7 +39,7 @@ class RolesController extends Controller
 
     public function store(RoleFormRequest $request)
     {
-        checkAdminHasPermissionAndThrowException('role.store');
+        // checkAdminHasPermissionAndThrowException('role.store');
         $role = Role::create(['name' => $request->name]);
         if (! empty($request->permissions)) {
             $role->syncPermissions($request->permissions);
@@ -43,32 +48,36 @@ class RolesController extends Controller
         return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.role.index');
     }
 
-    public function edit(Role $role)
+    public function edit($id)
     {
-        checkAdminHasPermissionAndThrowException('role.edit');
-        $permissions = Permission::all();
+        // checkAdminHasPermissionAndThrowException('role.edit');
+        $role = Role::where('name', '!=', 'Super Admin')->where('id', $id)->first();
+        abort_if(!$role, 403);
+        $permissions = Permission::all()->groupBy('group_name');
         $permission_groups = Admin::getPermissionGroup();
-
         return view('admin.roles.edit', compact('permissions', 'permission_groups', 'role'));
     }
 
-    public function update(RoleFormRequest $request, Role $role)
+    public function update(RoleFormRequest $request, $id)
     {
-        checkAdminHasPermissionAndThrowException('role.update');
-        if (! empty($request->permissions)) {
+        // checkAdminHasPermissionAndThrowException('role.update');
+        $role = Role::where('name', '!=', 'Super Admin')->where('id', $id)->first();
+        abort_if(!$role, 403);
+        if (!empty($request->permissions)) {
             $role->name = $request->name;
             $role->save();
             $role->syncPermissions($request->permissions);
         }
-
         return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.role.index');
     }
 
-    public function destroy(Role $role)
+    public function destroy($id)
+
     {
-        checkAdminHasPermissionAndThrowException('role.delete');
-        abort_if($role->id == 1, 403);
-        if (! is_null($role)) {
+        // checkAdminHasPermissionAndThrowException('role.delete');
+        $role = Role::where('name', '!=', 'Super Admin')->where('id', $id)->first();
+        abort_if(!$role, 403);
+        if (!is_null($role)) {
             $role->delete();
         }
 
@@ -77,22 +86,22 @@ class RolesController extends Controller
 
     public function assignRoleView()
     {
-        checkAdminHasPermissionAndThrowException('role.assign');
-        $admins = Admin::whereStatus('active')->get();
-        $roles = Role::all();
+        // checkAdminHasPermissionAndThrowException('role.assign');
+        $admins = Admin::notSuperAdmin()->whereStatus('active')->get();
+        $roles = Role::where('name', '!=', 'Super Admin')->get();
+
 
         return view('admin.roles.assign-role', compact('admins', 'roles'));
     }
 
     public function getAdminRoles($id)
     {
-        $admin = Admin::find($id);
-        $options = "<option value='' disabled>".__('Select Role').'</option>';
+        $admin = Admin::notSuperAdmin()->find($id);
+        $options = "<option value='' disabled>" . __('Select Role') . '</option>';
         if ($admin) {
-            // $adminRoles = $admin->roles()->get();
             $roles = Role::all();
             foreach ($roles as $role) {
-                $options .= "<option value='{$role->name}' ".($admin->hasRole($role->name) ? 'selected' : '').">{$role->name}</option>";
+                $options .= "<option value='{$role->name}' " . ($admin->hasRole($role->name) ? 'selected' : '') . ">{$role->name}</option>";
             }
 
             return response()->json([
@@ -109,7 +118,7 @@ class RolesController extends Controller
 
     public function assignRoleUpdate(Request $request)
     {
-        checkAdminHasPermissionAndThrowException('role.assign');
+        // checkAdminHasPermissionAndThrowException('role.assign');
 
         $messages = [
             'user_id.required' => __('You must select an admin'),
@@ -126,7 +135,7 @@ class RolesController extends Controller
             'role.*' => 'required|string',
         ], $messages);
 
-        Admin::findOrFail($request->user_id)?->syncRoles($request->role);
+        Admin::notSuperAdmin()->findOrFail($request->user_id)?->syncRoles($request->role);
 
         return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.role.index');
     }

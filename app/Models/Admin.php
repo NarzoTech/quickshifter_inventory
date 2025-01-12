@@ -64,17 +64,30 @@ class Admin extends Authenticatable
         return $permissions;
     }
 
+    public function scopeNotSuperAdmin($query)
+    {
+        return $query->where('is_super_admin', 0);
+    }
+
     public static function roleHasPermission($role, $permissions)
     {
         $hasPermission = true;
-        foreach ($permissions as $permission) {
-            if (! $role->hasPermissionTo($permission->name)) {
-                $hasPermission = false;
 
+        // Ensure $permissions is a collection or an array
+        foreach ($permissions as $permission) {
+            // Check if the permission is an object and has a 'name' property
+            if (is_object($permission) && isset($permission->name)) {
+                // If role does not have the permission, return false early
+                if (!$role->hasPermissionTo($permission->name)) {
+                    return false;
+                }
+            } else {
+                // Handle the case where $permission is not an object or 'name' doesn't exist
+                $hasPermission = false;
                 return $hasPermission;
             }
         }
 
-        return $hasPermission;
+        return $hasPermission; // Return true if all permissions exist
     }
 }
