@@ -124,7 +124,7 @@
             @include('attendance::sidebar')
         @endif
         <li
-            class="menu-item {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear'], 'active open') }}">
+            class="menu-item {{ isRoute(['admin.settings', 'admin.print.settings', 'admin.business*', 'admin.reset.database', 'admin.cache.clear', 'admin.admin*', 'admin.role*'], 'active open') }}">
 
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class='menu-icon tf-icons bx bx-cog'></i>
