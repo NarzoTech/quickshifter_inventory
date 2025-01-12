@@ -75,11 +75,6 @@
                             class="fa fa-plus"></i>
                         {{ __('Add Supplier Group') }}</a>
                 @endadminCan
-
-                <button type="button" class="btn btn-primary export"><i class="fa fa-file-excel"></i>
-                    {{ __('Excel') }}</button>
-                <button type="button" class="btn btn-success export-pdf"><i class="fa fa-file-pdf"></i>
-                    {{ __('PDF') }}</button>
             </div>
         </div>
         <div class="card-body">

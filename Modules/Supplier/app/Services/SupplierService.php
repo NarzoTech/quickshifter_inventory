@@ -236,7 +236,9 @@ class SupplierService
 
     public function duePayHistory()
     {
-        $list = SupplierPayment::query()
+        $list = SupplierPayment::query();
+
+        $list = $list->with('purchase', 'supplier', 'createdBy')
             ->whereNotNull('purchase_id')
             ->where('payment_type', 'due_pay');
 

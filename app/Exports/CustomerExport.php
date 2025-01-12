@@ -43,7 +43,7 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, WithS
             $user->sales->sum('grand_total') ?? 0,            // Purchase Total
             $user->total_paid ?? 0,              // Purchase Pay
             $user->total_due ?? 0,              // Purchase Due
-            $user->total_sale_return ?? 0,      // 
+            $user->total_sale_return ?? 0,      //
             $user->total_sale_return_pay ?? 0,  // Purchase Return Pay
             $user->total_sale_return_due ?? 0,  // Purchase Return Due
 
@@ -84,6 +84,17 @@ class CustomerExport implements FromCollection, WithHeadings, WithMapping, WithS
         $sheet->getColumnDimension('H')->setWidth(10);
         $sheet->getColumnDimension('I')->setWidth(15);
         $sheet->getColumnDimension('J')->setWidth(15);
+
+
+        // from c6 to end data will be right aligned
+        $sheet->getStyle('C6:C' . $sheet->getHighestRow())->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+        // a1 to j1 will be center aligned
+        $sheet->getStyle('A1:J1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // a2 to j2, a3 to j3  will be center aligned
+        $sheet->getStyle('A2:J2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A3:J3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     }
 
     public function title(): string

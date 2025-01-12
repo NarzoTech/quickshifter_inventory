@@ -150,9 +150,9 @@ class CustomerController extends Controller
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
-                $perPage = $customers->count();
-            } else {
 
+                $perPage = request()->order_type ? $customers->count() : $customerData->count();
+            } else {
                 $perPage = request('par-page');
             }
         } else {
