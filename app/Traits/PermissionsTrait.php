@@ -115,6 +115,15 @@ trait PermissionsTrait
             'customer.group.delete',
         ],
     ];
+    public static array $customerVehiclesPermissions = [
+        'group_name' => 'customer vehicle',
+        'permissions' => [
+            'customer.vehicle.view',
+            'customer.vehicle.create',
+            'customer.vehicle.edit',
+            'customer.vehicle.delete',
+        ],
+    ];
     public static array $customerAreaPermissions = [
         'group_name' => 'customer area',
         'permissions' => [

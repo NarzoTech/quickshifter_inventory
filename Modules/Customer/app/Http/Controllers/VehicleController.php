@@ -24,6 +24,7 @@ class VehicleController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('customer.vehicle.view');
         $vehicles = Vehicle::query();
 
         if (request()->keyword) {
@@ -59,6 +60,7 @@ class VehicleController extends Controller
      */
     public function store(VehicleRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('customer.vehicle.create');
         try {
             $this->vehicle->create($request->validated());
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle created successfully', 'alert-type' => 'success']);
@@ -74,6 +76,7 @@ class VehicleController extends Controller
      */
     public function update(VehicleRequest $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('customer.vehicle.edit');
         try {
             Vehicle::find($id)->update($request->validated());
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle updated successfully', 'alert-type' => 'success']);
@@ -88,6 +91,7 @@ class VehicleController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('customer.vehicle.delete');
         try {
             Vehicle::destroy($id);
             return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.vehicle.index', [], ['messege' => 'Vehicle deleted successfully', 'alert-type' => 'success']);
