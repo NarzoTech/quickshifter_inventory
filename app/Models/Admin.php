@@ -44,6 +44,26 @@ class Admin extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function getImageUrlAttribute()
+    {;
+        $setting = cache('setting');
+        $value = $this->attributes['image'];
+
+        // check if file is exists
+        if ($value && !file_exists(public_path($value))) {
+            if (str_contains($value, 'https:/')) {
+                $value = $value;
+            } else {
+                $value = $this->media?->path;
+                if ($value) {
+                    $value = asset($value);
+                }
+            }
+        } else if ($value) {
+            $value = asset($value);
+        }
+        return $value ? $value : asset($setting->default_avatar);
+    }
     public static function getPermissionGroup()
     {
         $permission_group = DB::table('permissions')

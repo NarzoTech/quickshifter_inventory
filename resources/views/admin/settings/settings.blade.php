@@ -5,8 +5,6 @@
 @section('content')
     <div class="main-content">
         <section class="section">
-
-
             <div class="section-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -20,25 +18,34 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div id="logo-preview" class="image_preview"
                                                 @if (!empty($setting->logo)) style="background-image: url({{ asset($setting->logo) }}); background-size: cover; background-position: center center;" @endif>
                                                 <label for="logo-upload" id="logo-label">{{ __('Logo') }}</label>
                                                 <input type="file" name="logo" id="logo-upload" hidden>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div id="favicon-preview" class="image_preview"
                                                 @if (!empty($setting->favicon)) style="background-image: url({{ asset($setting->favicon) }}); background-size: cover; background-position: center center;" @endif>
                                                 <label for="favicon-upload" id="favicon-label">{{ __('Favicon') }}</label>
                                                 <input type="file" name="favicon" id="favicon-upload" hidden>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div id="login-preview" class="image_preview"
                                                 @if (!empty($setting->login)) style="background-image: url({{ asset($setting->login) }}); background-size: cover; background-position: center center;" @endif>
                                                 <label for="login-upload" id="login-label">{{ __('Login') }}</label>
                                                 <input type="file" name="login" id="login-upload" hidden>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div id="default_avatar-preview" class="image_preview"
+                                                @if (!empty($setting->default_avatar)) style="background-image: url({{ asset($setting->default_avatar) }}); background-size: cover; background-position: center center;" @endif>
+                                                <label for="default_avatar-upload"
+                                                    id="default_avatar-label">{{ __('Default Avatar') }}</label>
+                                                <input type="file" name="default_avatar" id="default_avatar-upload"
+                                                    hidden>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -262,5 +269,6 @@
         prevImage('logo-upload', 'logo-preview', 'logo-label');
         prevImage('favicon-upload', 'favicon-preview', 'favicon-label');
         prevImage('login-upload', 'login-preview', 'login-label');
+        prevImage('default_avatar-upload', 'default_avatar-preview', 'default_avatar-label');
     </script>
 @endpush
