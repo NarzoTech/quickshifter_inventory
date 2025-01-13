@@ -1036,6 +1036,10 @@
                     });
 
                 })
+
+
+                $(".datepicker").datepicker("option", "dateFormat", "dd-mm-yy").val("{{ date('d-m-Y') }}");
+
             });
         })(jQuery);
 
@@ -1510,8 +1514,6 @@
                 }
             }
 
-
-
             const formData = $('#checkoutForm').serialize();
             $.ajax({
                 type: 'POST',
@@ -1539,15 +1541,16 @@
                         // reset discount type
                         $('#discount_type').val(0).trigger('change')
 
-                        // reset form
-                        $('#checkoutForm').trigger('reset');
 
                         // reset payment type
-                        $('[name="payment_type[]"]').val('cash').trigger('change').niceSelect('update');
+                        $('#paymentRow').html(`@include('pos::payment-row')`);
+                        $('[name="payment_type[]"]').niceSelect();
 
                         $('.invoice_modal_body').html(response.invoice);
                         $('.print-redirect').attr('href', response.invoiceRoute);
 
+                        // reset form
+                        $('#checkoutForm').trigger('reset');
                         $('#invoiceModal').modal('show');
 
                     } else {
