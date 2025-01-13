@@ -13,23 +13,26 @@ use Spatie\Permission\Models\Role;
 class AdminController extends Controller
 {
     use RedirectHelperTrait;
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
 
     public function index()
     {
         checkAdminHasPermissionAndThrowException('admin.view');
 
-        $admins = Admin::paginate(15);
+        $admins = Admin::notSuperAdmin()->paginate(15);
 
         return view('admin.admin-list.admin')->with([
             'admins' => $admins,
         ]);
-
     }
 
     public function create()
     {
         checkAdminHasPermissionAndThrowException('admin.create');
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'Super Admin')->get();
 
         return view('admin.admin-list.create_admin', compact('roles'));
     }
@@ -71,8 +74,8 @@ class AdminController extends Controller
     public function edit($id)
     {
         checkAdminHasPermissionAndThrowException('admin.edit');
-        $admin = Admin::findOrFail($id);
-        $roles = Role::all();
+        $admin = Admin::notSuperAdmin()->findOrFail($id);
+        $roles = Role::where('name', '!=', 'Super Admin')->get();
 
         return view('admin.admin-list.edit_admin', compact('roles', 'admin'));
     }
@@ -80,13 +83,13 @@ class AdminController extends Controller
     public function update(Request $request, $id)
     {
         checkAdminHasPermissionAndThrowException('admin.update');
-        $admin = Admin::find($id);
+        $admin = Admin::notSuperAdmin()->find($id);
         $rules = [
             'name' => 'required',
-            'email' => 'required|unique:admins,email,'.$admin->id,
+            'email' => 'required|unique:admins,email,' . $admin->id,
             'password' => 'nullable|min:4',
             'status' => 'required',
-            'role' => 'nullable|array',
+            'role' => 'required|array',
         ];
         $customMessages = [
             'name.required' => __('Name is required'),
@@ -94,6 +97,7 @@ class AdminController extends Controller
             'email.unique' => __('Email already exist'),
             'password.min' => __('Password Must be 4 characters'),
             'role.array' => __('You must select role'),
+            'role.required' => __('Role is required'),
         ];
         $this->validate($request, $rules, $customMessages);
 
@@ -115,8 +119,8 @@ class AdminController extends Controller
     public function destroy($id)
     {
         checkAdminHasPermissionAndThrowException('admin.delete');
-        $admin = Admin::findOrFail($id);
-        abort_if($admin->id == 1, 403);
+        $admin = Admin::notSuperAdmin()->findOrFail($id);
+        abort_if($admin->id == 1, 403, __('You can not delete super admin'));
         $admin->delete();
 
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.admin.index');
@@ -125,7 +129,7 @@ class AdminController extends Controller
     public function changeStatus($id)
     {
         checkAdminHasPermissionAndThrowException('admin.update');
-        $admin = Admin::find($id);
+        $admin = Admin::notSuperAdmin()->find($id);
         $status = $admin->status == 'active' ? 'inactive' : 'active';
         $admin->status = $status;
         $admin->save();

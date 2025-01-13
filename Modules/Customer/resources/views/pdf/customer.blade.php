@@ -3,7 +3,7 @@
 @section('title', __('Customer List'))
 
 @section('content')
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;" page-break-inside: avoid>
         <thead>
             @php
                 $list = [
@@ -36,60 +36,6 @@
                     <td>{{ currency($user->total_due) }}</td>
                     <td>{{ currency($user->advances()) }}</td>
                     <td>{{ currency($user->total_due - $user->total_sale_return_due) }}</td>
-
-                    <td>
-                        <div class="btn-group" role="group">
-                            <button id="btnGroupDrop{{ $user->id }}" type="button"
-                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                                Action
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $user->id }}">
-
-                                <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                    data-bs-target="#showCustomer{{ $user->id }}">Show</a>
-
-                                <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                    data-bs-target="#editCustomer{{ $user->id }}">Edit</a>
-
-
-                                @if ($user->total_due)
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
-                                        Receive</a>
-                                @endif
-
-                                <a class="dropdown-item"
-                                    href="{{ route('admin.customers.due-receive.list') }}?customer={{ $user->id }}">Due
-                                    Receive List</a>
-                                <a class="dropdown-item"
-                                    href="{{ route('admin.sales.return.list') }}?customer={{ $user->id }}">Sales
-                                    Return</a>
-
-
-                                <a class="dropdown-item"
-                                    href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Dismiss</a>
-
-
-                                <a class="dropdown-item" href="javascript:;" onclick="status('{{ $user->id }}')"
-                                    data-status="{{ $user->id }}">
-                                    {{ $user->status == 1 ? 'Deactivated' : 'Activate' }}
-                                </a>
-
-                                <a class="dropdown-item"
-                                    href="{{ route('admin.sales.index') }}?customer={{ $user->id }}">Sales</a>
-
-                                <a class="dropdown-item"
-                                    href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
-
-                                <a class="dropdown-item"
-                                    href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
-
-                                <a href="javascript:;" class="dropdown-item" onclick="deleteData({{ $user->id }})">
-                                    Delete</a>
-                            </div>
-                        </div>
-                    </td>
                 </tr>
             @endforeach
 

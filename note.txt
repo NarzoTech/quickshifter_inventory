@@ -44,6 +44,10 @@ ADD COLUMN `total_amount` DOUBLE(8,2) NULL DEFAULT 0 AFTER `amount`;
 ALTER TABLE `attendances`
 CHANGE COLUMN `status` `status` ENUM('present', 'absent', 'late', 'weekend') NOT NULL ;
 
-ALTER TABLE `admins` 
+ALTER TABLE `admins`
 ADD COLUMN `is_super_admin` TINYINT(1) NULL AFTER `forget_password_token`;
 
+
+// 13.1
+ALTER TABLE `admins`
+CHANGE COLUMN `is_super_admin` `is_super_admin` TINYINT(1) NULL DEFAULT 0 ;

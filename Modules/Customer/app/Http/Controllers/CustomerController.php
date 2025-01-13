@@ -144,7 +144,7 @@ class CustomerController extends Controller
                 ])->render();
 
                 $pdf = $fileName = 'customer-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
-                $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+                $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('enable_javascript')->setOption('isTableHeaderRepeat', false)->setOption('isRemoteEnabled', true)->setWarnings(false);
                 return $pdf->download($fileName);
             }
         }

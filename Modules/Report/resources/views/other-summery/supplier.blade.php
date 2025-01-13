@@ -123,7 +123,7 @@
                                 <td>{{ $summery->otherSummery->sum('paid') }}</td>
                                 <td>{{ $summery->otherSummery->sum('due') }}</td>
                                 <td>
-                                    @if (checkAdminHavePermission('supplier.other.due.ledger') || checkAdminHavePermission('supplier.other.due.pay'))
+                                    @if (checkAdminHasPermission('supplier.other.due.ledger') || checkAdminHasPermission('supplier.other.due.pay'))
                                         <div class="btn-group" role="group">
                                             <button id="btnGroupDrop{{ $summery->id }}" type="button"
                                                 class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"

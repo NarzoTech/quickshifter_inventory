@@ -19,7 +19,7 @@ class RoleFormRequest extends FormRequest
             ];
         } else {
             return [
-                'name' => "required|unique:roles,name,{$this->role->id}",
+                'name' => "required|unique:roles,name,{$this->role}",
             ];
         }
     }
