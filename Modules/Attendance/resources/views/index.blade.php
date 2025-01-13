@@ -82,6 +82,7 @@
         </div>
     </div>
 
+
     <div class="row mt-5">
         <div class="col-12">
             <div class="card">
@@ -222,8 +223,9 @@
                 const date = $(this).data('date');
 
                 // check  if date is after today
-                const today = new Date();
+                const today = new Date("{{ now()->format('Y-m-d') }}");
                 const selectedDate = new Date(date);
+
                 if (selectedDate > today) {
                     toastr.warning("{{ __('You can not mark attendance for future date') }}", '', options);
                     return;

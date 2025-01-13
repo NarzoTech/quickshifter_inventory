@@ -3,6 +3,7 @@
         <table class="table pos_pro_list_table">
             <thead class="text-center" style="background: #00a65a">
                 <tr style="height: 25px; color: #fff;">
+                    <th style="padding:4px 0px; margin:0px; width: 5%;">SL</th>
                     <th style="padding:4px 0px; margin:0px; width: 30%;">Name</th>
                     <th style="padding:4px 0px; margin:0px; width: 5%;">Source</th>
                     <th style="padding:4px 0px; margin:0px; width: 5%;">Qty</th>
@@ -21,7 +22,7 @@
                     foreach ($cart_contents as $key => $cart_content) {
                         $cart_contents[$key]['rowid'] = $key;
                     }
-
+                    $i = 1;
                 @endphp
                 @foreach ($cart_contents as $cart_index => $cart_content)
                     @php
@@ -34,6 +35,9 @@
                         }
                     @endphp
                     <tr data-rowid="{{ $cart_content['rowid'] }}">
+                        <td>
+                            <p>{{ $i++ }}</p>
+                        </td>
                         <td>
                             <p>{{ $cart_content['name'] }}</p>
                             @if (isset($cart_content['variant']))

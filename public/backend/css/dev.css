@@ -1829,6 +1829,6 @@ textarea.select2-search__field {
     padding: 15px 0px 0px 0px;
 }
 
-.payment_det_table th {
+table th {
     text-transform: capitalize !important;
 }

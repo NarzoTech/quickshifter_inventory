@@ -51,13 +51,6 @@
                     </a>
                 </li>
             @endadminCan
-            @adminCan('sales.return.list')
-                <li class="nav-item">
-                    <a href="{{ route('admin.sales.return.list') }}" class="nav-link nav-link-lg">
-                        <i class='bx bx-cart-download'></i> {{ __('Return Orders') }}</i>
-                    </a>
-                </li>
-            @endadminCan
             @adminCan('pos.view')
                 <li class="nav-item">
                     <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">

@@ -14,11 +14,6 @@
                             <div class="text-truncate" data-i18n="Settings">{{ __('Settings') }}</div>
                         </a>
                         <ul class="menu-sub">
-                            <li class="menu-item {{ Route::is('admin.attendance.settings.weekdays') ? 'active' : '' }}">
-                                <a href="{{ route('admin.attendance.settings.weekdays') }}" class="menu-link">
-                                    <div class="text-truncate" data-i18n="Weekend Setup">{{ __('Weekend Setup') }}</div>
-                                </a>
-                            </li>
                             <li
                                 class="menu-item {{ Route::is('admin.attendance.settings.holidays.index') ? 'active' : '' }}">
                                 <a href="{{ route('admin.attendance.settings.holidays.index') }}" class="menu-link">
@@ -29,11 +24,6 @@
                     </li>
                 @endadminCan
                 @adminCan('attendance.view')
-                    <li class="menu-item {{ Route::is('admin.attendance.create') ? 'active' : '' }}">
-                        <a href="{{ route('admin.attendance.create') }}" class="menu-link">
-                            <div class="text-truncate" data-i18n="{{ __('Attendance') }}">{{ __('Attendance') }}</div>
-                        </a>
-                    </li>
                     <li class="menu-item {{ Route::is('admin.attendance.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.attendance.index') }}" class="menu-link">
                             <div class="text-truncate" data-i18n="{{ __('Attendance Sheet') }}">

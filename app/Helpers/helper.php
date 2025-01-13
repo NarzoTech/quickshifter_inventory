@@ -796,18 +796,9 @@ if (!function_exists('routeList')) {
                 'route' => 'salary.list',
             ],
             (object) [
-                'name' => __('Attendance'),
-                'route' => 'attendance.create',
-                'sub_menu' => []
-            ],
-            (object) [
                 'name' => __('Attendance Sheet'),
                 'route' => 'attendance.index',
                 'sub_menu' => []
-            ],
-            (object) [
-                'name' => __('Weekend Setup'),
-                'route' => 'attendance.settings.weekdays',
             ],
             (object) [
                 'name' => __('Holiday Setup'),

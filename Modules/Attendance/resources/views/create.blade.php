@@ -113,13 +113,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>
-                                        <div class="custom-checkbox custom-control">
-                                            <input type="checkbox" data-checkbox-role="dad" class="custom-control-input"
-                                                id="checkbox-all">
-                                            <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
-                                        </div>
-                                    </th>
+
                                     <th>{{ __('Name') }}</th>
                                     <th>{{ __('Designation') }}</th>
                                     <th>{{ __('Mobile') }}</th>
@@ -133,15 +127,6 @@
                                             $atten = $employee->attendance->where('date', $currentDate)->first();
                                         @endphp
                                         <tr>
-                                            <td>
-                                                <div class="custom-checkbox custom-control">
-                                                    <input type="checkbox" data-checkboxes="mygroup"
-                                                        class="custom-control-input" id="checkbox-{{ $key }}"
-                                                        {{ $atten ? 'checked' : '' }}>
-                                                    <label for="checkbox-{{ $key }}"
-                                                        class="custom-control-label">&nbsp;</label>
-                                                </div>
-                                            </td>
 
                                             <td>{{ ucwords($employee->name) }}</td>
                                             <td>{{ $employee->designation }}</td>
