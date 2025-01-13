@@ -28,31 +28,43 @@
 
         <ul class="navbar-nav flex-wrap flex-row align-items-center ms-auto">
 
-            <li class="nav-item">
-                <a href="{{ route('admin.report.details-sale') }}" class="nav-link nav-link-lg">
-                    <i class='bx bx-dollar-circle'></i> {{ __('Sale Report') }}</i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('admin.stock.index') }}" class="nav-link nav-link-lg">
-                    <i class='bx bx-package'></i> {{ __('Stock') }}</i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('admin.report.dts') }}" class="nav-link nav-link-lg">
-                    <i class='bx bx-line-chart'></i> {{ __('Today\'s Summery') }}</i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('admin.sales.return.list') }}" class="nav-link nav-link-lg">
-                    <i class='bx bx-cart-download'></i> {{ __('Return Orders') }}</i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
-                    <i class='bx bx-basket'></i> {{ __('POS') }}</i>
-                </a>
-            </li>
+            @adminCan('report.view')
+                <li class="nav-item">
+                    <a href="{{ route('admin.report.details-sale') }}" class="nav-link nav-link-lg">
+                        <i class='bx bx-dollar-circle'></i> {{ __('Sale Report') }}</i>
+                    </a>
+                </li>
+            @endadminCan
+
+            @adminCan('stock.view')
+                <li class="nav-item">
+                    <a href="{{ route('admin.stock.index') }}" class="nav-link nav-link-lg">
+                        <i class='bx bx-package'></i> {{ __('Stock') }}</i>
+                    </a>
+                </li>
+            @endadminCan
+
+            @adminCan('dts.view')
+                <li class="nav-item">
+                    <a href="{{ route('admin.report.dts') }}" class="nav-link nav-link-lg">
+                        <i class='bx bx-line-chart'></i> {{ __('Today\'s Summery') }}</i>
+                    </a>
+                </li>
+            @endadminCan
+            @adminCan('sales.return.list')
+                <li class="nav-item">
+                    <a href="{{ route('admin.sales.return.list') }}" class="nav-link nav-link-lg">
+                        <i class='bx bx-cart-download'></i> {{ __('Return Orders') }}</i>
+                    </a>
+                </li>
+            @endadminCan
+            @adminCan('pos.view')
+                <li class="nav-item">
+                    <a href="{{ route('admin.pos') }}" class="nav-link nav-link-lg">
+                        <i class='bx bx-basket'></i> {{ __('POS') }}</i>
+                    </a>
+                </li>
+            @endadminCan
             <!-- User -->
             <li class="navbar-dropdown dropdown-user dropdown ms-3">
                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -86,15 +98,16 @@
                                 <i class="bx bx-user bx-md me-3"></i><span>My Profile</span>
                             </a>
                         </li>
+                        <li>
+                            <div class="dropdown-divider my-1"></div>
+                        </li>
                     @endadminCan
                     {{-- <li>
                         <a class="dropdown-item" href="#">
                             <i class="bx bx-cog bx-md me-3"></i><span>Settings</span>
                         </a>
                     </li> --}}
-                    <li>
-                        <div class="dropdown-divider my-1"></div>
-                    </li>
+
                     <li>
                         <a class="dropdown-item" href="javascript:void(0);"
                             onclick="event.preventDefault();

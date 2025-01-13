@@ -35,7 +35,7 @@
 
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class='menu-icon tf-icons bx bx-store'></i>
-            <div class="text-truncate" data-i18n="{{ __('Others Summery') }}">{{ __('Others Summery') }}</div>
+            <div class="text-truncate" data-i18n="{{ __('Others Summary') }}">{{ __('Others Summary') }}</div>
         </a>
 
         <ul class="menu-sub">
