@@ -161,10 +161,10 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="tab-content pt-0 pb-4">
+                        <div class="tab-content pt-0 pb-4 dashboard_tab_content">
                             <div class="tab-pane fade show active" id="navs-pills-browser" role="tabpanel">
                                 <div class="table-responsive text-start text-nowrap">
-                                    <table class="table table-borderless">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>{{ __('No') }}</th>
@@ -190,7 +190,7 @@
                             </div>
                             <div class="tab-pane fade" id="navs-pills-os" role="tabpanel">
                                 <div class="table-responsive text-start text-nowrap">
-                                    <table class="table table-borderless">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>{{ __('No') }}</th>
@@ -216,7 +216,7 @@
                             </div>
                             <div class="tab-pane fade" id="navs-pills-country" role="tabpanel">
                                 <div class="table-responsive text-start text-nowrap">
-                                    <table class="table table-borderless">
+                                    <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>{{ __('No') }}</th>

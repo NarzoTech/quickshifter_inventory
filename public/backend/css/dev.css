@@ -1832,3 +1832,9 @@ textarea.select2-search__field {
 table th {
     text-transform: capitalize !important;
 }
+
+.dashboard_tab_content .tab-pane {
+    max-height: 400px;
+    overflow: hidden;
+    overflow-y: auto;
+}

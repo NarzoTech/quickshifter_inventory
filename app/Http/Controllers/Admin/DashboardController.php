@@ -206,7 +206,6 @@ class DashboardController extends Controller
             $q->where('stock_alert', '!=', 0)
                 ->whereColumn('stock', '<=', 'stock_alert');
         })->orderByDesc('stock_alert')
-            ->take(10)
             ->get();
 
         $customers = User::with(['sales', 'payment', 'saleReturn'])->get();
@@ -223,7 +222,7 @@ class DashboardController extends Controller
             return $totalDue;
         });
 
-        $data['customers'] = $customers->take(10);
+        $data['customers'] = $customers;
 
         $suppliers = $this->supplierService->allSupplier()->get();
 
@@ -238,7 +237,7 @@ class DashboardController extends Controller
             return $totalDue;
         });
 
-        $data['suppliers'] = $suppliers->take(10);
+        $data['suppliers'] = $suppliers;
         return view('admin.dashboard', compact('data', 'purchaseData', 'saleData', 'chart'));
     }
 
