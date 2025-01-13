@@ -91,10 +91,13 @@
     <div class="card mt-5">
         <div class="card-header">
             <h4 class="section_title">Holiday list</h4>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addHoliday" class="btn bg-label-primary"> <i
-                        class="fa fa-plus"></i> {{ __('Add Holiday') }}</a>
 
+            <div class="btn-actions-pane-right actions-icon-btn">
+
+                @adminCan('attendance.setting.create')
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addHoliday" class="btn bg-label-primary"> <i
+                            class="fa fa-plus"></i> {{ __('Add Holiday') }}</a>
+                @endadminCan
             </div>
         </div>
         <div class="card-body">
@@ -122,24 +125,28 @@
                                 <td>{{ $day->end_date }}</td>
                                 <td>{{ $day->status ? 'Active' : 'Inactive' }}</td>
                                 <td>
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop{{ $day->id }}" type="button"
-                                            class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $day->id }}">
-
-                                            <a href="javascript:;" data-bs-toggle="modal"
-                                                data-bs-target="#editHoliday{{ $day->id }}"
-                                                class="dropdown-item">{{ __('Edit') }}</a>
-
-                                            <a href="javascript:;" class="dropdown-item"
-                                                onclick="deleteData({{ $day->id }})">
-                                                {{ __('Delete') }}
-                                            </a>
+                                    @if (checkAdminHasPermission('attendance.setting.edit') || checkAdminHasPermission('attendance.setting.delete'))
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop{{ $day->id }}" type="button"
+                                                class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $day->id }}">
+                                                @adminCan('attendance.setting.edit')
+                                                    <a href="javascript:;" data-bs-toggle="modal"
+                                                        data-bs-target="#editHoliday{{ $day->id }}"
+                                                        class="dropdown-item">{{ __('Edit') }}</a>
+                                                @endadminCan
+                                                @adminCan('attendance.setting.delete')
+                                                    <a href="javascript:;" class="dropdown-item"
+                                                        onclick="deleteData({{ $day->id }})">
+                                                        {{ __('Delete') }}
+                                                    </a>
+                                                @endadminCan
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

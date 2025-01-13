@@ -26,7 +26,7 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        // checkAdminHasPermissionAndThrowException('attendance.view');
+        checkAdminHasPermissionAndThrowException('attendance.view');
 
         $employees = $this->employee->all()->paginate(20);
 
@@ -38,7 +38,7 @@ class AttendanceController extends Controller
      */
     public function create()
     {
-        // checkAdminHasPermissionAndThrowException('attendance.create');
+        checkAdminHasPermissionAndThrowException('attendance.view');
 
 
         $employees = $this->employee->all()->paginate(20);
@@ -50,7 +50,7 @@ class AttendanceController extends Controller
      */
     public function store(Request $request)
     {
-        // checkAdminHasPermissionAndThrowException(['attendance.create', 'attendance.edit']);
+        checkAdminHasPermissionAndThrowException('attendance.create');
 
         $request->validate([
             'date' => 'required',
@@ -102,11 +102,13 @@ class AttendanceController extends Controller
 
     public function weekDays()
     {
+        checkAdminHasPermissionAndThrowException('attendance.setting.view');
         $days = WeekendSetup::all();
         return view('attendance::weekdays', compact('days'));
     }
     public function weekDaysUpdate(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('attendance.setting.edit');
         $request->validate([
             'name' => 'required',
             'status' => 'required|boolean',

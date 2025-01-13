@@ -36,6 +36,7 @@ class SettingController extends Controller
     use RedirectHelperTrait;
     public function settings()
     {
+        checkAdminHasPermissionAndThrowException('setting.view');
         $all_timezones = AllTimeZoneEnum::getAll();
         $allCountries = CountryEnum::getAll();
         return view('admin.settings.settings', compact('all_timezones', 'allCountries'));
@@ -59,6 +60,7 @@ class SettingController extends Controller
 
     public function clearDatabase(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('database.reset');
         $request->validate([
             'password' => 'required',
         ]);

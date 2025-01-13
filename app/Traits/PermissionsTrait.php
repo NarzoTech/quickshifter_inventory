@@ -41,10 +41,8 @@ trait PermissionsTrait
         'permissions' => [
             'role.view',
             'role.create',
-            'role.store',
             'role.assign',
             'role.edit',
-            'role.update',
             'role.delete',
         ],
     ];
@@ -54,6 +52,7 @@ trait PermissionsTrait
         'permissions' => [
             'setting.view',
             'setting.update',
+            'database.reset',
         ],
     ];
 
@@ -381,6 +380,30 @@ trait PermissionsTrait
             'employee.pay.advance',
             'employee.edit.salary',
             'employee.delete.salary',
+        ],
+    ];
+    public static array $attendancePermissions = [
+        'group_name' => 'Attendance',
+        'permissions' => [
+            'attendance.view',
+            'attendance.create',
+        ],
+    ];
+    public static array $attendanceSettingPermissions = [
+        'group_name' => 'Attendance Setting',
+        'permissions' => [
+            'attendance.setting.view',
+            'attendance.setting.create',
+            'attendance.setting.edit',
+            'attendance.setting.delete',
+        ],
+    ];
+    public static array $reportPermissions = [
+        'group_name' => 'report',
+        'permissions' => [
+            'report.view',
+            'report.excel.download',
+            'report.pdf.download',
         ],
     ];
 

@@ -87,23 +87,6 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <h4 class="section_title">{{ __('Employee List') }}</h4>
-                    <div class="attendance_type d-none d-flex justify-content-center align-items-center">
-                        <div class="selectgroup w-100">
-                            <label class="selectgroup-item">
-                                <input type="radio" name="attendance_type" value="present" class="selectgroup-input">
-                                <span class="selectgroup-button selectgroup-button-icon">Present</span>
-                            </label>
-                            <label class="selectgroup-item">
-                                <input type="radio" name="attendance_type" value="absent" class="selectgroup-input">
-                                <span class="selectgroup-button selectgroup-button-icon">Absent</span>
-                            </label>
-                        </div>
-                        @adminCan('attendance.store')
-                            <div class="button-container d-none">
-                                <button class="btn btn-success ms-2 submit-button" type="submit">{{ __('Apply') }}</button>
-                            </div>
-                        @endadminCan
-                    </div>
                 </div>
                 <div class="card-body pt-0">
                     <div class="table-responsive attendance_table_scroll">
@@ -182,31 +165,35 @@
                                                         aria-expanded="false"
                                                         style="background:{{ $isPresent ? 'green' : ($isAbsent ? 'red' : ($isWeekend ? '#e69500' : '')) }}; color:{{ $isPresent || $isAbsent ? 'white' : 'black' }}">
                                                     </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a class="dropdown-item attendance" href="javascript:;"
-                                                                data-employee-id={{ $employee->id }}
-                                                                data-date={{ $date->format('Y-m-d') }}
-                                                                data-value="present">{{ __('Present') }}</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item attendance" href="javascript:;"
-                                                                data-employee-id={{ $employee->id }}
-                                                                data-date={{ $date->format('Y-m-d') }}
-                                                                data-value="absent">{{ __('Absent') }}</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item attendance" href="javascript:;"
-                                                                data-employee-id={{ $employee->id }}
-                                                                data-date={{ $date->format('Y-m-d') }}
-                                                                data-value="weekend">{{ __('Weekend') }}</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item attendance text-danger"
-                                                                href="javascript:;" data-employee-id={{ $employee->id }}
-                                                                data-date={{ $date->format('Y-m-d') }}
-                                                                data-value="clear">{{ __('Clear Attendance') }}</a>
-                                                        </li>
-                                                    </ul>
+                                                    @adminCan('attendance.create')
+                                                        <ul class="dropdown-menu">
+
+                                                            <li><a class="dropdown-item attendance" href="javascript:;"
+                                                                    data-employee-id={{ $employee->id }}
+                                                                    data-date={{ $date->format('Y-m-d') }}
+                                                                    data-value="present">{{ __('Present') }}</a>
+                                                            </li>
+
+                                                            <li>
+                                                                <a class="dropdown-item attendance" href="javascript:;"
+                                                                    data-employee-id={{ $employee->id }}
+                                                                    data-date={{ $date->format('Y-m-d') }}
+                                                                    data-value="absent">{{ __('Absent') }}</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item attendance" href="javascript:;"
+                                                                    data-employee-id={{ $employee->id }}
+                                                                    data-date={{ $date->format('Y-m-d') }}
+                                                                    data-value="weekend">{{ __('Weekend') }}</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item attendance text-danger"
+                                                                    href="javascript:;" data-employee-id={{ $employee->id }}
+                                                                    data-date={{ $date->format('Y-m-d') }}
+                                                                    data-value="clear">{{ __('Clear Attendance') }}</a>
+                                                            </li>
+                                                        </ul>
+                                                    @endadminCan
                                                 </div>
                                             </td>
                                         @endfor

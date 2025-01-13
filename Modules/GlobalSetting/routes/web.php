@@ -18,7 +18,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
         Route::put('update-copyright-text', 'update_copyright_text')->name('update-copyright-text');
         Route::put('update-maintenance-mode', 'update_maintenance_mode')->name('update-maintenance-mode');
 
-        Route::get('cache-clear', 'cache_clear')->name('cache-clear');
+        Route::get('cache-clear', 'cache_clear')->name('cache.clear');
         Route::post('cache-clear', 'cache_clear_confirm')->name('cache-clear-confirm');
     });
 
@@ -32,5 +32,4 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admi
 
         Route::post('test/mail/credentials', 'test_mail_credentials')->name('test-mail-credentials');
     });
-
 });

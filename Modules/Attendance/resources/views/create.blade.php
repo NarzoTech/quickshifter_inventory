@@ -88,7 +88,7 @@
         <div class="col-12">
             <div class="card  {{ !$currentDate ? 'd-none' : '' }}">
                 <div class="card-header d-flex justify-content-between">
-                    <h4 class="section_title">{{ __('Member List') }}</h4>
+                    <h4 class="section_title">{{ __('Employee List') }}</h4>
                     <div class="attendance_type d-none d-flex justify-content-center align-items-center">
                         <div class="selectgroup w-100">
                             <label class="selectgroup-item">
@@ -100,9 +100,11 @@
                                 <span class="selectgroup-button selectgroup-button-icon">{{ __('Absent') }}</span>
                             </label>
                         </div>
-                        <div class="button-container d-none">
-                            <button class="btn btn-success ms-2 submit-button" type="submit">{{ __('Apply') }}</button>
-                        </div>
+                        @adminCan('attendance.create')
+                            <div class="button-container d-none">
+                                <button class="btn btn-success ms-2 submit-button" type="submit">{{ __('Apply') }}</button>
+                            </div>
+                        @endadminCan
                     </div>
 
                 </div>
@@ -145,22 +147,24 @@
                                             <td>{{ $employee->designation }}</td>
                                             <td>{{ $employee->mobile }}</td>
                                             <td>
-                                                <div class="selectgroup w-100" data-id="{{ $employee->id }}">
-                                                    <label class="selectgroup-item">
-                                                        <input type="radio" name="attendance[{{ $key }}]"
-                                                            value="present" class="selectgroup-input"
-                                                            {{ $atten?->status == 'present' ? 'checked' : '' }}>
-                                                        <span
-                                                            class="selectgroup-button selectgroup-button-icon">{{ __('Present') }}</span>
-                                                    </label>
-                                                    <label class="selectgroup-item">
-                                                        <input type="radio" name="attendance[{{ $key }}]"
-                                                            value="absent" class="selectgroup-input"
-                                                            {{ $atten?->status == 'absent' ? 'checked' : '' }}>
-                                                        <span
-                                                            class="selectgroup-button selectgroup-button-icon">{{ __('Absent') }}</span>
-                                                    </label>
-                                                </div>
+                                                @adminCan('attendance.create')
+                                                    <div class="selectgroup w-100" data-id="{{ $employee->id }}">
+                                                        <label class="selectgroup-item">
+                                                            <input type="radio" name="attendance[{{ $key }}]"
+                                                                value="present" class="selectgroup-input"
+                                                                {{ $atten?->status == 'present' ? 'checked' : '' }}>
+                                                            <span
+                                                                class="selectgroup-button selectgroup-button-icon">{{ __('Present') }}</span>
+                                                        </label>
+                                                        <label class="selectgroup-item">
+                                                            <input type="radio" name="attendance[{{ $key }}]"
+                                                                value="absent" class="selectgroup-input"
+                                                                {{ $atten?->status == 'absent' ? 'checked' : '' }}>
+                                                            <span
+                                                                class="selectgroup-button selectgroup-button-icon">{{ __('Absent') }}</span>
+                                                        </label>
+                                                    </div>
+                                                @endadminCan
                                             </td>
                                         </tr>
                                     @endforeach

@@ -21,7 +21,7 @@ class RolesController extends Controller
     }
     public function index()
     {
-        // checkAdminHasPermissionAndThrowException('role.view');
+        checkAdminHasPermissionAndThrowException('role.view');
         $roles = Role::where('name', '!=', 'Super Admin')->paginate(15);
         $admins_exists = Admin::notSuperAdmin()->whereStatus('active')->count();
 
@@ -30,7 +30,7 @@ class RolesController extends Controller
 
     public function create()
     {
-        // checkAdminHasPermissionAndThrowException('role.create');
+        checkAdminHasPermissionAndThrowException('role.create');
         $permissions = Permission::all();
         $permission_groups = Admin::getPermissionGroup();
 
@@ -39,7 +39,7 @@ class RolesController extends Controller
 
     public function store(RoleFormRequest $request)
     {
-        // checkAdminHasPermissionAndThrowException('role.store');
+        checkAdminHasPermissionAndThrowException('role.create');
         $role = Role::create(['name' => $request->name]);
         if (! empty($request->permissions)) {
             $role->syncPermissions($request->permissions);
@@ -50,7 +50,7 @@ class RolesController extends Controller
 
     public function edit($id)
     {
-        // checkAdminHasPermissionAndThrowException('role.edit');
+        checkAdminHasPermissionAndThrowException('role.edit');
         $role = Role::where('name', '!=', 'Super Admin')->where('id', $id)->first();
         abort_if(!$role, 403);
         $permissions = Permission::all()->groupBy('group_name');
@@ -60,7 +60,7 @@ class RolesController extends Controller
 
     public function update(RoleFormRequest $request, $id)
     {
-        // checkAdminHasPermissionAndThrowException('role.update');
+        checkAdminHasPermissionAndThrowException('role.edit');
         $role = Role::where('name', '!=', 'Super Admin')->where('id', $id)->first();
         abort_if(!$role, 403);
         if (!empty($request->permissions)) {
@@ -74,7 +74,7 @@ class RolesController extends Controller
     public function destroy($id)
 
     {
-        // checkAdminHasPermissionAndThrowException('role.delete');
+        checkAdminHasPermissionAndThrowException('role.delete');
         $role = Role::where('name', '!=', 'Super Admin')->where('id', $id)->first();
         abort_if(!$role, 403);
         if (!is_null($role)) {
@@ -86,7 +86,7 @@ class RolesController extends Controller
 
     public function assignRoleView()
     {
-        // checkAdminHasPermissionAndThrowException('role.assign');
+        checkAdminHasPermissionAndThrowException('role.assign');
         $admins = Admin::notSuperAdmin()->whereStatus('active')->get();
         $roles = Role::where('name', '!=', 'Super Admin')->get();
 
@@ -118,7 +118,7 @@ class RolesController extends Controller
 
     public function assignRoleUpdate(Request $request)
     {
-        // checkAdminHasPermissionAndThrowException('role.assign');
+        checkAdminHasPermissionAndThrowException('role.assign');
 
         $messages = [
             'user_id.required' => __('You must select an admin'),

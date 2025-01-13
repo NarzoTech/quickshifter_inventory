@@ -15,6 +15,7 @@ class HolidaysController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('attendance.setting.view');
         $holidays = HolidaySetup::query();
 
         if (request('keyword')) {
@@ -54,6 +55,7 @@ class HolidaysController extends Controller
      */
     public function store(HolidaysRequest $request): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('attendance.setting.create');
         try {
             $data = $request->validated();
             $data['start_date'] = now()->parse($data['start_date']);
@@ -81,6 +83,7 @@ class HolidaysController extends Controller
      */
     public function update(HolidaysRequest $request, $id): RedirectResponse
     {
+        checkAdminHasPermissionAndThrowException('attendance.setting.edit');
         try {
             $data = $request->validated();
             $data['start_date'] = now()->parse($data['start_date']);
@@ -108,6 +111,7 @@ class HolidaysController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('attendance.setting.delete');
         try {
             HolidaySetup::find($id)->delete();
             $notification = [
