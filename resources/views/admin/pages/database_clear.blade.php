@@ -43,9 +43,9 @@
 
                         </div>
                         <div class="modal-footer bg-whitesmoke br">
-                            <button type="button" class="btn btn-success"
+                            <button type="button" class="btn btn-primary"
                                 data-bs-dismiss="modal">{{ __('Close') }}</button>
-                            <button type="submit" class="btn btn-danger">{{ __('Yes, Clear') }}</button>
+                            <button type="submit" class="btn btn-danger m-0">{{ __('Yes, Clear') }}</button>
                         </div>
                     </form>
                 </div>
