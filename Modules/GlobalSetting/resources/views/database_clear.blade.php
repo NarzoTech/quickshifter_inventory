@@ -4,42 +4,20 @@
 @endsection
 @section('content')
     <!-- Main Content -->
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <div class="section-header-back">
-                    <a href="{{ route('admin.settings') }}" class="btn btn-icon"><i class="fas fa-arrow-left"></i></a>
-                </div>
-                <h1>{{ __('Database clear') }}</h1>
-
-            </div>
-
-    </div>
-    </div>
-
-    <div class="section-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="alert alert-warning alert-has-icon">
-                            <div class="alert-icon"><i class="far fa-lightbulb"></i></div>
-                            <div class="alert-body">
-                                <div class="alert-title">{{ __('Warning') }}</div>
-                                {{ __('If you want to use the software from scratch, you have to clear database. You do not need to remove the existing data one by one') }}
-                            </div>
-                        </div>
-
-                        <button class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#clearDatabaseModal">{{ __('Clear Database') }}</button>
-
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="alert alert-warning alert-has-icon">
+                <div class="alert-icon"><i class="far fa-lightbulb"></i></div>
+                <div class="alert-body">
+                    <div class="alert-title">{{ __('Warning') }}</div>
+                    {{ __('If you want to use the software from scratch, you have to clear database. You do not need to remove the existing data one by one') }}
                 </div>
             </div>
+
+            <button class="btn btn-danger" data-bs-toggle="modal"
+                data-bs-target="#clearDatabaseModal">{{ __('Clear Database') }}</button>
 
         </div>
-    </div>
-    </section>
     </div>
 
     <div class="modal fade" tabindex="-1" role="dialog" id="clearDatabaseModal">
@@ -50,7 +28,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body pt-0">
                     <p>{{ __('Are you really want to clear this database?') }}</p>
                 </div>
                 <div class="modal-footer bg-whitesmoke br">

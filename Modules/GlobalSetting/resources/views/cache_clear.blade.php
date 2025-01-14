@@ -29,7 +29,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body py-0">
                     <p>{{ __('Are You sure want to clear cache ?') }}</p>
                 </div>
                 <div class="modal-footer bg-whitesmoke br">

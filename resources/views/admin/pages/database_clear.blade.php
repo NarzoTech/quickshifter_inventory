@@ -36,7 +36,7 @@
                                 <i class="fas fa-times fa-fw"></i>
                             </button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body pt-0">
                             <p>{{ __('Are you really want to clear this database?') }}</p>
                             <input type="password" id="password" name="password" placeholder="{{ __('Password') }}"
                                 required="true" class="form-control">
