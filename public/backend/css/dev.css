@@ -822,6 +822,7 @@ table tr td {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-transform: capitalize;
 }
 
 .produt_card .price {
@@ -1829,12 +1830,50 @@ textarea.select2-search__field {
     padding: 15px 0px 0px 0px;
 }
 
+.dashboard_card {
+    margin-bottom: 25px;
+}
+
+.apexcharts-toolbar {
+    display: none !important;
+}
+
 table th {
     text-transform: capitalize !important;
 }
 
-.dashboard_tab_content .tab-pane {
-    max-height: 400px;
-    overflow: hidden;
-    overflow-y: auto;
+.dashboard_tab_content .table-responsive {
+    max-height: 456px;
+    overflow: auto;
+    position: relative;
 }
+
+.dashboard_tab_content .table-responsive::-webkit-scrollbar {
+    background: #ddd;
+    width: 5px;
+    height: 5px;
+}
+
+.dashboard_tab_content .table-responsive::-webkit-scrollbar-thumb {
+    width: 5px;
+    background: #696cff;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+
+.dashboard_tab_content .table {
+    margin-bottom: 0 !important;
+}
+
+.dashboard_tab_content .table thead {
+    position: sticky;
+    top: -1px;
+    z-index: 9;
+}
+
+.dashboard_tab_content .table thead tr {}
+
+.dashboard_tab_content .table thead tr th {}

@@ -341,7 +341,7 @@ input {
 }
 
 .product-table .table-responsive table {
-    margin-bottom: 80px !important;
+    margin-bottom: 0px !important;
     border-left: 0;
 }
 

@@ -6,8 +6,9 @@
     <section class="section">
         <div class="section-body">
             <div class="row">
+
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card dashboard_card">
+                    <div class="card dashboard_card ">
                         <div class="card-body">
                             <div class="card-title d-flex align-items-start justify-content-between mb-0">
                                 <div class="avatar flex-shrink-0">
@@ -19,9 +20,8 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card dashboard_card">
+                    <div class="card dashboard_card ">
                         <div class="card-body">
                             <div class="card-title d-flex align-items-start justify-content-between mb-0">
                                 <div class="avatar flex-shrink-0">
@@ -33,9 +33,8 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card dashboard_card">
+                    <div class="card dashboard_card ">
                         <div class="card-body">
                             <div class="card-title d-flex align-items-start justify-content-between mb-0">
                                 <div class="avatar flex-shrink-0">
@@ -48,7 +47,7 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card dashboard_card">
+                    <div class="card dashboard_card ">
                         <div class="card-body">
                             <div class="card-title d-flex align-items-start justify-content-between mb-0">
                                 <div class="avatar flex-shrink-0">
@@ -60,87 +59,86 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card dashboard_card mt-5">
-                                <div class="card-body">
-                                    <div class="card-title d-flex align-items-start justify-content-between mb-0">
-                                        <div class="avatar flex-shrink-0">
-                                            <i class='bx bx-dollar'></i>
-                                        </div>
-                                    </div>
-                                    <p class="mb-1">{{ 'Expense' }} ({{ now()->format('F') }})</p>
-                                    <h4 class="card-title mb-3">{{ currency($chart['currentMonthExpense']) }}</h4>
-                                    <small
-                                        class="{{ $chart['expensePercentage'] > 0 ? 'text-success' : ($chart['expensePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
-                                        @if ($chart['expensePercentage'] > 0)
-                                            <i class="bx bx-up-arrow-alt"></i>
-                                            {{ $chart['expensePercentage'] }}%
-                                        @elseif($chart['expensePercentage'] < 0)
-                                            <i class="bx bx-down-arrow-alt"></i>
-                                            {{ $chart['expensePercentage'] }}%
-                                        @else
-                                            0%
-                                        @endif
-                                    </small>
+
+                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                    <div class="card dashboard_card ">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                <div class="avatar flex-shrink-0">
+                                    <i class='bx bx-dollar'></i>
                                 </div>
                             </div>
+                            <h5 class="mb-1">{{ 'Expense' }} ({{ now()->format('F') }})</h5>
+                            <h4 class="card-title text-primary fw-medium mb-1">
+                                {{ currency($chart['currentMonthExpense']) }}</h4>
+                            <small
+                                class="{{ $chart['expensePercentage'] > 0 ? 'text-success' : ($chart['expensePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
+                                @if ($chart['expensePercentage'] > 0)
+                                    <i class="bx bx-up-arrow-alt"></i>
+                                    {{ $chart['expensePercentage'] }}%
+                                @elseif($chart['expensePercentage'] < 0)
+                                    <i class="bx bx-down-arrow-alt"></i>
+                                    {{ $chart['expensePercentage'] }}%
+                                @else
+                                    0%
+                                @endif
+                            </small>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card dashboard_card mt-5">
-                                <div class="card-body">
-                                    <div class="card-title d-flex align-items-start justify-content-between mb-0">
-                                        <div class="avatar flex-shrink-0">
-                                            <i class='bx bx-basket'></i>
-                                        </div>
-                                    </div>
-                                    <p class="mb-1">{{ 'Sales' }} ({{ now()->format('F') }})</p>
-                                    <h4 class="card-title mb-3">{{ currency($chart['currentSales']) }}</h4>
-                                    <small
-                                        class="{{ $chart['salePercentage'] > 0 ? 'text-success' : ($chart['salePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
-                                        @if ($chart['salePercentage'] > 0)
-                                            <i class="bx bx-up-arrow-alt"></i>
-                                            {{ $chart['salePercentage'] }}%
-                                        @elseif($chart['salePercentage'] < 0)
-                                            <i class="bx bx-down-arrow-alt"></i>
-                                            {{ $chart['salePercentage'] }}%
-                                        @else
-                                            0%
-                                        @endif
-                                    </small>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                    <div class="card dashboard_card ">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                <div class="avatar flex-shrink-0">
+                                    <i class='bx bx-basket'></i>
                                 </div>
                             </div>
+                            <h5 class="mb-1">{{ 'Sales' }} ({{ now()->format('F') }})</h5>
+                            <h4 class="card-title text-primary fw-medium mb-1">{{ currency($chart['currentSales']) }}</h4>
+                            <small
+                                class="{{ $chart['salePercentage'] > 0 ? 'text-success' : ($chart['salePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
+                                @if ($chart['salePercentage'] > 0)
+                                    <i class="bx bx-up-arrow-alt"></i>
+                                    {{ $chart['salePercentage'] }}%
+                                @elseif($chart['salePercentage'] < 0)
+                                    <i class="bx bx-down-arrow-alt"></i>
+                                    {{ $chart['salePercentage'] }}%
+                                @else
+                                    0%
+                                @endif
+                            </small>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card dashboard_card mt-5">
-                                <div class="card-body">
-                                    <div class="card-title d-flex align-items-start justify-content-between mb-0">
-                                        <div class="avatar flex-shrink-0">
-                                            <i class='bx bx-cart-add'></i>
-                                        </div>
-                                    </div>
-                                    <p class="mb-1">{{ 'Purchase' }} ({{ now()->format('F') }})</p>
-                                    <h4 class="card-title mb-3">{{ currency($chart['currentPurchases']) }}</h4>
-                                    <small
-                                        class="{{ $chart['purchasePercentage'] > 0 ? 'text-success' : ($chart['purchasePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
-                                        @if ($chart['purchasePercentage'] > 0)
-                                            <i class="bx bx-up-arrow-alt"></i>
-                                            {{ $chart['purchasePercentage'] }}%
-                                        @elseif($chart['purchasePercentage'] < 0)
-                                            <i class="bx bx-down-arrow-alt"></i>
-                                            {{ $chart['purchasePercentage'] }}%
-                                        @else
-                                            0%
-                                        @endif
-                                    </small>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                    <div class="card dashboard_card ">
+                        <div class="card-body">
+                            <div class="card-title d-flex align-items-start justify-content-between mb-0">
+                                <div class="avatar flex-shrink-0">
+                                    <i class='bx bx-cart-add'></i>
                                 </div>
                             </div>
+                            <h5 class="mb-1">{{ 'Purchase' }} ({{ now()->format('F') }})</h5>
+                            <h4 class="card-title text-primary fw-medium mb-1">{{ currency($chart['currentPurchases']) }}
+                            </h4>
+                            <small
+                                class="{{ $chart['purchasePercentage'] > 0 ? 'text-success' : ($chart['purchasePercentage'] < 0 ? 'text-danger' : 'text-primary') }} fw-medium">
+                                @if ($chart['purchasePercentage'] > 0)
+                                    <i class="bx bx-up-arrow-alt"></i>
+                                    {{ $chart['purchasePercentage'] }}%
+                                @elseif($chart['purchasePercentage'] < 0)
+                                    <i class="bx bx-down-arrow-alt"></i>
+                                    {{ $chart['purchasePercentage'] }}%
+                                @else
+                                    0%
+                                @endif
+                            </small>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-12 my-5">
+                <div class="col-md-12">
                     <div class="card h-100">
                         <div class="card-header nav-align-top">
                             <ul class="nav nav-pills flex-wrap row-gap-2 me-auto" role="tablist">

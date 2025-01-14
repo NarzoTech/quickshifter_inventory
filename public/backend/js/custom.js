@@ -48,7 +48,7 @@
 
     //======STICKY SIDEBAR=======
     $(".sticky_sidebar").stickit({
-        top: 90,
+        // top: 90,
     })
 
 

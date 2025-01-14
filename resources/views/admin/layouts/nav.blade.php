@@ -47,7 +47,7 @@
             @adminCan('dts.view')
                 <li class="nav-item">
                     <a href="{{ route('admin.report.dts') }}" class="nav-link nav-link-lg">
-                        <i class='bx bx-line-chart'></i> {{ __('Today\'s Summery') }}</i>
+                        <i class='bx bx-line-chart'></i> {{ __('Today\'s Summary') }}</i>
                     </a>
                 </li>
             @endadminCan
