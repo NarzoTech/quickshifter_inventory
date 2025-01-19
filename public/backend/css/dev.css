@@ -800,7 +800,7 @@ table tr td {
 }
 
 .produt_card .produt_card_img {
-    height: 135px;
+    height: 160px;
     overflow: hidden;
     border-bottom: 1px solid #ddd;
 }
@@ -1639,7 +1639,7 @@ td.sticky-2::after {
     }
 
     .produt_card .produt_card_img {
-        height: 120px;
+        height: 110px;
     }
 
     .pos_product_area {

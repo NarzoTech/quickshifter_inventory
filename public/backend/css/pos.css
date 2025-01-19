@@ -398,7 +398,7 @@ input {
 .pos_pro_table input {
     padding: 7px;
     border: none;
-    text-align: center;
+    /* text-align: center; */
     color: #646e78;
     outline: none;
 }

@@ -331,7 +331,7 @@ class POSController extends Controller
         $cart_contents = $cart_contents ? $cart_contents : [];
 
         $cart_contents[$request->rowid]['qty'] = $request->quantity;
-        $cart_contents[$request->rowid]['sub_total'] = $cart_contents[$request->rowid]['price'] * $request->quantity;
+        $cart_contents[$request->rowid]['sub_total'] = (float)$cart_contents[$request->rowid]['price'] * $request->quantity;
 
         session()->put($cartName, $cart_contents);
 
