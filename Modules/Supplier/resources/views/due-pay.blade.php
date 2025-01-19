@@ -107,14 +107,14 @@
                                                             </div>
                                                             <input type="number" class="form-control" name="total_payable"
                                                                 value="{{ $supplier->duePurchase->sum('due_amount') }}"
-                                                                readonly>
+                                                                readonly step="0.01">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('Paying Amount') }}</label>
-                                                        <input type="number" class="form-control" name="paying_amount">
+                                                        <input type="number" class="form-control" name="paying_amount" step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">

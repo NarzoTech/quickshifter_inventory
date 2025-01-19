@@ -121,7 +121,7 @@
                                             <label for="cost">{{ __('Purchase Price') }}
                                                 ({{ currency_icon() }})</label>
                                             <input type="number" name="cost" class="form-control" id="cost"
-                                                value="{{ old('cost') }}">
+                                                value="{{ old('cost') }}" step="0.01">
                                             @error('cost')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -132,7 +132,7 @@
                                             <label for="price">{{ __('Selling Price') }}
                                                 ({{ currency_icon() }})</label>
                                             <input type="number" name="price" class="form-control" id="price"
-                                                value="{{ old('price') }}">
+                                                value="{{ old('price') }}" step="0.01">
                                             @error('price')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror

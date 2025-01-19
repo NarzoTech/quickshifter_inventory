@@ -187,7 +187,7 @@
                                                     <div class="form-group">
                                                         <label>{{ __('Paid Amount') }}</label>
                                                         <input type="number" class="form-control" name="paid_amount"
-                                                            value="{{ $purchase->paid_amount }}" readonly>
+                                                            value="{{ $purchase->paid_amount }}" readonly step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">

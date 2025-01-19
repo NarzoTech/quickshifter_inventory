@@ -38,7 +38,8 @@
                                             <div class="form-group">
                                                 <label>{{ __('Return Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="return_date"
-                                                    value="{{ old('return_date', now()->format('d-m-Y')) }}" autocomplete="off">
+                                                    value="{{ old('return_date', now()->format('d-m-Y')) }}"
+                                                    autocomplete="off">
                                                 @error('return_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -131,7 +132,8 @@
                                                                 </td>
                                                                 <td>
                                                                     <input type="number" class="form-control"
-                                                                        name="return_subtotal[]" value="0" readonly>
+                                                                        name="return_subtotal[]" value="0" readonly
+                                                                        step="0.01">
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -148,7 +150,7 @@
                                                     <div class="form-group">
                                                         <label>{{ __('Paid Amount') }}</label>
                                                         <input type="number" class="form-control" name="paid_amount"
-                                                            value="{{ $purchase->paid_amount }}" readonly>
+                                                            value="{{ $purchase->paid_amount }}" readonly step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -162,7 +164,7 @@
                                                     <div class="form-group">
                                                         <label>{{ __('Received Amount') }}</label>
                                                         <input type="received_amount" class="form-control"
-                                                            name="received_amount" value="0">
+                                                            name="received_amount" value="0" step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">

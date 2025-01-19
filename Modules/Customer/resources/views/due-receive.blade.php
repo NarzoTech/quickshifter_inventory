@@ -106,14 +106,14 @@
                                                 <input type="number" class="form-control" placeholder="Username"
                                                     aria-label="Username" aria-describedby="basic-addon11"
                                                     id="total_payable" name="total_payable"
-                                                    value="{{ $customer->total_due }}" />
+                                                    value="{{ $customer->total_due }}" step="0.01"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>{{ __('Receiving Amount') }}</label>
-                                            <input type="number" class="form-control" name="receiving_amount">
+                                            <input type="number" class="form-control" name="receiving_amount" step="0.01">
                                         </div>
                                     </div>
                                     <div class="col-12">

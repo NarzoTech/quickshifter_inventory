@@ -216,7 +216,8 @@
                                             <div class="form-group">
                                                 <label for="">Select Business Vat(%)</label>
                                                 <input type="number" name="vat" value="{{ $setting->vat }}"
-                                                    class="form-control" step=".01" placeholder="Ex: 10">
+                                                    class="form-control" step=".01" placeholder="Ex: 10"
+                                                    step="0.01">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">

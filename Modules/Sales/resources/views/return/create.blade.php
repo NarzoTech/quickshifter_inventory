@@ -100,7 +100,7 @@
                                                         <input type="number" class="form-control" name="return_quantity[]">
                                                     </td>
                                                     <td>
-                                                        <input type="number" class="form-control" name="return_subtotal[]">
+                                                        <input type="number" class="form-control" name="return_subtotal[]" step="0.01">
                                                     </td>
 
                                                 </tr>

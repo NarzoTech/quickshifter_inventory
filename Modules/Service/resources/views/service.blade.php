@@ -261,7 +261,7 @@
                                     <div class="form-group">
                                         <label for="price">{{ __('Price') }}</label>
                                         <input type="number" class="form-control" id="price" name="price"
-                                            value="{{ $service->price }}">
+                                            value="{{ $service->price }}" step="0.01">
                                     </div>
                                 </div>
                                 <div class="col-12">

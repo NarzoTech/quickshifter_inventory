@@ -161,23 +161,23 @@
                                                                     <input type="number" class="form-control"
                                                                         name="unit_price[]"
                                                                         value="{{ $purchaseDetail->purchase_price }}"
-                                                                        min="0">
+                                                                        min="0" step="0.01">
                                                                 </td>
                                                                 <td>
                                                                     <input type="number" class="form-control"
                                                                         name="total[]"
-                                                                        value="{{ $purchaseDetail->sub_total }}" readonly>
+                                                                        value="{{ $purchaseDetail->sub_total }}" readonly step="0.01">
                                                                 </td>
                                                                 <td>
                                                                     <input type="text" class="form-control"
                                                                         name="profit[]"
-                                                                        value="{{ $purchaseDetail->profit }}">
+                                                                        value="{{ $purchaseDetail->profit }}" step="0.01">
                                                                 </td>
                                                                 <td>
                                                                     <input type="number" class="form-control"
                                                                         name="selling_price[]"
                                                                         value="{{ $purchaseDetail->sale_price }}"
-                                                                        min="0">
+                                                                        min="0" step="0.01">
                                                                 </td>
                                                                 <td>
                                                                     <button type="button" class="btn btn-white"
@@ -322,16 +322,16 @@
                         <input type="number" class="form-control" name="quantity[]" value="1" min="1">
                     </td>
                     <td>
-                        <input type="number" class="form-control" name="unit_price[]" value="${product.cost}" min="0">
+                        <input type="number" class="form-control" name="unit_price[]" value="${product.cost}" min="0" step="0.01">
                     </td>
                     <td>
-                        <input type="number" class="form-control" name="total[]" value="${product.cost}" readonly>
+                        <input type="number" class="form-control" name="total[]" value="${product.cost}" readonly step="0.01">
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="profit[]" value="${0}">
+                        <input type="text" class="form-control" name="profit[]" value="${0}" step="0.01">
                     </td>
                     <td>
-                        <input type="number" class="form-control" name="selling_price[]" value="${product.price}" min="0">
+                        <input type="number" class="form-control" name="selling_price[]" value="${product.price}" min="0" step="0.01">
                     </td>
                     <td>
                         <button type="button" class="btn btn-white" onclick="removePurchaseRow(this)"><i class="fas fa-trash text-danger"></i></button>

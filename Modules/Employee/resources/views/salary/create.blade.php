@@ -103,7 +103,7 @@
                                                 <label for="salary"
                                                     class="col-form-label p-0">{{ __('Already Taken') }}</label>
                                                 <input type="number" name="already_salary" id="already_salary"
-                                                    value="{{ $paidAmount }}" placeholder="0" class="form-control">
+                                                    value="{{ $paidAmount }}" placeholder="0" class="form-control" step="0.01">
                                             </div>
                                         </div>
                                         <div class="col-md-12">

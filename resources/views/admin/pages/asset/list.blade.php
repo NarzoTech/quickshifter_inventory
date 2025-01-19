@@ -226,7 +226,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="">{{ __('Amount') }}</label>
-                                    <input type="number" name="amount" class="form-control" required>
+                                    <input type="number" name="amount" class="form-control" required step="0.01">
                                 </div>
                             </div>
                             <div class="col-12">
@@ -319,7 +319,7 @@
                                     <div class="form-group">
                                         <label for="">{{ __('Amount') }}</label>
                                         <input type="number" name="amount" class="form-control" required
-                                            value="{{ $type->amount }}">
+                                            value="{{ $type->amount }}" step="0.01">
                                     </div>
                                 </div>
                                 <div class="col-12">

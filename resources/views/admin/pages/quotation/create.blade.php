@@ -94,7 +94,7 @@
                                                     <div class="form-group">
                                                         <label>{{ __('Subtotal') }}</label>
                                                         <input type="number" class="form-control" name="subtotal"
-                                                            value="0" readonly>
+                                                            value="0" readonly step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -108,7 +108,7 @@
                                                     <div class="form-group">
                                                         <label>{{ __('After Discount') }}</label>
                                                         <input type="number" class="form-control" name="after_discount"
-                                                            value="" readonly>
+                                                            value="" readonly step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -229,10 +229,10 @@
                         <input type="number" class="form-control" name="quantity[]" value="1" min="1">
                     </td>
                     <td>
-                        <input type="number" class="form-control" name="unit_price[]" value="${product.current_price}" min="0">
+                        <input type="number" class="form-control" name="unit_price[]" value="${product.current_price}" min="0" step="0.01">
                     </td>
                     <td>
-                        <input type="number" class="form-control" name="total[]" value="${product.current_price}" readonly>
+                        <input type="number" class="form-control" name="total[]" value="${product.current_price}" readonly step="0.01">
                     </td>
                     <td class="text-center">
                         <button type="button" class="btn btn-white" onclick="removequotationRow(this)"><i class="fas fa-trash text-danger"></i></button>

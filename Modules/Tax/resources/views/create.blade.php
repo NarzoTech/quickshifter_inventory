@@ -40,7 +40,7 @@
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">%</span>
                                                     <input type="number" class="form-control" name="rate"
-                                                        value="{{ old('rate') }}">
+                                                        value="{{ old('rate') }}" step="0.01">
                                                 </div>
                                             </div>
                                         </div>

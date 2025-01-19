@@ -168,7 +168,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="discount">{{ __('Discount') }}(%)</label>
-                                    <input type="number" class="form-control" id="discount" name="discount">
+                                    <input type="number" class="form-control" id="discount" name="discount"
+                                        step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -234,7 +235,7 @@
                                     <div class="form-group">
                                         <label for="discount">{{ __('Discount') }}(%)</label>
                                         <input type="number" class="form-control" id="discount" name="discount"
-                                            value="{{ $group->discount }}">
+                                            value="{{ $group->discount }}" step="0.01">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
