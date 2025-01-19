@@ -237,7 +237,6 @@
     </div>
 
     {{-- add Supplier --}}
-
     <div class="modal fade" id="addSupplier" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">

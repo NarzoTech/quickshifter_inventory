@@ -67,7 +67,7 @@
     <div class="card mt-5 mb-5">
         <div class="card-header-tab card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title">{{ __('Suppliers List') }}</h4>
+                <h4 class="section_title">{{ __('Suppliers Group List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 @adminCan('supplier.group.create')
@@ -77,7 +77,7 @@
                 @endadminCan
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body suppliers_list">
             <div class="table-responsive">
                 <table style="width: 100%;" class="table">
                     <thead>

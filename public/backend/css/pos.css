@@ -249,7 +249,6 @@ input.datepicker {
 }
 
 @media screen and (max-width: 767px) {
-
     .pos-right-side .filters {
         height: auto;
     }
@@ -345,8 +344,6 @@ input {
     border-left: 0;
 }
 
-.pos_pro_table {}
-
 .pos_pro_table table {
     width: 100%;
 }
@@ -361,10 +358,6 @@ input {
     position: relative;
 }
 
-.pos_pro_list_table thead {}
-
-.pos_pro_list_table tbody {}
-
 .pos_pro_table table thead tr th {
     text-align: left;
     padding: 10px !important;
@@ -373,12 +366,6 @@ input {
 .pos_pro_table table thead tr th:last-child {
     text-align: center;
 }
-
-.pos_pro_table table thead th {}
-
-.pos_pro_table table tbody {}
-
-.pos_pro_table table tbody tr {}
 
 .pos_pro_table table tbody tr td {
     padding: 10px;
@@ -472,8 +459,6 @@ input {
     margin-left: 5px;
 }
 
-.dis-form {}
-
 .dis .current {
     color: #000 !important;
 }
@@ -481,5 +466,3 @@ input {
 .summary-table .custom_width {
     width: 270px;
 }
-
-.pos-footer .cancel-btn button {}

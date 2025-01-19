@@ -187,6 +187,14 @@
                                     <div class="card-header">
                                         <form id="service_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="form-group mb-2">
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="service_name"
+                                                            placeholder="{{ __('Enter Service name') }}"
+                                                            autocomplete="off" value="{{ request()->get('name') }}">
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group mb-2">
                                                         <select name="service_category_id" id="service_category_id"
@@ -206,15 +214,6 @@
                                                                 @endforeach
                                                             @endif
                                                         </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-8">
-                                                    <div class="form-group mb-2">
-                                                        <input type="text" class="form-control" name="name"
-                                                            id="service_name"
-                                                            placeholder="{{ __('Enter Service name') }}"
-                                                            autocomplete="off" value="{{ request()->get('name') }}">
                                                     </div>
                                                 </div>
                                             </div>
