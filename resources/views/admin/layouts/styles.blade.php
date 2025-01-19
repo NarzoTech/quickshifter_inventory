@@ -28,6 +28,8 @@
 
 <script src="{{ asset('backend/assets/js/config.js') }}"></script>
 
+
+<link rel="stylesheet" href="{{ asset('backend/flatpickr.css') }}">
 <link rel="stylesheet" href="{{ asset('global/toastr/toastr.min.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/css/nice-select.css') }}" />
 <link rel="stylesheet" href="{{ asset('backend/css/dev.css') }}" />

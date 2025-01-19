@@ -298,7 +298,7 @@ class POSController extends Controller
         $data['image'] = $type == 'service' ? $service->singleImage : $product->image_url;
         $data['qty'] = $request->qty ? $request->qty : 1;
         $data['price'] = $type == 'service' ? $service->price : ($request->variant_price ? $request->variant_price : $product->currentPrice);
-        $data['sub_total'] = $data['price'] * $data['qty'];
+        $data['sub_total'] = (float)$data['price'] * $data['qty'];
         $data['sku'] = $sku;
         $data['unit'] = $type == 'service' ? '-' : $product->unit->name;
         $data['source'] = 1;

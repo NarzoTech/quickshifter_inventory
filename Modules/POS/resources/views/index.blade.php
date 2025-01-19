@@ -457,9 +457,8 @@
                                             </th>
                                             <td class="text-right w-40">
                                                 <div class="form-group mb-0">
-                                                    <input type="text" class="form-control datepicker"
-                                                        name="sale_date" value="{{ now()->format('d-m-Y') }}"
-                                                        autocomplete="off">
+                                                    <input type="text" class="form-control" name="sale_date"
+                                                        value="{{ now()->format('d-m-Y') }}" autocomplete="off">
                                                 </div>
                                             </td>
                                         </tr>
@@ -517,7 +516,8 @@
                                                 <label>Due Date</label>
                                             </td>
                                             <td colspan="3">
-                                                <input type="text" class="form-control datepicker" name="due_date">
+                                                <input type="date" class="form-control" name="due_date"
+                                                    id="flatpickr-date">
                                             </td>
                                         </tr>
 
@@ -716,12 +716,16 @@
 @push('js')
     <script src="{{ asset('backend/js/jquery-ui.min.js') }}"></script>
     <script>
+        $("[name='due_date']").datepicker('destroy');
         // load products
         (function($) {
             "use strict";
             $(document).ready(function() {
                 totalSummery();
                 loadProudcts();
+                $("#flatpickr-date,[name='sale_date']").flatpickr({
+                    dateFormat: "d-m-Y",
+                });
 
                 // update pos quantity
                 $(document).on("input", ".pos_input_qty", function(e) {
@@ -732,7 +736,7 @@
                     $('.preloader_area').removeClass('d-none');
                     let parernt_td = $(this).parents('td');
                     let rowid = parernt_td.data('rowid')
-
+                    const pos = getCurrentPos();
                     $.ajax({
                         type: 'get',
                         data: {
@@ -744,7 +748,8 @@
                             $(".product-table-container").html(response)
                             $('[name="source"]').niceSelect();
                             totalSummery();
-                            scrollToCurrent()
+                            console.log(pos);
+                            scrollToCurrent(pos)
                             $('.preloader_area').addClass('d-none');
                         },
                         error: function(response) {
@@ -1105,6 +1110,7 @@
         }
 
         function updatePrice(rowId, price) {
+            const pos = getCurrentPos();
             $.ajax({
                 type: 'get',
                 data: {
@@ -1115,7 +1121,7 @@
                 success: function(response) {
                     $(".product-table-container").html(response)
                     $('[name="source"]').niceSelect();
-                    scrollToCurrent()
+                    scrollToCurrent(pos)
                     totalSummery();
                 }
             });
@@ -1162,7 +1168,7 @@
         }
 
         function removeCartItem(rowId) {
-
+            const pos = getCurrentPos();
             $.ajax({
                 type: 'get',
                 url: "{{ url('admin/pos/remove-cart-item') }}" + "/" + rowId,
@@ -1170,7 +1176,7 @@
                     $(".product-table-container").html(response)
                     $('[name="source"]').niceSelect();
                     totalSummery();
-                    scrollToCurrent()
+                    scrollToCurrent(pos)
                     toastr.success("{{ __('Remove successfully') }}")
                 },
                 error: function(response) {
@@ -1698,18 +1704,28 @@
         }
 
 
-        function scrollToCurrent() {
+        function scrollToCurrent(pos = 'scroll') {
             const $current = $('.pos_pro_list_table tbody tr:last-child');
-            if ($current.length) {
-                const sidebar = $('.product-table .table-responsive');
+            const sidebar = $('.product-table .table-responsive');
+            if (pos !== 'scroll') {
+                sidebar.animate({
+                    scrollTop: pos
+                }, 300);
+            } else if (pos === 'scroll' && $current.length) {
+
                 const sidebarOffset = sidebar.offset().top;
                 const currentOffset = $current.offset().top;
 
                 sidebar.animate({
                     scrollTop: sidebar.scrollTop() + (currentOffset - sidebarOffset -
-                        50) // Adjust offset if
+                        50)
                 }, 300);
             }
+        }
+
+        function getCurrentPos() {
+            const sidebar = $('.product-table .table-responsive');
+            return sidebar.scrollTop();
         }
     </script>
 @endpush
