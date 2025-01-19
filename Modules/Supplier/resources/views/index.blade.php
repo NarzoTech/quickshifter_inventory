@@ -117,6 +117,7 @@
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>
+                            <th>{{ __('Company') }}</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Phone') }}</th>
                             <th>{{ __('Area') }}</th>
@@ -137,6 +138,7 @@
                             @endphp
                             <tr>
                                 <td>{{ $suppliers->firstItem() + $index }}</td>
+                                <td>{{ $supplier->company }}</td>
                                 <td>{{ $supplier->name }}</td>
                                 <td>{{ $supplier->phone }}</td>
                                 <td>{{ $supplier->area->name }}</td>
@@ -355,7 +357,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                    <button type="submit" class="btn btn-primary" form="add-supplier-form">{{ __('Save') }}</button>
+                    <button type="submit" class="btn btn-primary"
+                        form="add-supplier-form">{{ __('Save') }}</button>
                 </div>
             </div>
         </div>
@@ -405,35 +408,44 @@
                                             value="{{ $supplier->email }}">
                                     </div>
                                 </div>
-                                <div class="col-md-6 ">
-                                    <div class="form-group">
-                                        <label for="city">{{ __('City') }}</label>
-                                        <input type="text" class="form-control" id="city" name="city"
-                                            value="{{ $supplier->city }}">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        <label for="group_id">{{ __('Supplier Group') }}</label>
+                                        <select name="group_id" id="group_id" class="form-select">
+                                            <option value="">{{ __('Select Group') }}</option>
+                                            @foreach ($groups as $group)
+                                                <option value="{{ $group->id }}" @selected($supplier->group_id == $group->id)>
+                                                    {{ $group->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 ">
-                                    <div class="form-group">
-                                        <label for="state">{{ __('State') }}</label>
-                                        <input type="text" class="form-control" id="state" name="state"
-                                            value="{{ $supplier->state }}">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-0">
+                                        <label for="area_id">{{ __('Area') }}</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon11"><i
+                                                    class="fas fa-map-marker-alt"></i></span>
+
+                                            <select name="area_id" id="area_id" class="form-control">
+                                                <option value="">{{ __('Select Area') }}</option>
+                                                @foreach ($areaList as $list)
+                                                    <option value="{{ $list->id }}" @selected($supplier->area_id == $list->id)>
+                                                        {{ $list->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 ">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="country">{{ __('Country') }}</label>
-                                        <input type="text" class="form-control" id="country" name="country"
-                                            value="{{ $supplier->country }}">
+                                        <label for="date">{{ __('Date') }}</label>
+                                        <input type="text" class="form-control datepicker" id="date"
+                                            name="date" placeholder="MM/DD/YY" autocomplete="off"
+                                            value="{{ $supplier->date ?? '' }}">
                                     </div>
                                 </div>
-                                <div class="col-md-6 ">
-                                    <div class="form-group">
-                                        <label for="tax_number">{{ __('Tax Number') }}</label>
-                                        <input type="text" class="form-control" id="tax_number" name="tax_number"
-                                            value="{{ $supplier->tax_number }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="status">{{ __('Status') }}</label>
                                         <select name="status" id="status" class="form-control">
@@ -444,6 +456,7 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-md-12">
                                     <div class="form-group mb-0">
                                         <label for="address">{{ __('Address') }}</label>
