@@ -51,7 +51,7 @@
                                     <div class="card-header">
                                         <form id="product_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
-                                                <div class="col-md-4 col-lg-4 col-sm-12">
+                                                <div class="col-12">
                                                     <div class="form-group mb-2">
                                                         <input type="text" class="form-control" name="name"
                                                             id="name"
@@ -61,7 +61,7 @@
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                                {{-- <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="category_id" id="product_category_id"
                                                             class="form-control select2">
@@ -82,8 +82,8 @@
                                                             @endif
                                                         </select>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                                </div> --}}
+                                                {{-- <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="brand_id" id="product_brand_id"
                                                             class="form-control select2">
@@ -104,7 +104,7 @@
                                                             @endif
                                                         </select>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </form>
                                     </div>
@@ -119,7 +119,7 @@
                                     <div class="card-header">
                                         <form id="favorite_product_search_form" class="pos_pro_search_form w-100">
                                             <div class="row">
-                                                <div class="col-md-4 col-lg-4 col-sm-12">
+                                                <div class="col-12">
                                                     <div class="form-group mb-2">
                                                         <input type="text" class="form-control" name="name"
                                                             id="favoriteName"
@@ -130,7 +130,7 @@
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                                {{-- <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="category_id" id="category_id"
                                                             class="form-control select2">
@@ -151,8 +151,8 @@
                                                             @endif
                                                         </select>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                                </div> --}}
+                                                {{-- <div class="col-md-4 col-lg-4 col-sm-6">
                                                     <div class="form-group mb-2">
                                                         <select name="brand_id" id="brand_id"
                                                             class="form-control select2">
@@ -173,7 +173,7 @@
                                                             @endif
                                                         </select>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </form>
                                     </div>
@@ -745,6 +745,7 @@
                             $(".product-table-container").html(response)
                             $('[name="source"]').niceSelect();
                             totalSummery();
+                            scrollToCurrent()
                             $('.preloader_area').addClass('d-none');
                         },
                         error: function(response) {
@@ -1040,6 +1041,24 @@
 
                 $(".datepicker").datepicker("option", "dateFormat", "dd-mm-yy").val("{{ date('d-m-Y') }}");
 
+                $(document).on('keydown', function(event) {
+                    const keycode = event.keyCode || event.which;
+                    if (keycode === 13) {
+                        event.preventDefault();
+
+                        const $current = $(event.target);
+                        const $next = $current.nextAll('input, select, textarea, button').first();
+
+                        if ($next.length) {
+                            $next.focus();
+                        }
+
+                        // else unfocus
+                        else {
+                            $current.blur();
+                        }
+                    }
+                })
             });
         })(jQuery);
 
@@ -1097,6 +1116,7 @@
                 success: function(response) {
                     $(".product-table-container").html(response)
                     $('[name="source"]').niceSelect();
+                    scrollToCurrent()
                     totalSummery();
                 }
             });
@@ -1210,7 +1230,7 @@
                 },
                 error: function(response) {
                     toastr.error("{{ __('Server error occurred') }}")
-                    //location.reload();
+                    location.reload();
                 }
             });
         }

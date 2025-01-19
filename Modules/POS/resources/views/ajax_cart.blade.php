@@ -7,6 +7,7 @@
                     <th style="padding:4px 0px; margin:0px; width: 30%;">Name</th>
                     <th style="padding:4px 0px; margin:0px; width: 5%;">Source</th>
                     <th style="padding:4px 0px; margin:0px; width: 5%;">Qty</th>
+                    <th style="padding:4px 0px; margin:0px; width: 5%;">Unit</th>
                     <th style="padding:4px 0px; margin:0px; width: 7%;">Price</th>
                     <th style="padding:4px 0px; margin:0px; width: 10%;">Total</th>
                     <th style="padding:4px 0px; margin:0px; width: 5%;">
@@ -60,6 +61,9 @@
                         <td data-rowid="{{ $cart_content['rowid'] }}" class="px-3">
                             <input min="1" type="number" value="{{ $cart_content['qty'] }}"
                                 class="pos_input_qty form-control">
+                        </td>
+                        <td class="px-3">
+                            {{ $cart_content['unit'] ?? '' }}
                         </td>
 
                         <td class="price">

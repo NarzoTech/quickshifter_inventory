@@ -60,8 +60,10 @@
                         @yield('content')
                     </div>
 
-                    <!-- Footer -->
-                    @include('admin.layouts.footer')
+                    @if (!isRoute('admin.pos*'))
+                        <!-- Footer -->
+                        @include('admin.layouts.footer')
+                    @endif
                     <!-- / Footer -->
                     <div class="content-backdrop fade"></div>
                 </div>

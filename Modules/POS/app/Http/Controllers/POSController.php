@@ -300,6 +300,7 @@ class POSController extends Controller
         $data['price'] = $type == 'service' ? $service->price : ($request->variant_price ? $request->variant_price : $product->currentPrice);
         $data['sub_total'] = $data['price'] * $data['qty'];
         $data['sku'] = $sku;
+        $data['unit'] = $type == 'service' ? '-' : $product->unit->name;
         $data['source'] = 1;
         $data['purchase_price'] = 0;
         $data['selling_price'] = 0;
