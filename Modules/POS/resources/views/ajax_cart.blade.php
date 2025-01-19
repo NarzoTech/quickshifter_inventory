@@ -10,8 +10,8 @@
                     <th style="padding:4px 0px; margin:0px; width: 5%;">Unit</th>
                     <th style="padding:4px 0px; margin:0px; width: 7%;">Price</th>
                     <th style="padding:4px 0px; margin:0px; width: 10%;">Total</th>
-                    <th style="padding:4px 0px; margin:0px; width: 5%;">
-                        <i class="fa fa-trash"></i>
+                    <th style="padding:4px 0px; margin:0px; width:7%;">
+                        Action
                     </th>
                 </tr>
             </thead>
@@ -81,15 +81,17 @@
                         <td class="row_total">{{ currency($sub_total) }}</td>
 
                         <td class="text-center">
-                            <a href="javascript:;" onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
-                                class="d-block p-2 "><i class="fa fa-trash text-danger" aria-hidden="true"></i></a>
+                            <div class="d-flex align-items-center gap-1 justify-content-center">
+                                <a href="javascript:;" onclick="removeCartItem('{{ $cart_content['rowid'] }}')"
+                                    class="d-block p-2 "><i class="fa fa-trash text-danger" aria-hidden="true"></i></a>
 
-                            <a href="javascript:;"
-                                class="edit-btn {{ $cart_content['source'] == '2' ? '' : 'd-none' }}"
-                                data-purchase="{{ $cart_content['purchase_price'] }}"
-                                data-selling="{{ $cart_content['selling_price'] }}">
-                                <i class="fas fa-edit"></i>
-                            </a>
+                                <a href="javascript:;"
+                                    class="edit-btn {{ $cart_content['source'] == '2' ? '' : 'd-none' }}"
+                                    data-purchase="{{ $cart_content['purchase_price'] }}"
+                                    data-selling="{{ $cart_content['selling_price'] }}">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 @endforeach

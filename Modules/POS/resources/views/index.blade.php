@@ -20,7 +20,7 @@
         <section class="section">
             <div class="section-body">
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-5">
                         <div class="row">
                             <div class="col-md-12">
                                 <ul class="nav nav-tabs pos_tabs" id="myTab" role="tablist">
@@ -227,7 +227,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-6">
+                    <div class="col-lg-7">
                         <div class="card">
                             <div class="card-header pos_sidebar_button">
                                 <div class="row w-100">
