@@ -176,7 +176,10 @@
             } else {
                 fullUrl += '?export_pdf=true';
             }
-            window.location.href = fullUrl;
+            // redirect to a new tab
+            window.open(fullUrl, '_blank');
+
+            // window.location.href = fullUrl;
         })
         $('.form-reset').on('click', function() {
             // get full url without query string

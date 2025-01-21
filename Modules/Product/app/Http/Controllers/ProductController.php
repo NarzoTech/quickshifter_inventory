@@ -48,6 +48,7 @@ class ProductController extends Controller
                 $fileName = 'products-' . date('Y-m-d') . '-' . time() . '.xlsx';
                 return Excel::download(new ProductsExport($products), $fileName,);
             }
+
             if (request('par-page')) {
                 if (request('par-page') == 'all') {
                     $products = $products->get();
@@ -57,6 +58,11 @@ class ProductController extends Controller
                 }
             } else {
                 $products = $products->paginate(20);
+            }
+
+
+            if (request('export_pdf')) {
+                return view('product::products.product-pdf', ['products' => $products]);
             }
 
 

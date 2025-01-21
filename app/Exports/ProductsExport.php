@@ -11,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ProductsExport implements FromCollection, WithHeadings, WithMapping, WithStyles
 {
-    public function __construct(private Product $product) {}
+    public function __construct(private $product) {}
     public function collection()
     {
         return $this->product->get();

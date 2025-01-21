@@ -5,13 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
+    <style>
+        thead {
+            display: table-row-group;
+        }
+    </style>
 </head>
 
 <body style="font-family: Arial, sans-serif; margin: 20px;">
 
     <!-- Header -->
     <div style="width: 100%; margin-bottom: 20px;">
-        <div style="width: 40%; display: inline-block; vertical-align: top;">
+        <div style="width: 49%; display: inline-block; vertical-align: top;">
             <img src="{{ asset($setting->logo) }}" alt="Logo" style="width: 80px; height: auto; margin-bottom: 10px;">
         </div>
         <div style="width: 50%; display: inline-block; text-align:right;">
@@ -34,6 +39,10 @@
         @yield('title')
     </h2>
     @yield('content')
+
+    <script>
+        window.print();
+    </script>
 </body>
 
 </html>

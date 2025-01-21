@@ -72,10 +72,12 @@ class SupplierController extends Controller
 
         if (checkAdminHasPermission('supplier.pdf.download')) {
             if (request('export_pdf')) {
-                $html = view('supplier::pdf.supplier', ['suppliers' => $supplierData,  'data' => $data])->render();
-                $pdf = $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
-                $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
-                return $pdf->download($fileName);
+                return view('supplier::pdf.supplier', ['suppliers' => $supplierData,  'data' => $data]);
+
+                // $pdf = $fileName = 'suppliers-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+
+                // $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
+                // return $pdf->stream($fileName);
             }
         }
 
