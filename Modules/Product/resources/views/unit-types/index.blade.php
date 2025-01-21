@@ -131,8 +131,9 @@
                                                     <div class="dropdown-menu"
                                                         aria-labelledby="btnGroupDrop{{ $unit->id }}">
                                                         @adminCan('product.unit.edit')
-                                                            <a href="{{ route('admin.unit.edit', $unit->id) }}"
-                                                                class="dropdown-item">{{ __('Edit') }}</a>
+                                                            <a href="javascript:;"
+                                                                data-href="{{ route('admin.unit.edit', $unit->id) }}"
+                                                                class="dropdown-item edit-btn">{{ __('Edit') }}</a>
                                                         @endadminCan
                                                         @adminCan('product.unit.delete')
                                                             <a href="javascript:;" class="dropdown-item"
@@ -160,10 +161,9 @@
 @push('js')
     <script>
         $(document).ready(function() {
-            $('.edit-btn').click(function(e) {
+            $('.edit-btn').on('click', function(e) {
                 $('.preloader_area').removeClass('d-none');
-                e.preventDefault();
-                const url = $(this).attr('href');
+                const url = $(this).data('href');
                 $.ajax({
                     url: url,
                     type: 'GET',

@@ -200,7 +200,7 @@
                                                     @if (old('unit_sale_id', $product->unit_sale_id) == $product->unit->id) selected @endif>
                                                     {{ $product->unit->name }}
                                                 </option>
-                                                @foreach ($product->unit->children as $unit)
+                                                @foreach ($units as $unit)
                                                     <option value="{{ $unit->id }}"
                                                         @if (old('unit_sale_id', $product->unit_sale_id) == $unit->id) selected @endif>
                                                         {{ $unit->name }}
@@ -224,7 +224,7 @@
                                                     @if (old('unit_purchase_id', $product->unit_purchase_id) == $product->unit->id) selected @endif>
                                                     {{ $product->unit->name }}
                                                 </option>
-                                                @foreach ($product->unit->children as $unit)
+                                                @foreach ($units as $unit)
                                                     <option value="{{ $unit->id }}"
                                                         @if (old('unit_purchase_id', $product->unit_purchase_id) == $unit->id) selected @endif>
                                                         {{ $unit->name }}

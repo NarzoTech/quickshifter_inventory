@@ -54,6 +54,7 @@ class SupplierService
         if (request()->keyword) {
             $suppliers = $suppliers->where(function ($q) {
                 $q->where('name', 'like', '%' . request()->keyword . '%')
+                    ->orWhere('company', 'like', '%' . request()->keyword . '%')
                     ->orWhere('phone', 'like', '%' . request()->keyword . '%')
                     ->orWhere('address', 'like', '%' . request()->keyword . '%')
                     ->orWhere('email', 'like', '%' . request()->keyword . '%')
