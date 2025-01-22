@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StockExport;
 use App\Models\Stock;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Product\app\Services\BrandService;
 use Modules\Product\app\Services\ProductCategoryService;
 use Modules\Product\app\Services\ProductService;
@@ -51,6 +53,21 @@ class StockController extends Controller
         } else {
             $products = $query->paginate($parpage);  // Paginate results
             $products->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('stock.excel.download')) {
+            if (request('export')) {
+                $fileName = 'stock-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new StockExport($products), $fileName);
+            }
+        }
+
+        if (checkAdminHasPermission('stock.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('admin.pages.stock.pdf.stock', [
+                    'products' => $products,
+                ]);
+            }
         }
 
         $brands = $this->brandService->getActiveBrands();
