@@ -3,6 +3,7 @@
 namespace Modules\Purchase\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\PurchaseExport;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Purchase\app\Http\Requests\PurchaseRequest;
 use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Purchase\app\Services\PurchaseService;
@@ -42,6 +44,7 @@ class PurchaseController extends Controller
             $data['due_amount'] += $purchase->due_amount;
         }
 
+
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
@@ -52,6 +55,21 @@ class PurchaseController extends Controller
         } else {
             $purchases = $purchases->paginate($parpage);
             $purchases->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('purchase.excel.download')) {
+            if (request('export')) {
+                $fileName = 'purchase-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new PurchaseExport($purchases), $fileName);
+            }
+        }
+
+        if (checkAdminHasPermission('purchase.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('purchase::pdf.purchase', [
+                    'purchases' => $purchases,
+                ]);
+            }
         }
 
         $products = $this->purchaseService->getProducts(request());
