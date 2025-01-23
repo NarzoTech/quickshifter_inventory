@@ -77,7 +77,7 @@
                 @endadminCan
                 @adminCan('quotation.pdf.download')
                     <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                        PDF</button>
+                        {{ __('PDF') }}</button>
                 @endadminCan
             </div>
         </div>
@@ -86,12 +86,12 @@
                 <table style="width: 100%;" class="table mb-3">
                     <thead>
                         <tr>
-                            <th>Sl</th>
-                            <th>Quotation Date</th>
-                            <th>Quotation No</th>
-                            <th>Customer</th>
-                            <th>Total Amount</th>
-                            <th>Action</th>
+                            <th>{{ __('SL') }}</th>
+                            <th>{{ __('Quotation Date') }}</th>
+                            <th>{{ __('Quotation No') }}</th>
+                            <th>{{ __('Customer') }}</th>
+                            <th>{{ __('Total Amount') }}</th>
+                            <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
                     <tbody>

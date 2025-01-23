@@ -62,6 +62,14 @@ class QuotationController extends Controller
             $quotations->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('quotation.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('admin.pages.quotation.pdf.quotation', [
+                    'quotations' => $quotations,
+                ]);
+            }
+        }
+
 
         return view('admin.pages.quotation.index', compact('quotations', 'data'));
     }
