@@ -383,10 +383,7 @@ class ReportController extends Controller
             $data->push($newData);
         }
 
-        if (request('export')) {
-            $fileName = 'dts-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-            return Excel::download(new DTSExport($data), $fileName);
-        }
+
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
@@ -397,6 +394,21 @@ class ReportController extends Controller
             }
         } else {
             $perPage = 20;
+        }
+
+        if (request('export')) {
+            $fileName = 'dts-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new DTSExport($data), $fileName);
+        }
+
+        if (checkAdminHasPermission('dts.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.dts', [
+                    'data' => $data,
+                    'currentBalance' => $currentBalance,
+                    'openingBalance' => $openingBalance
+                ]);
+            }
         }
 
         $page = request('page', 1); // Default to page 1
