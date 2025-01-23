@@ -85,11 +85,11 @@
             <div class="btn-actions-pane-right actions-icon-btn">
                 @adminCan('other.income.excel.download')
                     <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                        Excel</button>
+                        {{ __('Excel') }}</button>
                 @endadminCan
                 @adminCan('other.income.pdf.download')
                     <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                        PDF</button>
+                        {{ __('PDF') }}</button>
                 @endadminCan
             </div>
         </div>

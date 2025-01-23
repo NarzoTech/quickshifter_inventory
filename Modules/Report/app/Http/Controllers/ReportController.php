@@ -99,6 +99,14 @@ class ReportController extends Controller
             $reports->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('quotation.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.other-income', [
+                    'reports' => $reports,
+                ]);
+            }
+        }
+
         return view('report::other-income', compact('reports', 'data'));
     }
 
