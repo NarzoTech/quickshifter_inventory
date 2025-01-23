@@ -2,6 +2,7 @@
 
 namespace Modules\Sales\app\Http\Controllers;
 
+use App\Exports\SalesExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Exception;
@@ -12,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
@@ -81,6 +83,21 @@ class SalesController extends Controller
         } else {
             $sales = $sales->paginate($parpage);
             $sales->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('sales.excel.download')) {
+            if (request('export')) {
+                $fileName = 'sales-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SalesExport($sales), $fileName);
+            }
+        }
+
+        if (checkAdminHasPermission('sales.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('sales::pdf.sales', [
+                    'sales' => $sales,
+                ]);
+            }
         }
 
         $title = 'Sales List';
