@@ -124,8 +124,48 @@ class EmployeeSalaryController extends Controller
     public function salaryList()
     {
         checkAdminHasPermissionAndThrowException('employee.view.payment');
-        $payments = EmployeeSalary::with('employee')->paginate(20);
-        $payments->appends(request()->query());
+
+        $payments = EmployeeSalary::with('employee');
+
+        if (request('keyword')) {
+            $keyword = request('keyword');
+            $payments = $payments->where(function ($query) use ($keyword) {
+                $query->where('amount', 'like', "%{$keyword}%")
+                    ->orWhereHas('employee', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    })
+                    ->orWhere('amount', 'like', "%{$keyword}%");
+            });
+        }
+        $sort = request()->order_by ? request()->order_by : 'desc';
+
+        if (request('order_type')) {
+            $payments = $payments->orderBy(request('order_type'), $sort);
+        } else {
+            $payments = $payments->orderBy('id', $sort);
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $payments = $payments->get();
+        } else {
+            $payments = $payments->paginate($parpage);
+            $payments->appends(request()->query());
+        }
+
+
+
+        if (request('export_pdf')) {
+
+            return view('employee::pdf.salary', [
+                'payments' => $payments,
+            ]);
+        }
+
 
         return view('employee::salary.salary-list', compact('payments'));
     }

@@ -56,6 +56,12 @@ class EmployeeController extends Controller
             $employees->appends(request()->query());
         }
 
+        if (request('export_pdf')) {
+
+            return view('employee::pdf.employee', [
+                'employees' => $employees,
+            ]);
+        }
         return view('employee::index', compact('employees'));
     }
 
