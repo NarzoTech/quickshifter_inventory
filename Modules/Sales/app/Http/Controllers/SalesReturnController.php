@@ -70,15 +70,23 @@ class SalesReturnController extends Controller
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
-                $lists = $lists->paginate();
+                $lists = $lists->get();
             } else {
                 $lists = $lists->paginate(request('par-page'));
+                $lists->appends(request()->query());
             }
         } else {
             $lists = $lists->paginate(20);
+            $lists->appends(request()->query());
         }
 
-        $lists->appends(request()->query());
+        if (checkAdminHasPermission('sales.return.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('sales::pdf.return', [
+                    'lists' => $lists,
+                ]);
+            }
+        }
 
         return view('sales::return.index', compact('lists', 'data'));
     }
