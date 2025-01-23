@@ -24,6 +24,15 @@ class AssetController extends Controller
         $lists = Asset::paginate(20);
         $types = AssetType::all();
         $accounts = $this->account->all()->get();
+
+        if (checkAdminHasPermission('expense.pdf.download')) {
+            if (request('export_pdf')) {
+
+                return view('admin.pages.asset.pdf.asset', [
+                    'lists' => $lists,
+                ]);
+            }
+        }
         return view('admin.pages.asset.list', compact('lists', 'types', 'accounts'));
     }
 

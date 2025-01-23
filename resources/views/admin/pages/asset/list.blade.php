@@ -84,6 +84,11 @@
                                 class="btn btn-primary"><i class="fa fa-plus"></i>
                                 {{ __('Add Asset') }}</a>
                         @endadminCan
+                        <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
+                            Excel</button>
+                        <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
+                            PDF</button>
+
                     </div>
                 </div>
                 <div class="card-body">
