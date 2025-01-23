@@ -1,6 +1,6 @@
 @extends('admin.layouts.pdf-layout')
 
-@section('title', __('Sales List'))
+@section('title', __('Sales Return List'))
 
 @section('content')
     <table style="width: 100%; border-collapse: collapse; margin-top: 20px;" page-break-inside: avoid>

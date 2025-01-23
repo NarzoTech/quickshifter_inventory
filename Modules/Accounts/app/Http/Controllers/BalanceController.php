@@ -150,9 +150,31 @@ class BalanceController extends Controller
     public function transfer()
     {
         checkAdminHasPermissionAndThrowException('balance.transfer.view');
+
         $accounts = $this->account->all()->get();
 
-        $transfers = BalanceTransfer::paginate(20);
+        $transfers = BalanceTransfer::query();
+
+        if (request('par-page')) {
+            if (request('par-page') == 'all') {
+                $transfers = $transfers->get();
+            } else {
+                $transfers = $transfers->paginate(request('par-page'));
+                $transfers->appends(request()->query());
+            }
+        } else {
+            $transfers = $transfers->paginate(20);
+            $transfers->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('balance.transfer.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('accounts::pdf.transfer', [
+                    'transfers' => $transfers,
+                ]);
+            }
+        }
+
         return view('accounts::balance-transfer', compact('accounts', 'transfers'));
     }
 

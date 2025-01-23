@@ -108,7 +108,7 @@
                                 <td>{{ accountList()[$balanceTransfer->toAccount->account_type] }}</td>
                                 <td>{{ $balanceTransfer->amount }}</td>
                                 <td>{{ $balanceTransfer->createdBy->name }}</td>
-                                <td>{{ $balanceTransfer->date }}</td>
+                                <td>{{ now()->parse($balanceTransfer->date)->format('d-m-Y') }}</td>
                                 <td>{{ $balanceTransfer->note }}</td>
                                 <td>
                                     @if (checkAdminHasPermission('balance.transfer.edit') || checkAdminHasPermission('balance.transfer.delete'))
