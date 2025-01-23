@@ -80,6 +80,15 @@ class ExpenseController extends Controller
             $expenses->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('expense.pdf.download')) {
+            if (request('export_pdf')) {
+
+                return view('expense::pdf.expense', [
+                    'expenses' => $expenses,
+                ]);
+            }
+        }
+
         $types = ExpenseType::all();
         $accounts = Account::all();
         return view('expense::index', compact('expenses', 'types', 'accounts', 'totalAmount'));
