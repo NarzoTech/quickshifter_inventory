@@ -1,12 +1,12 @@
 @extends('admin.layouts.pdf-layout')
 
-@section('title', __('Supplier Other Due List'))
+@section('title', __('Customer Other Due Ledger List'))
 
 @section('content')
     <table style="width: 100%; border-collapse: collapse; margin-top: 20px;" page-break-inside: avoid>
         <thead>
             @php
-                $list = [__('Name'), __('Company'), __('Phone'), __('Total'), __('Paid'), __('Due')];
+                $list = [__('Date'), __('Name'), __('Company'), __('Phone'), __('Total'), __('Paid'), __('Due')];
             @endphp
             <tr style="background-color: #003366; color: white;">
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('SN') }}</th>
@@ -23,23 +23,26 @@
             @endphp
             @foreach ($summeries as $index => $summery)
                 @php
-                    $data['total_amount'] += $summery->otherSummery->sum('amount');
-                    $data['total_paid'] += $summery->otherSummery->sum('paid');
-                    $data['total_due'] += $summery->otherSummery->sum('due');
+
+                    $data['total_amount'] += $summery->amount;
+                    $data['total_paid'] += $summery->paid;
+                    $data['total_due'] += $summery->due;
+
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ $summery->name }}</td>
-                    <td>{{ $summery->company }}</td>
-                    <td>{{ $summery->phone }}</td>
-                    <td>{{ $summery->otherSummery->sum('amount') }}</td>
-                    <td>{{ $summery->otherSummery->sum('paid') }}</td>
-                    <td>{{ $summery->otherSummery->sum('due') }}</td>
+                    <td>{{ now()->parse($summery->date)->format('d-m-Y') }}</td>
+                    <td>{{ $summery->supplier->name }}</td>
+                    <td>{{ $summery->supplier->company }}</td>
+                    <td>{{ $summery->supplier->phone }}</td>
+                    <td>{{ $summery->amount }}</td>
+                    <td>{{ $summery->paid }}</td>
+                    <td>{{ $summery->due }}</td>
                 </tr>
             @endforeach
             @if ($summeries->count() > 0)
                 <tr>
-                    <td colspan="4" style="text-align: center; font-weight: bold">
+                    <td colspan="5" style="text-align: center; font-weight: bold">
                         <b>{{ __('Total') }}</b>
                     </td>
                     <td>
