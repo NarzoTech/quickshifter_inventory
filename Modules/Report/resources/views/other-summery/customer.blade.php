@@ -79,7 +79,7 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"> Customer Other Due List</h4>
+                <h4 class="section_title"> {{ __('Customer Other Due List') }}</h4>
             </div>
             <div class="btn-actions-pane-right actions-icon-btn">
                 @adminCan('customer.other.due.create')

@@ -48,8 +48,26 @@ class OtherSummeryController extends Controller
             return $user->otherSummery->sum('due');
         });
 
-        $summeries = $summeries->paginate(20);
-        $summeries->appends(request()->all());
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $summeries = $summeries->get();
+        } else {
+            $summeries = $summeries->paginate($parpage);
+            $summeries->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('customer.other.due.pdf.download')) {
+            if (request('export_pdf')) {
+
+                return view('report::pdf.customer-due', [
+                    'summeries' => $summeries
+                ]);
+            }
+        }
         return view('report::other-summery.customer', compact('customers', 'summeries', 'data'));
     }
 
@@ -141,18 +159,30 @@ class OtherSummeryController extends Controller
         }
 
         if (request('par-page')) {
-            $perpage = request('par-page') == 'all' ? null : request('par-page');
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
-            $perpage = 20;
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $summeries = $summeries->get();
+        } else {
+            $summeries = $summeries->paginate($parpage);
+            $summeries->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('customer.other.due.pdf.download')) {
+            if (request('export_pdf')) {
+
+                return view('report::pdf.supplier-due', [
+                    'summeries' => $summeries,
+                ]);
+            }
         }
 
         $data['total_amount'] = $summeries->sum('amount');
         $data['total_paid'] = $summeries->sum('paid');
         $data['total_due'] = $summeries->sum('due');
 
-
-        $summeries = $summeries->paginate($perpage);
-        $summeries->appends(request()->all());
 
         return view('report::other-summery.supplier-ledger', compact('summeries', 'data'));
     }
@@ -249,8 +279,26 @@ class OtherSummeryController extends Controller
         });
 
 
-        $summeries = $summeries->paginate(20);
-        $summeries->appends(request()->all());
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $summeries = $summeries->get();
+        } else {
+            $summeries = $summeries->paginate($parpage);
+            $summeries->appends(request()->query());
+        }
+        if (checkAdminHasPermission('supplier.other.due.pdf.download')) {
+            if (request('export_pdf')) {
+
+                return view('report::pdf.supplier-due', [
+                    'summeries' => $summeries,
+                ]);
+            }
+        }
         return view('report::other-summery.supplier', compact('suppliers', 'summeries', 'data'));
     }
 
