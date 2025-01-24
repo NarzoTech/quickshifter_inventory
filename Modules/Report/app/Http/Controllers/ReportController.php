@@ -1103,6 +1103,14 @@ class ReportController extends Controller
         });
 
 
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.salary', [
+                    'employees' => $employees
+                ]);
+            }
+        }
+
 
         return view('report::salary', compact('employees'));
     }
