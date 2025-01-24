@@ -612,6 +612,14 @@ class ReportController extends Controller
             $sales->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.receivable', [
+                    'sales' => $sales
+                ]);
+            }
+        }
+
         return view('report::receiveable', compact('sales', 'totalDues'));
     }
 
