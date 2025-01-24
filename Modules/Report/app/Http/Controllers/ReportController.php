@@ -663,6 +663,14 @@ class ReportController extends Controller
             $sales = $sales->paginate($parpage);
             $sales->appends(request()->query());
         }
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.details-sale', [
+                    'sales' => $sales
+                ]);
+            }
+        }
         return view('report::details-sale', compact('sales', 'data'));
     }
 
@@ -695,6 +703,14 @@ class ReportController extends Controller
         } else {
             $sales = $sales->paginate($parpage);
             $sales->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.due-date-sale', [
+                    'sales' => $sales
+                ]);
+            }
         }
         return view('report::due-date-sale', compact('sales', 'data'));
     }
@@ -730,6 +746,15 @@ class ReportController extends Controller
         } else {
             $expenses = $expenses->paginate($parpage);
             $expenses->appends(request()->query());
+        }
+
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.expense', [
+                    'expenses' => $expenses
+                ]);
+            }
         }
         return view('report::expense', compact('expenses', 'totalAmount'));
     }

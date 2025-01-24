@@ -9,6 +9,10 @@
         thead {
             display: table-row-group;
         }
+
+        .text-center {
+            text-align: center;
+        }
     </style>
 </head>
 
