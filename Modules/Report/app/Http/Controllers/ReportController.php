@@ -444,6 +444,13 @@ class ReportController extends Controller
             $products->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.barcode-wise-product', [
+                    'products' => $products
+                ]);
+            }
+        }
 
 
         return view('report::barcode-wise-product', compact('products'));
@@ -485,6 +492,14 @@ class ReportController extends Controller
             $products->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.barcode-sale', [
+                    'products' => $products
+                ]);
+            }
+        }
+
         return view('report::barcode-sale', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
     }
 
@@ -504,6 +519,15 @@ class ReportController extends Controller
         } else {
             $categories = $categories->paginate($parpage);
             $categories->appends(request()->query());
+        }
+
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.categories', [
+                    'categories' => $categories
+                ]);
+            }
         }
 
         return view('report::categories', compact('categories'));
@@ -544,6 +568,15 @@ class ReportController extends Controller
         } else {
             $customers = $query->paginate($parpage);
             $customers->appends(request()->query());
+        }
+
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.customer-report', [
+                    'customers' => $customers
+                ]);
+            }
         }
 
         return view('report::customer', compact('customers', 'totalSales', 'totalAmount', 'totalPaid', 'totalDue'));
