@@ -75,7 +75,7 @@
 
     <div class="card mt-5">
         <div class="card-header">
-            <h4 class="section_title">{{ __('Supplier List') }}</h4>
+            <h4 class="section_title">{{ __('Supplier Report') }}</h4>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
                     Excel</button>

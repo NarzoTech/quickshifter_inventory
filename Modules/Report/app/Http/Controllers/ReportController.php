@@ -863,6 +863,14 @@ class ReportController extends Controller
         }
 
 
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.received-report', [
+                    'totalReceive' => $totalReceive
+                ]);
+            }
+        }
+
         return view('report::received-report', compact('totalReceive', 'data'));
     }
     public function purchase()
@@ -909,6 +917,14 @@ class ReportController extends Controller
             $purchases = $purchases->paginate($parpage);
             $purchases->appends(request()->query());
         }
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.purchase', [
+                    'purchases' => $purchases
+                ]);
+            }
+        }
         return view('report::purchase', compact('purchases', 'data'));
     }
 
@@ -951,6 +967,15 @@ class ReportController extends Controller
         } else {
             $suppliers = $suppliers->paginate($parpage);
             $suppliers->appends(request()->query());
+        }
+
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.supplier', [
+                    'suppliers' => $suppliers
+                ]);
+            }
         }
 
         return view('report::supplier', compact('suppliers', 'data'));
@@ -1003,6 +1028,14 @@ class ReportController extends Controller
             $supplierPayments->appends(request()->query());
         }
 
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.supplier-payment', [
+                    'supplierPayments' => $supplierPayments
+                ]);
+            }
+        }
 
         return view('report::supplier-payment', compact('supplierPayments', 'totalAmount', 'data'));
     }

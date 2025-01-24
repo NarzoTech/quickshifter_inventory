@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Suppliers Payment List') }}</title>
+    <title>{{ __('Suppliers Payment Report') }}</title>
 @endsection
 
 
@@ -75,7 +75,7 @@
 
     <div class="card mt-5">
         <div class="card-header">
-            <h4 class="section_title">{{ __('Suppliers Payment List') }}</h4>
+            <h4 class="section_title">{{ __('Suppliers Payment Report') }}</h4>
             <div class="btn-actions-pane-right actions-icon-btn">
                 <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
                     Excel</button>

@@ -128,7 +128,7 @@
                                 <td>
                                     @if ($receive->sale_id)
                                         <a class="btn btn-primary"
-                                            href="{{ route('admin.sales.invoice', $receive->sale_id) }}">{{ __('Invoice') }}</a>\
+                                            href="{{ route('admin.sales.invoice', $receive->sale_id) }}">{{ __('Invoice') }}</a>
                                     @endif
                                 </td>
                             </tr>
