@@ -2,6 +2,7 @@
 
 namespace Modules\Accounts\app\Http\Controllers;
 
+use App\Exports\BalanceTransferExport;
 use App\Http\Controllers\Controller;
 use App\Models\Balance;
 use Exception;
@@ -9,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Models\BalanceTransfer;
 use Modules\Accounts\app\Services\AccountsService;
@@ -165,6 +167,13 @@ class BalanceController extends Controller
         } else {
             $transfers = $transfers->paginate(20);
             $transfers->appends(request()->query());
+        }
+
+        if (checkAdminHasPermission('balance.transfer.excel.download')) {
+            if (request('export')) {
+                $fileName = 'transfer-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new BalanceTransferExport($transfers), $fileName);
+            }
         }
 
         if (checkAdminHasPermission('balance.transfer.pdf.download')) {

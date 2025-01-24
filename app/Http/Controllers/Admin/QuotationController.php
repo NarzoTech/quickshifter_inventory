@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\QuotationExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QuotationRequest;
 use App\Models\Quotation;
@@ -9,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Product\app\Models\Product;
 
 class QuotationController extends Controller
@@ -62,6 +64,12 @@ class QuotationController extends Controller
             $quotations->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('quotation.excel.download')) {
+            if (request('export')) {
+                $fileName = 'quotation-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new QuotationExport($quotations), $fileName);
+            }
+        }
         if (checkAdminHasPermission('quotation.pdf.download')) {
             if (request('export_pdf')) {
                 return view('admin.pages.quotation.pdf.quotation', [

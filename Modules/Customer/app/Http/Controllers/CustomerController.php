@@ -52,12 +52,7 @@ class CustomerController extends Controller
                 ->orWhere('address', 'like', '%' . $request->keyword . '%');
         });
 
-        if (checkAdminHasPermission('customer.excel.download')) {
-            if (request('export')) {
-                $fileName = 'customers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new CustomerExport($query->get()), $fileName);
-            }
-        }
+
         $orderBy = $request->filled('order_by') ? $request->order_by : 'asc';
 
         if ($orderBy) {
@@ -136,18 +131,6 @@ class CustomerController extends Controller
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
         }
 
-        if (checkAdminHasPermission('customer.pdf.download')) {
-            if (request('export_pdf')) {
-                $html = view('customer::pdf.customer', [
-                    'users' => $customerData,
-                    'data' => $data
-                ])->render();
-
-                $pdf = $fileName = 'customer-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
-                $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('enable_javascript')->setOption('isTableHeaderRepeat', false)->setOption('isRemoteEnabled', true)->setWarnings(false);
-                return $pdf->download($fileName);
-            }
-        }
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
@@ -165,6 +148,26 @@ class CustomerController extends Controller
             $page = request('page', 1); // Default to page 1
             $paginatedCustomers = $customerData->slice(($page - 1) * $perPage, $perPage)->values();
         }
+
+        if (checkAdminHasPermission('customer.excel.download')) {
+            if (request('export')) {
+                $fileName = 'customers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new CustomerExport($customerData), $fileName);
+            }
+        }
+        if (checkAdminHasPermission('customer.pdf.download')) {
+            if (request('export_pdf')) {
+                $html = view('customer::pdf.customer', [
+                    'users' => $customerData,
+                    'data' => $data
+                ])->render();
+
+                $pdf = $fileName = 'customer-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
+                $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('enable_javascript')->setOption('isTableHeaderRepeat', false)->setOption('isRemoteEnabled', true)->setWarnings(false);
+                return $pdf->download($fileName);
+            }
+        }
+
 
 
         if (request()->order_type) {
