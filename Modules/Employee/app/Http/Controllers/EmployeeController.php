@@ -3,12 +3,14 @@
 namespace Modules\Employee\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\EmployeeExport;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Employee\app\Http\Requests\EmployeeRequest;
 use Modules\Employee\app\Services\EmployeeService;
 
@@ -54,6 +56,13 @@ class EmployeeController extends Controller
         } else {
             $employees = $employees->paginate($parpage);
             $employees->appends(request()->query());
+        }
+
+
+
+        if (request('export')) {
+            $fileName = 'employee-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new EmployeeExport($employees), $fileName);
         }
 
         if (request('export_pdf')) {

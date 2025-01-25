@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\AssetExport;
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
 use App\Models\AssetType;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Services\AccountsService;
 
 class AssetController extends Controller
@@ -25,14 +27,22 @@ class AssetController extends Controller
         $types = AssetType::all();
         $accounts = $this->account->all()->get();
 
-        if (checkAdminHasPermission('expense.pdf.download')) {
-            if (request('export_pdf')) {
 
-                return view('admin.pages.asset.pdf.asset', [
-                    'lists' => $lists,
-                ]);
-            }
+
+
+        if (request('export')) {
+            $fileName = 'asset-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new AssetExport($lists), $fileName);
         }
+
+
+        if (request('export_pdf')) {
+
+            return view('admin.pages.asset.pdf.asset', [
+                'lists' => $lists,
+            ]);
+        }
+
         return view('admin.pages.asset.list', compact('lists', 'types', 'accounts'));
     }
 

@@ -3,12 +3,14 @@
 namespace Modules\Employee\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\EmployeeSalaryExport;
 use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Attendance\app\Models\HolidaySetup;
 use Modules\Attendance\app\Models\WeekendSetup;
 use Modules\Employee\app\Http\Requests\EmployeeSalaryRequest;
@@ -157,6 +159,11 @@ class EmployeeSalaryController extends Controller
             $payments->appends(request()->query());
         }
 
+
+        if (request('export')) {
+            $fileName = 'employee-salary-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new EmployeeSalaryExport($payments), $fileName);
+        }
 
 
         if (request('export_pdf')) {

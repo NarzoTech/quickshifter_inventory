@@ -27,7 +27,6 @@
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>{{ $employee->name }}</td>
-
                     <td>{{ $employee->designation }}</td>
                     <td>{{ $employee->mobile }}</td>
                     <td>{{ $employee->email }}</td>
