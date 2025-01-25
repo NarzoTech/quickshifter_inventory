@@ -4,6 +4,7 @@ namespace Modules\Customer\app\Http\Controllers;
 
 use App\Enums\RedirectType;
 use App\Exports\CustomerExport;
+use App\Exports\LedgerExport;
 use App\Http\Controllers\Controller;
 use App\Imports\CustomersImport;
 use App\Models\Ledger;
@@ -669,6 +670,14 @@ class CustomerController extends Controller
         $user = User::findOrFail($id);
         $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'asc')->paginate(20);
         $title = __('Customer Ledger');
+
+        if (request('export')) {
+            $fileName = 'customer-ledger-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new LedgerExport($ledgers, $title), $fileName);
+        }
+        if (request('export_pdf')) {
+            return view('supplier::pdf.ledger', ['ledgers' => $ledgers,  'title' => $title]);
+        }
         return view('supplier::ledger', compact('ledgers', 'title'));
     }
 

@@ -132,7 +132,6 @@
                             <td colspan="1" class="text-end fw-bold">{{ $opening }}</td>
                         </tr>
 
-                        {{-- @dd($ledgers) --}}
                         @foreach ($ledgers as $index => $ledger)
                             @php
                                 $opening += $ledger->due_amount;
@@ -142,7 +141,7 @@
 
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td><a href="{{ $ledger->invoice_url }}">{{ $ledger->invoice_no }}</a>
+                                <td><a href="{{ $ledger->invoice_url }}">{{ $ledger->invoice_no }}</a></td>
                                 <td>{{ $ledger->date }}</td>
                                 <td class="text-capitalize">{{ $ledger->invoice_type }}</td>
                                 <td>

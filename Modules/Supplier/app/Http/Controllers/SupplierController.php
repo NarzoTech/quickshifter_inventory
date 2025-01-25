@@ -3,6 +3,7 @@
 namespace Modules\Supplier\app\Http\Controllers;
 
 use App\Enums\RedirectType;
+use App\Exports\LedgerExport;
 use App\Exports\SupplierDuePaidExport;
 use App\Exports\SupplierExport;
 use App\Http\Controllers\Controller;
@@ -254,25 +255,24 @@ class SupplierController extends Controller
         }
         $data['total'] = $payments->sum('amount');
 
-        if (request('export_pdf')) {
-            $html = view('supplier::pdf.due-pay-list', ['payments' => $payments->get(),  'data' => $data])->render();
-
-            $pdf = $fileName = 'due-pay-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
-            $pdf = Pdf::loadHTML($html)->setPaper('a4', 'landscape')->setOption('isRemoteEnabled', true)->setOption('enable_javascript')->setWarnings(false);
-            return $pdf->download($fileName);
-        }
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
                 $payments = $payments->paginate();
             } else {
                 $payments = $payments->paginate(request('par-page'));
+                $payments->appends(request()->query());
             }
         } else {
             $payments = $payments->paginate(20);
+            $payments->appends(request()->query());
         }
 
-        $payments->appends(request()->query());
+
+
+        if (request('export_pdf')) {
+            return view('supplier::pdf.due-pay-list', ['payments' => $payments,  'data' => $data]);
+        }
 
         return view('supplier::due-pay-history', compact('payments', 'data'));
     }
@@ -356,6 +356,16 @@ class SupplierController extends Controller
         $ledgers->appends(request()->query());
 
         $title = __('Supplier Ledger');
+
+
+        if (request('export')) {
+            $fileName = 'supplier-ledger-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new LedgerExport($ledgers, $title), $fileName);
+        }
+
+        if (request('export_pdf')) {
+            return view('supplier::pdf.ledger', ['ledgers' => $ledgers,  'title' => $title]);
+        }
         return view('supplier::ledger', compact('ledgers', 'title'));
     }
 
