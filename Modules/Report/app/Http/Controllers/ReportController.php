@@ -2,8 +2,21 @@
 
 namespace Modules\Report\app\Http\Controllers;
 
+use App\Exports\BarcodeWiseProductExport;
+use App\Exports\BarcodeWiseSaleExport;
+use App\Exports\CategoryWiseExport;
+use App\Exports\CustomerReportExport;
+use App\Exports\DetailsSaleReportExport;
 use App\Exports\DTSExport;
+use App\Exports\DueDateSaleReportExport;
+use App\Exports\ExpenseReportExport;
 use App\Exports\OtherIncomeExport;
+use App\Exports\PurchaseReportExport;
+use App\Exports\ReceivableReportExport;
+use App\Exports\SalaryReportExport;
+use App\Exports\SuppliersPaymentReportExport;
+use App\Exports\SuppliersReportExport;
+use App\Exports\TotalReceiveReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
@@ -451,6 +464,13 @@ class ReportController extends Controller
             $products->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'barcode-wise-product-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new BarcodeWiseProductExport($products), $fileName);
+            }
+        }
+
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.barcode-wise-product', [
@@ -499,6 +519,12 @@ class ReportController extends Controller
             $products->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'barcode-wise-sale-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new BarcodeWiseSaleExport($products), $fileName);
+            }
+        }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.barcode-sale', [
@@ -529,6 +555,13 @@ class ReportController extends Controller
         }
 
 
+
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'category-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new CategoryWiseExport($categories), $fileName);
+            }
+        }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.categories', [
@@ -578,6 +611,14 @@ class ReportController extends Controller
         }
 
 
+
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'customers-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new CustomerReportExport($customers), $fileName);
+            }
+        }
+
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.customer-report', [
@@ -619,6 +660,12 @@ class ReportController extends Controller
             $sales->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'receivable-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new ReceivableReportExport($sales), $fileName);
+            }
+        }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.receivable', [
@@ -671,6 +718,14 @@ class ReportController extends Controller
             $sales->appends(request()->query());
         }
 
+
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'details-sale-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new DetailsSaleReportExport($sales), $fileName);
+            }
+        }
+
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.details-sale', [
@@ -710,6 +765,14 @@ class ReportController extends Controller
         } else {
             $sales = $sales->paginate($parpage);
             $sales->appends(request()->query());
+        }
+
+
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'due-date-sale-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new DueDateSaleReportExport($sales), $fileName);
+            }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
@@ -754,7 +817,12 @@ class ReportController extends Controller
             $expenses = $expenses->paginate($parpage);
             $expenses->appends(request()->query());
         }
-
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'expense-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new ExpenseReportExport($expenses), $fileName);
+            }
+        }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
@@ -842,6 +910,7 @@ class ReportController extends Controller
             $totalReceive = $totalReceive->whereBetween('created_at', [request('from_date'), request('to_date')]);
         }
 
+
         if (request()->keyword) {
             $totalReceive = $totalReceive->where(function ($q) {
                 $q->whereHas('customer', function ($query) {
@@ -869,6 +938,12 @@ class ReportController extends Controller
             $totalReceive->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'received-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new TotalReceiveReportExport($totalReceive), $fileName);
+            }
+        }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
@@ -925,6 +1000,13 @@ class ReportController extends Controller
             $purchases->appends(request()->query());
         }
 
+
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'purchase-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new PurchaseReportExport($purchases), $fileName);
+            }
+        }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.purchase', [
@@ -977,6 +1059,12 @@ class ReportController extends Controller
         }
 
 
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'suppliers-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SuppliersReportExport($suppliers), $fileName);
+            }
+        }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.supplier', [
@@ -1035,7 +1123,12 @@ class ReportController extends Controller
             $supplierPayments->appends(request()->query());
         }
 
-
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'suppliers-payment-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SuppliersPaymentReportExport($supplierPayments), $fileName);
+            }
+        }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.supplier-payment', [
@@ -1109,6 +1202,13 @@ class ReportController extends Controller
             return $employee;
         });
 
+
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'salaries-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SalaryReportExport($employees), $fileName);
+            }
+        }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
