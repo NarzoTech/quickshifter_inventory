@@ -3,6 +3,7 @@
 namespace Modules\Report\app\Http\Controllers;
 
 use App\Exports\DTSExport;
+use App\Exports\OtherIncomeExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
@@ -99,7 +100,13 @@ class ReportController extends Controller
             $reports->appends(request()->query());
         }
 
-        if (checkAdminHasPermission('quotation.pdf.download')) {
+        if (checkAdminHasPermission('other.income.excel.download')) {
+            if (request('export')) {
+                $fileName = 'other-income-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new OtherIncomeExport($reports), $fileName);
+            }
+        }
+        if (checkAdminHasPermission('other.income.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.other-income', [
                     'reports' => $reports,

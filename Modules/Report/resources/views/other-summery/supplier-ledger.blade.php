@@ -81,16 +81,6 @@
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
                 <h4 class="section_title"> {{ __('Supplier Other Due Ledger') }}</h4>
             </div>
-            <div class="btn-actions-pane-right actions-icon-btn">
-                @adminCan('supplier.other.due.excel.download')
-                    <button type="button" class="btn bg-label-success export"><i class="fa fa-file-excel"></i>
-                        {{ __('Excel') }}</button>
-                @endadminCan
-                @adminCan('supplier.other.due.pdf.download')
-                    <button type="button" class="btn bg-label-warning export-pdf"><i class="fa fa-file-pdf"></i>
-                        {{ __('PDF') }}</button>
-                @endadminCan
-            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive list_table">

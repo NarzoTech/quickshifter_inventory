@@ -2,11 +2,14 @@
 
 namespace Modules\Report\app\Http\Controllers;
 
+use App\Exports\CustomerOtherDueExport;
+use App\Exports\SupplierOtherDueExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Report\app\Models\OtherSummery;
 use Modules\Supplier\app\Models\Supplier;
 
@@ -60,6 +63,12 @@ class OtherSummeryController extends Controller
             $summeries->appends(request()->query());
         }
 
+        if (checkAdminHasPermission('customer.other.due.excel.download')) {
+            if (request('export')) {
+                $fileName = 'customer-other-due-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new CustomerOtherDueExport($summeries), $fileName);
+            }
+        }
         if (checkAdminHasPermission('customer.other.due.pdf.download')) {
             if (request('export_pdf')) {
 
@@ -304,6 +313,14 @@ class OtherSummeryController extends Controller
         } else {
             $summeries = $summeries->paginate($parpage);
             $summeries->appends(request()->query());
+        }
+
+
+        if (checkAdminHasPermission('supplier.other.due.excel.download')) {
+            if (request('export')) {
+                $fileName = 'supplier-other-due-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SupplierOtherDueExport($summeries), $fileName);
+            }
         }
         if (checkAdminHasPermission('supplier.other.due.pdf.download')) {
             if (request('export_pdf')) {
