@@ -80,6 +80,13 @@ class ExpenseController extends Controller
             $expenses->appends(request()->query());
         }
 
+
+        if (checkAdminHasPermission('expense.excel.download')) {
+            if (request('export')) {
+                $fileName = 'expense-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new ExpensesExport($expenses), $fileName);
+            }
+        }
         if (checkAdminHasPermission('expense.pdf.download')) {
             if (request('export_pdf')) {
 
