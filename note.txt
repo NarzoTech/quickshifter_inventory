@@ -63,3 +63,8 @@ ADD COLUMN `country` VARCHAR(255) NULL DEFAULT NULL AFTER `state`;
 
 ALTER TABLE `inventory`.`supplier`
 ADD COLUMN `tax_number` VARCHAR(255) NULL DEFAULT NULL AFTER `country`;
+
+
+26/1
+ALTER TABLE `services`
+ADD COLUMN `is_favourite` TINYINT(1) NULL DEFAULT 0 AFTER `deleted_at`;

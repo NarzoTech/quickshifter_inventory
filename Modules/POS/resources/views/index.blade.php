@@ -40,6 +40,12 @@
                                             aria-controls="profile"
                                             aria-selected="false">{{ __('Favorite Products') }}</button>
                                     </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="favoriteService-tab" data-bs-toggle="tab"
+                                            data-bs-target="#favoriteService" type="button" role="tab"
+                                            aria-controls="profile"
+                                            aria-selected="false">{{ __('Favorite Service') }}</button>
+                                    </li>
 
                                 </ul>
                             </div>
@@ -220,6 +226,50 @@
                                         </form>
                                     </div>
                                     <div class="card-body service_body" style="overflow: auto">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="favoriteService" role="tabpanel"
+                                aria-labelledby="favoriteService-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <form id="favorite_service_search_form" class="pos_pro_search_form w-100">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="form-group mb-2">
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="favorite_service_name"
+                                                            placeholder="{{ __('Enter Service name') }}"
+                                                            autocomplete="off" value="{{ request()->get('name') }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group mb-2">
+                                                        <select name="favorite_service_category_id"
+                                                            id="favorite_service_category_id"
+                                                            class="form-control select2">
+                                                            <option value="">{{ __('Select Category') }}</option>
+                                                            @if (request()->has('favorite_service_category_id'))
+                                                                @foreach ($serviceCategories as $category)
+                                                                    <option
+                                                                        {{ request()->get('service_category_id') == $category->id ? 'selected' : '' }}
+                                                                        value="{{ $category->id }}">{{ $category->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            @else
+                                                                @foreach ($serviceCategories as $category)
+                                                                    <option value="{{ $category->id }}">
+                                                                        {{ $category->name }}</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-body favorite_service_body" style="overflow: auto">
 
                                     </div>
                                 </div>
@@ -920,9 +970,13 @@
                     })
                 })
 
-                $("#service_category_id,#service_name").on('input', function() {
+                $("#service_category_id,#service_name,#favorite_service_name").on('input', function() {
                     const category_id = $('#service_category_id').val();
-                    const name = $('#service_name').val();
+                    let name = null;
+                    if (this.id != 'service_category_id') {
+                        name = $(this).val();
+                    }
+
 
                     loadProudcts({
                         service_category_id: category_id,
@@ -1231,9 +1285,11 @@
                     $("#products .product_body").html(response.productView)
                     $("#favoriteProducts .product_body").html(response.favProductView)
                     $(".service_body").html(response.serviceView)
+                    $(".favorite_service_body").html(response.favoriteServiceView)
                     $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
+
                     toastr.error("{{ __('Server error occurred') }}")
                     location.reload();
                 }
@@ -1675,6 +1731,37 @@
         function wishlist(event, id, type) {
             event.stopPropagation();
             let url = "{{ route('admin.product.wishlist', ':id') }}";
+
+            url = url.replace(':id', id);
+
+            // remove d-none from preloader
+            $('.preloader_area').removeClass('d-none');
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    type: type
+                },
+                url: url,
+                success: function(response) {
+                    if (response['alert-type'] == 'success') {
+                        toastr.success(response.message)
+                        loadProudcts();
+                    } else {
+                        toastr.error(response.message)
+                    }
+                },
+                error: function(response) {
+                    if (response.status == 500) {
+                        toastr.error("{{ __('Server error occurred') }}")
+                    }
+                }
+            });
+        }
+
+        function serviceWishlist(event, id, type) {
+            event.stopPropagation();
+            let url = "{{ route('admin.service.wishlist', ':id') }}";
 
             url = url.replace(':id', id);
 

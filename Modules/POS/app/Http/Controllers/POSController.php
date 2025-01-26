@@ -168,14 +168,27 @@ class POSController extends Controller
             });
         }
 
+
         if ($request->service_category_id) {
             $services = $services->where('category_id', $request->service_category_id);
         }
 
-        $services = $services->paginate(15);
+
+        $favoriteServices = clone $services; // Clone the query to avoid conflicts
+        $favoriteServices = $favoriteServices->where('is_favourite', 1)->paginate(15);
+        $favoriteServices->appends(request()->query());
+
+
+        $services = $services->where('is_favourite', 0)->paginate(15);
         $services->appends(request()->query());
+
+
         $serviceView = view('pos::ajax_service')->with([
             'services' => $services,
+        ])->render();
+
+        $favoriteServiceView = view('pos::ajax_service')->with([
+            'services' => $favoriteServices,
         ])->render();
 
         $productView =  view('pos::ajax_products')->with([
@@ -186,7 +199,7 @@ class POSController extends Controller
             'products' => $favoriteProducts,
         ])->render();
 
-        return response()->json(['productView' => $productView, 'serviceView' => $serviceView, 'favProductView' => $favProductView]);
+        return response()->json(['productView' => $productView, 'serviceView' => $serviceView, 'favProductView' => $favProductView, 'favoriteServiceView' => $favoriteServiceView]);
     }
 
     public function favoriteProducts($products)

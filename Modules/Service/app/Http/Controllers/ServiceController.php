@@ -89,4 +89,12 @@ class ServiceController extends Controller
         $this->service->destroy($id);
         return $this->redirectWithMessage(RedirectType::DELETE->value, null, [], ['messege' => 'Service deleted successfully', 'alert-type' => 'success']);
     }
+
+    public function addToWishlist(Request $request, $id)
+    {
+
+        $this->service->addToWishlist($request->type, $id);
+        $notification  = $request->type == 'add' ? ['message' => 'Service added to wishlist successfully', 'alert-type' => 'success'] : ['message' => 'Service removed from wishlist successfully', 'alert-type' => 'success'];
+        return response()->json($notification);
+    }
 }

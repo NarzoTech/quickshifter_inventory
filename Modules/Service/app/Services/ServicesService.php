@@ -84,4 +84,16 @@ class ServicesService
     {
         return $this->category->all()->where('status', 1)->get();
     }
+
+    public function addToWishlist(string $type, $id)
+    {
+        $service = $this->service->find($id);
+
+        if ($type == 'add') {
+            $service->is_favourite = 1;
+        } else {
+            $service->is_favourite = 0;
+        }
+        $service->save();
+    }
 }
