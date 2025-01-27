@@ -61,7 +61,7 @@ ADD COLUMN `state` VARCHAR(255) NULL DEFAULT NULL AFTER `city`,
 ADD COLUMN `country` VARCHAR(255) NULL DEFAULT NULL AFTER `state`;
 
 
-ALTER TABLE `inventory`.`supplier`
+ALTER TABLE `supplier`
 ADD COLUMN `tax_number` VARCHAR(255) NULL DEFAULT NULL AFTER `country`;
 
 

@@ -29,16 +29,17 @@
                                             data-bs-target="#products" type="button" role="tab"
                                             aria-controls="products" aria-selected="true">{{ __('Products') }}</button>
                                     </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="service-tab" data-bs-toggle="tab"
-                                            data-bs-target="#service" type="button" role="tab" aria-controls="profile"
-                                            aria-selected="false">{{ __('Service') }}</button>
-                                    </li>
+
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="favoriteProducts-tab" data-bs-toggle="tab"
                                             data-bs-target="#favoriteProducts" type="button" role="tab"
                                             aria-controls="profile"
                                             aria-selected="false">{{ __('Favorite Products') }}</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="service-tab" data-bs-toggle="tab"
+                                            data-bs-target="#service" type="button" role="tab" aria-controls="profile"
+                                            aria-selected="false">{{ __('Service') }}</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="favoriteService-tab" data-bs-toggle="tab"

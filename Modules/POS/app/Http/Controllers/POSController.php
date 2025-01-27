@@ -179,7 +179,7 @@ class POSController extends Controller
         $favoriteServices->appends(request()->query());
 
 
-        $services = $services->where('is_favourite', 0)->paginate(15);
+        $services = $services->paginate(15);
         $services->appends(request()->query());
 
 
