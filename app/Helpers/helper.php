@@ -9,15 +9,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Modules\Accounts\app\Models\Account;
-use Modules\BasicPayment\app\Models\BasicPayment;
 use Modules\Currency\app\Models\MultiCurrency;
 use Modules\GlobalSetting\app\Models\Setting;
 use Modules\Language\app\Models\Language;
-use Modules\PaymentGateway\app\Models\PaymentGateway;
-use Nwidart\Modules\Facades\Module;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 
-function file_upload(UploadedFile $file, string $path = 'uploads/custom-images/', string|null $oldFile = '', bool $optimize = false)
+function file_upload(UploadedFile $file, string $path = 'uploads/custom-images/', string | null $oldFile = '', bool $optimize = false)
 {
     $extention = $file->getClientOriginalExtension();
     $file_name = 'img' . date('-Y-m-d-h-i-s-') . rand(999, 9999) . '.' . $extention;
@@ -25,7 +22,7 @@ function file_upload(UploadedFile $file, string $path = 'uploads/custom-images/'
     $file->move(public_path($path), $file_name);
 
     try {
-        if ($oldFile && !str($oldFile)->contains('uploads/website-images') && File::exists(public_path($oldFile))) {
+        if ($oldFile && ! str($oldFile)->contains('uploads/website-images') && File::exists(public_path($oldFile))) {
             unlink(public_path($oldFile));
         }
 
@@ -39,7 +36,7 @@ function file_upload(UploadedFile $file, string $path = 'uploads/custom-images/'
     return $file_name;
 }
 
-if (!function_exists('delete_file')) {
+if (! function_exists('delete_file')) {
     function delete_file($path)
     {
         if (File::exists(public_path($path))) {
@@ -47,7 +44,7 @@ if (!function_exists('delete_file')) {
         }
     }
 }
-if (!function_exists('remove_comma')) {
+if (! function_exists('remove_comma')) {
     // remove , from number
     function remove_comma($number)
     {
@@ -55,16 +52,15 @@ if (!function_exists('remove_comma')) {
     }
 }
 
-
 // file upload method
-if (!function_exists('allLanguages')) {
+if (! function_exists('allLanguages')) {
     function allLanguages()
     {
         $allLanguages = Cache::rememberForever('allLanguages', function () {
             return Language::select('code', 'name', 'direction', 'status')->get();
         });
 
-        if (!$allLanguages) {
+        if (! $allLanguages) {
             $allLanguages = Language::select('code', 'name', 'direction', 'status')->get();
         }
 
@@ -72,38 +68,38 @@ if (!function_exists('allLanguages')) {
     }
 }
 
-if (!function_exists('accountList')) {
+if (! function_exists('accountList')) {
     function accountList()
     {
         $list = [
-            'cash' => 'Cash',
-            'bank' => 'Bank',
+            'cash'           => 'Cash',
+            'bank'           => 'Bank',
             'mobile_banking' => 'Mobile Banking',
-            'card' => 'Card',
+            'card'           => 'Card',
         ];
 
         return $list;
     }
 }
 
-if (!function_exists('mobileBankList')) {
+if (! function_exists('mobileBankList')) {
     function mobileBankList()
     {
         $list = [
-            'bkash' => 'bKash',
-            'rocket' => 'Rocket',
-            'nagad' => 'Nagad',
+            'bkash'    => 'bKash',
+            'rocket'   => 'Rocket',
+            'nagad'    => 'Nagad',
             'surecash' => 'SureCash',
-            'ucash' => 'UCash',
-            'mCash' => 'mCash',
-            'tap' => 'Tap',
+            'ucash'    => 'UCash',
+            'mCash'    => 'mCash',
+            'tap'      => 'Tap',
         ];
 
         return $list;
     }
 }
 
-if (!function_exists('selectedAccount')) {
+if (! function_exists('selectedAccount')) {
     function selectedAccount($inputValue, $selectedId = null)
     {
         $accounts = Cache::rememberForever('accounts', function () {
@@ -112,7 +108,7 @@ if (!function_exists('selectedAccount')) {
 
         $html = '';
 
-        if (!empty($accounts)) {
+        if (! empty($accounts)) {
             foreach ($accounts as $account) {
                 $isSelected = $account->id == $selectedId ? 'selected' : '';
 
@@ -176,17 +172,17 @@ if (!function_exists('selectedAccount')) {
 }
 
 // card type
-if (!function_exists('cardTypeList')) {
+if (! function_exists('cardTypeList')) {
     function cardTypeList()
     {
         $list = [
             'mastercard' => 'MasterCard',
-            'visa' => 'Visa',
-            'amex' => 'American Express',
-            'nexus' => 'Nexus',
-            'credit' => 'Credit Card',
-            'debit' => 'Debit Card',
-            'prepaid' => 'Prepaid Card',
+            'visa'       => 'Visa',
+            'amex'       => 'American Express',
+            'nexus'      => 'Nexus',
+            'credit'     => 'Credit Card',
+            'debit'      => 'Debit Card',
+            'prepaid'    => 'Prepaid Card',
 
         ];
 
@@ -194,10 +190,10 @@ if (!function_exists('cardTypeList')) {
     }
 }
 
-if (!function_exists('getSessionLanguage')) {
+if (! function_exists('getSessionLanguage')) {
     function getSessionLanguage(): string
     {
-        if (!session()->has('lang')) {
+        if (! session()->has('lang')) {
             session()->put('lang', config('app.locale'));
             session()->forget('text_direction');
             session()->put('text_direction', 'ltr');
@@ -210,17 +206,17 @@ if (!function_exists('getSessionLanguage')) {
 }
 
 // all payment methods
-if (!function_exists('allPaymentMethods')) {
+if (! function_exists('allPaymentMethods')) {
     function allPaymentMethods($key = null)
     {
         $methods = [
-            'bkash' => 'bKash',
-            'rocket' => 'Rocket',
-            'nagad' => 'Nagad',
+            'bkash'         => 'bKash',
+            'rocket'        => 'Rocket',
+            'nagad'         => 'Nagad',
             'bank_transfer' => 'Bank Transfer',
-            'hand_cash' => 'Hand Cash',
-            'cod' => 'Cash On Delivery',
-            'check' => 'Bank Check',
+            'hand_cash'     => 'Hand Cash',
+            'cod'           => 'Cash On Delivery',
+            'check'         => 'Bank Check',
         ];
 
         if ($key) {
@@ -235,7 +231,6 @@ function admin_lang()
     return Session::get('admin_lang');
 }
 
-
 // calculate currency
 function currency($price = '')
 {
@@ -246,16 +241,16 @@ function currency($price = '')
 
         $currency = MultiCurrency::when($siteCurrencyId, function ($query) use ($siteCurrencyId) {
             return $query->where('id', $siteCurrencyId);
-        })->when(!$siteCurrencyId, function ($query) {
+        })->when(! $siteCurrencyId, function ($query) {
             return $query->where('is_default', 'yes');
         })->first();
 
         return $currency;
     });
 
-    $currency_icon = $currencySetting->currency_icon;
-    $currency_code = $currencySetting->currency_code;
-    $currency_rate = $currencySetting->currency_rate ? $currencySetting->currency_rate : 1;
+    $currency_icon     = $currencySetting->currency_icon;
+    $currency_code     = $currencySetting->currency_code;
+    $currency_rate     = $currencySetting->currency_rate ? $currencySetting->currency_rate : 1;
     $currency_position = $currencySetting->currency_position;
     if ($price) {
         $price = floatval(str_replace(',', '', $price));
@@ -280,7 +275,6 @@ function currency($price = '')
     }
 }
 
-
 // get currency icon
 function currency_icon()
 {
@@ -289,7 +283,7 @@ function currency_icon()
 
         $currency = MultiCurrency::when($siteCurrencyId, function ($query) use ($siteCurrencyId) {
             return $query->where('id', $siteCurrencyId);
-        })->when(!$siteCurrencyId, function ($query) {
+        })->when(! $siteCurrencyId, function ($query) {
             return $query->where('is_default', 'yes');
         })->first();
 
@@ -307,8 +301,6 @@ function remove_icon($price)
     return $price;
 }
 
-
-
 // custom decode and encode input value
 function html_decode($text)
 {
@@ -317,28 +309,34 @@ function html_decode($text)
     return $after_decode;
 }
 
-if (!function_exists('checkAdminHasPermission')) {
+if (! function_exists('checkAdminHasPermission')) {
     function checkAdminHasPermission($permission): bool
     {
-        return Auth::guard('admin')->user()->can($permission) ? true : false;
+        $admin = Auth::guard('admin')->user();
+
+        if (! $admin) {
+            return false;
+        }
+
+        return $admin->can($permission);
     }
 }
 
-if (!function_exists('checkAdminHasPermissionAndThrowException')) {
+if (! function_exists('checkAdminHasPermissionAndThrowException')) {
     function checkAdminHasPermissionAndThrowException($permission)
     {
-        if (!checkAdminHasPermission($permission)) {
+        if (! checkAdminHasPermission($permission)) {
             throw new AccessPermissionDeniedException();
         }
     }
 }
 
-if (!function_exists('getSettingStatus')) {
+if (! function_exists('getSettingStatus')) {
     function getSettingStatus($key)
     {
         if (Cache::has('setting')) {
             $setting = Cache::get('setting');
-            if (!is_null($key)) {
+            if (! is_null($key)) {
                 return $setting->$key == 'active' ? true : false;
             }
         } else {
@@ -354,13 +352,13 @@ if (!function_exists('getSettingStatus')) {
     }
 }
 
-if (!function_exists('saveLog')) {
+if (! function_exists('saveLog')) {
     function saveLog($message, $level = 'info')
     {
         Log::log($level, $message);
     }
 }
-if (!function_exists('isRoute')) {
+if (! function_exists('isRoute')) {
     function isRoute(string | array $route, string $returnValue = null)
     {
         if (is_array($route)) {
@@ -380,26 +378,19 @@ if (!function_exists('isRoute')) {
     }
 }
 
-
-if (!function_exists('numberToWord')) {
+if (! function_exists('numberToWord')) {
 
     function numberToWord($num)
     {
-        $num  = (string) ((int) $num);
-
-
+        $num = (string) ((int) $num);
 
         if ((int) ($num) && ctype_digit($num)) {
 
-            $words  = array();
+            $words = [];
 
+            $num = str_replace([',', ' '], '', trim($num));
 
-
-            $num    = str_replace(array(',', ' '), '', trim($num));
-
-
-
-            $list1  = array(
+            $list1 = [
                 '',
                 'one',
                 'two',
@@ -421,12 +412,10 @@ if (!function_exists('numberToWord')) {
                 'sixteen',
                 'seventeen',
                 'eighteen',
-                'nineteen'
-            );
+                'nineteen',
+            ];
 
-
-
-            $list2  = array(
+            $list2 = [
                 '',
                 'ten',
                 'twenty',
@@ -438,12 +427,10 @@ if (!function_exists('numberToWord')) {
                 'seventy',
                 'eighty',
                 'ninety',
-                'hundred'
-            );
+                'hundred',
+            ];
 
-
-
-            $list3  = array(
+            $list3 = [
                 '',
                 'thousand',
                 'million',
@@ -470,10 +457,8 @@ if (!function_exists('numberToWord')) {
 
                 'octodecillion',
                 'novemdecillion',
-                'vigintillion'
-            );
-
-
+                'vigintillion',
+            ];
 
             $num_length = strlen($num);
 
@@ -481,31 +466,27 @@ if (!function_exists('numberToWord')) {
 
             $max_length = $levels * 3;
 
-            $num    = substr('00' . $num, -$max_length);
+            $num = substr('00' . $num, -$max_length);
 
             $num_levels = str_split($num, 3);
-
-
 
             foreach ($num_levels as $num_part) {
 
                 $levels--;
 
-                $hundreds   = (int) ($num_part / 100);
+                $hundreds = (int) ($num_part / 100);
 
-                $hundreds   = ($hundreds ? ' ' . $list1[$hundreds] . ' Hundred' . ($hundreds == 1 ? '' : 's') . ' ' : '');
+                $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' Hundred' . ($hundreds == 1 ? '' : 's') . ' ' : '');
 
-                $tens       = (int) ($num_part % 100);
+                $tens = (int) ($num_part % 100);
 
-                $singles    = '';
-
-
+                $singles = '';
 
                 if ($tens < 20) {
                     $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '');
                 } else {
-                    $tens = (int) ($tens / 10);
-                    $tens = ' ' . $list2[$tens] . ' ';
+                    $tens    = (int) ($tens / 10);
+                    $tens    = ' ' . $list2[$tens] . ' ';
                     $singles = (int) ($num_part % 10);
                     $singles = ' ' . $list1[$singles] . ' ';
                 }
@@ -517,17 +498,13 @@ if (!function_exists('numberToWord')) {
                 $commas = $commas - 1;
             }
 
+            $words = implode(', ', $words);
 
-
-            $words  = implode(', ', $words);
-
-
-
-            $words  = trim(str_replace(' ,', ',', ucwords($words)), ', ');
+            $words = trim(str_replace(' ,', ',', ucwords($words)), ', ');
 
             if ($commas) {
 
-                $words  = str_replace(',', ' and', $words);
+                $words = str_replace(',', ' and', $words);
             }
         } else if (! ((int) $num)) {
 
@@ -537,20 +514,18 @@ if (!function_exists('numberToWord')) {
             $words = '';
         }
 
-
-
         return $words;
     }
 }
 
-if (!function_exists('checkPaginate')) {
+if (! function_exists('checkPaginate')) {
     function checkPaginate($list)
     {
         return $list instanceof \Illuminate\Pagination\LengthAwarePaginator;
     }
 }
 
-if (!function_exists('routeList')) {
+if (! function_exists('routeList')) {
     function routeList(): object
     {
         $route_list = [
@@ -564,258 +539,258 @@ if (!function_exists('routeList')) {
             (object) ['name' => 'Vehicle List', 'route' => 'vehicle.index', 'permission' => 'vehicle.view'],
             (object) ['name' => 'Area List', 'route' => 'area.index', 'permission' => 'area.view'],
             (object) [
-                'name' => 'Product List',
-                'route' => 'product.index',
+                'name'       => 'Product List',
+                'route'      => 'product.index',
                 'permission' => 'product.view',
-                'children' => ['product.edit', 'product.show'],
+                'children'   => ['product.edit', 'product.show'],
             ],
             (object) [
-                'name' => 'Add Product',
-                'route' => 'product.create',
+                'name'       => 'Add Product',
+                'route'      => 'product.create',
                 'permission' => 'product.create',
             ],
             (object) [
-                'name' => 'Unit Type',
-                'route' => 'unit.index',
+                'name'       => 'Unit Type',
+                'route'      => 'unit.index',
                 'permission' => 'unit.view',
             ],
             (object) [
-                'name' => 'Category',
-                'route' => 'category.index',
+                'name'       => 'Category',
+                'route'      => 'category.index',
                 'permission' => 'category.view',
             ],
             (object) [
-                'name' => 'Brand',
-                'route' => 'brand.index',
+                'name'       => 'Brand',
+                'route'      => 'brand.index',
                 'permission' => 'brand.view',
             ],
             (object) [
-                'name' => 'Print Barcode / Label',
-                'route' => 'product.barcode',
+                'name'       => 'Print Barcode / Label',
+                'route'      => 'product.barcode',
                 'permission' => 'product.barcode',
             ],
             (object) [
-                'name' => 'Add Purchase',
-                'route' => 'purchase.create',
+                'name'       => 'Add Purchase',
+                'route'      => 'purchase.create',
                 'permission' => 'purchase.create',
             ],
             (object) [
-                'name' => 'Manage Purchase',
-                'route' => 'purchase.index',
+                'name'       => 'Manage Purchase',
+                'route'      => 'purchase.index',
                 'permission' => 'purchase.view',
             ],
             (object) [
-                'name' => 'Purchases Return List',
-                'route' => 'purchase.return.index',
+                'name'       => 'Purchases Return List',
+                'route'      => 'purchase.return.index',
                 'permission' => 'purchase.return.view',
             ],
             (object) [
-                'name' => 'Purchases Return Type',
-                'route' => 'purchase.return.type.list',
+                'name'       => 'Purchases Return Type',
+                'route'      => 'purchase.return.type.list',
                 'permission' => 'purchase.return.type.view',
             ],
             (object) [
-                'name' => __('Stock'),
-                'route' => 'stock.index',
+                'name'       => __('Stock'),
+                'route'      => 'stock.index',
                 'permission' => 'stock.view',
             ],
             (object) [
-                'name' => __('Service List'),
-                'route' => 'service.index',
+                'name'       => __('Service List'),
+                'route'      => 'service.index',
                 'permission' => 'service.view',
             ],
             (object) [
-                'name' => __('Service Category'),
-                'route' => 'serviceCategory.index',
+                'name'       => __('Service Category'),
+                'route'      => 'serviceCategory.index',
                 'permission' => 'serviceCategory.view',
             ],
             (object) [
-                'name' => __('POS'),
-                'route' => 'pos',
+                'name'       => __('POS'),
+                'route'      => 'pos',
                 'permission' => 'pos.view',
             ],
             (object) [
-                'name' => __('Manage Sales'),
-                'route' => 'sales.index',
+                'name'       => __('Manage Sales'),
+                'route'      => 'sales.index',
                 'permission' => 'sales.view',
             ],
             (object) [
-                'name' => __('Sales Return List'),
-                'route' => 'sales.return.list',
+                'name'       => __('Sales Return List'),
+                'route'      => 'sales.return.list',
                 'permission' => 'salesReturn.view',
             ],
             (object) [
-                'name' => __('Cash Flow'),
-                'route' => 'cashflow',
+                'name'       => __('Cash Flow'),
+                'route'      => 'cashflow',
                 'permission' => 'cashflow.view',
             ],
             (object) [
-                'name' => __('Create Account'),
-                'route' => 'accounts.create',
+                'name'       => __('Create Account'),
+                'route'      => 'accounts.create',
                 'permission' => 'accounts.create',
             ],
             (object) [
-                'name' => __('Account List'),
-                'route' => 'accounts.index',
+                'name'       => __('Account List'),
+                'route'      => 'accounts.index',
                 'permission' => 'accounts.view',
             ],
             (object) [
-                'name' => __('Balance Transfer'),
-                'route' => 'balance.transfer',
+                'name'       => __('Balance Transfer'),
+                'route'      => 'balance.transfer',
                 'permission' => 'balance.transfer',
             ],
             (object) [
-                'name' => __('Deposit') . '/' . __('Withdraw'),
-                'route' => 'opening-balance',
+                'name'       => __('Deposit') . '/' . __('Withdraw'),
+                'route'      => 'opening-balance',
                 'permission' => 'opening-balance.manage',
             ],
             (object) [
-                'name' => __('Bank'),
-                'route' => 'bank.index',
+                'name'       => __('Bank'),
+                'route'      => 'bank.index',
                 'permission' => 'bank.view',
             ],
             (object) [
-                'name' => __('Add Quotation'),
-                'route' => 'quotation.create',
+                'name'       => __('Add Quotation'),
+                'route'      => 'quotation.create',
                 'permission' => 'quotation.create',
             ],
             (object) [
-                'name' => __('Quotation Manage'),
-                'route' => 'quotation.index',
+                'name'       => __('Quotation Manage'),
+                'route'      => 'quotation.index',
                 'permission' => 'quotation.manage',
             ],
             (object) [
-                'name' => __('Other Income'),
-                'route' => 'report.other-income',
+                'name'       => __('Other Income'),
+                'route'      => 'report.other-income',
                 'permission' => 'report.other-income',
             ],
             (object) [
-                'name' => __('DTS'),
-                'route' => 'report.dts',
+                'name'       => __('DTS'),
+                'route'      => 'report.dts',
                 'permission' => 'report.dts',
             ],
             (object) [
-                'name' => __('Customer Other Due'),
-                'route' => 'other-summery.customer',
+                'name'       => __('Customer Other Due'),
+                'route'      => 'other-summery.customer',
                 'permission' => 'other-summery.customer',
             ],
             (object) [
-                'name' => __('Supplier Other Due'),
-                'route' => 'other-summery.supplier',
+                'name'       => __('Supplier Other Due'),
+                'route'      => 'other-summery.supplier',
                 'permission' => 'other-summery.supplier',
             ],
             (object) [
-                'name' => __('Barcode Wise Product Report'),
+                'name'  => __('Barcode Wise Product Report'),
                 'route' => 'report.barcode-wise-product',
             ],
             (object) [
-                'name' => __('Barcode Wise Sale Report'),
+                'name'  => __('Barcode Wise Sale Report'),
                 'route' => 'report.barcode-sale',
             ],
             (object) [
-                'name' => __('Categories Report'),
+                'name'  => __('Categories Report'),
                 'route' => 'report.categories',
             ],
             (object) [
-                'name' => __('Customers Report'),
+                'name'  => __('Customers Report'),
                 'route' => 'report.customers',
             ],
             (object) [
-                'name' => __('Due Report'),
+                'name'  => __('Due Report'),
                 'route' => 'report.receivable',
             ],
             (object) [
-                'name' => __('Detail Sales Report'),
+                'name'  => __('Detail Sales Report'),
                 'route' => 'report.details-sale',
 
             ],
             (object) [
-                'name' => __('Due Date Sales Report'),
+                'name'  => __('Due Date Sales Report'),
                 'route' => 'report.due-date-sale',
             ],
             (object) [
-                'name' => __('Expense Report'),
+                'name'  => __('Expense Report'),
                 'route' => 'report.expense',
             ],
             (object) [
-                'name' => __('Payment Received Report'),
+                'name'  => __('Payment Received Report'),
                 'route' => 'report.received-report',
             ],
             (object) [
-                'name' => __('Purchases Report'),
+                'name'  => __('Purchases Report'),
                 'route' => 'report.purchase',
             ],
             (object) [
-                'name' => __('Suppliers Report'),
+                'name'  => __('Suppliers Report'),
                 'route' => 'report.supplier',
             ],
             (object) [
-                'name' => __('Suppliers Payment'),
+                'name'  => __('Suppliers Payment'),
                 'route' => 'report.supplier-payment',
             ],
             (object) [
-                'name' => __('Salary Report'),
+                'name'  => __('Salary Report'),
                 'route' => 'report.salary',
             ],
             (object) [
-                'name' => __('New Expense'),
+                'name'  => __('New Expense'),
                 'route' => 'expense.create',
                 'query' => '?type=new',
             ],
             (object) [
-                'name' => __('Expense List'),
+                'name'  => __('Expense List'),
                 'route' => 'expense.index',
                 'query' => '',
             ],
             (object) [
-                'name' => __('Expense Type'),
+                'name'  => __('Expense Type'),
                 'route' => 'expense.type.index',
                 'query' => '',
             ],
             (object) [
-                'name' => __('Asset List'),
+                'name'  => __('Asset List'),
                 'route' => 'assets.index',
                 'query' => '',
             ],
             (object) [
-                'name' => __('Asset Type'),
+                'name'  => __('Asset Type'),
                 'route' => 'asset-category.index',
                 'query' => '',
             ],
             (object) [
-                'name' => __('Employee List'),
+                'name'  => __('Employee List'),
                 'route' => 'employee.index',
             ],
             (object) [
-                'name' => __('Add New Employee'),
+                'name'  => __('Add New Employee'),
                 'route' => 'employee.create',
 
             ],
             (object) [
-                'name' => __('All Paid Salary'),
+                'name'  => __('All Paid Salary'),
                 'route' => 'salary.list',
             ],
             (object) [
-                'name' => __('Attendance Sheet'),
-                'route' => 'attendance.index',
-                'sub_menu' => []
+                'name'     => __('Attendance Sheet'),
+                'route'    => 'attendance.index',
+                'sub_menu' => [],
             ],
             (object) [
-                'name' => __('Holiday Setup'),
+                'name'  => __('Holiday Setup'),
                 'route' => 'attendance.settings.holidays.index',
             ],
             (object) [
-                'name' => __('Business Settings'),
+                'name'  => __('Business Settings'),
                 'route' => 'settings',
             ],
             (object) [
-                'name' => __('Reset Database'),
+                'name'  => __('Reset Database'),
                 'route' => 'reset.database',
             ],
             (object) [
-                'name' => __('Clear Cache'),
+                'name'  => __('Clear Cache'),
                 'route' => 'cache.clear',
-            ]
+            ],
         ];
         usort($route_list, function ($a, $b) {
             return strcmp($a->name, $b->name);
