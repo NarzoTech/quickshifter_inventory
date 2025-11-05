@@ -253,7 +253,7 @@
                 const paymentType = $(this).val();
                 console.log(paymentType);
                 let html = `<label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
-                    <select name="account_id" id="" class="form-control form-group">`;
+                    <select name="account_id" id="" class="form-control form-group" required>`;
                 const filterAccount = accounts.filter(account => account.account_type === paymentType);
                 html = accountsType(filterAccount, html, paymentType);
                 $('.accounts').html(html);

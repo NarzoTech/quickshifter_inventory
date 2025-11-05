@@ -180,7 +180,7 @@
                                     <label for="name">{{ __('Holiday Name') }}<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="Name">
+                                        placeholder="Name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -188,20 +188,20 @@
                                     <label for="date">{{ __('Start Date') }} <span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="start_date"
-                                        name="start_date" placeholder="MM/DD/YY" autocomplete="off">
+                                        name="start_date" placeholder="MM/DD/YY" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="date">{{ __('End Date') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="end_date" name="end_date"
-                                        placeholder="MM/DD/YY" autocomplete="off">
+                                        placeholder="MM/DD/YY" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="status">{{ __('Status') }}</label>
-                                    <select name="status" id="status" class="form-control mb-0">
+                                    <select name="status" id="status" class="form-control mb-0" required>
                                         <option value="1">{{ __('Active') }}</option>
                                         <option value="0">{{ __('Inactive') }}</option>
                                     </select>
@@ -211,7 +211,7 @@
                                 <div class="form-group mt-4 mb-0">
                                     <label for="description">{{ __('Description') }}<span
                                             class="text-danger">*</span></label>
-                                    <textarea name="description" id="description" class="form-control" rows="4"></textarea>
+                                    <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
                                 </div>
                             </div>
                         </div>
@@ -246,7 +246,7 @@
                                         <label for="name">{{ __('Holiday Name') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            placeholder="Name" value="{{ $day->name }}">
+                                            placeholder="Name" value="{{ $day->name }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -255,7 +255,7 @@
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="start_date"
                                             name="start_date" placeholder="MM/DD/YY" value="{{ $day->start_date }}"
-                                            autocomplete="off">
+                                            autocomplete="off" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -264,7 +264,7 @@
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="end_date"
                                             name="end_date" placeholder="MM/DD/YY" value="{{ $day->end_date }}"
-                                            autocomplete="off">
+                                            autocomplete="off" required>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -282,7 +282,7 @@
                                     <div class="form-group mt-4 mb-0">
                                         <label for="description">{{ __('Description') }}<span
                                                 class="text-danger">*</span></label>
-                                        <textarea name="description" id="description" class="form-control" rows="4">{{ $day->description }}</textarea>
+                                        <textarea name="description" id="description" class="form-control" rows="4" required>{{ $day->description }}</textarea>
                                     </div>
                                 </div>
                             </div>

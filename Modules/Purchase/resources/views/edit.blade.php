@@ -35,7 +35,7 @@
                                                     @foreach ($suppliers as $supplier)
                                                         <option value="{{ $supplier->id }}"
                                                             {{ $supplier->id == $purchase->supplier_id ? 'selected' : '' }}>
-                                                            {{ $supplier->name }}</option>
+                                                            {{ $supplier->company }}</option>
                                                     @endforeach
                                                 </select>
                                                 @error('supplier_id')
@@ -166,12 +166,14 @@
                                                                 <td>
                                                                     <input type="number" class="form-control"
                                                                         name="total[]"
-                                                                        value="{{ $purchaseDetail->sub_total }}" readonly step="0.01">
+                                                                        value="{{ $purchaseDetail->sub_total }}" readonly
+                                                                        step="0.01">
                                                                 </td>
                                                                 <td>
                                                                     <input type="text" class="form-control"
                                                                         name="profit[]"
-                                                                        value="{{ $purchaseDetail->profit }}" step="0.01">
+                                                                        value="{{ $purchaseDetail->profit }}"
+                                                                        step="0.01">
                                                                 </td>
                                                                 <td>
                                                                     <input type="number" class="form-control"

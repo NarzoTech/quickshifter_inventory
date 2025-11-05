@@ -13,7 +13,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
                                 <h4 class="section_title">{{ __('Edit Employee') }}</h4>
-                                
+
                             </div>
                             <div class="card-body">
                                 <form action="{{ route('admin.employee.update', $employee->id) }}" method="post"
@@ -27,7 +27,7 @@
                                                         class="text-danger">*</span>
                                                 </label>
                                                 <input type="text" class="form-control" name="name"
-                                                    placeholder="Employee Name" value="{{ $employee->name }}">
+                                                    placeholder="Employee Name" value="{{ $employee->name }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">

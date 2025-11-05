@@ -26,7 +26,7 @@
                                                         <label for="name">{{ __('Name') }}<span
                                                                 class="text-danger">*</span></label>
                                                         <input type="text" name="name" class="form-control"
-                                                            id="name" required value="{{ old('name') }}">
+                                                            id="name" required value="{{ old('name') }}" required>
                                                         @error('name')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -36,7 +36,7 @@
                                                     <div class="form-group">
                                                         <label for="slug">{{ __('Status') }}<span
                                                                 class="text-danger">*</span></label>
-                                                        <select name="status" id="status" class="form-control">
+                                                        <select name="status" id="status" class="form-control" required>
                                                             <option value="1">
                                                                 {{ __('Active') }}</option>
                                                             <option value="0">

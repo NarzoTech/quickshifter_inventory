@@ -117,10 +117,10 @@
                     <thead>
                         <tr>
                             <th>{{ __('SN') }}</th>
-                            <th>{{ __('Company') }}</th>
-                            <th>{{ __('Name') }}</th>
-                            <th>{{ __('Phone') }}</th>
-                            <th>{{ __('Area') }}</th>
+                            <th>{{ __('Supplier Company') }}</th>
+                            <th>{{ __('Supplier Name') }}</th>
+                            <th>{{ __('Supplier Phone') }}</th>
+                            <th>{{ __('Supplier Area') }}</th>
                             <th>{{ __('Purchase Total') }}</th>
                             <th>{{ __('Purchase Payment') }}</th>
                             <th>{{ __('Total Due') }}</th>
@@ -254,7 +254,7 @@
                                     <label for="name">{{ __('Supplier Name') }}<span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="Name">
+                                        placeholder="Name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -383,7 +383,7 @@
                                         <label for="name">{{ __('Supplier Name') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            value="{{ $supplier->name }}">
+                                            value="{{ $supplier->name }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

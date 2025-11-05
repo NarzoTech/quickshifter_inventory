@@ -212,7 +212,7 @@
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ date('d-m-Y') }}" autocomplete="off">
+                                        value="{{ date('d-m-Y') }}" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -220,7 +220,7 @@
                                     <label for="name">{{ __('Expense Type') }}<span
                                             class="text-danger">*</span></label>
                                     <select name="expense_type_id" id="" class="form-control select2"
-                                        data-dropdown-parent="#addExpense">
+                                        data-dropdown-parent="#addExpense" required>
                                         <option value="">{{ __('Expense Type') }}</option>
                                         @foreach ($types as $type)
                                             <option value="{{ $type->id }}">{{ $type->name }}</option>
@@ -232,7 +232,7 @@
                                 <div class="form-group">
                                     <label for="name">{{ __('Payment Type') }}<span
                                             class="text-danger">*</span></label>
-                                    <select name="payment_type" id="" class="form-control">
+                                    <select name="payment_type" id="" class="form-control" required>
                                         <option value="">{{ __('Payment Type') }}</option>
                                         @foreach (accountList() as $key => $list)
                                             <option value="{{ $key }}">{{ $list }}</option>
@@ -247,7 +247,7 @@
                                 <div class="form-group">
                                     <label for="amount">{{ __('Amount') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="amount" name="amount"
-                                        value="{{ old('amount') }}">
+                                        value="{{ old('amount') }}" required>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -294,7 +294,7 @@
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="date"
                                             name="date" value="{{ now()->parse($expense->date)->format('d-m-Y') }}"
-                                            autocomplete="off">
+                                            autocomplete="off" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -302,7 +302,7 @@
                                         <label for="name">{{ __('Expense Type') }}<span
                                                 class="text-danger">*</span></label>
                                         <select name="expense_type_id" id="" class="form-control select2"
-                                            data-dropdown-parent="#editExpense{{ $expense->id }}">
+                                            data-dropdown-parent="#editExpense{{ $expense->id }}" required>
                                             <option value="">{{ __('Expense Type') }}</option>
                                             @foreach ($types as $type)
                                                 <option value="{{ $type->id }}"
@@ -316,7 +316,7 @@
                                     <div class="form-group">
                                         <label for="name">{{ __('Payment Type') }}<span
                                                 class="text-danger">*</span></label>
-                                        <select name="payment_type" id="" class="form-control">
+                                        <select name="payment_type" id="" class="form-control" required>
                                             <option value="">{{ __('Payment Type') }}</option>
                                             @foreach (accountList() as $key => $list)
                                                 <option value="{{ $key }}"
@@ -335,7 +335,7 @@
                                         <label for="amount">{{ __('Amount') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="amount" name="amount"
-                                            value="{{ $expense->amount }}">
+                                            value="{{ $expense->amount }}" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -372,7 +372,7 @@
                 $('select[name="payment_type"]').on('change', function() {
                     const paymentType = $(this).val();
                     let html = `<label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
-                    <select name="account_id" id="" class="form-control form-group">`;
+                    <select name="account_id" id="" class="form-control form-group" required>`;
                     const filterAccount = accounts.filter(account => account.account_type === paymentType);
                     html = accountsType(filterAccount, html, paymentType);
                     $('.accounts').html(html);

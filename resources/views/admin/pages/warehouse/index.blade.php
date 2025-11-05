@@ -102,7 +102,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name">
+                                    <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -172,7 +172,7 @@
                                         <label for="name">{{ __('Name') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            value="{{ $house->name }}">
+                                            value="{{ $house->name }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

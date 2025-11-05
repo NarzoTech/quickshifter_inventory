@@ -150,13 +150,13 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name">
+                                    <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="name">{{ __('Status') }}<span class="text-danger">*</span></label>
-                                    <select name="status" id="status" class="form-control">
+                                    <select name="status" id="status" class="form-control" required>
                                         <option value="1">{{ __('Active') }}</option>
                                         <option value="0">{{ __('Inactive') }}</option>
                                     </select>
@@ -201,14 +201,14 @@
                                         <label for="name">{{ __('Name') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            value="{{ $category->name }}">
+                                            value="{{ $category->name }}" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label for="status">{{ __('Status') }}<span
                                                 class="text-danger">*</span></label>
-                                        <select name="status" id="status" class="form-control">
+                                        <select name="status" id="status" class="form-control" required>
                                             <option value="1" {{ $category->status == 1 ? 'selected' : '' }}>
                                                 {{ __('Active') }}
                                             </option>

@@ -38,7 +38,7 @@
                                         <label for="user">{{ __('Select Admin') }} <span
                                                 class="text-danger">*</span></label>
                                         <select name="user_id" id="user"
-                                            class="form-control select2 @error('user_id') is-invalid @enderror">
+                                            class="form-control select2 @error('user_id') is-invalid @enderror" required>
                                             <option value="">{{ __('Select Admin') }}</option>
                                             @foreach ($admins as $admin)
                                                 <option value="{{ $admin->id }}">{{ $admin->name }}
@@ -54,7 +54,8 @@
                                         <label for="role">{{ __('Role') }} <span
                                                 class="text-danger">*</span></label>
                                         <select name="role[]" id="role"
-                                            class="form-control select2 @error('role') is-invalid @enderror" multiple>
+                                            class="form-control select2 @error('role') is-invalid @enderror" multiple
+                                            required>
                                             <option value="" disabled>{{ __('Select Role') }}</option>
                                             @foreach ($roles as $role)
                                                 <option value="{{ $role->name }}">{{ $role->name }}

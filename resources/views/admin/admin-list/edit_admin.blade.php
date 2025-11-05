@@ -29,14 +29,14 @@
                                             <div class="form-group">
                                                 <label>{{ __('Name') }} <span class="text-danger">*</span></label>
                                                 <input type="text" id="name" class="form-control" name="name"
-                                                    value="{{ $admin->name }}">
+                                                    value="{{ $admin->name }}" required>
                                             </div>
                                         </div>
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>{{ __('Email') }} <span class="text-danger">*</span></label>
                                                 <input type="email" id="slug" class="form-control" name="email"
-                                                    value="{{ $admin->email }}">
+                                                    value="{{ $admin->email }}" required>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -44,14 +44,15 @@
                                                 <label
                                                     title="Leave it blank if you don't want to change password">{{ __('Password') }}
                                                     <span class="text-success">*</span></label>
-                                                <input type="password" id="password" class="form-control" name="password">
+                                                <input type="password" id="password" class="form-control" name="password"
+                                                    required>
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label>{{ __('Status') }} <span class="text-danger">*</span></label>
-                                                <select name="status" class="form-control">
+                                                <select name="status" class="form-control" required>
                                                     <option value="active" @selected($admin->status == 'active')>
                                                         {{ __('Active') }}</option>
                                                     <option value="inactive" @selected($admin->status == 'inactive')>
@@ -65,7 +66,7 @@
                                                         class="text-danger">*</span></label>
                                                 <select name="role[]" id="role"
                                                     class="form-control select2 @error('role') is-invalid @enderror"
-                                                    multiple>
+                                                    multiple required>
                                                     <option value="" disabled>{{ __('Select Role') }}</option>
                                                     @foreach ($roles as $role)
                                                         <option value="{{ $role->name }}" @selected($admin->hasRole($role->name))>

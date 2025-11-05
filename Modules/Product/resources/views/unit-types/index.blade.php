@@ -22,13 +22,13 @@
                                 <div class="col-xl-12">
                                     <div class="form-group">
                                         <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                        <input type="text" id="name" class="form-control" name="name">
+                                        <input type="text" id="name" class="form-control" name="name" required>
                                     </div>
                                 </div>
                                 <div class="col-xl-12">
                                     <div class="form-group">
                                         <label>{{ __('Short Name') }} <span class="text-danger">*</span></label>
-                                        <input type="text" id="ShortName" class="form-control" name="ShortName">
+                                        <input type="text" id="ShortName" class="form-control" name="ShortName" required>
                                     </div>
                                 </div>
                                 <div class="col-xl-12">
@@ -45,7 +45,7 @@
                                 <div class="col-xl-12 operator d-none">
                                     <div class="form-group">
                                         <label>{{ __('Operator') }}</label>
-                                        <select name="operator" id="operator" class="form-control">
+                                        <select name="operator" id="operator" class="form-control" required>
                                             <option value="*">{{ __('Multiply') }} (*)</option>
                                             <option value="/">{{ __('Divide') }} (/)</option>
                                         </select>

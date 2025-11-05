@@ -28,14 +28,16 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label>{{ __('Name') }} <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" value="{{ $admin->name }}" name="name">
+                                <input type="text" class="form-control" value="{{ $admin->name }}" name="name"
+                                    required>
                             </div>
                         </div>
 
                         <div class="col-12">
                             <div class="form-group">
                                 <label>{{ __('Email') }} <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" value="{{ $admin->email }}" name="email">
+                                <input type="email" class="form-control" value="{{ $admin->email }}" name="email"
+                                    required>
                             </div>
                         </div>
                     </div>
@@ -65,21 +67,21 @@
                     <div class="col-12">
                         <div class="form-group">
                             <label>{{ __('Current Password') }} <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control" name="current_password">
+                            <input type="password" class="form-control" name="current_password" required>
                         </div>
                     </div>
 
                     <div class="col-12">
                         <div class="form-group">
                             <label>{{ __('Password') }} <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control" name="password">
+                            <input type="password" class="form-control" name="password" required>
                         </div>
                     </div>
 
                     <div class="col-12">
                         <div class="form-group">
                             <label>{{ __('Confirm Password') }} <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control" name="password_confirmation">
+                            <input type="password" class="form-control" name="password_confirmation" required>
                         </div>
                     </div>
 

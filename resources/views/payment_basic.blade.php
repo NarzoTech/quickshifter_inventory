@@ -32,7 +32,7 @@
                                 <div class="form-group">
                                     <label for="card_number">{{ __('Card Number') }}*</label>
                                     <input autocomplete='off' class='form-control card-number' size='20'
-                                        type='text' name="card_number" autocomplete="off">
+                                        type='text' name="card_number" autocomplete="off" required>
 
                                 </div>
                             </div>
@@ -40,21 +40,21 @@
                                 <div class="form-group">
                                     <label for="month">{{ __('Month') }}*</label>
                                     <input input class='form-control card-expiry-month' size='2' type='text'
-                                        name="month" autocomplete="off">
+                                        name="month" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-12 mt-4">
                                 <div class="form-group">
                                     <label for="year">{{ __('Year') }}*</label>
                                     <input class='form-control card-expiry-year' size='4' type='text'
-                                        name="year" autocomplete="off">
+                                        name="year" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-12 my-4">
                                 <div class="form-group">
                                     <label for="cvc">{{ __('CVC') }}*</label>
                                     <input autocomplete='off' class='form-control card-cvc' size='4'
-                                        type='text' name="cvc" autocomplete="off">
+                                        type='text' name="cvc" autocomplete="off" required>
                                 </div>
                             </div>
                         </div>

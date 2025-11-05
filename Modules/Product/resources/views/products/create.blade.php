@@ -27,7 +27,7 @@
                                             <label for="name">{{ __('Name') }}<span
                                                     class="text-danger">*</span></label>
                                             <input type="text" name="name" class="form-control" id="name"
-                                                value="{{ old('name') }}">
+                                                value="{{ old('name') }}" required>
                                             @error('name')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -43,7 +43,7 @@
                                             <label for="barcode">{{ __('Barcode') }}<span
                                                     class="text-danger">*</span></label>
                                             <input type="text" name="barcode" class="form-control" id="barcode"
-                                                value="{{ old('barcode', $barcode) }}">
+                                                value="{{ old('barcode', $barcode) }}" required>
                                             @error('barcode')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -58,7 +58,7 @@
                                                     class="text-danger">*</span></label>
                                             <div class="input-group">
                                                 <input type="text" id="sku" name="sku"
-                                                    class="form-control currency" />
+                                                    class="form-control currency" required />
                                                 <span id="sku2"
                                                     class="input-group-text mb-0 generate_sku cursor-pointer"><i
                                                         class="fas fa-barcode"></i></span>
@@ -73,7 +73,8 @@
                                             <label for="category_id">{{ __('Category') }}<span
                                                     class="text-danger">*</span></label>
                                             <div class="input-group">
-                                                <select name="category_id" id="categories" class="form-control select2">
+                                                <select name="category_id" id="categories" class="form-control select2"
+                                                    required>
                                                     <option value="">{{ __('Select Categories') }}
                                                     </option>
                                                     @foreach ($categories as $cat)
@@ -182,7 +183,7 @@
                                         <div class="form-group">
                                             <label for="status">{{ __('Status') }}<span
                                                     class="text-danger">*</span></label>
-                                            <select name="status" id="status" class="form-control">
+                                            <select name="status" id="status" class="form-control" required>
                                                 <option value="1">
                                                     {{ __('Active') }}</option>
                                                 <option value="0">
@@ -198,7 +199,8 @@
                                             <label for="unit_id">{{ __('Unit') }}<span
                                                     class="text-danger">*</span></label>
                                             <div class="input-group">
-                                                <select name="unit_id" id="unit_id" class="form-control select2">
+                                                <select name="unit_id" id="unit_id" class="form-control select2"
+                                                    required>
                                                     <option value="">{{ __('Select Unit') }}
                                                     </option>
                                                     @foreach ($units as $unit)
@@ -222,7 +224,8 @@
                                         <div class="form-group">
                                             <label for="unit_sale_id">{{ __('Sale Unit') }}<span
                                                     class="text-danger">*</span></label>
-                                            <select name="unit_sale_id" id="unit_sale_id" class="form-control select2">
+                                            <select name="unit_sale_id" id="unit_sale_id" class="form-control select2"
+                                                required>
                                                 <option value="">{{ __('Select Sale Unit') }}
                                                 </option>
                                             </select>
@@ -236,7 +239,7 @@
                                             <label for="unit_purchase_id">{{ __('Purchase Unit') }}<span
                                                     class="text-danger">*</span></label>
                                             <select name="unit_purchase_id" id="unit_purchase_id"
-                                                class="form-control select2">
+                                                class="form-control select2" required>
                                                 <option value="">{{ __('Select Purchase Unit') }}
                                                 </option>
                                             </select>

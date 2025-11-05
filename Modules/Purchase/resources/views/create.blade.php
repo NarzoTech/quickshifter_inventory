@@ -27,7 +27,8 @@
                                     <select class="form-control select2" name="supplier_id">
                                         <option value="">{{ __('Select Supplier') }}</option>
                                         @foreach ($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                            <option value="{{ $supplier->id }}">
+                                                {{ $supplier->company }}</option>
                                         @endforeach
                                     </select>
                                     @error('supplier_id')
