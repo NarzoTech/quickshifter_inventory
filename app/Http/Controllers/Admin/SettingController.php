@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\Stock;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -98,7 +99,10 @@ class SettingController extends Controller
         PurchaseDetails::truncate();
         PurchaseReturn::truncate();
         PurchaseReturnDetails::truncate();
-
+        Artisan::call('db:seed', [
+            '--class' => 'RolePermissionSeeder',
+            '--force' => true,
+        ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // cache clear
