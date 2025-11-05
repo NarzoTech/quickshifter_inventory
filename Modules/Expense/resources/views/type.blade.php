@@ -173,7 +173,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="parent_id">{{ __('Parent Type') }}</label>
-                                    <select name="parent_id" id="parent_id" class="form-control">
+                                    <select name="parent_id" id="parent_id" class="form-control select2">
                                         <option value="">{{ __('Select Parent (Optional)') }}</option>
                                         @foreach ($parentTypes as $parent)
                                             <option value="{{ $parent->id }}">{{ $parent->name }}</option>
@@ -227,7 +227,7 @@
                                     <div class="form-group">
                                         <label for="parent_id_edit_{{ $type->id }}">{{ __('Parent Type') }}</label>
                                         <select name="parent_id" id="parent_id_edit_{{ $type->id }}"
-                                            class="form-control">
+                                            class="form-control select2">
                                             <option value="">{{ __('Select Parent (Optional)') }}</option>
                                             @foreach ($parentTypes as $parent)
                                                 @if ($parent->id != $type->id)
@@ -260,6 +260,20 @@
     @endforeach
     @push('js')
         <script>
+            $(document).ready(function() {
+            $('.select2').select2({
+                dropdownParent: $('#addExpense, .modal.show'),
+                width: '100%'
+            });
+
+            // Reinitialize select2 when modal is shown (important for edit modals)
+            $('.modal').on('shown.bs.modal', function() {
+                $(this).find('.select2').select2({
+                    dropdownParent: $(this),
+                    width: '100%'
+                });
+            });
+        });
             function deleteData(id) {
                 let url = "{{ route('admin.expense.type.destroy', ':id') }}"
                 url = url.replace(':id', id);
