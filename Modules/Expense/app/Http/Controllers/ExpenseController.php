@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Expense\app\Http\Controllers;
 
 use App\Enums\RedirectType;
@@ -8,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
@@ -34,7 +32,7 @@ class ExpenseController extends Controller
         $expenses = Expense::query();
 
         if (request('keyword')) {
-            $keyword = request('keyword');
+            $keyword  = request('keyword');
             $expenses = $expenses->where(function ($query) use ($keyword) {
                 $query->where('amount', 'like', "%{$keyword}%")
                     ->orWhereHas('expenseType', function ($q) use ($keyword) {
@@ -57,8 +55,8 @@ class ExpenseController extends Controller
             $expenses = $expenses->orderBy('id', $sort);
         }
         if (request('from_date') && request('to_date')) {
-            $from = now()->parse(request('from_date'));
-            $to = now()->parse(request('to_date'));
+            $from     = now()->parse(request('from_date'));
+            $to       = now()->parse(request('to_date'));
             $expenses = $expenses->whereBetween('date', [$from, $to]);
         }
 
@@ -80,7 +78,6 @@ class ExpenseController extends Controller
             $expenses->appends(request()->query());
         }
 
-
         if (checkAdminHasPermission('expense.excel.download')) {
             if (request('export')) {
                 $fileName = 'expense-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
@@ -96,8 +93,8 @@ class ExpenseController extends Controller
             }
         }
 
-        $types = ExpenseType::all();
-        $accounts = Account::all();
+        $types    = ExpenseType::all();
+        $accounts = Account::with('bank')->get();
         return view('expense::index', compact('expenses', 'types', 'accounts', 'totalAmount'));
     }
 

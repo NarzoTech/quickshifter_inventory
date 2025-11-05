@@ -119,7 +119,8 @@
                                     <th style="width: 5%">{{ __('Sl') }}</th>
                                     <th style="width: 15%">{{ __('Date') }}</th>
                                     <th style="width: 25%">{{ __('Created By') }}</th>
-                                    <th style="width: 25%">{{ __('Type') }}</th>
+                                    <th style="width: 20%">{{ __('Type') }}</th>
+                                    <th style="width: 20%">{{ __('Sub Type') }}</th>
                                     <th style="width: 15%">{{ __('Amount') }}</th>
                                     <th style="width: 15%">{{ __('Payment Type') }}</th>
                                     <th style="width: 30%">{{ __('Note') }}</th>
@@ -139,6 +140,13 @@
                                         <td>{{ $expense->date }}</td>
                                         <td>{{ $expense->createdBy->name }}</td>
                                         <td>{{ $expense->expenseType->name }}</td>
+                                        <td>
+                                            @if ($expense->sub_expense_type_id)
+                                                <span class="badge bg-info">{{ $expense->subExpenseType->name }}</span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
                                         <td>{{ currency($expense->amount) }}</td>
                                         <td>{{ ucfirst($expense->payment_type) }}</td>
                                         <td>{{ $expense->note }}</td>
@@ -167,12 +175,12 @@
                                     </tr>
                                 @empty
                                     <x-empty-table :name="__('Expense')" route="" create="no" :message="__('No data found!')"
-                                        colspan="8"></x-empty-table>
+                                        colspan="9"></x-empty-table>
                                 @endforelse
 
                                 @if ($expenses->count() > 0)
                                     <tr>
-                                        <td colspan="4" class="text-center">
+                                        <td colspan="5" class="text-center">
                                             <b>{{ __('Total') }}</b>
                                         </td>
                                         <td>
@@ -217,22 +225,39 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="name">{{ __('Expense Type') }}<span
+                                    <label for="expense_type_id">{{ __('Expense Type') }}<span
                                             class="text-danger">*</span></label>
-                                    <select name="expense_type_id" id="" class="form-control select2"
+                                    <select name="expense_type_id" id="expense_type_id" class="form-control select2"
                                         data-dropdown-parent="#addExpense" required>
-                                        <option value="">{{ __('Expense Type') }}</option>
+                                        <option value="">{{ __('Select Expense Type') }}</option>
                                         @foreach ($types as $type)
-                                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                            @if ($type->parent_id)
+                                                @continue
+                                            @endif
+                                            <option value="{{ $type->id }}"
+                                                data-has-children="{{ $type->children->count() > 0 ? '1' : '0' }}">
+                                                {{ $type->name }}
+                                            </option>
                                         @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 sub-expense-wrapper" style="display: none;">
+                                <div class="form-group">
+                                    <label for="sub_expense_type_id">{{ __('Sub Expense Type') }}<span
+                                            class="text-danger">*</span></label>
+                                    <select name="sub_expense_type_id" id="sub_expense_type_id"
+                                        class="form-control select2" data-dropdown-parent="#addExpense">
+                                        <option value="">{{ __('Select Sub Expense Type') }}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name">{{ __('Payment Type') }}<span
+                                    <label for="payment_type">{{ __('Payment Type') }}<span
                                             class="text-danger">*</span></label>
-                                    <select name="payment_type" id="" class="form-control" required>
+                                    <select name="payment_type" id="payment_type" class="select2" required
+                                        data-dropdown-parent="#addExpense">
                                         <option value="">{{ __('Payment Type') }}</option>
                                         @foreach (accountList() as $key => $list)
                                             <option value="{{ $key }}">{{ $list }}</option>
@@ -252,7 +277,7 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label for="amount">{{ __('Note') }}</label>
+                                    <label for="note">{{ __('Note') }}</label>
                                     <textarea name="note" id="note" cols="30" rows="5" class="form-control"></textarea>
                                 </div>
                             </div>
@@ -299,24 +324,53 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="name">{{ __('Expense Type') }}<span
+                                        <label
+                                            for="expense_type_id_edit_{{ $expense->id }}">{{ __('Expense Type') }}<span
                                                 class="text-danger">*</span></label>
-                                        <select name="expense_type_id" id="" class="form-control select2"
-                                            data-dropdown-parent="#editExpense{{ $expense->id }}" required>
-                                            <option value="">{{ __('Expense Type') }}</option>
+                                        <select name="expense_type_id" id="expense_type_id_edit_{{ $expense->id }}"
+                                            class="form-control select2 expense-type-edit"
+                                            data-dropdown-parent="#editExpense{{ $expense->id }}"
+                                            data-expense-id="{{ $expense->id }}" required>
+                                            <option value="">{{ __('Select Expense Type') }}</option>
                                             @foreach ($types as $type)
+                                                @if ($type->parent_id)
+                                                    @continue
+                                                @endif
                                                 <option value="{{ $type->id }}"
+                                                    data-has-children="{{ $type->children->count() > 0 ? '1' : '0' }}"
                                                     {{ $type->id == $expense->expense_type_id ? 'selected' : '' }}>
                                                     {{ $type->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-12 sub-expense-wrapper-{{ $expense->id }}"
+                                    style="display: {{ $expense->expenseType->children->count() > 0 ? 'block' : 'none' }};">
+                                    <div class="form-group">
+                                        <label
+                                            for="sub_expense_type_id_edit_{{ $expense->id }}">{{ __('Sub Expense Type') }}<span
+                                                class="text-danger">*</span></label>
+                                        <select name="sub_expense_type_id"
+                                            id="sub_expense_type_id_edit_{{ $expense->id }}"
+                                            class="form-control select2"
+                                            data-dropdown-parent="#editExpense{{ $expense->id }}">
+                                            <option value="">{{ __('Select Sub Expense Type') }}</option>
+                                            @foreach ($expense->expenseType->children as $child)
+                                                <option value="{{ $child->id }}"
+                                                    {{ $expense->sub_expense_type_id == $child->id ? 'selected' : '' }}>
+                                                    {{ $child->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="name">{{ __('Payment Type') }}<span
+                                        <label for="payment_type">{{ __('Payment Type') }}<span
                                                 class="text-danger">*</span></label>
-                                        <select name="payment_type" id="" class="form-control" required>
+                                        <select name="payment_type" id="payment_type" class="select2" required
+                                            data-dropdown-parent="#editExpense{{ $expense->id }}"
+                                            data-expense-id="{{ $expense->id }}">
                                             <option value="">{{ __('Payment Type') }}</option>
                                             @foreach (accountList() as $key => $list)
                                                 <option value="{{ $key }}"
@@ -328,7 +382,39 @@
                                     </div>
                                 </div>
                                 <div class="col-12 accounts">
-                                    <input type="hidden" name="account_id" value="{{ $expense->account_id }}">
+                                    @if ($expense->payment_type == 'cash' || $expense->payment_type == 'advance')
+                                        <input type="hidden" name="account_id" value="{{ $expense->payment_type }}">
+                                    @elseif($expense->account_id)
+                                        <div class="form-group">
+                                            <label for="account_id">{{ __('Select Account') }}<span
+                                                    class="text-danger">*</span></label>
+                                            <select name="account_id" id="account_id_edit_{{ $expense->id }}"
+                                                class="form-control" required>
+                                                <option value="">{{ __('Select Account') }}</option>
+                                                @foreach ($accounts->where('account_type', $expense->payment_type) as $account)
+                                                    @if ($expense->payment_type == 'bank')
+                                                        <option value="{{ $account->id }}"
+                                                            {{ $expense->account_id == $account->id ? 'selected' : '' }}>
+                                                            {{ $account->bank_account_number }}
+                                                            ({{ $account->bank->name ?? 'N/A' }})
+                                                        </option>
+                                                    @elseif($expense->payment_type == 'mobile_banking')
+                                                        <option value="{{ $account->id }}"
+                                                            {{ $expense->account_id == $account->id ? 'selected' : '' }}>
+                                                            {{ $account->mobile_number }}
+                                                            ({{ $account->mobile_bank_name }})
+                                                        </option>
+                                                    @elseif($expense->payment_type == 'card')
+                                                        <option value="{{ $account->id }}"
+                                                            {{ $expense->account_id == $account->id ? 'selected' : '' }}>
+                                                            {{ $account->card_number }}
+                                                            ({{ $account->bank->name ?? 'N/A' }})
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
@@ -340,7 +426,7 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="form-group">
-                                        <label for="amount">{{ __('Note') }}</label>
+                                        <label for="note">{{ __('Note') }}</label>
                                         <textarea name="note" id="note" cols="30" rows="5" class="form-control">{{ $expense->note }}</textarea>
                                     </div>
                                 </div>
@@ -363,16 +449,93 @@
     @push('js')
         <script>
             $(document).ready(function() {
+                $('#addExpense').on('shown.bs.modal', function() {
+                    $(this).find('select[name="payment_type"]').select2({
+                        dropdownParent: $('#addExpense')
+                    });
+                });
+
+                @foreach ($expenses as $expense)
+                    $('#editExpense{{ $expense->id }}').on('shown.bs.modal', function() {
+                        $(this).find('select[name="payment_type"]').select2({
+                            dropdownParent: $('#editExpense{{ $expense->id }}')
+                        });
+                    });
+                @endforeach
                 const reqType = '{{ request()->type }}';
                 if (reqType) {
                     $('#addExpense').modal('show');
                 }
 
                 let accounts = @json($accounts);
+                let expenseTypes = @json($types);
+
+                // Handle expense type change for ADD modal
+                $('#expense_type_id').on('change', function() {
+                    const selectedOption = $(this).find('option:selected');
+                    const hasChildren = selectedOption.data('has-children');
+                    const expenseTypeId = $(this).val();
+
+                    if (hasChildren == '1' && expenseTypeId) {
+                        loadSubExpenseTypes(expenseTypeId, '#sub_expense_type_id', '#addExpense');
+                        $('.sub-expense-wrapper').slideDown();
+                        $('#sub_expense_type_id').prop('required', true);
+                    } else {
+                        $('.sub-expense-wrapper').slideUp();
+                        $('#sub_expense_type_id').val('').prop('required', false);
+                    }
+                });
+
+                // Handle expense type change for EDIT modals
+                $('.expense-type-edit').on('change', function() {
+                    const selectedOption = $(this).find('option:selected');
+                    const hasChildren = selectedOption.data('has-children');
+                    const expenseTypeId = $(this).val();
+                    const expenseId = $(this).data('expense-id');
+                    const subExpenseSelect = `#sub_expense_type_id_edit_${expenseId}`;
+                    const parentModal = `#editExpense${expenseId}`;
+
+                    if (hasChildren == '1' && expenseTypeId) {
+                        loadSubExpenseTypes(expenseTypeId, subExpenseSelect, parentModal);
+                        $(`.sub-expense-wrapper-${expenseId}`).slideDown();
+                        $(subExpenseSelect).prop('required', true);
+                    } else {
+                        $(`.sub-expense-wrapper-${expenseId}`).slideUp();
+                        $(subExpenseSelect).val('').prop('required', false);
+                    }
+                });
+
+                // Function to load sub expense types via AJAX
+                function loadSubExpenseTypes(parentId, selectElement, parentModal) {
+                    // Filter children from expenseTypes
+                    const children = expenseTypes.filter(type => type.parent_id == parentId);
+
+                    let options = '<option value="">{{ __('Select Sub Expense Type') }}</option>';
+                    children.forEach(child => {
+                        options += `<option value="${child.id}">${child.name}</option>`;
+                    });
+
+                    $(selectElement).html(options);
+
+                    // Reinitialize select2 if it's being used
+                    if ($(selectElement).hasClass('select2')) {
+                        $(selectElement).select2({
+                            dropdownParent: $(parentModal)
+                        });
+                    }
+                }
+
+                // Payment type handling
                 $('select[name="payment_type"]').on('change', function() {
                     const paymentType = $(this).val();
+
+                    if (paymentType == '') {
+                        $('.accounts').html('');
+                        return;
+                    }
+
                     let html = `<label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
-                    <select name="account_id" id="" class="form-control form-group" required>`;
+                    <select name="account_id" id="account_id" class="form-control form-group" required>`;
                     const filterAccount = accounts.filter(account => account.account_type === paymentType);
                     html = accountsType(filterAccount, html, paymentType);
                     $('.accounts').html(html);

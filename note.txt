@@ -68,3 +68,14 @@ ADD COLUMN `tax_number` VARCHAR(255) NULL DEFAULT NULL AFTER `country`;
 26/1
 ALTER TABLE `services`
 ADD COLUMN `is_favourite` TINYINT(1) NULL DEFAULT 0 AFTER `deleted_at`;
+
+
+
+5/11/25
+ALTER TABLE expense_types
+    ADD COLUMN parent_id BIGINT UNSIGNED NULL,
+    ADD CONSTRAINT fk_expense_types_parent
+        FOREIGN KEY (parent_id) REFERENCES expense_types(id)
+        ON DELETE CASCADE;
+
+php artisan migrate --path=Modules/Expense/database/migrations/2025_11_06_010243_add_sub_expense_type_id_column_to_expenses_table.php

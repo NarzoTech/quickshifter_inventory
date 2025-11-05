@@ -95,6 +95,7 @@
                         <tr>
                             <th>{{ __('SN') }}</th>
                             <th>{{ __('Name') }}</th>
+                            <th>{{ __('Parent Type') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
                     </thead>
@@ -103,6 +104,13 @@
                             <tr>
                                 <td>{{ $loop->first + $index }}</td>
                                 <td>{{ $type->name }}</td>
+                                <td>
+                                    @if ($type->parent_id)
+                                        <span class="badge bg-info">{{ $type->parent->name ?? 'N/A' }}</span>
+                                    @else
+                                        <span class="badge bg-secondary">{{ __('Parent') }}</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @if (checkAdminHasPermission('expense.type.edit') || checkAdminHasPermission('expense.type.delete'))
                                         <div class="btn-group" role="group">
@@ -128,7 +136,7 @@
                             </tr>
                         @empty
                             <x-empty-table :name="__('Expense Type')" route="" create="no" :message="__('No data found!')"
-                                colspan="6"></x-empty-table>
+                                colspan="7"></x-empty-table>
                         @endforelse
                     </tbody>
                 </table>
@@ -159,7 +167,20 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label for="name">{{ __('Name') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name">
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="parent_id">{{ __('Parent Type') }}</label>
+                                    <select name="parent_id" id="parent_id" class="form-control">
+                                        <option value="">{{ __('Select Parent (Optional)') }}</option>
+                                        @foreach ($parentTypes as $parent)
+                                            <option value="{{ $parent->id }}">{{ $parent->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <small
+                                        class="form-text text-muted">{{ __('Leave empty to create a parent type') }}</small>
                                 </div>
                             </div>
                         </div>
@@ -199,7 +220,26 @@
                                         <label for="name">{{ __('Name') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="name" name="name"
-                                            value="{{ $type->name }}">
+                                            value="{{ $type->name }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="parent_id_edit_{{ $type->id }}">{{ __('Parent Type') }}</label>
+                                        <select name="parent_id" id="parent_id_edit_{{ $type->id }}"
+                                            class="form-control">
+                                            <option value="">{{ __('Select Parent (Optional)') }}</option>
+                                            @foreach ($parentTypes as $parent)
+                                                @if ($parent->id != $type->id)
+                                                    <option value="{{ $parent->id }}"
+                                                        {{ $type->parent_id == $parent->id ? 'selected' : '' }}>
+                                                        {{ $parent->name }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                        <small
+                                            class="form-text text-muted">{{ __('Leave empty to make this a parent type') }}</small>
                                     </div>
                                 </div>
                             </div>

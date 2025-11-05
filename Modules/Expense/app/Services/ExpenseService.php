@@ -1,15 +1,14 @@
 <?php
-
 namespace Modules\Expense\app\Services;
 
-use App\Models\Payment;
 use Illuminate\Http\Request;
 use Modules\Accounts\app\Models\Account;
 use Modules\Expense\app\Models\Expense;
 
 class ExpenseService
 {
-    public function __construct(private Expense $expense, private Account $account) {}
+    public function __construct(private Expense $expense, private Account $account)
+    {}
 
     public function all()
     {
@@ -32,15 +31,15 @@ class ExpenseService
         // store the expense
 
         $expense = $this->expense->create([
-            'date' => now()->parse($request->date),
-            'amount' => $request->amount,
-            'account_id' => $account->id,
-            'payment_type' => $request->payment_type,
-            'note' => $request->note,
-            'expense_type_id' => $request->expense_type_id,
-            'created_by' => auth('admin')->id(),
+            'date'                => now()->parse($request->date),
+            'amount'              => $request->amount,
+            'account_id'          => $account->id,
+            'payment_type'        => $request->payment_type,
+            'note'                => $request->note,
+            'expense_type_id'     => $request->expense_type_id,
+            'sub_expense_type_id' => $request->sub_expense_type_id,
+            'created_by'          => auth('admin')->id(),
         ]);
-
 
         return $expense;
     }
@@ -54,13 +53,14 @@ class ExpenseService
         }
         $expense = $this->expense->find($id);
         $expense->update([
-            'date' => now()->parse($request->date),
-            'amount' => $request->amount,
-            'note' => $request->note,
-            'updated_by' => auth('admin')->user()->id,
-            'account_id' => $account->id,
-            'payment_type' => $request->payment_type,
-            'expense_type_id' => $request->expense_type_id,
+            'date'                => now()->parse($request->date),
+            'amount'              => $request->amount,
+            'note'                => $request->note,
+            'updated_by'          => auth('admin')->user()->id,
+            'account_id'          => $account->id,
+            'payment_type'        => $request->payment_type,
+            'sub_expense_type_id' => $request->sub_expense_type_id,
+            'expense_type_id'     => $request->expense_type_id,
         ]);
         return $expense;
     }
@@ -69,7 +69,6 @@ class ExpenseService
     {
         $expense = $this->expense->find($id);
         // delete payment and from trash
-
 
         // delete expense a
         return $expense->delete();

@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Expense\app\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -12,12 +11,13 @@ class ExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => 'required|date',
-            'amount' => 'required|numeric',
-            'payment_type' => 'required',
-            'account_id' => 'required',
-            'expense_type_id' => 'required',
-            'note' => 'nullable',
+            'date'                => 'required|date',
+            'amount'              => 'required|numeric',
+            'payment_type'        => 'required',
+            'account_id'          => 'required',
+            'expense_type_id'     => 'required',
+            'sub_expense_type_id' => 'nullable',
+            'note'                => 'nullable',
 
         ];
     }
@@ -33,10 +33,10 @@ class ExpenseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'date.required' => 'Date is required',
-            'amount.required' => 'Amount is required',
-            'payment_type.required' => 'Payment type is required',
-            'account_id.required' => 'Account is required',
+            'date.required'            => 'Date is required',
+            'amount.required'          => 'Amount is required',
+            'payment_type.required'    => 'Payment type is required',
+            'account_id.required'      => 'Account is required',
             'expense_type_id.required' => 'Expense type is required',
         ];
     }

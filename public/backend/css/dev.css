@@ -1910,3 +1910,7 @@ table th {
     top: -1px;
     z-index: 9;
 }
+
+.create_product_table .input-group {
+    flex-wrap: nowrap;
+}

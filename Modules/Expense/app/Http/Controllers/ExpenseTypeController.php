@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Expense\app\Http\Controllers;
 
 use App\Enums\RedirectType;
@@ -7,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Modules\Expense\app\Models\ExpenseType;
 
@@ -24,7 +22,7 @@ class ExpenseTypeController extends Controller
 
         if (request('keyword')) {
             $keyword = request('keyword');
-            $types = $types->where(function ($query) use ($keyword) {
+            $types   = $types->where(function ($query) use ($keyword) {
                 $query->where('name', 'like', "%{$keyword}%");
             });
         }
@@ -40,10 +38,10 @@ class ExpenseTypeController extends Controller
         }
 
         $types->appends(request()->query());
+        $parentTypes = ExpenseType::whereNull('parent_id')->orderBy('name')->get();
 
-        return view('expense::type', compact('types'));
+        return view('expense::type', compact('types', 'parentTypes'));
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -51,9 +49,15 @@ class ExpenseTypeController extends Controller
     public function store(Request $request): RedirectResponse
     {
         checkAdminHasPermissionAndThrowException('expense.type.create');
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:expense_types,id',
+        ]);
+
         try {
-            $type = new ExpenseType();
-            $type->name = $request->name;
+            $type            = new ExpenseType();
+            $type->name      = $request->name;
+            $type->parent_id = $request->parent_id;
             $type->save();
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.expense.type.index', [], ['messege' => 'Expense Type Created Successfully', 'alert-type' => 'success']);
         } catch (\Exception $th) {
@@ -62,16 +66,21 @@ class ExpenseTypeController extends Controller
         }
     }
 
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id): RedirectResponse
     {
         checkAdminHasPermissionAndThrowException('expense.type.edit');
+        $request->validate([
+            'name'      => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:expense_types,id|not_in:' . $id,
+        ]);
+
         try {
-            $type = ExpenseType::find($id);
-            $type->name = $request->name;
+            $type            = ExpenseType::find($id);
+            $type->name      = $request->name;
+            $type->parent_id = $request->parent_id;
             $type->save();
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.type.index', [], ['messege' => 'Expense Type Updated Successfully', 'alert-type' => 'success']);
         } catch (\Exception $th) {
@@ -94,5 +103,11 @@ class ExpenseTypeController extends Controller
             Log::error($th->getMessage());
             return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.expense.type.index', [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
         }
+    }
+
+    public function getChildren($id)
+    {
+        $children = ExpenseType::where('parent_id', $id)->get();
+        return response()->json($children);
     }
 }

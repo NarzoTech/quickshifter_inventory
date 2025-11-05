@@ -1,13 +1,10 @@
 <?php
-
 namespace Modules\Expense\app\Models;
 
 use App\Models\Admin;
-use App\Models\Payment;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Accounts\app\Models\Account;
-use Modules\Expense\Database\factories\ExpenseFactory;
 
 class Expense extends Model
 {
@@ -25,6 +22,7 @@ class Expense extends Model
         'note',
         'amount',
         'expense_type_id',
+        'sub_expense_type_id',
         'created_by',
         'updated_by',
     ];
@@ -32,6 +30,11 @@ class Expense extends Model
     public function expenseType()
     {
         return $this->belongsTo(ExpenseType::class, 'expense_type_id')->withDefault();
+    }
+
+    public function subExpenseType()
+    {
+        return $this->belongsTo(ExpenseType::class, 'sub_expense_type_id')->withDefault();
     }
 
     public function account()

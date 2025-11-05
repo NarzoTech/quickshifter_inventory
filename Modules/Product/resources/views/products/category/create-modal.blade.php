@@ -26,7 +26,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="slug">{{ __('Status') }}<span class="text-danger">*</span></label>
-                                <select name="status" id="status" class="form-control" required>
+                                <select name="status" id="status" class="form-control">
                                     <option value="1">
                                         {{ __('Active') }}</option>
                                     <option value="0">
@@ -60,7 +60,9 @@
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
-                <x-admin.save-button :text="__('Save')"></x-admin.save-button>
+                <button type="submit" class="btn btn-primary" form="categoryForm"><i class="fa fa-save me-2"></i>
+                    {{ __('Save') }}</button>
+
             </div>
 
         </div>

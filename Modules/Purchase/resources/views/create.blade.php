@@ -106,6 +106,7 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
+                                                <th>SL</th>
                                                 <th>{{ __('Product Name') }}</th>
                                                 <th>{{ __('Product Stock') }}</th>
                                                 <th>{{ __('Quantity') }}</th>
@@ -232,11 +233,38 @@
             })
         })
 
+
+        function updateSerialNumbers() {
+            $('#purchase_table tr').each(function(index) {
+                $(this).find('td:first').text(index + 1);
+            });
+        }
+
         function addPurchaseRow(product) {
-            // calculation profit per product on product cost and product price
-            let profit = ((parseFloat(product.price) - parseFloat(product.cost)) / parseFloat(product.cost)) * 100;
+            if ($('#purchase_table tr').length) {
+                let exists = false;
+                $('#purchase_table tr').each(function() {
+                    if ($(this).find('input[name="product_id[]"]').val() == product.id) {
+                        exists = true;
+                    }
+                });
+                if (exists) {
+                    alert('Product already added!');
+                    return;
+                }
+            }
+
+            const cost = parseFloat(product.cost);
+            const price = parseFloat(product.price);
+
+            let profit = (cost && isFinite(cost) && isFinite(price)) ?
+                ((price - cost) / cost) * 100 : 0;
+            profit = profit.toFixed(2);
+            const serial = $('#purchase_table tr').length + 1;
+
             let tr = `
                 <tr>
+                    <td>${serial}</td>
                     <td>
                         <input type="text" class="form-control" name="product_name[]" value="${product.name}" readonly>
                         <input type="hidden" name="product_id[]" value="${product.id}">
@@ -254,7 +282,7 @@
                         <input type="number" class="form-control" name="total[]" value="${product.cost}" readonly step="0.01">
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="profit[]" value="${0}" step="0.01">
+                        <input type="text" class="form-control" name="profit[]" value="${profit}" step="0.01">
                     </td>
                     <td>
                         <input type="number" class="form-control" name="selling_price[]" value="${product.price}" min="0" step="0.01">
@@ -284,6 +312,7 @@
 
         function removePurchaseRow(row) {
             $(row).closest('tr').remove();
+            updateSerialNumbers();
             calculateTotalAmount();
         }
         const products = @json($products);

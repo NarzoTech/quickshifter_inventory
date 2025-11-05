@@ -18,4 +18,7 @@ use Modules\Expense\app\Http\Controllers\ExpenseTypeController;
 Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('expense', ExpenseController::class)->names('expense');
     Route::resource('expenseType', ExpenseTypeController::class)->names('expense.type');
+    Route::get('expense-types/{id}/children', [ExpenseTypeController::class, 'getChildren'])
+        ->name('expense.type.children');
+
 });
