@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Product\app\Http\Controllers;
 
 use App\Enums\RedirectType;
@@ -28,11 +27,11 @@ class ProductController extends Controller
     private UnitTypeService $unitService;
     public function __construct(ProductService $productService, ProductCategoryService $categoryService, AttributeService $attributeService, BrandService $brandService, UnitTypeService $unitService)
     {
-        $this->productService = $productService;
-        $this->categoryService = $categoryService;
+        $this->productService   = $productService;
+        $this->categoryService  = $categoryService;
         $this->attributeService = $attributeService;
-        $this->brandService = $brandService;
-        $this->unitService = $unitService;
+        $this->brandService     = $brandService;
+        $this->unitService      = $unitService;
         $this->middleware('auth:admin');
     }
     /**
@@ -46,7 +45,7 @@ class ProductController extends Controller
 
             if (request('export')) {
                 $fileName = 'products-' . date('Y-m-d') . '-' . time() . '.xlsx';
-                return Excel::download(new ProductsExport($products), $fileName,);
+                return Excel::download(new ProductsExport($products), $fileName, );
             }
 
             if (request('par-page')) {
@@ -60,13 +59,11 @@ class ProductController extends Controller
                 $products = $products->paginate(20);
             }
 
-
             if (request('export_pdf')) {
                 return view('product::products.product-pdf', ['products' => $products]);
             }
 
-
-            $brands = $this->brandService->getActiveBrands();
+            $brands     = $this->brandService->getActiveBrands();
             $categories = $this->categoryService->getAllProductCategoriesForSelect();
             return view('product::products.index', compact('products', 'brands', 'categories'));
         } catch (\Exception $ex) {
@@ -81,9 +78,9 @@ class ProductController extends Controller
     public function create()
     {
         checkAdminHasPermissionAndThrowException('product.create');
-        $categories = $this->categoryService->getAllProductCategoriesForSelect();
-        $brands = $this->brandService->getActiveBrands();
-        $units = $this->unitService->getParentUnits();
+        $categories  = $this->categoryService->getAllProductCategoriesForSelect();
+        $brands      = $this->brandService->getActiveBrands();
+        $units       = $this->unitService->getParentUnits();
         $parentUnits = $this->unitService->getParentUnits();
         return view('product::products.create', compact('categories', 'brands', 'units', 'parentUnits'));
     }
@@ -98,22 +95,13 @@ class ProductController extends Controller
         try {
             $product = $this->productService->storeProduct($request);
             DB::commit();
-            if ($product->id) {
-                return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.product.edit', [$product->id], [
-                    'messege' => 'Product created successfully',
-                    'alert-type' => 'success',
-                ]);
-            } else {
-                return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.product.create', [], [
-                    'messege' => 'Product creation failed',
-                    'alert-type' => 'error',
-                ]);
-            }
+            Log::info('Product Created Successfully. ID: ' . $product->id);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.product.create', [], ['messege' => 'Product Created Successfully', 'alert-type' => 'success']);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -148,10 +136,10 @@ class ProductController extends Controller
     {
         checkAdminHasPermissionAndThrowException('product.edit');
         try {
-            $product = $this->productService->getProduct($id);
+            $product    = $this->productService->getProduct($id);
             $categories = $this->categoryService->getAllProductCategoriesForSelect();
-            $brands = $this->brandService->getActiveBrands();
-            $units = $this->unitService->getParentUnits();
+            $brands     = $this->brandService->getActiveBrands();
+            $units      = $this->unitService->getParentUnits();
             return view('product::products.edit', compact('categories', 'brands', 'product', 'units'));
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
@@ -168,9 +156,9 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $product = $this->productService->getProduct($id);
-            if (!$product) {
+            if (! $product) {
                 return back()->with([
-                    'messege' => 'Product not found',
+                    'messege'    => 'Product not found',
                     'alert-type' => 'error',
                 ]);
             }
@@ -178,12 +166,12 @@ class ProductController extends Controller
             DB::commit();
             if ($product->id) {
                 return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.product.index', [], [
-                    'messege' => 'Product updated successfully',
+                    'messege'    => 'Product updated successfully',
                     'alert-type' => 'success',
                 ]);
             } else {
                 return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.product.index', [], [
-                    'messege' => 'Product update failed',
+                    'messege'    => 'Product update failed',
                     'alert-type' => 'error',
                 ]);
             }
@@ -191,7 +179,7 @@ class ProductController extends Controller
             Log::error($ex->getMessage());
             DB::rollBack();
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -205,28 +193,28 @@ class ProductController extends Controller
         checkAdminHasPermissionAndThrowException('product.delete');
         try {
             $product = $this->productService->getProduct($id);
-            if (!$product) {
+            if (! $product) {
                 return back()->with([
-                    'messege' => 'Product not found',
+                    'messege'    => 'Product not found',
                     'alert-type' => 'error',
                 ]);
             }
             $product = $this->productService->deleteProduct($product);
             if ($product) {
                 return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.product.index', [], [
-                    'messege' => 'Product deleted successfully',
+                    'messege'    => 'Product deleted successfully',
                     'alert-type' => 'success',
                 ]);
             } else {
                 return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.product.index', [], [
-                    'messege' => 'Product deletion failed. Product has orders',
+                    'messege'    => 'Product deletion failed. Product has orders',
                     'alert-type' => 'error',
                 ]);
             }
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -236,9 +224,9 @@ class ProductController extends Controller
     {
         try {
             $product = $this->productService->getProduct($id);
-            if (!$product) {
+            if (! $product) {
                 return back()->with([
-                    'messege' => 'Product not found',
+                    'messege'    => 'Product not found',
                     'alert-type' => 'error',
                 ]);
             }
@@ -247,7 +235,7 @@ class ProductController extends Controller
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -257,9 +245,9 @@ class ProductController extends Controller
     {
         try {
             $product = $this->productService->getProduct($id);
-            if (!$product) {
+            if (! $product) {
                 return back()->with([
-                    'messege' => 'Product not found',
+                    'messege'    => 'Product not found',
                     'alert-type' => 'error',
                 ]);
             }
@@ -268,7 +256,7 @@ class ProductController extends Controller
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -280,23 +268,23 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $product = $this->productService->getProduct($id);
-            if (!$product) {
+            if (! $product) {
                 return back()->with([
-                    'messege' => 'Product not found',
+                    'messege'    => 'Product not found',
                     'alert-type' => 'error',
                 ]);
             }
             $this->productService->storeProductVariant($request, $product);
             DB::commit();
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.product-variant', [$product->id], [
-                'messege' => 'Product Variant created successfully',
+                'messege'    => 'Product Variant created successfully',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -306,19 +294,19 @@ class ProductController extends Controller
     {
         try {
             $variant = $this->productService->getProductVariant($variant_id);
-            if (!$variant) {
+            if (! $variant) {
                 return back()->with([
-                    'messege' => 'Product Variant not found',
+                    'messege'    => 'Product Variant not found',
                     'alert-type' => 'error',
                 ]);
             }
             $attributes = $this->attributeService->getAllAttributesForSelect();
-            $product = $variant->product;
+            $product    = $variant->product;
             return view('product::products.product_variant_edit', compact('variant', 'attributes', 'product'));
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -329,23 +317,23 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $variant = $this->productService->getProductVariant($variant_id);
-            if (!$variant) {
+            if (! $variant) {
                 return back()->with([
-                    'messege' => 'Product Variant not found',
+                    'messege'    => 'Product Variant not found',
                     'alert-type' => 'error',
                 ]);
             }
             $this->productService->updateProductVariant($request, $variant);
             DB::commit();
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.product-variant', [$variant->product->id], [
-                'messege' => 'Product Variant updated successfully',
+                'messege'    => 'Product Variant updated successfully',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -356,23 +344,23 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             $variant = $this->productService->getProductVariant($variant_id);
-            if (!$variant) {
+            if (! $variant) {
                 return back()->with([
-                    'messege' => 'Product Variant not found',
+                    'messege'    => 'Product Variant not found',
                     'alert-type' => 'error',
                 ]);
             }
             $this->productService->deleteProductVariant($variant);
             DB::commit();
             return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.product-variant', [$variant->product->id], [
-                'messege' => 'Product Variant deleted successfully',
+                'messege'    => 'Product Variant deleted successfully',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
@@ -382,9 +370,9 @@ class ProductController extends Controller
     {
         $product = $this->productService->getProduct($id);
 
-        if (!$product) {
+        if (! $product) {
             return back()->with([
-                'messege' => 'Product not found',
+                'messege'    => 'Product not found',
                 'alert-type' => 'error',
             ]);
         }
@@ -422,47 +410,47 @@ class ProductController extends Controller
             $this->productService->bulkImport($request);
             DB::commit();
             return back()->with([
-                'messege' => 'Products imported successfully',
+                'messege'    => 'Products imported successfully',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $ex) {
             DB::rollBack();
             Log::error($ex->getMessage());
             return back()->with([
-                'messege' => 'Something Went Wrong',
+                'messege'    => 'Something Went Wrong',
                 'alert-type' => 'error',
             ]);
         }
     }
 
     // search  product
-    function search()
+    public function search()
     {
-        $product =  $this->productService->getProducts()->first();
-        if (!$product) {
+        $product = $this->productService->getProducts()->first();
+        if (! $product) {
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => 'Product not found',
             ]);
         } else {
             return response()->json([
                 'status' => true,
-                'data' => $product,
+                'data'   => $product,
             ]);
         }
     }
-    function searchProducts(Request $request)
+    public function searchProducts(Request $request)
     {
-        $product =  $this->productService->getProducts()->get();
-        if (!$product->count()) {
+        $product = $this->productService->getProducts()->get();
+        if (! $product->count()) {
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => 'Product not found',
             ]);
         } else {
             return response()->json([
                 'status' => true,
-                'data' => $product,
+                'data'   => $product,
             ]);
         }
     }
@@ -475,16 +463,15 @@ class ProductController extends Controller
     public function barcodePrint(Request $request)
     {
         checkAdminHasPermissionAndThrowException('product.barcode.print');
-        $setting = cache()->get('setting');
+        $setting  = cache()->get('setting');
         $products = $this->productService->getProducts()->whereIn('id', $request->product_id)->get();
-        $d = new DNS1D();
-        $codes = [];
-
+        $d        = new DNS1D();
+        $codes    = [];
 
         foreach ($request->barcode_id as $key => $value) {
             for ($i = 1; $i <= (int) $request->qty[$key]; $i++) {
                 $code = [
-                    'code' => $value,
+                    'code'   => $value,
                     'qrcode' => $d->getBarcodeSVG($value, 'C39+', .53),
                 ];
                 $codes[] = $code;
@@ -495,12 +482,11 @@ class ProductController extends Controller
         return view('product::products.barcode-print', compact('products', 'codes', 'setting', 'action'));
     }
 
-
     public function status($id)
     {
         checkAdminHasPermissionAndThrowException('product.status');
         $product = $this->productService->getProduct($id);
-        $status = $product->status == 1 ? 0 : 1;
+        $status  = $product->status == 1 ? 0 : 1;
 
         $product->status = $status;
         $product->save();
