@@ -41,11 +41,6 @@
                     </div>
                 </div>
 
-                @if ($setting->recaptcha_status == 'active')
-                    <div class="form-group inflanar-form-input mg-top-20">
-                        <div class="g-recaptcha" data-sitekey="{{ $setting->recaptcha_site_key }}"></div>
-                    </div>
-                @endif
 
                 <!-- Login Button Group -->
                 <div class="form-group mg-top-40">
