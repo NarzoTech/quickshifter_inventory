@@ -190,6 +190,15 @@
                                                             </td>
                                                         </tr>
                                                     @endforeach
+                                                    @if ($deposits->count() > 0)
+                                                        <tr class="table-success">
+                                                            <td colspan="3" class="text-end">
+                                                                <strong>{{ __('Total:') }}</strong>
+                                                            </td>
+                                                            <td><strong>{{ currency($totalDeposits) }}</strong></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    @endif
                                                 </tbody>
                                             </table>
                                         </div>
@@ -220,7 +229,7 @@
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ $withdraw->date }}</td>
                                                             <td>{{ $withdraw->note }}</td>
-                                                            <td>{{ $withdraw->amount }}</td>
+                                                            <td>TK{{ $withdraw->amount }}</td>
                                                             <td>
                                                                 @if (checkAdminHasPermission('deposit.withdraw.edit') || checkAdminHasPermission('deposit.withdraw.delete'))
                                                                     <div class="btn-group" role="group">
@@ -250,6 +259,16 @@
                                                             </td>
                                                         </tr>
                                                     @endforeach
+                                                    @if ($withdraws->count() > 0)
+                                                        <tr class="table-danger">
+                                                            <td colspan="3" class="text-end">
+                                                                <strong>{{ __('Total:') }}</strong>
+                                                            </td>
+                                                            <td><strong>{{ currency($totalWithdraws) }}</strong></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    @endif
+
                                                 </tbody>
                                             </table>
                                         </div>
