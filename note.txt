@@ -79,3 +79,4 @@ ALTER TABLE expense_types
         ON DELETE CASCADE;
 
 php artisan migrate --path=Modules/Expense/database/migrations/2025_11_06_010243_add_sub_expense_type_id_column_to_expenses_table.php
+php artisan migrate --path=Modules/Expense/database/migrations/2025_11_06_010001_add_parent_id_column_to_expense_types_table.php
