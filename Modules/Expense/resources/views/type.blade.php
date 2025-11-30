@@ -45,18 +45,18 @@
                             </div>
                             <div class="col-xxl-2 col-md-6">
                                 <div class="form-group">
-                                    <select name="par-page" id="par-page" class="form-control">
+                                    <select name="par_page" id="par_page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
-                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
+                                        <option value="10" {{ '10' == request('par_page') ? 'selected' : '' }}>
                                             {{ __('10') }}
                                         </option>
-                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
+                                        <option value="50" {{ '50' == request('par_page') ? 'selected' : '' }}>
                                             {{ __('50') }}
                                         </option>
-                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
+                                        <option value="100" {{ '100' == request('par_page') ? 'selected' : '' }}>
                                             {{ __('100') }}
                                         </option>
-                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
+                                        <option value="all" {{ 'all' == request('par_page') ? 'selected' : '' }}>
                                             {{ __('All') }}
                                         </option>
                                     </select>
@@ -141,7 +141,7 @@
                     </tbody>
                 </table>
             </div>
-            @if (request()->get('par-page') !== 'all')
+            @if (request()->get('par_page') !== 'all')
                 <div class="float-right">
                     {{ $types->onEachSide(0)->links() }}
                 </div>
@@ -261,19 +261,20 @@
     @push('js')
         <script>
             $(document).ready(function() {
-            $('.select2').select2({
-                dropdownParent: $('#addExpense, .modal.show'),
-                width: '100%'
-            });
-
-            // Reinitialize select2 when modal is shown (important for edit modals)
-            $('.modal').on('shown.bs.modal', function() {
-                $(this).find('.select2').select2({
-                    dropdownParent: $(this),
+                $('.select2').select2({
+                    dropdownParent: $('#addExpense, .modal.show'),
                     width: '100%'
                 });
+
+                // Reinitialize select2 when modal is shown (important for edit modals)
+                $('.modal').on('shown.bs.modal', function() {
+                    $(this).find('.select2').select2({
+                        dropdownParent: $(this),
+                        width: '100%'
+                    });
+                });
             });
-        });
+
             function deleteData(id) {
                 let url = "{{ route('admin.expense.type.destroy', ':id') }}"
                 url = url.replace(':id', id);

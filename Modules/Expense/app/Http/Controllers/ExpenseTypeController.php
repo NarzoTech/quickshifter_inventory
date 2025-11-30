@@ -27,7 +27,8 @@ class ExpenseTypeController extends Controller
             });
         }
         if (request('order_type')) {
-            $types = $types->orderBy(request('order_type'), request('order_by'));
+            $orderBy = request('order_by', 'desc'); // Default to 'desc' if not specified
+            $types   = $types->orderBy(request('order_type'), $orderBy);
         } else {
             $types = $types->orderBy('id', 'desc');
         }
