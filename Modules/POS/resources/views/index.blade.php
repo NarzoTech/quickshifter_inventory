@@ -68,50 +68,32 @@
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                {{-- <div class="col-md-4 col-lg-4 col-sm-6">
+                                                <div class="col-6">
                                                     <div class="form-group mb-2">
-                                                        <select name="category_id" id="product_category_id"
+                                                        <select name="category_id" id="category_id"
                                                             class="form-control select2">
                                                             <option value="">{{ __('Select Category') }}</option>
-                                                            @if (request()->has('category_id'))
-                                                                @foreach ($categories as $category)
-                                                                    <option
-                                                                        {{ request()->get('category_id') == $category->id ? 'selected' : '' }}
-                                                                        value="{{ $category->id }}">{{ $category->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            @else
-                                                                @foreach ($categories as $category)
-                                                                    <option value="{{ $category->id }}">
-                                                                        {{ $category->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
+                                                            @foreach ($categories as $category)
+                                                                <option value="{{ $category->id }}">
+                                                                    {{ $category->name }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
-                                                </div> --}}
-                                                {{-- <div class="col-md-4 col-lg-4 col-sm-6">
+                                                </div>
+                                                <div class="col-6">
                                                     <div class="form-group mb-2">
-                                                        <select name="brand_id" id="product_brand_id"
+                                                        <select name="brand_id" id="brand_id"
                                                             class="form-control select2">
-                                                            <option value="">{{ __('Select brand') }}</option>
-                                                            @if (request()->has('brand_id'))
-                                                                @foreach ($brands as $brand)
-                                                                    <option
-                                                                        {{ request()->get('brand_id') == $brand->id ? 'selected' : '' }}
-                                                                        value="{{ $brand->id }}">{{ $brand->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            @else
-                                                                @foreach ($categories as $brand)
-                                                                    <option value="{{ $brand->id }}">
-                                                                        {{ $brand->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
+                                                            <option value="">{{ __('Select Brand') }}</option>
+                                                            @foreach ($brands as $brand)
+                                                                <option value="{{ $brand->id }}">
+                                                                    {{ $brand->name }}
+                                                                </option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
-                                                </div> --}}
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
@@ -959,7 +941,7 @@
                 })
                 // search products
 
-                $("#category_id,#brand_id").on('input', function() {
+                $("#category_id,#brand_id").on('change', function() {
                     const category_id = $('#category_id').val();
                     const brand = $('#brand_id').val();
                     const name = $('#name').val();

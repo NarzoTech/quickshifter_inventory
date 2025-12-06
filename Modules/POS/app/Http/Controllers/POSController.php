@@ -150,12 +150,12 @@ class POSController extends Controller
         }
 
 
-        // Paginate favorite products
-        $favoriteProducts = $products->where('is_favorite', 1)->paginate(15);
+        // Paginate favorite products (clone to avoid modifying original query)
+        $favoriteProducts = (clone $products)->where('is_favorite', 1)->paginate(15);
         $favoriteProducts->appends(request()->query());  // Append request parameters
 
-        // Paginate non-favorite products
-        $nonFavoriteProducts = $products->orWhere('is_favorite', 0)->paginate(15);
+        // Paginate non-favorite products (use clone of original query)
+        $nonFavoriteProducts = (clone $products)->paginate(15);
         $nonFavoriteProducts->appends(request()->query()); // Append request parameters
 
 
