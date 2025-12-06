@@ -38,7 +38,13 @@
     <div class="card mt-5">
         <div class="card-header">
             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                <h4 class="section_title"> Cash Flow</h4>
+                <h4 class="section_title"> Cash Flow
+                    @if (!isset($hasDateFilter) || !$hasDateFilter)
+                        <span class="badge bg-info">{{ __('All Time') }}</span>
+                    @else
+                        <span class="badge bg-secondary">{{ __('Filtered') }}</span>
+                    @endif
+                </h4>
             </div>
         </div>
         <div class="card-body">
@@ -285,6 +291,7 @@
                                 </b>
                             </td>
                         </tr>
+                        @if (isset($hasDateFilter) && $hasDateFilter)
                         <tr>
                             <td colspan="3" class="text-end">
                                 <h5 class="m-0">
@@ -293,21 +300,26 @@
                             </td>
                             <td colspan="" class="text-left">
                                 <h5 class="m-0">
-                                    <b>{{ $openingBalance }}</b>
+                                    <b>{{ currency($openingBalance) }}</b>
                                 </h5>
                             </td>
                         </tr>
+                        @endif
                         <tr>
                             <td colspan="3" class="text-end">
                                 <h5 class="m-0">
-                                    <b>Current Balance =</b>
+                                    <b>{{ isset($hasDateFilter) && $hasDateFilter ? __('Current Balance') : __('Net Balance') }} =</b>
                                 </h5>
                             </td>
                             <td class="text-left">
                                 <h5 class="m-0">
-                                    <b>{{ $currentBalance }}</b>
+                                    <b>{{ currency($currentBalance) }}</b>
                                 </h5>
-                                (Opening Balance + Cash In - Cash Out)
+                                @if (isset($hasDateFilter) && $hasDateFilter)
+                                ({{ __('Opening Balance') }} + {{ __('Cash In') }} - {{ __('Cash Out') }})
+                                @else
+                                ({{ __('Cash In') }} - {{ __('Cash Out') }})
+                                @endif
                             </td>
                         </tr>
                     </tfoot>

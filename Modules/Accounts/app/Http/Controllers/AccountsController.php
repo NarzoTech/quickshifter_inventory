@@ -128,48 +128,116 @@ class AccountsController extends Controller
     public function cashflow()
     {
         checkAdminHasPermissionAndThrowException('cash.flow.view');
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+        // Check if date filter is applied - show all-time data by default
+        $hasDateFilter = request('from_date') || request('to_date');
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : null;
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : null;
+
         $data = [];
 
+        // Helper function to apply date filter
+        $applyDateFilter = function ($query, $dateColumn) use ($hasDateFilter, $fromDate, $toDate) {
+            if ($hasDateFilter) {
+                if ($fromDate && $toDate) {
+                    $query->whereBetween($dateColumn, [$fromDate, $toDate]);
+                } elseif ($fromDate) {
+                    $query->where($dateColumn, '>=', $fromDate);
+                } elseif ($toDate) {
+                    $query->where($dateColumn, '<=', $toDate);
+                }
+            }
+            return $query;
+        };
 
-        $data['serviceSale'] = ProductSale::whereHas('sale', function ($q) use ($fromDate, $toDate) {
-            $q->whereBetween('order_date', [$fromDate, $toDate]);
-        })->whereNotNull('service_id')->sum('sub_total');
+        // Service Sale
+        $serviceSaleQuery = ProductSale::whereNotNull('service_id');
+        if ($hasDateFilter) {
+            $serviceSaleQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                if ($fromDate && $toDate) {
+                    $q->whereBetween('order_date', [$fromDate, $toDate]);
+                } elseif ($fromDate) {
+                    $q->where('order_date', '>=', $fromDate);
+                } elseif ($toDate) {
+                    $q->where('order_date', '<=', $toDate);
+                }
+            });
+        }
+        $data['serviceSale'] = $serviceSaleQuery->sum('sub_total');
 
-        $data['productSale'] = CustomerPayment::where('payment_type', 'sale')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount') - $data['serviceSale'];
+        // Product Sale
+        $productSaleQuery = CustomerPayment::where('payment_type', 'sale');
+        $applyDateFilter($productSaleQuery, 'payment_date');
+        $data['productSale'] = $productSaleQuery->sum('amount') - $data['serviceSale'];
 
+        // Customer Due
+        $customerDueQuery = CustomerPayment::where('payment_type', 'due_receive');
+        $applyDateFilter($customerDueQuery, 'payment_date');
+        $data['customer_due'] = $customerDueQuery->sum('amount');
 
-        $data['customer_due'] = CustomerPayment::where('payment_type', 'due_receive')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        // Sale Return
+        $saleReturnQuery = SalesReturn::query();
+        $applyDateFilter($saleReturnQuery, 'return_date');
+        $data['sale_return'] = $saleReturnQuery->sum('return_amount');
 
-        $data['sale_return'] = SalesReturn::whereBetween('return_date', [$fromDate, $toDate])->sum('return_amount');
-        $data['balance_deposit'] = Balance::where('balance_type', 'deposit')->whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        // Balance Deposit
+        $balanceDepositQuery = Balance::where('balance_type', 'deposit');
+        $applyDateFilter($balanceDepositQuery, 'date');
+        $data['balance_deposit'] = $balanceDepositQuery->sum('amount');
 
-        $data['balance_withdraw'] = Balance::where('balance_type', 'withdraw')->whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        // Balance Withdraw
+        $balanceWithdrawQuery = Balance::where('balance_type', 'withdraw');
+        $applyDateFilter($balanceWithdrawQuery, 'date');
+        $data['balance_withdraw'] = $balanceWithdrawQuery->sum('amount');
 
-        $data['customer_advance'] = CustomerPayment::where('payment_type', 'advance_receive')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        // Customer Advance
+        $customerAdvanceQuery = CustomerPayment::where('payment_type', 'advance_receive');
+        $applyDateFilter($customerAdvanceQuery, 'payment_date');
+        $data['customer_advance'] = $customerAdvanceQuery->sum('amount');
 
-        $data['customer_advance_refund'] = CustomerPayment::where('payment_type', 'advance_refund')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        // Customer Advance Refund
+        $customerAdvanceRefundQuery = CustomerPayment::where('payment_type', 'advance_refund');
+        $applyDateFilter($customerAdvanceRefundQuery, 'payment_date');
+        $data['customer_advance_refund'] = $customerAdvanceRefundQuery->sum('amount');
 
-        $data['salary'] = EmployeeSalary::whereBetween('date', [$fromDate, $toDate])->sum('amount');
-        $data['expenses'] = Expense::whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        // Salary
+        $salaryQuery = EmployeeSalary::query();
+        $applyDateFilter($salaryQuery, 'date');
+        $data['salary'] = $salaryQuery->sum('amount');
 
-        $data['supplierDuePay'] = SupplierPayment::where('payment_type', 'due_pay')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        // Expenses
+        $expensesQuery = Expense::query();
+        $applyDateFilter($expensesQuery, 'date');
+        $data['expenses'] = $expensesQuery->sum('amount');
 
-        $data['supplierAdvancePay'] = SupplierPayment::where('payment_type', 'advance_pay')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        // Supplier Due Pay
+        $supplierDuePayQuery = SupplierPayment::where('payment_type', 'due_pay');
+        $applyDateFilter($supplierDuePayQuery, 'payment_date');
+        $data['supplierDuePay'] = $supplierDuePayQuery->sum('amount');
 
-        $data['supplierAdvanceRefund'] = SupplierPayment::where('payment_type', 'advance_refund')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        // Supplier Advance Pay
+        $supplierAdvancePayQuery = SupplierPayment::where('payment_type', 'advance_pay');
+        $applyDateFilter($supplierAdvancePayQuery, 'payment_date');
+        $data['supplierAdvancePay'] = $supplierAdvancePayQuery->sum('amount');
 
-        $data['purchase'] = SupplierPayment::where('payment_type', 'purchase')->whereBetween('payment_date', [$fromDate, $toDate])->sum('amount');
+        // Supplier Advance Refund
+        $supplierAdvanceRefundQuery = SupplierPayment::where('payment_type', 'advance_refund');
+        $applyDateFilter($supplierAdvanceRefundQuery, 'payment_date');
+        $data['supplierAdvanceRefund'] = $supplierAdvanceRefundQuery->sum('amount');
+
+        // Purchase
+        $purchaseQuery = SupplierPayment::where('payment_type', 'purchase');
+        $applyDateFilter($purchaseQuery, 'payment_date');
+        $data['purchase'] = $purchaseQuery->sum('amount');
 
         $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'];
 
         $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'] + $data['serviceSale'];
 
-        $openingBalance = $this->accountsService->getOpeningBalance($fromDate);
-        // $currentBalance = $this->accountsService->accountBalance($fromDate, $toDate) + $openingBalance;
+        // Opening balance is 0 for all-time view, or calculated from the start date when filtered
+        $openingBalance = $hasDateFilter && $fromDate ? $this->accountsService->getOpeningBalance($fromDate) : 0;
 
         $currentBalance = $openingBalance + $data['totalReceive'] - $data['totalPay'];
-        return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance'));
+        return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance', 'hasDateFilter'));
     }
 }
