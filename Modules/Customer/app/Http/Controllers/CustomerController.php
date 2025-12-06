@@ -155,7 +155,7 @@ class CustomerController extends Controller
         if (checkAdminHasPermission('customer.excel.download')) {
             if (request('export')) {
                 $fileName = 'customers-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new CustomerExport($customerData), $fileName);
+                return Excel::download(new CustomerExport($customerData, $data), $fileName);
             }
         }
         if (checkAdminHasPermission('customer.pdf.download')) {
