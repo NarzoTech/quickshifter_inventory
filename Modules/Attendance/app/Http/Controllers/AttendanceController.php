@@ -29,6 +29,7 @@ class AttendanceController extends Controller
         checkAdminHasPermissionAndThrowException('attendance.view');
 
         $employees = $this->employee->all()->paginate(20);
+        $employees->appends(request()->query());
 
         return view('attendance::index', compact('employees'));
     }
@@ -42,6 +43,7 @@ class AttendanceController extends Controller
 
 
         $employees = $this->employee->all()->paginate(20);
+        $employees->appends(request()->query());
         return view('attendance::create', compact('employees'));
     }
 

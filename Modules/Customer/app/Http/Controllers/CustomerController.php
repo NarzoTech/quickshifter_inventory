@@ -669,6 +669,7 @@ class CustomerController extends Controller
         checkAdminHasPermissionAndThrowException('customer.ledger');
         $user = User::findOrFail($id);
         $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'asc')->paginate(20);
+        $ledgers->appends(request()->query());
         $title = __('Customer Ledger');
 
         if (request('export')) {

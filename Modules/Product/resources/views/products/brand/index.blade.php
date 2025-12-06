@@ -204,7 +204,7 @@
                 });
 
                 // fire swal
-                swal.fire({
+                Swal.fire({
                     title: 'Are you sure?',
                     text: 'You will not be able to recover this data!',
                     icon: 'warning',

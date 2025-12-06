@@ -23,6 +23,7 @@ class AdminController extends Controller
         checkAdminHasPermissionAndThrowException('admin.view');
 
         $admins = Admin::notSuperAdmin()->paginate(15);
+        $admins->appends(request()->query());
 
         return view('admin.admin-list.admin')->with([
             'admins' => $admins,

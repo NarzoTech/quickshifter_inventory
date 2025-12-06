@@ -46,6 +46,8 @@ class HolidaysController extends Controller
             $holidays = $holidays->paginate(20);
         }
 
+        $holidays->appends(request()->query());
+
         return view('attendance::holidays.index', compact('holidays'));
     }
 

@@ -23,6 +23,7 @@ class RolesController extends Controller
     {
         checkAdminHasPermissionAndThrowException('role.view');
         $roles = Role::where('name', '!=', 'Super Admin')->paginate(15);
+        $roles->appends(request()->query());
         $admins_exists = Admin::notSuperAdmin()->whereStatus('active')->count();
 
         return view('admin.roles.index', compact('roles', 'admins_exists'));

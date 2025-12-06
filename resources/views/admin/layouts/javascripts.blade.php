@@ -25,6 +25,7 @@
 <script src="{{ asset('backend/clockpicker/dist/bootstrap-clockpicker.js') }}"></script>
 <script src="{{ asset('backend/tinymce/js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('global/toastr/toastr.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('backend/js/jquery.uploadPreview.min.js') }}"></script>
 <script src="{{ asset('backend/flatpickr.js') }}"></script>
 <script src="{{ asset('backend/js/custom.js') }}"></script>

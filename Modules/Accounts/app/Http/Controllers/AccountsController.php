@@ -36,6 +36,7 @@ class AccountsController extends Controller
     {
         checkAdminHasPermissionAndThrowException('account.view');
         $accounts = $this->accountsService->all()->paginate(20);
+        $accounts->appends(request()->query());
         $bankAccounts = $this->accountsService->all()->where('account_type', 'bank')->with('payments')->get();
         $cashAccount = $this->accountsService->all()->where('account_type', 'cash')->with('payments')->first();
         $mobileAccounts = $this->accountsService->all()->where('account_type', 'mobile_banking')->with('payments')->get();

@@ -57,6 +57,7 @@ class ProductController extends Controller
                 }
             } else {
                 $products = $products->paginate(20);
+                $products->appends(request()->query());
             }
 
             if (request('export_pdf')) {
@@ -498,9 +499,9 @@ class ProductController extends Controller
 
     public function bulkDelete(Request $request)
     {
-        checkAdminHasPermissionAndThrowException('product.bulk.delete');
+        checkAdminHasPermissionAndThrowException('product.delete');
         $ids = $request->ids;
         $this->productService->bulkDelete($ids);
-        return response()->json(['status' => 'success', 'message' => 'Product Deleted Successfully']);
+        return response()->json(['success' => true, 'message' => 'Product Deleted Successfully']);
     }
 }
