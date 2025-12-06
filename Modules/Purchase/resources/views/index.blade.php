@@ -120,7 +120,8 @@
                             <th>{{ __('SN') }}</th>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Invoice Number') }}</th>
-                            <th>{{ __('Supplier') }}</th>
+                            <th>{{ __('Supplier Company') }}</th>
+                            <th>{{ __('Supplier Name') }}</th>
                             <th>{{ __('Total Amount') }}</th>
                             <th>{{ __('Total Pay') }}</th>
                             <th>{{ __('Total Due') }}</th>
@@ -130,9 +131,10 @@
                     <tbody>
                         @foreach ($purchases as $index => $purchase)
                             <tr>
-                                <td>{{ ++$index }}</td>
+                                <td>{{ $purchases->firstItem() + $index }}</td>
                                 <td>{{ $purchase->purchase_date }}</td>
                                 <td>{{ $purchase->invoice_number }}</td>
+                                <td>{{ $purchase->supplier?->company }}</td>
                                 <td>{{ $purchase->supplier?->name }}</td>
                                 <td>{{ currency($purchase->total_amount) }}</td>
                                 <td>{{ currency($purchase->paid_amount) }}</td>
@@ -179,7 +181,7 @@
                         @endforeach
 
                         <tr>
-                            <td colspan="4" class="text-center">
+                            <td colspan="5" class="text-center">
                                 <b> {{ __('Total') }}</b>
                             </td>
                             <td colspan="1">
@@ -191,6 +193,7 @@
                             <td colspan="1">
                                 <b>{{ currency($data['due_amount']) }}</b>
                             </td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>

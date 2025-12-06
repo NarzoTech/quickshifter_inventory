@@ -40,7 +40,7 @@ class PurchaseService
 
     public function all()
     {
-        $purchase = $this->purchase->with('supplier', 'warehouse')->latest();
+        $purchase = $this->purchase->with('supplier', 'warehouse')->orderBy('purchase_date', 'desc');
 
         if (request()->has('keyword')) {
             $purchase = $purchase->where(function ($query) {
@@ -48,9 +48,9 @@ class PurchaseService
                     ->orWhere('memo_no', 'like', '%' . request()->keyword . '%')
                     ->orWhere('reference_no', 'like', '%' . request()->keyword . '%')
                     ->orWhereHas('supplier', function ($q) {
-                        $q->where('name', 'like', '%' . request()->keyword . '%');
-                    })
-                ;
+                        $q->where('name', 'like', '%' . request()->keyword . '%')
+                            ->orWhere('company', 'like', '%' . request()->keyword . '%');
+                    });
             });
         }
         if (request()->supplier_id) {
