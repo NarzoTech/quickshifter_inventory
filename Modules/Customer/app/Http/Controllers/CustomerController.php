@@ -8,6 +8,7 @@ use App\Exports\LedgerExport;
 use App\Http\Controllers\Controller;
 use App\Imports\CustomersImport;
 use App\Models\Ledger;
+use App\Models\LedgerDetails;
 use App\Models\User;
 use App\Traits\RedirectHelperTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -496,10 +497,34 @@ class CustomerController extends Controller
 
 
         // customer ledger delete
+        $invoiceNumber = $payment->sale->invoice;
+        $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)->first();
+
+        if ($ledgerDetail) {
+            $ledger = $ledgerDetail->ledger;
+
+            // Check if this is the only detail in the ledger
+            $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
+                ->where('id', '!=', $ledgerDetail->id)
+                ->count();
+
+            // Delete the ledger detail
+            $ledgerDetail->delete();
+
+            if ($otherDetailsCount == 0) {
+                // No other details, delete the entire ledger
+                $ledger->delete();
+            } else {
+                // Update ledger amounts
+                $ledger->amount = $ledger->amount - $payment->amount;
+                $ledger->due_amount = $ledger->due_amount + $payment->amount;
+                $ledger->save();
+            }
+        }
 
         $payment->delete();
         return to_route('admin.customer.due-receive.list')->with([
-            'messege' => 'Customer due receive successfully.',
+            'messege' => 'Customer due receive deleted successfully.',
             'alert-type' => 'success'
         ]);
     }
@@ -579,12 +604,14 @@ class CustomerController extends Controller
 
 
         // create payment data
+        // advance_receive: is_paid=0, is_received=1 (receiving money from customer)
+        // advance_refund: is_paid=1, is_received=0 (paying money back to customer)
         CustomerPayment::create([
             'customer_id' => $id,
             'account_id' => $account->id,
             'payment_type' => $request->refund_amount != null ? 'advance_refund' : 'advance_receive',
-            'is_paid' => $request->refund_amount == null ? 0 : 1,
-            'is_received' => $request->refund_amount == null ? 0 : 1,
+            'is_paid' => $request->refund_amount != null ? 1 : 0,
+            'is_received' => $request->refund_amount != null ? 0 : 1,
             'amount' => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
             'account_type' => accountList()[$account->account_type],
             'note' => $request->note,

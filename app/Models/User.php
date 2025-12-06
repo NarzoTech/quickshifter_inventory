@@ -61,13 +61,27 @@ class User extends Model
     {
         return $this->hasMany(CustomerDue::class, 'customer_id');
     }
+    public function getTotalSalesAttribute()
+    {
+        return $this->sales->sum('grand_total');
+    }
+
     public function getTotalDueAttribute()
     {
-        $prevDue = $this->wallet_balance;
-        $totalSales = $this->sales->sum('grand_total');
+        $prevDue = $this->wallet_balance ?? 0;
+        $totalSales = $this->total_sales;
 
-        $due = $totalSales - $this->payment->where('is_received', 1)->sum('amount') + $this->payment->where('is_paid', 1)->sum('amount');
-        return $due + $prevDue;
+        // Payments that reduce customer due (sale payments + due receive)
+        $totalPaid = $this->payment
+            ->whereIn('payment_type', ['sale', 'due_receive'])
+            ->sum('amount');
+
+        // Sale returns reduce the amount customer owes
+        $totalSaleReturn = $this->sales->sum(function ($sale) {
+            return $sale->saleReturns->sum('return_amount');
+        });
+
+        return $totalSales - $totalPaid - $totalSaleReturn + $prevDue;
     }
 
     public function sales()

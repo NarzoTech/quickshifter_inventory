@@ -185,9 +185,11 @@ class SalesReturnController extends Controller
                     $account = $account->where('id', $request->account_id)->first();
                 }
                 $data = [
+                    'customer_id' => $request->customer_id,
                     'payment_type' => 'sale return',
                     'sale_return_id' => $return->id,
                     'is_paid' => 1,
+                    'is_received' => 0,
                     'account_id' => $account->id,
                     'amount' => $request->paying_amount,
                     'payment_date' => now(),
