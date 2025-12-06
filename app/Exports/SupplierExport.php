@@ -20,8 +20,11 @@ class SupplierExport implements FromCollection, WithHeadings, WithMapping, WithS
      */
     public function collection()
     {
-        $supplierData = request()->order_type ? $this->supplier : $this->supplier->get();
-        return $supplierData;
+        // Check if it's already a collection, otherwise execute the query
+        if ($this->supplier instanceof \Illuminate\Support\Collection || $this->supplier instanceof \Illuminate\Database\Eloquent\Collection) {
+            return $this->supplier;
+        }
+        return $this->supplier->get();
     }
 
     public function headings(): array

@@ -44,6 +44,20 @@ class PurchaseController extends Controller
             $data['due_amount'] += $purchase->due_amount;
         }
 
+        if (checkAdminHasPermission('purchase.excel.download')) {
+            if (request('export')) {
+                $fileName = 'purchase-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new PurchaseExport($purchases->get()), $fileName);
+            }
+        }
+
+        if (checkAdminHasPermission('purchase.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('purchase::pdf.purchase', [
+                    'purchases' => $purchases->get(),
+                ]);
+            }
+        }
 
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
@@ -55,21 +69,6 @@ class PurchaseController extends Controller
         } else {
             $purchases = $purchases->paginate($parpage);
             $purchases->appends(request()->query());
-        }
-
-        if (checkAdminHasPermission('purchase.excel.download')) {
-            if (request('export')) {
-                $fileName = 'purchase-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new PurchaseExport($purchases), $fileName);
-            }
-        }
-
-        if (checkAdminHasPermission('purchase.pdf.download')) {
-            if (request('export_pdf')) {
-                return view('purchase::pdf.purchase', [
-                    'purchases' => $purchases,
-                ]);
-            }
         }
 
         $products = $this->purchaseService->getProducts(request());

@@ -7,14 +7,18 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Events\BeforeExport;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 
-class PurchaseExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class PurchaseExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $count;
+    private $totalAmount = 0;
+    private $totalPaid = 0;
+    private $totalDue = 0;
+
     public function __construct(private $purchases) {}
     /**
      * @return \Illuminate\Support\Collection
@@ -44,6 +48,11 @@ class PurchaseExport implements FromCollection, WithHeadings, WithMapping, WithS
 
     public function map($purchase): array
     {
+        // Track totals
+        $this->totalAmount += $purchase->total_amount;
+        $this->totalPaid += $purchase->paid_amount;
+        $this->totalDue += $purchase->due_amount;
+
         // Map the data to match your format
         return [
             ++$this->count,
@@ -53,7 +62,6 @@ class PurchaseExport implements FromCollection, WithHeadings, WithMapping, WithS
             $purchase->total_amount,
             $purchase->paid_amount,
             $purchase->due_amount,
-
         ];
     }
     public function styles(Worksheet $sheet)
@@ -101,5 +109,32 @@ class PurchaseExport implements FromCollection, WithHeadings, WithMapping, WithS
     public function title(): string
     {
         return 'Purchase List';
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+                $highestRow = $sheet->getHighestRow();
+                $totalRow = $highestRow + 1;
+
+                // Add total row
+                $sheet->setCellValue('A' . $totalRow, '');
+                $sheet->setCellValue('B' . $totalRow, '');
+                $sheet->setCellValue('C' . $totalRow, '');
+                $sheet->setCellValue('D' . $totalRow, __('Total'));
+                $sheet->setCellValue('E' . $totalRow, $this->totalAmount);
+                $sheet->setCellValue('F' . $totalRow, $this->totalPaid);
+                $sheet->setCellValue('G' . $totalRow, $this->totalDue);
+
+                // Style the total row
+                $sheet->getStyle('A' . $totalRow . ':G' . $totalRow)->getFont()->setBold(true);
+                $sheet->getStyle('A' . $totalRow . ':G' . $totalRow)
+                    ->getBorders()
+                    ->getAllBorders()
+                    ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            },
+        ];
     }
 }
