@@ -8,6 +8,7 @@
             @php
                 $list = [
                     __('Invoice No'),
+                    __('Memo No'),
                     __('Date'),
                     __('Description'),
                     $title == 'Supplier Ledger'
@@ -33,7 +34,7 @@
                 $debit = 0;
             @endphp
             <tr>
-                <td colspan="5" class="text-center fw-bold">{{ __('Opening Balance') }}</td>
+                <td colspan="6" class="text-center fw-bold">{{ __('Opening Balance') }}</td>
                 <td></td>
                 <td colspan="1" class="text-end fw-bold">{{ $opening }}</td>
             </tr>
@@ -46,6 +47,7 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $ledger->invoice_no }}</td>
+                    <td>{{ $ledger->purchase?->memo_no }}</td>
                     <td>{{ $ledger->date }}</td>
                     <td class="text-capitalize">{{ $ledger->invoice_type }}</td>
                     <td>
@@ -56,13 +58,14 @@
                 </tr>
             @endforeach
             <tr>
-                <td colspan="4" class="text-center fw-bold">
+                <td colspan="5" class="text-center fw-bold">
                     {{ __('Total') }}
                 </td>
                 <td colspan="1" class="fw-bold">{{ $credit }}</td>
                 <td colspan="1" class="fw-bold">
                     {{ $debit }}
                 </td>
+                <td></td>
             </tr>
         </tbody>
     </table>

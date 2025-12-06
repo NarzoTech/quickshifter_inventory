@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Supplier\app\Models\Supplier;
+use Modules\Purchase\app\Models\Purchase;
 
 class Ledger extends Model
 {
@@ -47,5 +48,10 @@ class Ledger extends Model
     public function createdBy()
     {
         return $this->belongsTo(Admin::class, 'created_by', 'id')->withDefault();
+    }
+
+    public function purchase()
+    {
+        return $this->belongsTo(Purchase::class, 'invoice_no', 'invoice_number');
     }
 }

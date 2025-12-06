@@ -33,6 +33,7 @@ class LedgerExport implements FromCollection, WithHeadings, WithMapping, WithSty
             [
                 __('SN'),
                 __('Invoice No'),
+                __('Memo No'),
                 __('Date'),
                 __('Description'),
                 $this->title == 'Supplier Ledger'
@@ -56,6 +57,7 @@ class LedgerExport implements FromCollection, WithHeadings, WithMapping, WithSty
         return [
             ++$this->index,
             $ledger->invoice_no,
+            $ledger->purchase?->memo_no,
             $ledger->date,
             $ledger->invoice_type,
             $ledger->amount,
@@ -66,9 +68,9 @@ class LedgerExport implements FromCollection, WithHeadings, WithMapping, WithSty
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle
-        $sheet->mergeCells('A1:G1');  // Title
-        $sheet->mergeCells('A2:G2');  // Subtitle
-        $sheet->mergeCells('A3:G3');  // Time
+        $sheet->mergeCells('A1:H1');  // Title
+        $sheet->mergeCells('A2:H2');  // Subtitle
+        $sheet->mergeCells('A3:H3');  // Time
 
 
         // Apply styles to title and subtitle
@@ -77,7 +79,7 @@ class LedgerExport implements FromCollection, WithHeadings, WithMapping, WithSty
         $sheet->getStyle('A3')->getFont()->setItalic(true)->setSize(10);
 
         // Apply borders and center alignment to header rows
-        $sheet->getStyle('A4:G' . $sheet->getHighestRow())
+        $sheet->getStyle('A4:H' . $sheet->getHighestRow())
             ->getBorders()
             ->getAllBorders()
             ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
@@ -90,16 +92,17 @@ class LedgerExport implements FromCollection, WithHeadings, WithMapping, WithSty
         $sheet->getColumnDimension('E')->setWidth(25);
         $sheet->getColumnDimension('F')->setWidth(25);
         $sheet->getColumnDimension('G')->setWidth(25);
+        $sheet->getColumnDimension('H')->setWidth(25);
 
 
 
 
         // a1 to j1 will be center aligned
-        $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1:H1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
         // a2 to j2, a3 to j3  will be center aligned
-        $sheet->getStyle('A2:G2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle('A3:G3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A2:H2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A3:H3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     }
 
     public function title(): string
