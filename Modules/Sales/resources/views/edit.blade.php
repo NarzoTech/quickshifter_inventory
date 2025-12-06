@@ -638,6 +638,7 @@
 @endsection
 
 @push('js')
+    <script src="{{ asset('backend/js/jquery-ui.min.js') }}"></script>
     <script>
         // load products
         (function($) {
@@ -767,9 +768,9 @@
 
 
 
-                $("#category_id,#brand_id,#name").on('input', function() {
-                    const category_id = $('#category_id').val();
-                    const brand = $('#brand_id').val();
+                $("#product_category_id,#product_brand_id").on('change', function() {
+                    const category_id = $('#product_category_id').val();
+                    const brand = $('#product_brand_id').val();
                     const name = $('#name').val();
 
                     loadProudcts({
@@ -777,6 +778,41 @@
                         brand,
                         name
                     })
+                })
+
+                // Autocomplete for product search
+                $(document).on('click', function(event) {
+                    var searchInput = $("#name");
+                    var itemList = $("#itemList");
+
+                    if (!searchInput.is(event.target) && !itemList.is(event.target) && itemList.has(event.target).length === 0) {
+                        itemList.removeClass("show");
+                    }
+                })
+
+                $('#name').autocomplete({
+                    html: true,
+                    source: function(request, response) {
+                        $.ajax({
+                            url: "{{ route('admin.load-products-list') }}",
+                            dataType: 'json',
+                            data: {
+                                name: request.term
+                            },
+                            success: function(response) {
+                                if (response.total > 0) {
+                                    $('#itemList').html(response.view).addClass('show');
+                                }
+                            }
+                        })
+                    },
+                    minLength: 2,
+                    open: function() {
+                        $(this).removeClass('ui-corner-all').addClass('ui-corner-top')
+                    },
+                    close: function() {
+                        $(this).removeClass('ui-corner-top').addClass('ui-corner-all')
+                    }
                 })
 
                 $("#service_category_id,#service_name").on('input', function() {

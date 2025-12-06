@@ -71,7 +71,7 @@ class POSController extends Controller
 
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
-        })->orderBy('id', 'desc');
+        })->orderBy('stock', 'desc');
 
         if ($request->category_id) {
             $products = $products->where(function ($query) use ($request) {
@@ -130,7 +130,7 @@ class POSController extends Controller
 
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
-        })->orderBy('id', 'desc');
+        })->orderBy('stock', 'desc');
 
         if ($request->category_id) {
             $products = $products->where(function ($query) use ($request) {
@@ -215,7 +215,7 @@ class POSController extends Controller
 
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
-        })->orderBy('id', 'desc');
+        })->orderBy('stock', 'desc');
 
         if ($request->name) {
             $products = $products->where(function ($q) use ($request) {
