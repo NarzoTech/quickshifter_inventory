@@ -10,6 +10,7 @@ use App\Imports\CustomersImport;
 use App\Models\Ledger;
 use App\Models\LedgerDetails;
 use App\Models\User;
+use Carbon\Carbon;
 use App\Traits\RedirectHelperTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -252,7 +253,7 @@ class CustomerController extends Controller
         $user->vehicle_id = $request->vehicle_id;
         $user->membership = $request->membership;
         $user->plate_number = $request->plate_number;
-        $user->date = now()->parse($request->date);
+        $user->date = Carbon::createFromFormat('d-m-Y', $request->date);
         $user->status = $request->status;
         $user->guest = $request->guest ? 1 : 0;
         $user->address = $request->address;
@@ -295,7 +296,7 @@ class CustomerController extends Controller
         $user->membership = $request->membership;
         $user->plate_number = $request->plate_number;
         $user->wallet_balance = $request->due;
-        $user->date = now()->parse($request->date);
+        $user->date = Carbon::createFromFormat('d-m-Y', $request->date);
         $user->status = $request->status;
         $user->guest = $request->guest ? 1 : 0;
         $user->address = $request->address;
@@ -345,7 +346,7 @@ class CustomerController extends Controller
             $ledger->due_amount -= $request->receiving_amount;
 
             $ledger->note = $request->note;
-            $ledger->date = now()->parse($request->payment_date);
+            $ledger->date = Carbon::createFromFormat('d-m-Y', $request->payment_date);
 
             $ledger->created_by = auth('admin')->user()->id;
             $ledger->save();
@@ -379,7 +380,7 @@ class CustomerController extends Controller
                     'payment_type' => 'due_receive',
                     'is_received' => 1,
                     'amount' => $request->amount[$index],
-                    'payment_date' => now()->parse($request->payment_date),
+                    'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
                     'note' => $request->note,
                     'created_by' => auth('admin')->user()->id,
                 ]);
@@ -616,7 +617,7 @@ class CustomerController extends Controller
             'account_type' => accountList()[$account->account_type],
             'note' => $request->note,
             'created_by' => auth('admin')->user()->id,
-            'payment_date' => now()->parse($request->date),
+            'payment_date' => Carbon::createFromFormat('d-m-Y', $request->date),
             'invoice' => $this->genInvoiceNumber()
         ]);
 
@@ -641,7 +642,7 @@ class CustomerController extends Controller
             $ledger->due_amount = -$request->paying_amount;
             $ledger->amount = $request->paying_amount;
         }
-        $ledger->date = now()->parse($request->date);
+        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
     }

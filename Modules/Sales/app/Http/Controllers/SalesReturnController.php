@@ -8,6 +8,7 @@ use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
 use App\Traits\RedirectHelperTrait;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -130,8 +131,8 @@ class SalesReturnController extends Controller
             $return = SalesReturn::create([
                 'sale_id' => $request->sale_id,
                 'customer_id' => $request->customer_id,
-                'order_date' => now()->parse($request->order_date),
-                'return_date' => now()->parse($request->return_date),
+                'order_date' => Carbon::createFromFormat('d-m-Y', $request->order_date),
+                'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                 'return_amount' => $request->return_amount,
                 'return_due' => $due,
                 'invoice' => $this->returnInvoice(),
@@ -165,7 +166,7 @@ class SalesReturnController extends Controller
                 Stock::create([
                     'sale_return_id' => $return->id,
                     'product_id' => $prod_id,
-                    'date' => now()->parse($request->order_date),
+                    'date' => Carbon::createFromFormat('d-m-Y', $request->order_date),
                     'type' => 'Sale Return',
                     // 'invoice' => route('admin.sales.invoice', $sale->id),
                     // 'invoice_number' => $sale->invoice,
@@ -209,7 +210,7 @@ class SalesReturnController extends Controller
             $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
             $ledger->note = $request->note;
             $ledger->due_amount += $due;
-            $ledger->date = now()->parse($request->payment_date);
+            $ledger->date = Carbon::createFromFormat('d-m-Y', $request->payment_date);
             $ledger->created_by = auth('admin')->user()->id;
             $ledger->save();
 

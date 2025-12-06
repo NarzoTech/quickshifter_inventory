@@ -5,6 +5,7 @@ namespace Modules\Sales\app\Services;
 use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,7 @@ class SaleService
         $sale->warehouse_id = 1;
         $sale->quantity = 1;
         $sale->total_price = $request->sub_total;
-        $sale->order_date = now()->parse($request->sale_date);
+        $sale->order_date = Carbon::createFromFormat('d-m-Y', $request->sale_date);
         $sale->status = 1;
         $sale->payment_status = 1;
 
@@ -50,7 +51,7 @@ class SaleService
         $sale->return_amount = $request->return_amount;
         $due = $request->total_amount - array_sum($request->paying_amount);
         $sale->due_amount = $due < 0 ? 0 : $due;
-        $sale->due_date = now()->parse($request->due_date);
+        $sale->due_date = Carbon::createFromFormat('d-m-Y', $request->due_date);
         $sale->sale_note = $request->remark;
         $sale->created_by = auth('admin')->id();
         $sale->save();
@@ -89,7 +90,7 @@ class SaleService
                 Stock::create([
                     'sale_id' => $sale->id,
                     'product_id' => $product->id,
-                    'date' => now()->parse($request->sale_date),
+                    'date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
                     'type' => 'Sale',
                     'invoice' => route('admin.sales.invoice', $sale->id),
                     'invoice_number' => $sale->invoice,
@@ -124,7 +125,7 @@ class SaleService
                 'customer_id' => $request->order_customer_id,
                 'account_id' => $account->id,
                 'amount' => $request->paying_amount[$key],
-                'payment_date' => now()->parse($request->sale_date),
+                'payment_date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
                 'created_by' => auth('admin')->user()->id,
             ];
             if ($customerId == 'walk-in-customer') {
@@ -170,7 +171,7 @@ class SaleService
             $sale->customer_id = $request->order_customer_id;
             $sale->warehouse_id = 1;
             $sale->total_price = $request->sub_total;
-            $sale->order_date = now()->parse($request->sale_date);
+            $sale->order_date = Carbon::createFromFormat('d-m-Y', $request->sale_date);
             $sale->status = 1;
             $sale->payment_status = 1;
 
@@ -183,7 +184,7 @@ class SaleService
 
             $due = $request->total_amount - array_sum($request->paying_amount);
             $sale->due_amount = $due < 0 ? 0 : $due;
-            $sale->due_date = now()->parse($request->due_date);
+            $sale->due_date = Carbon::createFromFormat('d-m-Y', $request->due_date);
             $sale->sale_note = $request->remark;
             $sale->receive_amount = $request->receive_amount;
             $sale->return_amount = $request->return_amount;
@@ -239,7 +240,7 @@ class SaleService
                     Stock::create([
                         'sale_id' => $sale->id,
                         'product_id' => $product->id,
-                        'date' => now()->parse($request->sale_date),
+                        'date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
                         'type' => 'Sale',
                         'invoice' => route('admin.sales.invoice', $sale->id),
                         'invoice_number' => $sale->invoice,
@@ -277,7 +278,7 @@ class SaleService
                     'customer_id' => $request->order_customer_id,
                     'account_id' => $account->id,
                     'amount' => $request->paying_amount[$key],
-                    'payment_date' => now()->parse($request->sale_date),
+                    'payment_date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
                     'created_by' => auth('admin')->user()->id,
                 ];
                 if ($customerId == 'walk-in-customer') {
@@ -426,7 +427,7 @@ class SaleService
         $ledger->note = $request->note;
         $ledger->due_amount = $dueAmount;
         $ledger->total_amount = $total_amount;
-        $ledger->date = now()->parse($request->sale_date);
+        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->sale_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
     }

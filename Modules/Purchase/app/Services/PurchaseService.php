@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\Stock;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -87,7 +88,7 @@ class PurchaseService
         $purchase->invoice_number = $request->invoice_number;
         $purchase->memo_no = $request->memo_no;
         $purchase->reference_no = $request->reference_no;
-        $purchase->purchase_date = now()->parse($request->purchase_date);
+        $purchase->purchase_date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
         $purchase->items = $request->items;
         $purchase->attachment = $attachment_name;
         $purchase->total_amount = $request->total_amount;
@@ -125,7 +126,7 @@ class PurchaseService
             Stock::create([
                 'purchase_id' => $purchase->id,
                 'product_id' => $id,
-                'date' => now()->parse($request->purchase_date),
+                'date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'type' => 'Purchase',
                 'invoice' => route('admin.purchase.invoice', $purchase->id),
                 'in_quantity' => $request->quantity[$index],
@@ -158,7 +159,7 @@ class PurchaseService
                 'supplier_id' => $request->supplier_id,
                 'account_id' => $account->id,
                 'amount' => $request->paid_amount[$key],
-                'payment_date' => now()->parse($request->purchase_date),
+                'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'note' => $request->note,
                 'created_by' => auth('admin')->user()->id,
                 'account_type' => accountList()[$item],
@@ -189,7 +190,7 @@ class PurchaseService
         $purchase->invoice_number = $request->invoice_number;
         $purchase->memo_no = $request->memo_no;
         $purchase->reference_no = $request->reference_no;
-        $purchase->purchase_date = now()->parse($request->purchase_date);
+        $purchase->purchase_date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
         $purchase->items = $request->items;
         $purchase->attachment = $attachment_name;
         $purchase->total_amount = $request->total_amount;
@@ -242,7 +243,7 @@ class PurchaseService
             Stock::create([
                 'purchase_id' => $purchase->id,
                 'product_id' => $id,
-                'date' => now()->parse($request->purchase_date),
+                'date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'type' => 'Purchase',
                 'invoice' => route('admin.purchase.invoice', $purchase->id),
                 'in_quantity' => $request->quantity[$index],
@@ -270,7 +271,7 @@ class PurchaseService
                 'supplier_id' => $request->supplier_id,
                 'account_id' => $account->id,
                 'amount' => $request->paid_amount[$key],
-                'payment_date' => now()->parse($request->purchase_date),
+                'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'note' => $request->note,
                 'created_by' => auth('admin')->user()->id,
                 'invoice' => $request->invoice_number,
@@ -399,7 +400,7 @@ class PurchaseService
             'created_by' => auth()->user()->id,
             'purchase_id' => $request->purchase_id,
             'return_type_id' => $request->return_type_id,
-            'return_date' => now()->parse($request->return_date),
+            'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
             'note' => $request->note,
             'payment_method' => $request->payment_type,
             'received_amount' => $request->received_amount,
@@ -476,7 +477,7 @@ class PurchaseService
             'supplier_id' => $request->supplier_id,
             'warehouse_id' => $request->warehouse_id,
             'return_type_id' => $request->return_type_id,
-            'return_date' => now()->parse($request->return_date),
+            'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
             'note' => $request->note,
             'payment_method' => $request->payment_type,
             'received_amount' => $request->received_amount,
@@ -519,7 +520,7 @@ class PurchaseService
         $ledger->note = $request->note;
         $ledger->due_amount = $dueAmount;
         $ledger->total_amount = $total_amount;
-        $ledger->date = now()->parse($request->purchase_date);
+        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
     }
@@ -536,7 +537,7 @@ class PurchaseService
         $ledger->invoice_no = $request->invoice_number;
         $ledger->note = $request->note;
         $ledger->due_amount = $dueAmount;
-        $ledger->date = now()->parse($request->return_date);
+        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
 
@@ -578,7 +579,7 @@ class PurchaseService
         $ledger->invoice_no = $request->invoice_number;
         $ledger->note = $request->note;
         $ledger->due_amount = $request->due_amount ?? 0;
-        $ledger->date = now()->parse($request->purchase_date);
+        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
     }
