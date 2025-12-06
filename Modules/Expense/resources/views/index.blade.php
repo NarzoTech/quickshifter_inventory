@@ -244,8 +244,7 @@
                             </div>
                             <div class="col-md-12 sub-expense-wrapper" style="display: none;">
                                 <div class="form-group">
-                                    <label for="sub_expense_type_id">{{ __('Sub Expense Type') }}<span
-                                            class="text-danger">*</span></label>
+                                    <label for="sub_expense_type_id">{{ __('Sub Expense Type') }}</label>
                                     <select name="sub_expense_type_id" id="sub_expense_type_id"
                                         class="form-control select2" data-dropdown-parent="#addExpense">
                                         <option value="">{{ __('Select Sub Expense Type') }}</option>
@@ -348,8 +347,7 @@
                                     style="display: {{ $expense->expenseType->children->count() > 0 ? 'block' : 'none' }};">
                                     <div class="form-group">
                                         <label
-                                            for="sub_expense_type_id_edit_{{ $expense->id }}">{{ __('Sub Expense Type') }}<span
-                                                class="text-danger">*</span></label>
+                                            for="sub_expense_type_id_edit_{{ $expense->id }}">{{ __('Sub Expense Type') }}</label>
                                         <select name="sub_expense_type_id"
                                             id="sub_expense_type_id_edit_{{ $expense->id }}"
                                             class="form-control select2"
@@ -479,10 +477,9 @@
                     if (hasChildren == '1' && expenseTypeId) {
                         loadSubExpenseTypes(expenseTypeId, '#sub_expense_type_id', '#addExpense');
                         $('.sub-expense-wrapper').slideDown();
-                        $('#sub_expense_type_id').prop('required', true);
                     } else {
                         $('.sub-expense-wrapper').slideUp();
-                        $('#sub_expense_type_id').val('').prop('required', false);
+                        $('#sub_expense_type_id').val('');
                     }
                 });
 
@@ -498,10 +495,9 @@
                     if (hasChildren == '1' && expenseTypeId) {
                         loadSubExpenseTypes(expenseTypeId, subExpenseSelect, parentModal);
                         $(`.sub-expense-wrapper-${expenseId}`).slideDown();
-                        $(subExpenseSelect).prop('required', true);
                     } else {
                         $(`.sub-expense-wrapper-${expenseId}`).slideUp();
-                        $(subExpenseSelect).val('').prop('required', false);
+                        $(subExpenseSelect).val('');
                     }
                 });
 

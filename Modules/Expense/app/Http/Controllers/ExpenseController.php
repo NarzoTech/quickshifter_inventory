@@ -35,10 +35,13 @@ class ExpenseController extends Controller
             $keyword  = request('keyword');
             $expenses = $expenses->where(function ($query) use ($keyword) {
                 $query->where('amount', 'like', "%{$keyword}%")
+                    ->orWhere('note', 'like', "%{$keyword}%")
                     ->orWhereHas('expenseType', function ($q) use ($keyword) {
                         $q->where('name', 'like', "%{$keyword}%");
                     })
-                    ->orWhere('amount', 'like', "%{$keyword}%")
+                    ->orWhereHas('subExpenseType', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    })
                     ->orWhereHas('account', function ($q) use ($keyword) {
                         $q->where('account_type', 'like', "%{$keyword}%");
                     })
@@ -52,7 +55,7 @@ class ExpenseController extends Controller
         if (request('order_type')) {
             $expenses = $expenses->orderBy(request('order_type'), $sort);
         } else {
-            $expenses = $expenses->orderBy('id', $sort);
+            $expenses = $expenses->orderBy('date', $sort);
         }
         if (request('from_date') && request('to_date')) {
             $from     = now()->parse(request('from_date'));
