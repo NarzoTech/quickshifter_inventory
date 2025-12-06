@@ -281,20 +281,35 @@ class SupplierService
     {
         $payment = SupplierPayment::find($id);
 
-
-        $payment->purchase->paid_amount = $payment->purchase->paid_amount - $payment->amount;
-        $payment->purchase->due_amount = $payment->purchase->due_amount + $payment->amount;
-        $payment->purchase->payment_status = $payment->purchase->due_amount == 0 ? 'paid' : 'due';
-        $payment->purchase->save();
+        // Update purchase paid/due amounts
+        if ($payment->purchase && $payment->purchase->id) {
+            $payment->purchase->paid_amount = $payment->purchase->paid_amount - $payment->amount;
+            $payment->purchase->due_amount = $payment->purchase->due_amount + $payment->amount;
+            $payment->purchase->payment_status = $payment->purchase->due_amount == 0 ? 'paid' : 'due';
+            $payment->purchase->save();
+        }
 
         $ledger = $payment->ledger;
 
-        if ($ledger) {
-            // delete ledger details
-            $ledger->details()->delete();
+        if ($ledger && $ledger->id) {
+            // Check if other payments reference this ledger
+            $otherPaymentsCount = SupplierPayment::where('ledger_id', $ledger->id)
+                ->where('id', '!=', $id)
+                ->count();
 
-            // delete ledger
-            $ledger->delete();
+            if ($otherPaymentsCount == 0) {
+                // No other payments use this ledger, safe to delete
+                $ledger->details()->delete();
+                $ledger->delete();
+            } else {
+                // Other payments exist, only delete the specific ledger detail for this payment
+                $ledger->details()->where('invoice', $payment->purchase?->invoice_number)->delete();
+
+                // Update ledger amount
+                $ledger->amount = $ledger->amount - $payment->amount;
+                $ledger->due_amount = $ledger->due_amount + $payment->amount;
+                $ledger->save();
+            }
         }
 
         return $payment->delete();

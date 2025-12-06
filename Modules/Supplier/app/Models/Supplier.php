@@ -72,9 +72,28 @@ class Supplier extends Model
     }
 
 
+    public function getTotalPurchaseAttribute()
+    {
+        return $this->purchases->sum('total_amount');
+    }
+
+    public function getTotalPaidAttribute()
+    {
+        // Only count payments that reduce purchase due (purchase payments + due payments)
+        return $this->payments
+            ->whereIn('payment_type', ['purchase', 'due_pay'])
+            ->sum('amount');
+    }
+
     public function getTotalDueAttribute()
     {
-        return $this->purchases->sum('total_amount') - $this->payments->sum('amount');
+        $totalPurchase = $this->total_purchase;
+        $totalPaid = $this->total_paid;
+
+        // Subtract purchase returns (money received back from supplier)
+        $totalReturn = $this->purchaseReturn->sum('return_amount');
+
+        return $totalPurchase - $totalPaid - $totalReturn;
     }
 
     public function duePurchase()
