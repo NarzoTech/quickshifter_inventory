@@ -372,40 +372,55 @@
             addPurchaseRow(product);
         });
 
+        // Debounce function to limit API calls
+        let searchTimeout = null;
+
         // when search product will not in the product list. it will search from the database;
         $(document).on('input', '[aria-controls="select2-product_id-results"]', function() {
             let input = $(this).val();
+
+            // Clear previous timeout
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+
+            if (input.length < 2) {
+                return;
+            }
+
             // check if input its in product name or product code
-            const filteredProducts = products.filter(p => p.name.toLowerCase().includes(input.toLowerCase()) ||
-                p.barcode.toLowerCase().includes(input.toLowerCase()));
+            const filteredProducts = products.filter(p =>
+                p.name.toLowerCase().includes(input.toLowerCase()) ||
+                (p.barcode && p.barcode.toLowerCase().includes(input.toLowerCase())) ||
+                (p.sku && p.sku.toLowerCase().includes(input.toLowerCase()))
+            );
 
             if (filteredProducts.length == 0) {
-                // check if input its in product name or product code in the database
-                $.ajax({
-                    url: "{{ route('admin.purchase.product.search') }}",
-                    type: 'POST',
-                    data: {
-                        keyword: input
-                    },
-                    success: function(response) {
-                        if (response.status) {
-                            let html = '';
-                            response.data.forEach(product => {
-                                const filteredProducts = products.filter(p => p.name
-                                    .toLowerCase().includes(input.toLowerCase()) || p
-                                    .barcode.toLowerCase().includes(input.toLowerCase()));
+                // Debounce the API call - wait 300ms after user stops typing
+                searchTimeout = setTimeout(function() {
+                    $.ajax({
+                        url: "{{ route('admin.purchase.product.search') }}",
+                        type: 'POST',
+                        data: {
+                            keyword: input
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                response.data.forEach(product => {
+                                    // Check if product already exists in the list
+                                    const existingProduct = products.find(p => p.id == product.id);
 
-                                if (!filteredProducts.length) {
-                                    products.push(product);
-                                    html +=
-                                        `<option value="${product.id}">${product.name}</option>`;
-                                }
-                            });
-                            $('#product_id').append(html);
+                                    if (!existingProduct) {
+                                        products.push(product);
+                                        $('#product_id').append(
+                                            `<option value="${product.id}">${product.name} (${product.sku})</option>`
+                                        );
+                                    }
+                                });
+                            }
                         }
-
-                    }
-                })
+                    });
+                }, 300);
             }
         })
 

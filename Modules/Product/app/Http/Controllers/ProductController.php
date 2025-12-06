@@ -442,18 +442,36 @@ class ProductController extends Controller
     }
     public function searchProducts(Request $request)
     {
-        $product = $this->productService->getProducts()->get();
-        if (! $product->count()) {
+        $keyword = $request->keyword;
+
+        if (empty($keyword)) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Keyword is required',
+            ]);
+        }
+
+        $products = $this->productService->getProducts()
+            ->where('status', 1)
+            ->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                    ->orWhere('sku', 'like', '%' . $keyword . '%')
+                    ->orWhere('barcode', 'like', '%' . $keyword . '%');
+            })
+            ->limit(20)
+            ->get();
+
+        if (!$products->count()) {
             return response()->json([
                 'status'  => false,
                 'message' => 'Product not found',
             ]);
-        } else {
-            return response()->json([
-                'status' => true,
-                'data'   => $product,
-            ]);
         }
+
+        return response()->json([
+            'status' => true,
+            'data'   => $products,
+        ]);
     }
     public function barcode()
     {
