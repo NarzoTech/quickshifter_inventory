@@ -162,7 +162,7 @@
                                 $selling_price = $product->selling_price ?? 0;
                             @endphp
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $products->firstItem() + $index }}</td>
                                 <td>
                                     <img src="{{ asset($product->single_image) }}" alt="Product Picture" width="100">
                                 </td>
@@ -211,6 +211,18 @@
                                 </td>
                             </tr>
                         @endforeach
+
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <b>{{ __('Total') }}</b>
+                            </td>
+                            <td><b>{{ $totals['totalInQty'] }}</b></td>
+                            <td><b>{{ $totals['totalOutQty'] }}</b></td>
+                            <td><b>{{ $totals['totalStock'] }}</b></td>
+                            <td><b>{{ $totals['totalStockPP'] }}</b></td>
+                            <td><b>{{ $totals['totalStockSP'] }}</b></td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

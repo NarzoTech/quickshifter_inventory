@@ -85,6 +85,7 @@ class SaleService
                 $product->save();
 
                 // create stock
+                $purchasePrice = $product->last_purchase_price ?? 0;
                 Stock::create([
                     'sale_id' => $sale->id,
                     'product_id' => $product->id,
@@ -94,9 +95,10 @@ class SaleService
                     'invoice_number' => $sale->invoice,
                     'out_quantity' => $item['qty'],
                     'sku' => $product->sku,
+                    'purchase_price' => $purchasePrice,
                     'sale_price' => $item['price'],
                     'rate' => $item['price'],
-                    'profit' => $item['price'] - $product->last_purchase_price,
+                    'profit' => ($item['price'] - $purchasePrice) * $item['qty'],
                     'created_by' => auth('admin')->user()->id,
                 ]);
             }
@@ -233,6 +235,7 @@ class SaleService
                     $product->save();
 
                     // create stock
+                    $purchasePrice = $product->last_purchase_price ?? 0;
                     Stock::create([
                         'sale_id' => $sale->id,
                         'product_id' => $product->id,
@@ -242,9 +245,10 @@ class SaleService
                         'invoice_number' => $sale->invoice,
                         'out_quantity' => $item['qty'],
                         'sku' => $product->sku,
+                        'purchase_price' => $purchasePrice,
                         'sale_price' => $item['price'],
                         'rate' => $item['price'],
-                        'profit' => $item['price'] - $product->last_purchase_price,
+                        'profit' => ($item['price'] - $purchasePrice) * $item['qty'],
                         'created_by' => auth('admin')->user()->id,
                     ]);
                 }

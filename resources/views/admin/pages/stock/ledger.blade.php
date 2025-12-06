@@ -110,13 +110,23 @@
                     </thead>
                     <tbody>
                         @php
-                            $available = 0;
+                            $runningAvailable = 0;
                         @endphp
 
                         @foreach ($stocks as $stock)
                             @php
-                                $available = $stock->in_quantity - $stock->out_quantity;
-                                $qty = $stock->in_quantity ?? $stock->out_quantity;
+                                // Calculate running available quantity
+                                $runningAvailable += $stock->in_quantity - $stock->out_quantity;
+
+                                // Calculate profit/loss for sales: (sale_price - purchase_price) * out_quantity
+                                $profit = 0;
+                                if ($stock->out_quantity > 0 && $stock->type == 'Sale') {
+                                    $purchasePrice = $stock->purchase_price ?? $product->avg_purchase_price ?? 0;
+                                    $salePrice = $stock->sale_price ?? $stock->rate ?? 0;
+                                    $profit = ($salePrice - $purchasePrice) * $stock->out_quantity;
+                                }
+
+                                $qty = $stock->in_quantity > 0 ? $stock->in_quantity : $stock->out_quantity;
                             @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -124,16 +134,16 @@
                                 <td>{{ $product->barcode }}</td>
                                 <td>
                                     <a href="{{ $stock->invoice }}">
-                                        {{ $stock->purchase->invoice_number }}
+                                        {{ $stock->purchase->invoice_number ?? '' }}
                                     </a>
                                 </td>
                                 <td>{{ ucwords($stock->type) }}</td>
                                 <td>{{ $stock->in_quantity }}</td>
                                 <td>{{ $stock->out_quantity }}</td>
-                                <td>{{ $available }}</td>
-                                <td>{{ $stock->rate }}</td>
-                                <td>{{ $stock->rate * $qty }}</td>
-                                <td>{{ $stock->profit }}</td>
+                                <td>{{ $runningAvailable }}</td>
+                                <td>{{ number_format($stock->rate, 2) }}</td>
+                                <td>{{ number_format($stock->rate * $qty, 2) }}</td>
+                                <td>{{ number_format($profit, 2) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

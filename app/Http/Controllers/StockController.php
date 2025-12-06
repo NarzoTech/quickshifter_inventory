@@ -43,6 +43,25 @@ class StockController extends Controller
                 $query = $query->where('stock', '=<', 0);
             }
         }
+        // Calculate totals from all filtered data before pagination
+        $allProducts = (clone $query)->with('stockDetails')->get();
+        $totals = [
+            'totalInQty' => 0,
+            'totalOutQty' => 0,
+            'totalStock' => 0,
+            'totalStockPP' => 0,
+            'totalStockSP' => 0,
+        ];
+        foreach ($allProducts as $product) {
+            $stock = $product->stock < 0 ? 0 : $product->stock;
+            $selling_price = $product->selling_price ?? 0;
+            $totals['totalInQty'] += $product->stockDetails->sum('in_quantity');
+            $totals['totalOutQty'] += $product->stockDetails->sum('out_quantity');
+            $totals['totalStock'] += $product->stock;
+            $totals['totalStockPP'] += remove_comma($stock) * remove_comma($product->avg_purchase_price);
+            $totals['totalStockSP'] += remove_comma($stock) * remove_comma($selling_price);
+        }
+
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
@@ -72,7 +91,7 @@ class StockController extends Controller
 
         $brands = $this->brandService->getActiveBrands();
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
-        return view('admin.pages.stock.stock', compact('products', 'brands', 'categories'));
+        return view('admin.pages.stock.stock', compact('products', 'brands', 'categories', 'totals'));
     }
 
     public function ledger($id)
