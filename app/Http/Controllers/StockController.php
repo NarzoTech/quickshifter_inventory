@@ -77,14 +77,15 @@ class StockController extends Controller
         if (checkAdminHasPermission('stock.excel.download')) {
             if (request('export')) {
                 $fileName = 'stock-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new StockExport($products), $fileName);
+                return Excel::download(new StockExport($allProducts, $totals), $fileName);
             }
         }
 
         if (checkAdminHasPermission('stock.pdf.download')) {
             if (request('export_pdf')) {
                 return view('admin.pages.stock.pdf.stock', [
-                    'products' => $products,
+                    'products' => $allProducts,
+                    'totals' => $totals,
                 ]);
             }
         }

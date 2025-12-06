@@ -39,16 +39,21 @@
                     <td>{{ $product->last_purchase_price }}</td>
                     <td>{{ $product->selling_price }}</td>
                     <td>{{ $product->stockDetails->sum('in_quantity') }}</td>
-                    <td>{{ $product->stockDetails->sum('out_quantity') }}
-                    </td>
+                    <td>{{ $product->stockDetails->sum('out_quantity') }}</td>
                     <td>{{ $product->stock }}</td>
-                    <td>{{ remove_comma($stock) * remove_comma($product->avg_purchase_price) }}
-                    </td>
-                    <td>
-                        {{ remove_comma($stock) * remove_comma($selling_price) }}
-                    </td>
+                    <td>{{ remove_comma($stock) * remove_comma($product->avg_purchase_price) }}</td>
+                    <td>{{ remove_comma($stock) * remove_comma($selling_price) }}</td>
                 </tr>
             @endforeach
+
+            <tr style="font-weight: bold; background-color: #f0f0f0;">
+                <td colspan="5" style="text-align: right; padding: 8px;">{{ __('Total') }}</td>
+                <td style="padding: 8px;">{{ $totals['totalInQty'] ?? 0 }}</td>
+                <td style="padding: 8px;">{{ $totals['totalOutQty'] ?? 0 }}</td>
+                <td style="padding: 8px;">{{ $totals['totalStock'] ?? 0 }}</td>
+                <td style="padding: 8px;">{{ number_format($totals['totalStockPP'] ?? 0, 2) }}</td>
+                <td style="padding: 8px;">{{ number_format($totals['totalStockSP'] ?? 0, 2) }}</td>
+            </tr>
         </tbody>
     </table>
 @endsection
