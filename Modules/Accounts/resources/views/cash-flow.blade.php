@@ -199,7 +199,7 @@
                             </td>
                             <td>
                                 <span>
-                                    TK 0.00
+                                    {{ currency($data['purchaseReturn'] ?? 0) }}
                                 </span>
                             </td>
                             <td>

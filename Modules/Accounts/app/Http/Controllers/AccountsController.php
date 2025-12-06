@@ -18,8 +18,6 @@ use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
 use Modules\Sales\app\Models\ProductSale;
-use Modules\Sales\app\Models\Sale;
-use Modules\Sales\app\Models\SalesReturn;
 use Modules\Supplier\app\Models\SupplierPayment;
 
 class AccountsController extends Controller
@@ -175,10 +173,10 @@ class AccountsController extends Controller
         $applyDateFilter($customerDueQuery, 'payment_date');
         $data['customer_due'] = $customerDueQuery->sum('amount');
 
-        // Sale Return
-        $saleReturnQuery = SalesReturn::query();
-        $applyDateFilter($saleReturnQuery, 'return_date');
-        $data['sale_return'] = $saleReturnQuery->sum('return_amount');
+        // Sale Return (actual cash refunded to customer)
+        $saleReturnQuery = CustomerPayment::where('payment_type', 'sale return');
+        $applyDateFilter($saleReturnQuery, 'payment_date');
+        $data['sale_return'] = $saleReturnQuery->sum('amount');
 
         // Balance Deposit
         $balanceDepositQuery = Balance::where('balance_type', 'deposit');
@@ -230,9 +228,14 @@ class AccountsController extends Controller
         $applyDateFilter($purchaseQuery, 'payment_date');
         $data['purchase'] = $purchaseQuery->sum('amount');
 
+        // Purchase Return (money received from supplier)
+        $purchaseReturnQuery = SupplierPayment::where('payment_type', 'purchase_receive');
+        $applyDateFilter($purchaseReturnQuery, 'payment_date');
+        $data['purchaseReturn'] = $purchaseReturnQuery->sum('amount');
+
         $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'];
 
-        $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'] + $data['serviceSale'];
+        $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'] + $data['serviceSale'] + $data['purchaseReturn'];
 
         // Opening balance is 0 for all-time view, or calculated from the start date when filtered
         $openingBalance = $hasDateFilter && $fromDate ? $this->accountsService->getOpeningBalance($fromDate) : 0;
