@@ -143,11 +143,11 @@
                 {{ __('Monthly Sales Report') }}
             </a>
         </li> --}}
-            {{-- <li class="{{ Route::is('admin.report.profit-loss') ? 'active' : '' }} menu-item">
-            <a href="{{ route('admin.report.profit-loss') }}" class="menu-link">
-                {{ __('Profit/Loss Report') }}
-            </a>
-        </li> --}}
+            <li class="{{ Route::is('admin.report.profit-loss') ? 'active' : '' }} menu-item">
+                <a href="{{ route('admin.report.profit-loss') }}" class="menu-link">
+                    {{ __('Profit/Loss Report') }}
+                </a>
+            </li>
             {{-- <li class="{{ Route::is('admin.report.product-sale-report') ? 'active' : '' }} menu-item">
             <a href="{{ route('admin.report.product-sale-report') }}" class="menu-link">
                 {{ __('Products Sales Report') }}

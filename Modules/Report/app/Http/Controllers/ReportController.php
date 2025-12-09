@@ -864,11 +864,52 @@ class ReportController extends Controller
 
     public function profitLoss()
     {
-        $data['totalPurchases'] = Purchase::sum('total_amount');
-        $data['expenses'] = Expense::sum('amount');
-        $data['totalSales'] = Sale::sum('grand_total');
-        $data['salesReturns'] = SalesReturn::sum('return_amount');
-        $data['totalReceive'] = CustomerPayment::where('is_received', 1)->sum('amount');
+        checkAdminHasPermissionAndThrowException('report.view');
+
+        // Date filtering - default to current date
+        $fromDate = request('from_date') ? Carbon::parse(request('from_date'))->startOfDay() : now()->startOfDay();
+        $toDate = request('to_date') ? Carbon::parse(request('to_date'))->endOfDay() : now()->endOfDay();
+
+        // Income
+        $data['totalSales'] = Sale::whereBetween('order_date', [$fromDate, $toDate])->sum('grand_total');
+        $data['salesReturns'] = SalesReturn::whereBetween('created_at', [$fromDate, $toDate])->sum('return_amount');
+        $data['netSales'] = $data['totalSales'] - $data['salesReturns'];
+
+        // Purchase Returns (income - money received back from supplier)
+        $data['purchaseReturns'] = PurchaseReturn::whereBetween('created_at', [$fromDate, $toDate])->sum('return_amount');
+
+        // Total Income
+        $data['totalIncome'] = $data['netSales'] + $data['purchaseReturns'];
+
+        // Expenses
+        $data['totalPurchases'] = Purchase::whereBetween('purchase_date', [$fromDate, $toDate])->sum('total_amount');
+        $data['expenses'] = Expense::whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        $data['salaries'] = EmployeeSalary::whereBetween('date', [$fromDate, $toDate])->sum('amount');
+
+        // Total Expenses
+        $data['totalExpenses'] = $data['totalPurchases'] + $data['expenses'] + $data['salaries'];
+
+        // Profit/Loss Calculation
+        $data['profitLoss'] = $data['totalIncome'] - $data['totalExpenses'];
+
+        // Date range for display
+        $data['fromDate'] = $fromDate->format('d-m-Y');
+        $data['toDate'] = $toDate->format('d-m-Y');
+
+        // Excel Export
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'profit-loss-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new \App\Exports\ProfitLossExport($data), $fileName);
+            }
+        }
+
+        // PDF Export
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.profit-loss', compact('data'));
+            }
+        }
 
         return view('report::profit-loss', compact('data'));
     }
