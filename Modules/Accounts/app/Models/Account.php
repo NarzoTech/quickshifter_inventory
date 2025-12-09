@@ -52,12 +52,22 @@ class Account extends Model
     {
         $receive =  $this->payments()->where('is_received', 1)->sum('amount');
         $paid = $this->payments()->where('is_paid', 1)->sum('amount');
-        $supplierPayments = $this->supplierPayments()->where('is_paid', 1)->sum('amount');
+
+        // Supplier Payments
+        $supplierPaymentsReceived = $this->supplierPayments()->where('is_received', 1)->sum('amount');
+        $supplierPaymentsPaid = $this->supplierPayments()->where('is_paid', 1)->sum('amount');
+
+        // Customer Payments (from sales)
+        $customerPaymentsReceived = $this->customerPayments()->where('is_received', 1)->sum('amount');
+        $customerPaymentsPaid = $this->customerPayments()->where('is_paid', 1)->sum('amount');
+
         $deposit = $this->deposits()->sum('amount');
         $withdraw = $this->withdraws()->sum('amount');
         $asset = $this->assets()->sum('amount');
         $expenses = $this->expenses->sum('amount');
-        $balance = ($receive + $deposit) - ($paid  + $withdraw + $asset + $expenses + $supplierPayments);
+
+        $balance = ($receive + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
+            - ($paid + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid);
         return $balance;
     }
 
@@ -214,27 +224,30 @@ class Account extends Model
         $customerPaymentsReceived = $customerPaymentsReceivedQuery->sum('amount');
         $customerPaymentsPaid = $customerPaymentsPaidQuery->sum('amount');
 
-        // Deposits, Withdraws, Assets, and Expenses
+        // Deposits, Withdraws, Assets, Expenses and Salary
         $depositQuery = $this->deposits();
         $withdrawQuery = $this->withdraws();
         $assetQuery = $this->assets();
         $expensesQuery = $this->expenses();
+        $salaryQuery = $this->salary();
 
         if ($hasDateFilter && $startDate && $endDate) {
             $depositQuery->whereBetween('date', [$startDate, $endDate]);
             $withdrawQuery->whereBetween('date', [$startDate, $endDate]);
             $assetQuery->whereBetween('date', [$startDate, $endDate]);
             $expensesQuery->whereBetween('date', [$startDate, $endDate]);
+            $salaryQuery->whereBetween('date', [$startDate, $endDate]);
         }
 
         $deposit = $depositQuery->sum('amount');
         $withdraw = $withdrawQuery->sum('amount');
         $asset = $assetQuery->sum('amount');
         $expenses = $expensesQuery->sum('amount');
+        $salary = $salaryQuery->sum('amount');
 
         // Calculate Balance
         $balance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
-            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid);
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary);
 
         return $balance;
     }
