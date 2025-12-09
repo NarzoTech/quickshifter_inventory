@@ -18,15 +18,6 @@ CHANGE COLUMN `images` `image` VARCHAR(255) NULL DEFAULT NULL;
 ALTER TABLE `inventory`.`products`
 ADD CONSTRAINT `products_chk_1` CHECK (`image` IS NOT NULL OR LENGTH(`image`) > 0);
 
-
-
-
-https://codecanyon.net/search/attendance
-https://demo.24hourworx.com/hrm/weekend/setup
-
-
-
-
 // sql
 ALTER TABLE `sales_return`
 ADD COLUMN `invoice` VARCHAR(45) NULL DEFAULT NULL AFTER `updated_at`;
