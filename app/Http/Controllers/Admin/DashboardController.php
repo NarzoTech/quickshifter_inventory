@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
 use Modules\Customer\app\Models\CustomerDue;
+use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
+use Modules\Expense\app\Models\ExpenseType;
 use Modules\Language\app\Models\Language;
 use Modules\Product\app\Models\Product;
 use Modules\Purchase\app\Models\Purchase;
+use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Purchase\app\Services\PurchaseService;
 use Modules\Sales\app\Models\Sale;
+use Modules\Sales\app\Models\SalesReturn;
 use Modules\Supplier\app\Services\SupplierService;
 
 class DashboardController extends Controller
@@ -26,6 +30,18 @@ class DashboardController extends Controller
         $data['customerDues'] = CustomerDue::where('status', 1)->sum('due_amount');
         $data['todaySales'] = Sale::whereDate('order_date', date('Y-m-d'))->sum('grand_total');
         $data['totalProducts'] = Product::count();
+
+        // Today's Purchase
+        $data['todayPurchase'] = Purchase::whereDate('purchase_date', date('Y-m-d'))->sum('total_amount');
+
+        // Today's Expense
+        $data['todayExpense'] = Expense::whereDate('date', date('Y-m-d'))->sum('amount');
+
+        // Total Sales (All Time)
+        $data['totalSales'] = Sale::sum('grand_total');
+
+        // Total Purchase (All Time)
+        $data['totalPurchases'] = Purchase::sum('total_amount');
 
         $suppliers = $this->supplierService->allSupplier();
 
@@ -238,6 +254,58 @@ class DashboardController extends Controller
         });
 
         $data['suppliers'] = $suppliers;
+
+        // Expense by Type for Pie Chart (Current Month)
+        $expenseByType = Expense::where('date', '>=', now()->startOfMonth())
+            ->selectRaw('expense_type_id, SUM(amount) as total')
+            ->groupBy('expense_type_id')
+            ->with('expenseType')
+            ->get();
+
+        $chart['expenseByType'] = $expenseByType->map(function ($expense) {
+            return [
+                'name' => $expense->expenseType->name ?? 'Unknown',
+                'value' => (float) $expense->total
+            ];
+        })->values()->toArray();
+
+        // Income vs Expense Pie Chart (Current Month)
+        $currentMonthIncome = Sale::where('order_date', '>=', now()->startOfMonth())->sum('grand_total');
+        $currentMonthPurchaseReturn = PurchaseReturn::where('created_at', '>=', now()->startOfMonth())->sum('return_amount');
+        $totalIncome = $currentMonthIncome + $currentMonthPurchaseReturn;
+
+        $currentMonthPurchase = Purchase::where('purchase_date', '>=', now()->startOfMonth())->sum('total_amount');
+        $currentMonthSalary = EmployeeSalary::where('date', '>=', now()->startOfMonth())->sum('amount');
+        $totalExpenseAmount = $chart['currentMonthExpense'] + $currentMonthPurchase + $currentMonthSalary;
+
+        $chart['incomeVsExpense'] = [
+            ['name' => __('Income'), 'value' => (float) $totalIncome],
+            ['name' => __('Expenses'), 'value' => (float) $totalExpenseAmount]
+        ];
+
+        // Weekly Sales Data (Last 7 days)
+        $weeklySales = Sale::where('order_date', '>=', now()->subDays(6)->startOfDay())
+            ->selectRaw('DATE(order_date) as date, SUM(grand_total) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->pluck('total', 'date')
+            ->toArray();
+
+        $weeklyLabels = [];
+        $weeklyData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $weeklyLabels[] = now()->subDays($i)->format('D');
+            $weeklyData[] = (float) ($weeklySales[$date] ?? 0);
+        }
+        $chart['weeklySalesLabels'] = $weeklyLabels;
+        $chart['weeklySalesData'] = $weeklyData;
+
+        // Profit/Loss for current month
+        $salesReturns = SalesReturn::where('created_at', '>=', now()->startOfMonth())->sum('return_amount');
+        $chart['currentMonthProfit'] = $totalIncome - $salesReturns - $totalExpenseAmount;
+
         return view('admin.dashboard', compact('data', 'purchaseData', 'saleData', 'chart'));
     }
 
