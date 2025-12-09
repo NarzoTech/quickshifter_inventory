@@ -51,32 +51,33 @@
                     <td>{{ $sale->paid_amount }}</td>
                     <td>{{ $sale->due_amount }}</td>
                     <td>
-                        @if ($sale->paid_amount == $sale->grand_total)
-                            <span class="badge badge-success">{{ __('Paid') }}</span>
-                        @elseif ($sale->due_amount > 0 && $sale->paid_amount < $sale->total_price)
-                            <span class="badge badge-danger">{{ __('Partial Due') }}</span>
+                        @if ((float)$sale->paid_amount >= (float)$sale->grand_total)
+                            <span class="badge bg-success">{{ __('Paid') }}</span>
+                        @elseif ((float)$sale->paid_amount == 0)
+                            <span class="badge bg-danger">{{ __('Due') }}</span>
                         @else
-                            <span class="badge badge-danger">{{ __('Due') }}</span>
+                            <span class="badge bg-warning">{{ __('Partial Due') }}</span>
                         @endif
                     </td>
                 </tr>
             @endforeach
-            <tr>
+            <tr style="font-weight: bold; background-color: #f0f0f0;">
                 <td colspan="5" class="text-center">
-                    <b> {{ __('Total') }}</b>
+                    <b>{{ __('Total') }}</b>
                 </td>
-                <td colspan="1">
+                <td>
                     <b>{{ $data['sale_amount'] }}</b>
                 </td>
-                <td colspan="1">
+                <td>
                     <b>{{ $data['total_amount'] }}</b>
                 </td>
-                <td colspan="1">
+                <td>
                     <b>{{ $data['paid_amount'] }}</b>
                 </td>
-                <td colspan="1">
+                <td>
                     <b>{{ $data['due_amount'] }}</b>
                 </td>
+                <td></td>
             </tr>
         </tbody>
     </table>

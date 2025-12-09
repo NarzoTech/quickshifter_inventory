@@ -22,6 +22,27 @@ use Modules\Service\app\Models\Service;
 class SaleService
 {
     public function __construct(private Sale $sale) {}
+
+    private function parseDate($date)
+    {
+        if (!$date) {
+            return null;
+        }
+
+        // Try d-m-Y format first (expected from form)
+        try {
+            return Carbon::createFromFormat('d-m-Y', $date);
+        } catch (Exception $e) {
+            // Try Y-m-d format (database format)
+            try {
+                return Carbon::createFromFormat('Y-m-d', $date);
+            } catch (Exception $e) {
+                // Try parsing as general date string
+                return Carbon::parse($date);
+            }
+        }
+    }
+
     public function getSales()
     {
         return $this->sale->with('products', 'customer', 'services', 'details', 'payment', 'saleReturns');
@@ -51,7 +72,7 @@ class SaleService
         $sale->return_amount = $request->return_amount;
         $due = $request->total_amount - array_sum($request->paying_amount);
         $sale->due_amount = $due < 0 ? 0 : $due;
-        $sale->due_date = Carbon::createFromFormat('d-m-Y', $request->due_date);
+        $sale->due_date = $request->due_date ? $this->parseDate($request->due_date) : null;
         $sale->sale_note = $request->remark;
         $sale->created_by = auth('admin')->id();
         $sale->save();
@@ -171,7 +192,7 @@ class SaleService
             $sale->customer_id = $request->order_customer_id;
             $sale->warehouse_id = 1;
             $sale->total_price = $request->sub_total;
-            $sale->order_date = Carbon::createFromFormat('d-m-Y', $request->sale_date);
+            $sale->order_date = $this->parseDate($request->sale_date);
             $sale->status = 1;
             $sale->payment_status = 1;
 
@@ -184,7 +205,7 @@ class SaleService
 
             $due = $request->total_amount - array_sum($request->paying_amount);
             $sale->due_amount = $due < 0 ? 0 : $due;
-            $sale->due_date = Carbon::createFromFormat('d-m-Y', $request->due_date);
+            $sale->due_date = $request->due_date ? $this->parseDate($request->due_date) : null;
             $sale->sale_note = $request->remark;
             $sale->receive_amount = $request->receive_amount;
             $sale->return_amount = $request->return_amount;
@@ -240,7 +261,7 @@ class SaleService
                     Stock::create([
                         'sale_id' => $sale->id,
                         'product_id' => $product->id,
-                        'date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
+                        'date' => $this->parseDate($request->sale_date),
                         'type' => 'Sale',
                         'invoice' => route('admin.sales.invoice', $sale->id),
                         'invoice_number' => $sale->invoice,
@@ -278,7 +299,7 @@ class SaleService
                     'customer_id' => $request->order_customer_id,
                     'account_id' => $account->id,
                     'amount' => $request->paying_amount[$key],
-                    'payment_date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
+                    'payment_date' => $this->parseDate($request->sale_date),
                     'created_by' => auth('admin')->user()->id,
                 ];
                 if ($customerId == 'walk-in-customer') {
@@ -307,6 +328,7 @@ class SaleService
         } catch (Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollback();
+            throw $ex;
         }
     }
 

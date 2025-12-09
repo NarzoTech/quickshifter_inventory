@@ -879,8 +879,8 @@
                     const rowId = $('[name="row_number"]').val();
                     const purchasePrice = $('#purchase_price').val();
                     const sellingPrice = $('#selling_price').val();
-                    const val = parseInt(sellingPrice || 0) - parseInt(purchasePrice || 0);
-                    $('input[data-rowid="' + rowId + '"]').val(val);
+                    const profit = parseInt(sellingPrice || 0) - parseInt(purchasePrice || 0);
+                    $('input[data-rowid="' + rowId + '"]').val(sellingPrice);
                     $('#stockUpdateModal').modal('hide')
                     // reset the form
                     $('#stockUpdateModalForm').trigger('reset');
@@ -903,13 +903,13 @@
                             rowid: rowId,
                             purchase_price: purchasePrice,
                             selling_price: sellingPrice,
-                            price: val,
+                            price: sellingPrice,
                             edit: true
                         },
                         url: "{{ route('admin.cart.price.update') }}",
                         success: function(response) {
                             $('#stockUpdateModal').modal('hide')
-                            updatePrice(rowId, val)
+                            updatePrice(rowId, sellingPrice)
                             calculateExtra()
                             totalSummery();
                         }
@@ -928,9 +928,13 @@
             let total = 0;
             $('[name="source"]').each(function() {
                 if ($(this).val() == '2') {
-                    let price = $(this).closest('td').siblings('td.row_total').text();
-                    price = parseFloat(price.replace(/[^0-9\.]/g, ''));
-                    total += isNaN(price) ? 0 : price;
+                    const row = $(this).closest('tr');
+                    const editBtn = row.find('.edit-btn');
+                    const sellingPrice = parseFloat(editBtn.data('selling')) || 0;
+                    const purchasePrice = parseFloat(editBtn.data('purchase')) || 0;
+                    const qty = parseFloat(row.find('.pos_input_qty').val()) || 1;
+                    const profit = (sellingPrice - purchasePrice) * qty;
+                    total += profit;
                 }
             });
             $('#extra').text(`{{ currency_icon() }}${total}`)
@@ -1106,7 +1110,7 @@
             calDue();
             $('.pos-footer').css('z-index', 0);
             const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
-            const discountAmount = $('#tds').text();
+            const discountAmount = $('#tds').text().replace(/[^0-9.]/g, '') || 0;
             const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
             const item = $('#titems').text();
 
@@ -1131,9 +1135,28 @@
 
             $('#itemModal').text(item);
 
-
-
-            // $('.paying_amount').val(grandTotal);
+            // Update the first payment row amount with new grand total
+            const paymentRows = $('#paymentRow tr');
+            if (paymentRows.length === 1) {
+                // If there's only one payment row, update its amount to the new total
+                paymentRows.first().find('.paying_amount').val(grandTotal);
+                // Set due to 0 since paying full amount
+                $('#normalPayment [name="total_due"]').val(0);
+                $(".due-date").addClass('d-none');
+            } else if (paymentRows.length > 1) {
+                // If there are multiple payment rows, calculate total paid and update due
+                let totalPaid = 0;
+                paymentRows.each(function() {
+                    totalPaid += parseFloat($(this).find('.paying_amount').val()) || 0;
+                });
+                const dueAmount = grandTotal - totalPaid;
+                $('#normalPayment [name="total_due"]').val(dueAmount.toFixed(2));
+                if (dueAmount > 0) {
+                    $(".due-date").removeClass('d-none');
+                } else {
+                    $(".due-date").addClass('d-none');
+                }
+            }
 
             // hide rows
             if (!discountAmount) {
@@ -1365,16 +1388,9 @@
                     console.log(response);
                     $(".product-table tbody").html('')
                     if (response['alert-type'] == 'success') {
-
                         toastr.success(response.message)
-                        $("#payment-modal").modal('hide');
-                        $("#checkoutForm")[0].reset();
-                        $('#titems').text(0);
-                        $('#discount_total_amount').val(0);
-                        $('#tds').text(0);
-                        totalSummery();
-
-                        $('.pos-footer').css('z-index', 9000);
+                        // Redirect to manage sales list
+                        window.location.href = "{{ route('admin.sales.index') }}";
                     } else {
                         toastr.error(response.message)
                     }
@@ -1393,12 +1409,15 @@
             const products = $('.product-table tbody > tr > .row_total');
 
             let total = 0;
+            let itemCount = 0;
 
             products.each(function() {
                 total += numberOnly($(this).text())
+                itemCount++;
             })
 
             $('#total').text(`{{ currency_icon() }}${total}`)
+            $('#titems').text(itemCount)
 
 
             // discount

@@ -138,7 +138,7 @@
                         </td>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
                             class="text-left">
-                            {{ $details->product->name }}({{ $details->product->barcode }})
+                            {{ $details->product->name }}
                         </td>
 
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"

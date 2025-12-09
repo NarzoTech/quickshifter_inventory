@@ -122,12 +122,12 @@
                                 <td>{{ $sale->paid_amount }}</td>
                                 <td>{{ $sale->due_amount }}</td>
                                 <td>
-                                    @if ($sale->paid_amount == $sale->grand_total)
-                                        <span class="badge badge-success">{{ __('Paid') }}</span>
-                                    @elseif ($sale->due_amount > 0 && $sale->paid_amount < $sale->total_price)
-                                        <span class="badge badge-danger">{{ __('Partial Due') }}</span>
+                                    @if ((float)$sale->paid_amount >= (float)$sale->grand_total)
+                                        <span class="badge bg-success">{{ __('Paid') }}</span>
+                                    @elseif ((float)$sale->paid_amount == 0)
+                                        <span class="badge bg-danger">{{ __('Due') }}</span>
                                     @else
-                                        <span class="badge badge-danger">{{ __('Due') }}</span>
+                                        <span class="badge bg-warning">{{ __('Partial Due') }}</span>
                                     @endif
                                 </td>
                                 <td>

@@ -16,18 +16,17 @@
                     $html = '';
                 @endphp
                 @if ($account)
-                    @if ($payment->account->account_type != 'cash')
+                    @if ($payment->account->account_type == 'cash')
+                        <input type="text" name="account_id[]" class="form-control" value="Cash" readonly>
+                    @else
                         <select name="account_id[]" class="form-control" required>
-                    @endif
-
-                    @foreach ($account as $key => $list)
-                        @include('accounts::payment', [
-                            'html' => $html,
-                            'account' => $list,
-                            'value' => $payment->account->account_type,
-                        ])
-                    @endforeach
-                    @if ($payment->account->account_type != 'cash' && $html)
+                        @foreach ($account as $key => $list)
+                            @include('accounts::payment', [
+                                'html' => $html,
+                                'account' => $list,
+                                'value' => $payment->account->account_type,
+                            ])
+                        @endforeach
                         </select>
                     @endif
                 @endif
