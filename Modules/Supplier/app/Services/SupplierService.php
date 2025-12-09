@@ -66,9 +66,9 @@ class SupplierService
         }
 
         if (request()->order_by) {
-            $suppliers = $suppliers->orderBy('name', request()->order_by);
+            $suppliers = $suppliers->orderBy('company', request()->order_by);
         } else {
-            $suppliers = $suppliers->orderBy('name', 'asc');
+            $suppliers = $suppliers->orderBy('company', 'asc');
         }
 
         if (request()->from_date && request()->to_date) {

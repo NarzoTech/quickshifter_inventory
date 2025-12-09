@@ -1,31 +1,27 @@
 <?php
-
 namespace Modules\Purchase\app\Services;
 
 use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
 use App\Models\Warehouse;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
-use Modules\Purchase\app\Models\Purchase;
-use Modules\Purchase\app\Models\PurchaseDetails;
-use Modules\Supplier\app\Models\Supplier;
 use Modules\Product\app\Models\Product;
 use Modules\Product\app\Services\ProductService;
+use Modules\Purchase\app\Models\Purchase;
+use Modules\Purchase\app\Models\PurchaseDetails;
 use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Purchase\app\Models\PurchaseReturnDetails;
 use Modules\Purchase\app\Models\PurchaseReturnType;
+use Modules\Supplier\app\Models\Supplier;
 use Modules\Supplier\app\Models\SupplierPayment;
 
 class PurchaseService
 {
-
 
     public function __construct(
         private Purchase $purchase,
@@ -77,72 +73,70 @@ class PurchaseService
     {
         $attachment_name = null;
         if ($request->hasFile('attachment')) {
-            $attachment = $request->file('attachment');
+            $attachment      = $request->file('attachment');
             $attachment_name = time() . '.' . $attachment->getClientOriginalExtension();
             $attachment->move(public_path('uploads/purchase/'), $attachment_name);
         }
-        $purchase = new Purchase();
-        $paidAmount = $request->total_amount - $request->due_amount;
-        $purchase->supplier_id = $request->supplier_id;
-        $purchase->warehouse_id = $request->warehouse_id;
+        $purchase                 = new Purchase();
+        $paidAmount               = $request->total_amount - $request->due_amount;
+        $purchase->supplier_id    = $request->supplier_id;
+        $purchase->warehouse_id   = $request->warehouse_id;
         $purchase->invoice_number = $request->invoice_number;
-        $purchase->memo_no = $request->memo_no;
-        $purchase->reference_no = $request->reference_no;
-        $purchase->purchase_date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
-        $purchase->items = $request->items;
-        $purchase->attachment = $attachment_name;
-        $purchase->total_amount = $request->total_amount;
-        $purchase->paid_amount = $paidAmount;
-        $purchase->due_amount = $request->due_amount;
+        $purchase->memo_no        = $request->memo_no;
+        $purchase->reference_no   = $request->reference_no;
+        $purchase->purchase_date  = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+        $purchase->items          = $request->items;
+        $purchase->attachment     = $attachment_name;
+        $purchase->total_amount   = $request->total_amount;
+        $purchase->paid_amount    = $paidAmount;
+        $purchase->due_amount     = $request->due_amount;
         $purchase->payment_status = $paidAmount == $request->total_amount ? 'paid' : 'due';
-        $purchase->payment_type = $request->payment_type;
-        $purchase->note = $request->note;
-        $purchase->created_by = Auth::id();
+        $purchase->payment_type   = $request->payment_type;
+        $purchase->note           = $request->note;
+        $purchase->created_by     = Auth::id();
         $purchase->save();
 
         $this->purchaseLedger($request, $purchase->id, $paidAmount, $request->total_amount, 'purchase', 1, $request->due_amount);
         // $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
 
         foreach ($request->product_id as $index => $id) {
-            $purchaseDetails = new PurchaseDetails();
-            $purchaseDetails->purchase_id = $purchase->id;
-            $purchaseDetails->product_id = $id;
-            $purchaseDetails->quantity = $request->quantity[$index];
+            $purchaseDetails                 = new PurchaseDetails();
+            $purchaseDetails->purchase_id    = $purchase->id;
+            $purchaseDetails->product_id     = $id;
+            $purchaseDetails->quantity       = $request->quantity[$index];
             $purchaseDetails->purchase_price = $request->unit_price[$index];
-            $purchaseDetails->sale_price = $request->selling_price[$index];
-            $purchaseDetails->sub_total = $request->total[$index];
-            $purchaseDetails->profit = $request->profit[$index];
-            $purchaseDetails->created_by = Auth::id();
+            $purchaseDetails->sale_price     = $request->selling_price[$index];
+            $purchaseDetails->sub_total      = $request->total[$index];
+            $purchaseDetails->profit         = $request->profit[$index];
+            $purchaseDetails->created_by     = Auth::id();
             $purchaseDetails->save();
 
             $product = Product::find($id);
             $product->stock += $request->quantity[$index];
-            $product->cost = $request->unit_price[$index];
+            $product->cost  = $request->unit_price[$index];
             $product->price = $request->selling_price[$index];
             $product->save();
 
-
             // create stock
             Stock::create([
-                'purchase_id' => $purchase->id,
-                'product_id' => $id,
-                'date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
-                'type' => 'Purchase',
-                'invoice' => route('admin.purchase.invoice', $purchase->id),
-                'in_quantity' => $request->quantity[$index],
-                'sku' => $product->sku,
+                'purchase_id'    => $purchase->id,
+                'product_id'     => $id,
+                'date'           => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
+                'type'           => 'Purchase',
+                'invoice'        => route('admin.purchase.invoice', $purchase->id),
+                'in_quantity'    => $request->quantity[$index],
+                'sku'            => $product->sku,
                 'purchase_price' => $request->unit_price[$index],
-                'sale_price' => $request->selling_price[$index],
-                'rate' => $request->unit_price[$index],
-                'profit' => 0,
-                'created_by' => auth('admin')->user()->id,
+                'sale_price'     => $request->selling_price[$index],
+                'rate'           => $request->unit_price[$index],
+                'profit'         => 0,
+                'created_by'     => auth('admin')->user()->id,
             ]);
         }
 
         // if ($paidAmount) {
         //     $this->purchaseLedger($request, $purchase->id, -$paidAmount, 'purchase payment', 1, $request->due_amount);
         // }
-
 
         // create payments
         foreach ($request->payment_type as $key => $item) {
@@ -154,16 +148,16 @@ class PurchaseService
             }
             $data = [
                 'payment_type' => 'purchase',
-                'purchase_id' => $purchase->id,
-                'is_paid' => 1,
-                'supplier_id' => $request->supplier_id,
-                'account_id' => $account->id,
-                'amount' => $request->paid_amount[$key],
+                'purchase_id'  => $purchase->id,
+                'is_paid'      => 1,
+                'supplier_id'  => $request->supplier_id,
+                'account_id'   => $account->id,
+                'amount'       => $request->paid_amount[$key],
                 'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
-                'note' => $request->note,
-                'created_by' => auth('admin')->user()->id,
+                'note'         => $request->note,
+                'created_by'   => auth('admin')->user()->id,
                 'account_type' => accountList()[$item],
-                'invoice' => $request->invoice_number,
+                'invoice'      => $request->invoice_number,
             ];
             if ($request->paid_amount[$key]) {
                 SupplierPayment::create($data);
@@ -179,34 +173,31 @@ class PurchaseService
 
         $attachment_name = null;
         if ($request->hasFile('attachment')) {
-            $attachment = $request->file('attachment');
+            $attachment      = $request->file('attachment');
             $attachment_name = file_upload($attachment, oldFile: $purchase->attachment);
         }
 
-
-        $paidAmount = $request->total_amount - $request->due_amount;
-        $purchase->supplier_id = $request->supplier_id;
-        $purchase->warehouse_id = $request->warehouse_id;
+        $paidAmount               = $request->total_amount - $request->due_amount;
+        $purchase->supplier_id    = $request->supplier_id;
+        $purchase->warehouse_id   = $request->warehouse_id;
         $purchase->invoice_number = $request->invoice_number;
-        $purchase->memo_no = $request->memo_no;
-        $purchase->reference_no = $request->reference_no;
-        $purchase->purchase_date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
-        $purchase->items = $request->items;
-        $purchase->attachment = $attachment_name;
-        $purchase->total_amount = $request->total_amount;
-        $purchase->paid_amount = $paidAmount;
-        $purchase->due_amount = $request->due_amount;
+        $purchase->memo_no        = $request->memo_no;
+        $purchase->reference_no   = $request->reference_no;
+        $purchase->purchase_date  = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+        $purchase->items          = $request->items;
+        $purchase->attachment     = $attachment_name;
+        $purchase->total_amount   = $request->total_amount;
+        $purchase->paid_amount    = $paidAmount;
+        $purchase->due_amount     = $request->due_amount;
         $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due';
-        $purchase->payment_type = $request->payment_type;
-        $purchase->note = $request->note;
-        $purchase->updated_by = Auth::id();
+        $purchase->payment_type   = $request->payment_type;
+        $purchase->note           = $request->note;
+        $purchase->updated_by     = Auth::id();
         $purchase->save();
 
         $ledger = $this->getLedger($request, $id, 'purchase', 1);
 
         $this->purchaseLedger($request, $purchase->id, $paidAmount, $request->total_amount, 'purchase', 1, $request->due_amount, $ledger);
-
-
 
         // restore product stock
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
@@ -220,39 +211,37 @@ class PurchaseService
         $purchase->payments()->delete();
         $purchase->stock()->delete();
 
-
         // store new purchase details
         foreach ($request->product_id as $index => $id) {
-            $purchaseDetails = new PurchaseDetails();
-            $purchaseDetails->purchase_id = $purchase->id;
-            $purchaseDetails->product_id = $id;
-            $purchaseDetails->quantity = $request->quantity[$index];
+            $purchaseDetails                 = new PurchaseDetails();
+            $purchaseDetails->purchase_id    = $purchase->id;
+            $purchaseDetails->product_id     = $id;
+            $purchaseDetails->quantity       = $request->quantity[$index];
             $purchaseDetails->purchase_price = $request->unit_price[$index];
-            $purchaseDetails->sale_price = $request->selling_price[$index];
-            $purchaseDetails->sub_total = $request->total[$index];
-            $purchaseDetails->profit = $request->profit[$index];
-            $purchaseDetails->created_by = Auth::id();
+            $purchaseDetails->sale_price     = $request->selling_price[$index];
+            $purchaseDetails->sub_total      = $request->total[$index];
+            $purchaseDetails->profit         = $request->profit[$index];
+            $purchaseDetails->created_by     = Auth::id();
             $purchaseDetails->save();
 
             $product = Product::find($id);
             $product->stock += $request->quantity[$index];
             $product->save();
 
-
             // create stock
             Stock::create([
-                'purchase_id' => $purchase->id,
-                'product_id' => $id,
-                'date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
-                'type' => 'Purchase',
-                'invoice' => route('admin.purchase.invoice', $purchase->id),
-                'in_quantity' => $request->quantity[$index],
-                'sku' => $product->sku,
+                'purchase_id'    => $purchase->id,
+                'product_id'     => $id,
+                'date'           => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
+                'type'           => 'Purchase',
+                'invoice'        => route('admin.purchase.invoice', $purchase->id),
+                'in_quantity'    => $request->quantity[$index],
+                'sku'            => $product->sku,
                 'purchase_price' => $request->unit_price[$index],
-                'sale_price' => $request->selling_price[$index],
-                'rate' => $request->unit_price[$index],
-                'profit' => 0,
-                'created_by' => auth('admin')->user()->id,
+                'sale_price'     => $request->selling_price[$index],
+                'rate'           => $request->unit_price[$index],
+                'profit'         => 0,
+                'created_by'     => auth('admin')->user()->id,
             ]);
         }
 
@@ -266,15 +255,15 @@ class PurchaseService
             }
             $data = [
                 'payment_type' => 'purchase',
-                'purchase_id' => $purchase->id,
-                'is_paid' => 1,
-                'supplier_id' => $request->supplier_id,
-                'account_id' => $account->id,
-                'amount' => $request->paid_amount[$key],
+                'purchase_id'  => $purchase->id,
+                'is_paid'      => 1,
+                'supplier_id'  => $request->supplier_id,
+                'account_id'   => $account->id,
+                'amount'       => $request->paid_amount[$key],
                 'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
-                'note' => $request->note,
-                'created_by' => auth('admin')->user()->id,
-                'invoice' => $request->invoice_number,
+                'note'         => $request->note,
+                'created_by'   => auth('admin')->user()->id,
+                'invoice'      => $request->invoice_number,
                 'account_type' => accountList()[$item],
             ];
             if ($request->paid_amount[$key]) {
@@ -284,7 +273,6 @@ class PurchaseService
 
         // update ledger
         // $ledger = $this->getLedger($request, $purchase->id, 1, 'purchase payment');
-
 
         // if ($paidAmount) {
         //     $this->purchaseLedger($request, $purchase->id, -$paidAmount, 'purchase payment', 1, $request->due_amount, $ledger);
@@ -313,7 +301,6 @@ class PurchaseService
             ->where('invoice_no', $purchase->invoice_number)
             ->get();
 
-
         $ledger = Ledger::where('invoice_type', 'purchase')->orWhere('invoice_type', 'purchase payment')
             ->where('invoice_no', $purchase->invoice_number)
             ->get();
@@ -327,8 +314,8 @@ class PurchaseService
     public function genInvoiceNumber()
     {
         $setting = cache('setting');
-        $number = $setting->invoice_suffix ? $setting->invoice_suffix : 1;
-        $prefix = $setting->invoice_prefix ? $setting->invoice_prefix : 'INV-';
+        $number  = $setting->invoice_suffix ? $setting->invoice_suffix : 1;
+        $prefix  = $setting->invoice_prefix ? $setting->invoice_prefix : 'INV-';
 
         $invoice_number = $prefix . $number;
 
@@ -338,7 +325,7 @@ class PurchaseService
             $purchaseInvoice = $purchase->invoice_number;
 
             // split the invoice number
-            $split_invoice = explode('-', $purchaseInvoice);
+            $split_invoice  = explode('-', $purchaseInvoice);
             $invoice_number = (int) $split_invoice[1] + 1;
             $invoice_number = $prefix . $invoice_number;
         }
@@ -363,7 +350,7 @@ class PurchaseService
 
     public function getSuppliers()
     {
-        return Supplier::where('status', 1)->orderBy('name', 'asc')->latest()->get();
+        return Supplier::where('status', 1)->orderBy('name', 'asc')->get();
     }
 
     public function getWarehouses()
@@ -395,49 +382,45 @@ class PurchaseService
     {
         // store purchase return
         $purchase = $this->purchaseReturn->create([
-            'supplier_id' => $request->supplier_id,
-            'warehouse_id' => $request->warehouse_id,
-            'created_by' => auth()->user()->id,
-            'purchase_id' => $request->purchase_id,
-            'return_type_id' => $request->return_type_id,
-            'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
-            'note' => $request->note,
-            'payment_method' => $request->payment_type,
+            'supplier_id'     => $request->supplier_id,
+            'warehouse_id'    => $request->warehouse_id,
+            'created_by'      => auth()->user()->id,
+            'purchase_id'     => $request->purchase_id,
+            'return_type_id'  => $request->return_type_id,
+            'return_date'     => Carbon::createFromFormat('d-m-Y', $request->return_date),
+            'note'            => $request->note,
+            'payment_method'  => $request->payment_type,
             'received_amount' => $request->received_amount,
-            'return_amount' => $request->invoice_amount,
-            'shipping_cost' => $request->shipping_cost,
-            'invoice' => $this->returnInvoice()
+            'return_amount'   => $request->invoice_amount,
+            'shipping_cost'   => $request->shipping_cost,
+            'invoice'         => $this->returnInvoice(),
         ]);
-
 
         // store purchase return details
 
         foreach ($request->product_id as $index => $val) {
             $purchase->purchaseDetails()->create([
-                'product_id' => $val,
+                'product_id'  => $val,
                 'purchase_id' => $request->purchase_id,
-                'quantity' => $request->return_quantity[$index],
-                'total' => $request->return_subtotal[$index],
+                'quantity'    => $request->return_quantity[$index],
+                'total'       => $request->return_subtotal[$index],
             ]);
 
-
             // update product stock
-            $prod = Product::find($val);
+            $prod        = Product::find($val);
             $prod->stock = $prod->stock - $request->return_quantity[$index];
             $prod->save();
 
-
-
             // update stock
             Stock::create([
-                'invoice_number' => $purchase->invoice,
+                'invoice_number'     => $purchase->invoice,
                 'purchase_return_id' => $purchase->id,
-                'type' => 'purchase return',
-                'product_id' => $val,
-                'date' => now(),
-                'out_quantity' => $request->return_quantity[$index],
-                'sku' => $prod->sku,
-                'created_by' => auth('admin')->user()->id,
+                'type'               => 'purchase return',
+                'product_id'         => $val,
+                'date'               => now(),
+                'out_quantity'       => $request->return_quantity[$index],
+                'sku'                => $prod->sku,
+                'created_by'         => auth('admin')->user()->id,
             ]);
         }
 
@@ -452,16 +435,16 @@ class PurchaseService
             // create ledger
             $ledger = $this->purchaseReturnLedger($request, $purchase->id, $request->received_amount, 'purchase return', 0);
             SupplierPayment::create([
-                'payment_type' => 'purchase_receive',
+                'payment_type'       => 'purchase_receive',
                 'purchase_return_id' => $request->purchase_id,
-                'supplier_id' => $purchase->supplier_id,
-                'account_id' => $account->id,
-                'is_received' => 1,
-                'account_type' => accountList()[$request->payment_type],
-                'amount' => $request->received_amount,
-                'payment_date' => now(),
-                'created_by' => auth()->user()->id,
-                'ledger_id' => $ledger->id
+                'supplier_id'        => $purchase->supplier_id,
+                'account_id'         => $account->id,
+                'is_received'        => 1,
+                'account_type'       => accountList()[$request->payment_type],
+                'amount'             => $request->received_amount,
+                'payment_date'       => now(),
+                'created_by'         => auth()->user()->id,
+                'ledger_id'          => $ledger->id,
             ]);
         }
 
@@ -472,18 +455,17 @@ class PurchaseService
     {
         $return = $this->purchaseReturn->find($id);
 
-
         $return->update([
-            'supplier_id' => $request->supplier_id,
-            'warehouse_id' => $request->warehouse_id,
-            'return_type_id' => $request->return_type_id,
-            'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
-            'note' => $request->note,
-            'payment_method' => $request->payment_type,
+            'supplier_id'     => $request->supplier_id,
+            'warehouse_id'    => $request->warehouse_id,
+            'return_type_id'  => $request->return_type_id,
+            'return_date'     => Carbon::createFromFormat('d-m-Y', $request->return_date),
+            'note'            => $request->note,
+            'payment_method'  => $request->payment_type,
             'received_amount' => $request->received_amount,
-            'return_amount' => $request->invoice_amount,
-            'shipping_cost' => $request->shipping_cost,
-            'invoice' => $this->returnInvoice()
+            'return_amount'   => $request->invoice_amount,
+            'shipping_cost'   => $request->shipping_cost,
+            'invoice'         => $this->returnInvoice(),
         ]);
 
         // restore product stock
@@ -494,51 +476,54 @@ class PurchaseService
             $product->save();
         }
 
-
         // delete old purchase details
         $return->purchaseDetails()->delete();
         $return->payments()?->delete();
         $return->stock()->delete();
     }
 
-
     public function getPurchaseReturn($id)
     {
         return $this->purchaseReturn->with('supplier', 'purchaseDetails')->find($id);
     }
 
-
     public function purchaseLedger($request, $id, $paid, $total_amount = 0, $type = 'purchase', $isPaid = 1, $dueAmount = 0, $ledger = null)
     {
-        if ($ledger == null) $ledger = new Ledger();
-        $ledger->supplier_id = $request->supplier_id;
-        $ledger->amount = $paid;
+        if ($ledger == null) {
+            $ledger = new Ledger();
+        }
+
+        $ledger->supplier_id  = $request->supplier_id;
+        $ledger->amount       = $paid;
         $ledger->invoice_type = $type;
-        $ledger->is_paid = $isPaid;
-        $ledger->invoice_url = route('admin.purchase.invoice', $id);
-        $ledger->invoice_no = $request->invoice_number;
-        $ledger->note = $request->note;
-        $ledger->due_amount = $dueAmount;
+        $ledger->is_paid      = $isPaid;
+        $ledger->invoice_url  = route('admin.purchase.invoice', $id);
+        $ledger->invoice_no   = $request->invoice_number;
+        $ledger->note         = $request->note;
+        $ledger->due_amount   = $dueAmount;
         $ledger->total_amount = $total_amount;
-        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
-        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->date         = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+        $ledger->created_by   = auth('admin')->user()->id;
         $ledger->save();
     }
 
     public function purchaseReturnLedger($request, $id, $paid, $type = 'purchase_return', $isPaid = 0, $dueAmount = 0, $ledger = null)
     {
-        if ($ledger == null) $ledger = new Ledger();
-        $ledger->supplier_id = $request->supplier_id;
-        $ledger->amount = $paid;
+        if ($ledger == null) {
+            $ledger = new Ledger();
+        }
+
+        $ledger->supplier_id  = $request->supplier_id;
+        $ledger->amount       = $paid;
         $ledger->invoice_type = $type;
-        $ledger->is_paid = $isPaid;
-        $ledger->is_received = 1;
-        $ledger->invoice_url = route('admin.purchase.return.invoice', $id);
-        $ledger->invoice_no = $request->invoice_number;
-        $ledger->note = $request->note;
-        $ledger->due_amount = $dueAmount;
-        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
-        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->is_paid      = $isPaid;
+        $ledger->is_received  = 1;
+        $ledger->invoice_url  = route('admin.purchase.return.invoice', $id);
+        $ledger->invoice_no   = $request->invoice_number;
+        $ledger->note         = $request->note;
+        $ledger->due_amount   = $dueAmount;
+        $ledger->date         = Carbon::createFromFormat('d-m-Y', $request->return_date);
+        $ledger->created_by   = auth('admin')->user()->id;
         $ledger->save();
 
         return $ledger;
@@ -546,7 +531,7 @@ class PurchaseService
     public function getLedger($request, $id, $type, $isPaid = 1)
     {
         $purchase = $this->purchase->find($id);
-        $ledger = Ledger::where('supplier_id', $request->supplier_id)
+        $ledger   = Ledger::where('supplier_id', $request->supplier_id)
             ->where('invoice_type', $type)
             ->where('invoice_no', $purchase->invoice_number)
             ->where('is_paid', $isPaid)
@@ -566,21 +551,20 @@ class PurchaseService
             ->where('is_paid', $isPaid)
             ->first();
 
-        if (!$ledger) {
+        if (! $ledger) {
             $ledger = new Ledger();
         }
 
-
-        $ledger->supplier_id = $request->supplier_id;
-        $ledger->amount = $paidAmount;
+        $ledger->supplier_id  = $request->supplier_id;
+        $ledger->amount       = $paidAmount;
         $ledger->invoice_type = $type;
-        $ledger->is_paid = 1;
-        $ledger->invoice_url = route('admin.purchase.invoice', $purchase->id);
-        $ledger->invoice_no = $request->invoice_number;
-        $ledger->note = $request->note;
-        $ledger->due_amount = $request->due_amount ?? 0;
-        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
-        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->is_paid      = 1;
+        $ledger->invoice_url  = route('admin.purchase.invoice', $purchase->id);
+        $ledger->invoice_no   = $request->invoice_number;
+        $ledger->note         = $request->note;
+        $ledger->due_amount   = $request->due_amount ?? 0;
+        $ledger->date         = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+        $ledger->created_by   = auth('admin')->user()->id;
         $ledger->save();
     }
 
@@ -602,7 +586,6 @@ class PurchaseService
             $product->save();
         }
 
-
         $return->payment()->delete();
         $return->purchaseDetails()->delete();
         $return->delete();
@@ -610,8 +593,8 @@ class PurchaseService
 
     public function returnInvoice($id = 0)
     {
-        $number = 1;
-        $prefix = 'INV-';
+        $number         = 1;
+        $prefix         = 'INV-';
         $invoice_number = $prefix . $number;
 
         $return = $this->purchaseReturn->find($id);
@@ -619,7 +602,7 @@ class PurchaseService
             $purchaseInvoice = $return->invoice;
 
             // split the invoice number
-            $split_invoice = explode($prefix, $purchaseInvoice);
+            $split_invoice  = explode($prefix, $purchaseInvoice);
             $invoice_number = (int) $split_invoice[1] + 1;
             $invoice_number = $prefix . $invoice_number;
         }
