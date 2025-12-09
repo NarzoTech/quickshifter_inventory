@@ -3,71 +3,158 @@
     <title>{{ __('Account List') }}</title>
 @endsection
 
+@push('css')
+    <style>
+        .account-summary-card {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+        }
+        .account-summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .account-summary-card .card-body {
+            padding: 1.5rem;
+        }
+        .account-summary-card .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .account-summary-card .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .account-summary-card .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);
+        }
+        .bg-gradient-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #007bff 100%);
+        }
+        .bg-gradient-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+        .bg-gradient-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+        .account-section-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .account-section-card .card-header {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 1.5rem;
+        }
+        .account-section-card .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        .account-section-card .table thead th {
+            border-top: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            padding: 1rem 0.75rem;
+        }
+        .account-section-card .table tbody td {
+            vertical-align: middle;
+            padding: 0.875rem 0.75rem;
+        }
+        .amount-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .amount-positive {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        .amount-negative {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        .filter-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .text-white-50 {
+            color: rgba(255,255,255,0.7) !important;
+        }
+    </style>
+@endpush
 
 @section('content')
+    {{-- Filter Section --}}
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card filter-card">
                 <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
-                        <div class="row">
-                            <div class="col-xxl-3 col-md-4 ">
-                                <div class="form-group search-wrapper">
-                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
-                                        class="form-control" placeholder="{{ __('Search') }}..." autocomplete="off">
-                                    <button type="submit">
-                                        <i class='bx bx-search'></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-xxl-2 col-md-4">
-                                <div class="form-group">
-                                    <select name="order_by" id="order_by" class="form-control">
-                                        <option value="">{{ __('Order By') }}</option>
-                                        <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
-                                            {{ __('ASC') }}
-                                        </option>
-                                        <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
-                                            {{ __('DESC') }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-xxl-2 col-md-4">
-                                <div class="form-group">
-                                    <select name="par-page" id="par-page" class="form-control">
-                                        <option value="">{{ __('Per Page') }}</option>
-                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>
-                                            {{ __('10') }}
-                                        </option>
-                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>
-                                            {{ __('50') }}
-                                        </option>
-                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>
-                                            {{ __('100') }}
-                                        </option>
-                                        <option value="all" {{ 'all' == request('par-page') ? 'selected' : '' }}>
-                                            {{ __('All') }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="row align-items-end">
                             <div class="col-xxl-3 col-md-4">
                                 <div class="form-group">
+                                    <label class="form-label text-muted small">{{ __('Search') }}</label>
+                                    <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
+                                        class="form-control" placeholder="{{ __('Search') }}..." autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-xxl-4 col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label text-muted small">{{ __('Date Range') }}</label>
                                     <div class="input-group input-daterange" id="bs-datepicker-daterange">
                                         <input type="text" id="dateRangePicker" placeholder="From Date"
                                             class="form-control datepicker" name="from_date"
                                             value="{{ request()->get('from_date') }}" autocomplete="off">
-                                        <span class="input-group-text">to</span>
+                                        <span class="input-group-text bg-light">to</span>
                                         <input type="text" placeholder="To Date" class="form-control datepicker"
                                             name="to_date" value="{{ request()->get('to_date') }}" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-2 col-md-2">
                                 <div class="form-group">
-                                    <button type="button" class="btn bg-danger form-reset">{{ __('Reset') }}</button>
-                                    <button type="submit" class="btn bg-primary">{{ __('Search') }}</button>
+                                    <label class="form-label text-muted small">{{ __('Per Page') }}</label>
+                                    <select name="par-page" id="par-page" class="form-control">
+                                        <option value="">{{ __('All') }}</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>10</option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>50</option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>100</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-3 col-md-4">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-outline-danger form-reset">
+                                        <i class="fas fa-redo me-1"></i>{{ __('Reset') }}
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search me-1"></i>{{ __('Search') }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -77,117 +164,172 @@
         </div>
     </div>
 
+    {{-- Summary Cards --}}
+    <div class="row mt-4">
+        {{-- Cash Amount Card --}}
+        <div class="col-12 col-md-6 col-xl-3 mb-4">
+            <div class="card account-summary-card bg-gradient-success text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-wrapper bg-white bg-opacity-25 me-3">
+                            <i class="fas fa-money-bill-wave text-white"></i>
+                        </div>
+                        <div>
+                            <p class="label mb-1 text-white-50">{{ __('Cash in Hand') }}</p>
+                            <h3 class="amount mb-0">{{ currency($cashAccount?->getBalanceBetween()) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Bank Accounts Total --}}
+        <div class="col-12 col-md-6 col-xl-3 mb-4">
+            <div class="card account-summary-card bg-gradient-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-wrapper bg-white bg-opacity-25 me-3">
+                            <i class="fas fa-university text-white"></i>
+                        </div>
+                        <div>
+                            @php
+                                $bankTotal = $bankAccounts->sum(fn($acc) => $acc->getBalanceBetween());
+                            @endphp
+                            <p class="label mb-1 text-white-50">{{ __('Bank Accounts') }}</p>
+                            <h3 class="amount mb-0">{{ currency($bankTotal) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Mobile Banking Total --}}
+        <div class="col-12 col-md-6 col-xl-3 mb-4">
+            <div class="card account-summary-card bg-gradient-info text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-wrapper bg-white bg-opacity-25 me-3">
+                            <i class="fas fa-mobile-alt text-white"></i>
+                        </div>
+                        <div>
+                            @php
+                                $mobileTotal = $mobileAccounts->sum(fn($acc) => $acc->getBalanceBetween());
+                            @endphp
+                            <p class="label mb-1 text-white-50">{{ __('Mobile Banking') }}</p>
+                            <h3 class="amount mb-0">{{ currency($mobileTotal) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Total Balance Card --}}
+        <div class="col-12 col-md-6 col-xl-3 mb-4">
+            <div class="card account-summary-card bg-gradient-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-wrapper bg-white bg-opacity-25 me-3">
+                            <i class="fas fa-wallet text-white"></i>
+                        </div>
+                        <div>
+                            <p class="label mb-1 text-white-50">{{ __('Total Balance') }}</p>
+                            <h3 class="amount mb-0">{{ currency($accountBalance) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Bank Accounts Section --}}
     <div class="row">
-        <div class="col-12 col-md-6 mt-5">
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center"><b>{{ __('Cash Amount') }}</b></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th class="text-center">
-                                        <h4>
-                                            <b>{{ currency($cashAccount?->getBalanceBetween()) }}</b>
-                                        </h4>
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
+        <div class="col-12 mb-4">
+            <div class="card account-section-card">
+                <div class="card-header bg-white d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="section-icon bg-primary bg-opacity-10">
+                            <i class="fas fa-university text-primary"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">{{ __('Bank Accounts') }}</h5>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 mt-5">
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center"><b>{{ __('Total Amount') }}</b></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th class="text-center">
-                                        <h4>
-                                            <b>{{ currency($accountBalance) }}</b>
-                                        </h4>
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 mt-5">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                        <h4 class="section_title">{{ __('Bank Accounts') }}</h4>
-                    </div>
-
+                    <span class="badge bg-primary rounded-pill">{{ $bankAccounts->count() }} {{ __('Accounts') }}</span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table">
-                            <thead>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
                                 <tr>
                                     <th>{{ __('SN') }}</th>
                                     <th>{{ __('Bank Name') }}</th>
-                                    <th>{{ __('Bank Account Type') }}</th>
-                                    <th>{{ __('Bank Account Name') }}</th>
-                                    <th>{{ __('Bank Account Number') }}</th>
-                                    <th>{{ __('Bank Account Branch') }}</th>
-                                    <th>{{ __('Amount') }}</th>
-                                    <th>{{ __('Action') }}</th>
+                                    <th>{{ __('Account Type') }}</th>
+                                    <th>{{ __('Account Name') }}</th>
+                                    <th>{{ __('Account Number') }}</th>
+                                    <th>{{ __('Branch') }}</th>
+                                    <th class="text-end">{{ __('Balance') }}</th>
+                                    <th class="text-center">{{ __('Action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($bankAccounts as $index => $account)
+                                    @php
+                                        $balance = $account->getBalanceBetween();
+                                    @endphp
                                     <tr>
-                                        <td>{{ $loop->first + $index }}</td>
-                                        <td>{{ $account?->bank?->name }}</td>
-                                        <td>{{ $account->bank_account_type }}</td>
-                                        <td>{{ $account->bank_account_name }}</td>
-                                        <td>{{ $account->bank_account_number }}</td>
-                                        <td>{{ $account->bank_account_branch }}</td>
-                                        <td>{{ currency($account->getBalanceBetween()) }}</td>
+                                        <td>{{ $index + 1 }}</td>
                                         <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                                    <i class="fas fa-university text-primary"></i>
+                                                </div>
+                                                <span class="fw-medium">{{ $account?->bank?->name ?? '-' }}</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark">{{ $account->bank_account_type ?? '-' }}</span></td>
+                                        <td>{{ $account->bank_account_name ?? '-' }}</td>
+                                        <td><code>{{ $account->bank_account_number ?? '-' }}</code></td>
+                                        <td>{{ $account->bank_account_branch ?? '-' }}</td>
+                                        <td class="text-end">
+                                            <span class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
+                                                {{ currency($balance) }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button id="btnGroupDrop{{ $account->id }}" type="button"
-                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        {{ __('Action') }}
+                                                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
                                                     </button>
-                                                    <div class="dropdown-menu"
-                                                        aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                    <ul class="dropdown-menu dropdown-menu-end">
                                                         @adminCan('account.edit')
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('admin.accounts.edit', $account->id) }}">
+                                                                    <i class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
+                                                                </a>
+                                                            </li>
                                                         @endadminCan
                                                         @adminCan('account.delete')
-                                                            <a href="javascript:;" data-bs-toggle="modal"
-                                                                data-bs-target="#deleteModal" class="dropdown-item"
-                                                                onclick="deleteData({{ $account->id }})">
-                                                                {{ __('Delete') }}</a>
+                                                            <li>
+                                                                <a href="javascript:;" class="dropdown-item text-danger"
+                                                                    onclick="deleteData({{ $account->id }})">
+                                                                    <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
+                                                                </a>
+                                                            </li>
                                                         @endadminCan
-                                                    </div>
+                                                    </ul>
                                                 </div>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Bank')" route="" create="no" :message="__('No data found!')"
-                                        colspan="8"></x-empty-table>
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="fas fa-university fa-3x mb-2 d-block"></i>
+                                                {{ __('No bank accounts found') }}
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -195,62 +337,92 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-12 mt-5">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                        <h4 class="section_title"> {{ __('Mobile Accounts') }}</h4>
+    {{-- Mobile Accounts & Card Accounts Row --}}
+    <div class="row">
+        {{-- Mobile Accounts Section --}}
+        <div class="col-12 col-xl-6 mb-4">
+            <div class="card account-section-card h-100">
+                <div class="card-header bg-white d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="section-icon bg-info bg-opacity-10">
+                            <i class="fas fa-mobile-alt text-info"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">{{ __('Mobile Banking') }}</h5>
                     </div>
-
+                    <span class="badge bg-info rounded-pill">{{ $mobileAccounts->count() }} {{ __('Accounts') }}</span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table">
-                            <thead>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
                                 <tr>
                                     <th>{{ __('SN') }}</th>
-                                    <th>{{ __('Mobile Bank Name') }}</th>
+                                    <th>{{ __('Provider') }}</th>
                                     <th>{{ __('Mobile Number') }}</th>
-                                    <th>{{ __('Amount') }}</th>
-                                    <th>{{ __('Action') }}</th>
+                                    <th class="text-end">{{ __('Balance') }}</th>
+                                    <th class="text-center">{{ __('Action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($mobileAccounts as $index => $account)
+                                    @php
+                                        $balance = $account->getBalanceBetween();
+                                    @endphp
                                     <tr>
-                                        <td>{{ $loop->first + $index }}</td>
-                                        <td>{{ $account->mobile_bank_name }}</td>
-                                        <td>{{ $account->mobile_number }}</td>
-                                        <td>{{ currency($account->getBalanceBetween()) }}</td>
+                                        <td>{{ $index + 1 }}</td>
                                         <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-info bg-opacity-10 rounded-circle p-2 me-2">
+                                                    <i class="fas fa-mobile-alt text-info"></i>
+                                                </div>
+                                                <span class="fw-medium">{{ $account->mobile_bank_name }}</span>
+                                            </div>
+                                        </td>
+                                        <td><code>{{ $account->mobile_number }}</code></td>
+                                        <td class="text-end">
+                                            <span class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
+                                                {{ currency($balance) }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button id="btnGroupDrop{{ $account->id }}" type="button"
-                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        {{ __('Action') }}
+                                                    <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
                                                     </button>
-                                                    <div class="dropdown-menu"
-                                                        aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                    <ul class="dropdown-menu dropdown-menu-end">
                                                         @adminCan('account.edit')
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('admin.accounts.edit', $account->id) }}">
+                                                                    <i class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
+                                                                </a>
+                                                            </li>
                                                         @endadminCan
                                                         @adminCan('account.delete')
-                                                            <a href="javascript:;" data-bs-toggle="modal"
-                                                                data-bs-target="#deleteModal" class="dropdown-item"
-                                                                onclick="deleteData({{ $account->id }})">
-                                                                {{ __('Delete') }}</a>
+                                                            <li>
+                                                                <a href="javascript:;" class="dropdown-item text-danger"
+                                                                    onclick="deleteData({{ $account->id }})">
+                                                                    <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
+                                                                </a>
+                                                            </li>
                                                         @endadminCan
-                                                    </div>
+                                                    </ul>
                                                 </div>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Mobile Account')" route="" create="no" :message="__('No data found!')"
-                                        colspan="5"></x-empty-table>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="fas fa-mobile-alt fa-3x mb-2 d-block"></i>
+                                                {{ __('No mobile accounts found') }}
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
@@ -259,63 +431,91 @@
             </div>
         </div>
 
-        <div class="col-12 mt-5">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                        <h4 class="section_title"> {{ __('Bank Cards') }}</h4>
+        {{-- Card Accounts Section --}}
+        <div class="col-12 col-xl-6 mb-4">
+            <div class="card account-section-card h-100">
+                <div class="card-header bg-white d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="section-icon bg-danger bg-opacity-10">
+                            <i class="fas fa-credit-card text-danger"></i>
+                        </div>
+                        <h5 class="mb-0 fw-bold">{{ __('Bank Cards') }}</h5>
                     </div>
+                    <span class="badge bg-danger rounded-pill">{{ $cardAccounts->count() }} {{ __('Cards') }}</span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive list_table">
-                        <table style="width: 100%;" class="table">
-                            <thead>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
                                 <tr>
                                     <th>{{ __('SN') }}</th>
-                                    <th>{{ __('Card Type') }}</th>
-                                    <th>{{ __('Bank Name') }}</th>
-                                    <th>{{ __('Card Holder Name') }}</th>
+                                    <th>{{ __('Card Info') }}</th>
                                     <th>{{ __('Card Number') }}</th>
-                                    <th>{{ __('Amount') }}</th>
-                                    <th>{{ __('Action') }}</th>
+                                    <th class="text-end">{{ __('Balance') }}</th>
+                                    <th class="text-center">{{ __('Action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($cardAccounts as $index => $account)
+                                    @php
+                                        $balance = $account->getBalanceBetween();
+                                    @endphp
                                     <tr>
-                                        <td>{{ $loop->first + $index }}</td>
-                                        <td>{{ $account->card_type }}</td>
-                                        <td>{{ $account->bank?->name }}</td>
-                                        <td>{{ $account->card_holder_name }}</td>
-                                        <td>{{ $account->card_number }}</td>
-                                        <td>{{ currency($account->getBalanceBetween()) }}</td>
+                                        <td>{{ $index + 1 }}</td>
                                         <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-2">
+                                                    <i class="fas fa-credit-card text-danger"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="fw-medium d-block">{{ $account->card_holder_name }}</span>
+                                                    <small class="text-muted">{{ $account->card_type }} - {{ $account->bank?->name }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><code>{{ $account->card_number }}</code></td>
+                                        <td class="text-end">
+                                            <span class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
+                                                {{ currency($balance) }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button id="btnGroupDrop{{ $account->id }}" type="button"
-                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        {{ __('Action') }}
+                                                    <button type="button" class="btn btn-sm btn-outline-danger dropdown-toggle"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
                                                     </button>
-                                                    <div class="dropdown-menu"
-                                                        aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                    <ul class="dropdown-menu dropdown-menu-end">
                                                         @adminCan('account.edit')
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
+                                                            <li>
+                                                                <a class="dropdown-item" href="{{ route('admin.accounts.edit', $account->id) }}">
+                                                                    <i class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
+                                                                </a>
+                                                            </li>
                                                         @endadminCan
                                                         @adminCan('account.delete')
-                                                            <a href="javascript:;" class="dropdown-item"
-                                                                onclick="deleteData({{ $account->id }})">
-                                                                {{ __('Delete') }}</a>
+                                                            <li>
+                                                                <a href="javascript:;" class="dropdown-item text-danger"
+                                                                    onclick="deleteData({{ $account->id }})">
+                                                                    <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
+                                                                </a>
+                                                            </li>
                                                         @endadminCan
-                                                    </div>
+                                                    </ul>
                                                 </div>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
-                                    <x-empty-table :name="__('Card')" route="" create="no" :message="__('No data found!')"
-                                        colspan="7"></x-empty-table>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="fas fa-credit-card fa-3x mb-2 d-block"></i>
+                                                {{ __('No bank cards found') }}
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>
