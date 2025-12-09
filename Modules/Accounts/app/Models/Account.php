@@ -170,58 +170,67 @@ class Account extends Model
 
     public function getBalanceBetween($startDate = null, $endDate = null)
     {
-        $startDate = $startDate ? $startDate : (request('from_date') ? now()->parse(request('from_date')) : now()->subDay());
-        $endDate = $endDate ? $endDate : (request('to_date') ? now()->parse(request('to_date')) : now());
+        // Check if date filters are provided via request or parameters
+        $hasDateFilter = $startDate || $endDate || request('from_date') || request('to_date');
+
+        if ($hasDateFilter) {
+            $startDate = $startDate ? $startDate : (request('from_date') ? now()->parse(request('from_date')) : null);
+            $endDate = $endDate ? $endDate : (request('to_date') ? now()->parse(request('to_date')) : now());
+        }
 
         // Payments Received and Paid
-        $receivedPayments = $this->payments()
-            ->where('is_received', 1)
-            ->whereBetween('payment_date', [$startDate, $endDate])
-            ->sum('amount');
+        $receivedPaymentsQuery = $this->payments()->where('is_received', 1);
+        $paidPaymentsQuery = $this->payments()->where('is_paid', 1);
 
-        $paidPayments = $this->payments()
-            ->where('is_paid', 1)
-            ->whereBetween('payment_date', [$startDate, $endDate])
-            ->sum('amount');
+        if ($hasDateFilter && $startDate && $endDate) {
+            $receivedPaymentsQuery->whereBetween('payment_date', [$startDate, $endDate]);
+            $paidPaymentsQuery->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+
+        $receivedPayments = $receivedPaymentsQuery->sum('amount');
+        $paidPayments = $paidPaymentsQuery->sum('amount');
 
         // Supplier Payments Received and Paid
-        $supplierPaymentsReceived = $this->supplierPayments()
-            ->where('is_received', 1)
-            ->whereBetween('payment_date', [$startDate, $endDate])
-            ->sum('amount');
+        $supplierPaymentsReceivedQuery = $this->supplierPayments()->where('is_received', 1);
+        $supplierPaymentsPaidQuery = $this->supplierPayments()->where('is_paid', 1);
 
-        $supplierPaymentsPaid = $this->supplierPayments()
-            ->where('is_paid', 1)
-            ->whereBetween('payment_date', [$startDate, $endDate])
-            ->sum('amount');
+        if ($hasDateFilter && $startDate && $endDate) {
+            $supplierPaymentsReceivedQuery->whereBetween('payment_date', [$startDate, $endDate]);
+            $supplierPaymentsPaidQuery->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+
+        $supplierPaymentsReceived = $supplierPaymentsReceivedQuery->sum('amount');
+        $supplierPaymentsPaid = $supplierPaymentsPaidQuery->sum('amount');
 
         // Customer Payments Received and Paid
-        $customerPaymentsReceived = $this->customerPayments()
-            ->where('is_received', 1)
-            ->whereBetween('payment_date', [$startDate, $endDate])
-            ->sum('amount');
+        $customerPaymentsReceivedQuery = $this->customerPayments()->where('is_received', 1);
+        $customerPaymentsPaidQuery = $this->customerPayments()->where('is_paid', 1);
 
-        $customerPaymentsPaid = $this->customerPayments()
-            ->where('is_paid', 1)
-            ->whereBetween('payment_date', [$startDate, $endDate])
-            ->sum('amount');
+        if ($hasDateFilter && $startDate && $endDate) {
+            $customerPaymentsReceivedQuery->whereBetween('payment_date', [$startDate, $endDate]);
+            $customerPaymentsPaidQuery->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+
+        $customerPaymentsReceived = $customerPaymentsReceivedQuery->sum('amount');
+        $customerPaymentsPaid = $customerPaymentsPaidQuery->sum('amount');
 
         // Deposits, Withdraws, Assets, and Expenses
-        $deposit = $this->deposits()
-            ->whereBetween('date', [$startDate, $endDate])
-            ->sum('amount');
+        $depositQuery = $this->deposits();
+        $withdrawQuery = $this->withdraws();
+        $assetQuery = $this->assets();
+        $expensesQuery = $this->expenses();
 
-        $withdraw = $this->withdraws()
-            ->whereBetween('date', [$startDate, $endDate])
-            ->sum('amount');
+        if ($hasDateFilter && $startDate && $endDate) {
+            $depositQuery->whereBetween('date', [$startDate, $endDate]);
+            $withdrawQuery->whereBetween('date', [$startDate, $endDate]);
+            $assetQuery->whereBetween('date', [$startDate, $endDate]);
+            $expensesQuery->whereBetween('date', [$startDate, $endDate]);
+        }
 
-        $asset = $this->assets()
-            ->whereBetween('date', [$startDate, $endDate])
-            ->sum('amount');
-
-        $expenses = $this->expenses()
-            ->whereBetween('date', [$startDate, $endDate])
-            ->sum('amount');
+        $deposit = $depositQuery->sum('amount');
+        $withdraw = $withdrawQuery->sum('amount');
+        $asset = $assetQuery->sum('amount');
+        $expenses = $expensesQuery->sum('amount');
 
         // Calculate Balance
         $balance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
