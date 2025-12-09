@@ -275,6 +275,59 @@
                                 </span>
                             </td>
                         </tr>
+
+                        <tr>
+                            <td>
+                                <img src="{{ asset('backend/img/cash-flow/15.png') }}" class="icon-img" />
+                                {{ __('Expense Supplier Advance Refund') }}
+                            </td>
+                            <td>
+                                <span>
+                                    {{ currency($data['expenseSupplierAdvanceRefund'] ?? 0) }}
+                                </span>
+                            </td>
+                            <td>
+                                <img src="{{ asset('backend/img/cash-flow/11.png') }}" class="icon-img" />
+                                {{ __('Expense Supplier Payment') }}
+                            </td>
+                            <td>
+                                <span>
+                                    {{ currency($data['expenseSupplierPayment'] ?? 0) }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                <img src="{{ asset('backend/img/cash-flow/10.png') }}" class="icon-img" />
+                                {{ __('Expense Supplier Due Pay') }}
+                            </td>
+                            <td>
+                                <span>
+                                    {{ currency($data['expenseSupplierDuePay'] ?? 0) }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                                <img src="{{ asset('backend/img/cash-flow/15.png') }}" class="icon-img" />
+                                {{ __('Expense Supplier Advance') }}
+                            </td>
+                            <td>
+                                <span>
+                                    {{ currency($data['expenseSupplierAdvancePay'] ?? 0) }}
+                                </span>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>

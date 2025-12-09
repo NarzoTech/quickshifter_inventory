@@ -22,6 +22,30 @@
                             </div>
                             <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
+                                    <select name="payment_status" id="payment_status" class="form-control">
+                                        <option value="">{{ __('Payment Status') }}</option>
+                                        <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>
+                                            {{ __('Paid') }}</option>
+                                        <option value="partial" {{ request('payment_status') == 'partial' ? 'selected' : '' }}>
+                                            {{ __('Partial Paid') }}</option>
+                                        <option value="due" {{ request('payment_status') == 'due' ? 'selected' : '' }}>
+                                            {{ __('Due') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <select name="expense_supplier_id" id="expense_supplier_id" class="form-control">
+                                        <option value="">{{ __('All Suppliers') }}</option>
+                                        @foreach ($expenseSuppliers as $supplier)
+                                            <option value="{{ $supplier->id }}" {{ request('expense_supplier_id') == $supplier->id ? 'selected' : '' }}>
+                                                {{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-2 col-md-6 col-lg-4">
+                                <div class="form-group">
                                     <select name="order_type" id="order_type" class="form-control">
                                         <option value="id" {{ request('order_type') == 'id' ? 'selected' : '' }}>
                                             {{ __('Serial') }}</option>
@@ -116,14 +140,16 @@
                         <table style="width: 100%;" class="table">
                             <thead>
                                 <tr>
-                                    <th style="width: 5%">{{ __('Sl') }}</th>
-                                    <th style="width: 15%">{{ __('Date') }}</th>
-                                    <th style="width: 25%">{{ __('Created By') }}</th>
-                                    <th style="width: 20%">{{ __('Type') }}</th>
-                                    <th style="width: 20%">{{ __('Sub Type') }}</th>
-                                    <th style="width: 15%">{{ __('Amount') }}</th>
-                                    <th style="width: 15%">{{ __('Payment Type') }}</th>
-                                    <th style="width: 30%">{{ __('Note') }}</th>
+                                    <th style="width: 4%">{{ __('Sl') }}</th>
+                                    <th style="width: 8%">{{ __('Invoice') }}</th>
+                                    <th style="width: 8%">{{ __('Date') }}</th>
+                                    <th style="width: 12%">{{ __('Supplier') }}</th>
+                                    <th style="width: 12%">{{ __('Type') }}</th>
+                                    <th style="width: 8%">{{ __('Amount') }}</th>
+                                    <th style="width: 8%">{{ __('Paid') }}</th>
+                                    <th style="width: 8%">{{ __('Due') }}</th>
+                                    <th style="width: 8%">{{ __('Status') }}</th>
+                                    <th style="width: 12%">{{ __('Memo') }}</th>
                                     <th>{{ __('Action') }}</th>
                                 </tr>
                             </thead>
@@ -137,19 +163,24 @@
                                 @forelse ($expenses as $index => $expense)
                                     <tr>
                                         <td>{{ $start + $index }}</td>
+                                        <td>{{ $expense->invoice ?? '-' }}</td>
                                         <td>{{ $expense->date }}</td>
-                                        <td>{{ $expense->createdBy->name }}</td>
+                                        <td>{{ $expense->expenseSupplier->name ?? '-' }}</td>
                                         <td>{{ $expense->expenseType->name }}</td>
+                                        <td>{{ currency($expense->amount) }}</td>
+                                        <td>{{ currency($expense->paid_amount) }}</td>
+                                        <td>{{ currency($expense->due_amount) }}</td>
                                         <td>
-                                            @if ($expense->sub_expense_type_id)
-                                                <span class="badge bg-info">{{ $expense->subExpenseType->name }}</span>
+                                            @php $status = $expense->payment_status_label; @endphp
+                                            @if($status == 'paid')
+                                                <span class="badge bg-success">{{ __('Paid') }}</span>
+                                            @elseif($status == 'partial')
+                                                <span class="badge bg-warning">{{ __('Partial') }}</span>
                                             @else
-                                                <span class="text-muted">-</span>
+                                                <span class="badge bg-danger">{{ __('Due') }}</span>
                                             @endif
                                         </td>
-                                        <td>{{ currency($expense->amount) }}</td>
-                                        <td>{{ ucfirst($expense->payment_type) }}</td>
-                                        <td>{{ $expense->note }}</td>
+                                        <td>{{ $expense->memo }}</td>
                                         <td>
                                             @if (checkAdminHasPermission('expense.edit') || checkAdminHasPermission('expense.delete'))
                                                 <div class="btn-group" role="group">
@@ -175,7 +206,7 @@
                                     </tr>
                                 @empty
                                     <x-empty-table :name="__('Expense')" route="" create="no" :message="__('No data found!')"
-                                        colspan="9"></x-empty-table>
+                                        colspan="11"></x-empty-table>
                                 @endforelse
 
                                 @if ($expenses->count() > 0)
@@ -185,6 +216,12 @@
                                         </td>
                                         <td>
                                             <b>{{ currency($totalAmount) }}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{ currency($totalPaid) }}</b>
+                                        </td>
+                                        <td>
+                                            <b>{{ currency($totalDue) }}</b>
                                         </td>
                                         <td colspan="3"></td>
                                     </tr>
@@ -225,6 +262,18 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="expense_supplier_id_add">{{ __('Expense Supplier') }}</label>
+                                    <select name="expense_supplier_id" id="expense_supplier_id_add" class="form-control select2"
+                                        data-dropdown-parent="#addExpense">
+                                        <option value="">{{ __('Select Supplier (Optional)') }}</option>
+                                        @foreach ($expenseSuppliers as $supplier)
+                                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="expense_type_id">{{ __('Expense Type') }}<span
                                             class="text-danger">*</span></label>
                                     <select name="expense_type_id" id="expense_type_id" class="form-control select2"
@@ -242,7 +291,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12 sub-expense-wrapper" style="display: none;">
+                            <div class="col-md-6 sub-expense-wrapper" style="display: none;">
                                 <div class="form-group">
                                     <label for="sub_expense_type_id">{{ __('Sub Expense Type') }}</label>
                                     <select name="sub_expense_type_id" id="sub_expense_type_id"
@@ -251,7 +300,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="payment_type">{{ __('Payment Type') }}<span
                                             class="text-danger">*</span></label>
@@ -264,20 +313,34 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12 accounts">
+                            <div class="col-md-6 accounts">
 
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="amount">{{ __('Amount') }}<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="amount" name="amount"
+                                    <label for="amount">{{ __('Total Amount') }}<span class="text-danger">*</span></label>
+                                    <input type="number" step="0.01" class="form-control" id="amount" name="amount"
                                         value="{{ old('amount') }}" required>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-md-6 paid-amount-wrapper" style="display: none;">
+                                <div class="form-group">
+                                    <label for="paid_amount">{{ __('Paid Amount') }}</label>
+                                    <input type="number" step="0.01" class="form-control" id="paid_amount" name="paid_amount"
+                                        value="0">
+                                    <small class="text-muted">{{ __('Leave empty or 0 for full due') }}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="note">{{ __('Note') }}</label>
-                                    <textarea name="note" id="note" cols="30" rows="5" class="form-control"></textarea>
+                                    <textarea name="note" id="note" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter note (optional)') }}"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="memo">{{ __('Memo') }}</label>
+                                    <textarea name="memo" id="memo" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter memo (optional)') }}"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -422,10 +485,16 @@
                                             value="{{ $expense->amount }}" required>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="note">{{ __('Note') }}</label>
-                                        <textarea name="note" id="note" cols="30" rows="5" class="form-control">{{ $expense->note }}</textarea>
+                                        <textarea name="note" id="note" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter note (optional)') }}">{{ $expense->note }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="memo">{{ __('Memo') }}</label>
+                                        <textarea name="memo" id="memo" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter memo (optional)') }}">{{ $expense->memo }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -550,6 +619,16 @@
                 $("#deleteForm").attr("action", url);
                 $('#deleteModal').modal('show');
             }
+
+            // Show/hide paid amount field based on supplier selection
+            $('#expense_supplier_id_add').on('change', function() {
+                if ($(this).val()) {
+                    $('.paid-amount-wrapper').slideDown();
+                } else {
+                    $('.paid-amount-wrapper').slideUp();
+                    $('#paid_amount').val('');
+                }
+            });
         </script>
     @endpush
 @endsection

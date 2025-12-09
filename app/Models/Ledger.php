@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Supplier\app\Models\Supplier;
+use Modules\Expense\app\Models\ExpenseSupplier;
 use Modules\Purchase\app\Models\Purchase;
 
 class Ledger extends Model
@@ -15,6 +16,7 @@ class Ledger extends Model
         'customer_id',
         'sale_return_id',
         'supplier_id',
+        'expense_supplier_id',
         'amount',
         'total_amount',
         'is_paid',
@@ -38,6 +40,11 @@ class Ledger extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id')->withDefault(['name' => 'Guest']);
+    }
+
+    public function expenseSupplier()
+    {
+        return $this->belongsTo(ExpenseSupplier::class, 'expense_supplier_id', 'id')->withDefault(['name' => 'Guest']);
     }
 
     public function details()

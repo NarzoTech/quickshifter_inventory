@@ -347,6 +347,20 @@ trait PermissionsTrait
             'expense.type.ledger',
         ],
     ];
+    public static array $expenseSupplierPermissions = [
+        'group_name' => 'expense supplier',
+        'permissions' => [
+            'expense_supplier.view',
+            'expense_supplier.create',
+            'expense_supplier.edit',
+            'expense_supplier.delete',
+            'expense_supplier.due_pay',
+            'expense_supplier.advance',
+            'expense_supplier.ledger',
+            'expense_supplier.excel.download',
+            'expense_supplier.pdf.download',
+        ],
+    ];
     public static array $assetsPermissions = [
         'group_name' => 'assets',
         'permissions' => [

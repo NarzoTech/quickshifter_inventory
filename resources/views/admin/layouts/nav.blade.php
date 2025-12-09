@@ -28,6 +28,24 @@
 
         <ul class="navbar-nav flex-wrap flex-row align-items-center ms-auto">
 
+            <!-- Calculator Button -->
+            <li class="nav-item me-2">
+                <button type="button" class="btn btn-sm btn-success d-flex align-items-center" data-bs-toggle="modal"
+                    data-bs-target="#calculatorModal">
+                    <i class="bx bx-calculator me-1"></i> <span class="d-none d-md-inline">{{ __('Calculator') }}</span>
+                </button>
+            </li>
+
+            <!-- Real-time Clock -->
+            <li class="nav-item me-2 d-none d-lg-block">
+                <div class="topbar-clock-widget d-flex align-items-center px-2 py-1 rounded" style="background: linear-gradient(135deg, #696cff 0%, #5a5edd 100%); color: #fff;">
+                    <i class="bx bx-time-five me-2"></i>
+                    <div>
+                        <div class="topbar-clock-time" id="topbarClock" style="font-size: 0.9rem; font-weight: 600; font-family: 'Courier New', monospace;">00:00:00</div>
+                    </div>
+                </div>
+            </li>
+
             @adminCan('report.view')
                 <li class="nav-item">
                     <a href="{{ route('admin.report.details-sale') }}" class="nav-link nav-link-lg">

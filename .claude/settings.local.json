@@ -3,7 +3,9 @@
     "allow": [
       "Bash(php artisan tinker:*)",
       "Bash(php artisan migrate:*)",
-      "Bash(php artisan make:migration:*)"
+      "Bash(php artisan make:migration:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)"
     ]
   }
 }

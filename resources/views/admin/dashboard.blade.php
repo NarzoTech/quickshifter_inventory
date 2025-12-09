@@ -166,97 +166,6 @@
             color: #696cff;
         }
 
-        /* Real-time Clock */
-        .clock-widget {
-            background: linear-gradient(135deg, #696cff 0%, #5a5edd 100%);
-            border-radius: 15px;
-            padding: 1rem 1.5rem;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .clock-time {
-            font-size: 1.5rem;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-        }
-
-        .clock-date {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        /* Calculator */
-        .calculator-btn {
-            background: linear-gradient(135deg, #71dd37 0%, #5fc52e 100%);
-            border: none;
-            border-radius: 12px;
-            padding: 0.75rem 1.25rem;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .calculator-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(113, 221, 55, 0.4);
-        }
-
-        .calculator-modal .modal-content {
-            border-radius: 15px;
-            border: none;
-        }
-
-        .calculator-display {
-            background: #1a1a2e;
-            color: #fff;
-            font-size: 2rem;
-            text-align: right;
-            padding: 1rem;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            min-height: 70px;
-            word-break: break-all;
-        }
-
-        .calc-btn {
-            width: 100%;
-            padding: 1rem;
-            font-size: 1.25rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 600;
-        }
-
-        .calc-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .calc-btn-number {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .calc-btn-operator {
-            background: #696cff;
-            color: #fff;
-        }
-
-        .calc-btn-equals {
-            background: #71dd37;
-            color: #fff;
-        }
-
-        .calc-btn-clear {
-            background: #ff3e1d;
-            color: #fff;
-        }
-
         /* Monthly Stats Cards Redesign */
         .monthly-stat-card {
             border: none;
@@ -353,20 +262,10 @@
                             <h4 class="mb-1">{{ __('Welcome Back') }}! {{ auth()->guard('admin')->user()->name }}</h4>
                             <p class="text-muted mb-0">{{ __("Here's what's happening with your business today.") }}</p>
                         </div>
-                        <div class="d-flex align-items-center gap-3 flex-wrap">
-                            <!-- Calculator Button -->
-                            <button type="button" class="calculator-btn" data-bs-toggle="modal"
-                                data-bs-target="#calculatorModal">
-                                <i class="bx bx-calculator me-1"></i> {{ __('Calculator') }}
-                            </button>
-                            <!-- Real-time Clock -->
-                            <div class="clock-widget">
-                                <i class="bx bx-time-five" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <div class="clock-time" id="realTimeClock">00:00:00</div>
-                                    <div class="clock-date" id="realTimeDate">{{ now()->format('l, d M Y') }}</div>
-                                </div>
-                            </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary fs-6 px-3 py-2">
+                                <i class="bx bx-calendar me-1"></i> {{ now()->format('l, d M Y') }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -836,85 +735,6 @@
         </div>
     </section>
 
-    <!-- Calculator Modal -->
-    <div class="modal fade calculator-modal" id="calculatorModal" tabindex="-1" aria-labelledby="calculatorModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="calculatorModalLabel">
-                        <i class="bx bx-calculator me-2"></i>{{ __('Calculator') }}
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="calculator-display mb-3" id="calcDisplay">0</div>
-                    <div class="row g-2">
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-clear" onclick="clearCalc()">C</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-operator" onclick="appendCalc('(')">(</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-operator" onclick="appendCalc(')')">)</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-operator" onclick="appendCalc('/')">/</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('7')">7</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('8')">8</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('9')">9</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-operator" onclick="appendCalc('*')">x</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('4')">4</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('5')">5</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('6')">6</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-operator" onclick="appendCalc('-')">-</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('1')">1</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('2')">2</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('3')">3</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-operator" onclick="appendCalc('+')">+</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('0')">0</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('00')">00</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-number" onclick="appendCalc('.')">.</button>
-                        </div>
-                        <div class="col-3">
-                            <button class="calc-btn calc-btn-equals" onclick="calculateResult()">=</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('js')
@@ -1180,73 +1000,5 @@
 
         var profitChart = new ApexCharts(document.querySelector("#profitChart"), chartOptions);
         profitChart.render();
-
-        // Real-time Clock
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('realTimeClock').textContent = `${hours}:${minutes}:${seconds}`;
-
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const dayName = days[now.getDay()];
-            const monthName = months[now.getMonth()];
-            const date = now.getDate();
-            const year = now.getFullYear();
-            document.getElementById('realTimeDate').textContent = `${dayName}, ${date} ${monthName} ${year}`;
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        // Calculator Functions
-        let calcExpression = '';
-
-        function appendCalc(value) {
-            if (calcExpression === '0' || calcExpression === 'Error') {
-                calcExpression = '';
-            }
-            calcExpression += value;
-            document.getElementById('calcDisplay').textContent = calcExpression || '0';
-        }
-
-        function clearCalc() {
-            calcExpression = '';
-            document.getElementById('calcDisplay').textContent = '0';
-        }
-
-        function calculateResult() {
-            try {
-                const result = eval(calcExpression);
-                calcExpression = String(result);
-                document.getElementById('calcDisplay').textContent = result.toLocaleString();
-            } catch (e) {
-                document.getElementById('calcDisplay').textContent = 'Error';
-                calcExpression = '';
-            }
-        }
-
-        // Keyboard support for calculator
-        document.addEventListener('keydown', function(e) {
-            const modal = document.getElementById('calculatorModal');
-            if (modal.classList.contains('show')) {
-                if (e.key >= '0' && e.key <= '9') {
-                    appendCalc(e.key);
-                } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
-                    appendCalc(e.key);
-                } else if (e.key === '.') {
-                    appendCalc('.');
-                } else if (e.key === 'Enter' || e.key === '=') {
-                    e.preventDefault();
-                    calculateResult();
-                } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
-                    clearCalc();
-                } else if (e.key === 'Backspace') {
-                    calcExpression = calcExpression.slice(0, -1);
-                    document.getElementById('calcDisplay').textContent = calcExpression || '0';
-                }
-            }
-        });
     </script>
 @endpush

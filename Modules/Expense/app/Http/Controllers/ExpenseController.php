@@ -12,6 +12,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Models\Account;
 use Modules\Expense\app\Http\Requests\ExpenseRequest;
 use Modules\Expense\app\Models\Expense;
+use Modules\Expense\app\Models\ExpenseSupplier;
 use Modules\Expense\app\Models\ExpenseType;
 use Modules\Expense\app\Services\ExpenseService;
 
@@ -29,7 +30,7 @@ class ExpenseController extends Controller
     public function index()
     {
         checkAdminHasPermissionAndThrowException('expense.view');
-        $expenses = Expense::query();
+        $expenses = Expense::query()->with('expenseSupplier');
 
         if (request('keyword')) {
             $keyword  = request('keyword');
@@ -47,9 +48,37 @@ class ExpenseController extends Controller
                     })
                     ->orWhereHas('createdBy', function ($q) use ($keyword) {
                         $q->where('name', 'like', "%{$keyword}%");
+                    })
+                    ->orWhereHas('expenseSupplier', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
                     });
             });
         }
+
+        // Filter by payment status
+        if (request('payment_status')) {
+            $status = request('payment_status');
+            if ($status == 'paid') {
+                $expenses = $expenses->where(function ($q) {
+                    $q->where('due_amount', 0)
+                        ->orWhereNull('expense_supplier_id');
+                });
+            } elseif ($status == 'partial') {
+                $expenses = $expenses->whereNotNull('expense_supplier_id')
+                    ->where('due_amount', '>', 0)
+                    ->where('paid_amount', '>', 0);
+            } elseif ($status == 'due') {
+                $expenses = $expenses->whereNotNull('expense_supplier_id')
+                    ->where('due_amount', '>', 0)
+                    ->where('paid_amount', 0);
+            }
+        }
+
+        // Filter by supplier
+        if (request('expense_supplier_id')) {
+            $expenses = $expenses->where('expense_supplier_id', request('expense_supplier_id'));
+        }
+
         $sort = request()->order_by ? request()->order_by : 'desc';
 
         if (request('order_type')) {
@@ -68,6 +97,8 @@ class ExpenseController extends Controller
             return Excel::download(new ExpensesExport($expenses->get()), $fileName);
         }
         $totalAmount = $expenses->sum('amount');
+        $totalPaid = $expenses->sum('paid_amount');
+        $totalDue = $expenses->sum('due_amount');
 
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
@@ -98,7 +129,8 @@ class ExpenseController extends Controller
 
         $types    = ExpenseType::all();
         $accounts = Account::with('bank')->get();
-        return view('expense::index', compact('expenses', 'types', 'accounts', 'totalAmount'));
+        $expenseSuppliers = ExpenseSupplier::where('status', 1)->get();
+        return view('expense::index', compact('expenses', 'types', 'accounts', 'totalAmount', 'totalPaid', 'totalDue', 'expenseSuppliers'));
     }
 
     /**

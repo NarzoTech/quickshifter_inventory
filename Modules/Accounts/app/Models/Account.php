@@ -11,6 +11,7 @@ use Modules\Accounts\Database\factories\AccountFactory;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
+use Modules\Expense\app\Models\ExpenseSupplierPayment;
 use Modules\Supplier\app\Models\SupplierPayment;
 
 class Account extends Model
@@ -61,20 +62,25 @@ class Account extends Model
         $customerPaymentsReceived = $this->customerPayments()->where('is_received', 1)->sum('amount');
         $customerPaymentsPaid = $this->customerPayments()->where('is_paid', 1)->sum('amount');
 
+        // Expense Supplier Payments
+        $expenseSupplierPaymentsReceived = $this->expenseSupplierPayments()->where('is_received', 1)->sum('amount');
+        $expenseSupplierPaymentsPaid = $this->expenseSupplierPayments()->where('is_paid', 1)->sum('amount');
+
         $deposit = $this->deposits()->sum('amount');
         $withdraw = $this->withdraws()->sum('amount');
         $asset = $this->assets()->sum('amount');
         $expenses = $this->expenses->sum('amount');
 
-        $balance = ($receive + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
-            - ($paid + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid);
+        $balance = ($receive + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived)
+            - ($paid + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $expenseSupplierPaymentsPaid);
         return $balance;
     }
 
     public function expenses()
     {
-
-        return $this->hasMany(Expense::class, 'account_id');
+        // Only expenses WITHOUT supplier (those are paid immediately in full)
+        // Expenses WITH supplier are tracked via ExpenseSupplierPayment
+        return $this->hasMany(Expense::class, 'account_id')->whereNull('expense_supplier_id');
     }
     public function salary()
     {
@@ -89,6 +95,11 @@ class Account extends Model
     public function customerPayments()
     {
         return $this->hasMany(CustomerPayment::class, 'account_id', 'id');
+    }
+
+    public function expenseSupplierPayments()
+    {
+        return $this->hasMany(ExpenseSupplierPayment::class, 'account_id', 'id');
     }
 
     public function deposits()
@@ -119,20 +130,16 @@ class Account extends Model
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
-
         // Supplier Payments Received and Paid before the start date
         $supplierPaymentsReceived = $this->supplierPayments()
             ->where('is_received', 1)
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
-
         $supplierPaymentsPaid = $this->supplierPayments()
             ->where('is_paid', 1)
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
-
-
 
         // Customer Payments Received and Paid before the start date
         $customerPaymentsReceived = $this->customerPayments()
@@ -140,25 +147,30 @@ class Account extends Model
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
-
         $customerPaymentsPaid = $this->customerPayments()
             ->where('is_paid', 1)
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
+        // Expense Supplier Payments Received and Paid before the start date
+        $expenseSupplierPaymentsReceived = $this->expenseSupplierPayments()
+            ->where('is_received', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
 
+        $expenseSupplierPaymentsPaid = $this->expenseSupplierPayments()
+            ->where('is_paid', 1)
+            ->where('payment_date', '<', $startDate)
+            ->sum('amount');
 
         // Deposits, Withdrawals, Assets, and Expenses before the start date
         $deposit = $this->deposits()
             ->where('date', '<', $startDate)
             ->sum('amount');
 
-
-
         $withdraw = $this->withdraws()
             ->where('date', '<', $startDate)
             ->sum('amount');
-
 
         $asset = $this->assets()
             ->where('date', '<', $startDate)
@@ -173,8 +185,8 @@ class Account extends Model
             ->sum('amount');
 
         // Calculate Opening Balance
-        $openingBalance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
-            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary);
+        $openingBalance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived)
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary + $expenseSupplierPaymentsPaid);
         return $openingBalance;
     }
 
@@ -224,6 +236,18 @@ class Account extends Model
         $customerPaymentsReceived = $customerPaymentsReceivedQuery->sum('amount');
         $customerPaymentsPaid = $customerPaymentsPaidQuery->sum('amount');
 
+        // Expense Supplier Payments Received and Paid
+        $expenseSupplierPaymentsReceivedQuery = $this->expenseSupplierPayments()->where('is_received', 1);
+        $expenseSupplierPaymentsPaidQuery = $this->expenseSupplierPayments()->where('is_paid', 1);
+
+        if ($hasDateFilter && $startDate && $endDate) {
+            $expenseSupplierPaymentsReceivedQuery->whereBetween('payment_date', [$startDate, $endDate]);
+            $expenseSupplierPaymentsPaidQuery->whereBetween('payment_date', [$startDate, $endDate]);
+        }
+
+        $expenseSupplierPaymentsReceived = $expenseSupplierPaymentsReceivedQuery->sum('amount');
+        $expenseSupplierPaymentsPaid = $expenseSupplierPaymentsPaidQuery->sum('amount');
+
         // Deposits, Withdraws, Assets, Expenses and Salary
         $depositQuery = $this->deposits();
         $withdrawQuery = $this->withdraws();
@@ -246,8 +270,8 @@ class Account extends Model
         $salary = $salaryQuery->sum('amount');
 
         // Calculate Balance
-        $balance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived)
-            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary);
+        $balance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived)
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary + $expenseSupplierPaymentsPaid);
 
         return $balance;
     }

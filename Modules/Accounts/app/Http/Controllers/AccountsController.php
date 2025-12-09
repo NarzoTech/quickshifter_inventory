@@ -17,6 +17,7 @@ use Modules\Accounts\app\Services\BankService;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
+use Modules\Expense\app\Models\ExpenseSupplierPayment;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Supplier\app\Models\SupplierPayment;
 
@@ -203,8 +204,8 @@ class AccountsController extends Controller
         $applyDateFilter($salaryQuery, 'date');
         $data['salary'] = $salaryQuery->sum('amount');
 
-        // Expenses
-        $expensesQuery = Expense::query();
+        // Expenses (only expenses WITHOUT supplier - these are paid immediately in full)
+        $expensesQuery = Expense::whereNull('expense_supplier_id');
         $applyDateFilter($expensesQuery, 'date');
         $data['expenses'] = $expensesQuery->sum('amount');
 
@@ -233,9 +234,29 @@ class AccountsController extends Controller
         $applyDateFilter($purchaseReturnQuery, 'payment_date');
         $data['purchaseReturn'] = $purchaseReturnQuery->sum('amount');
 
-        $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'];
+        // Expense Supplier Due Pay
+        $expenseSupplierDuePayQuery = ExpenseSupplierPayment::where('payment_type', 'due_pay');
+        $applyDateFilter($expenseSupplierDuePayQuery, 'payment_date');
+        $data['expenseSupplierDuePay'] = $expenseSupplierDuePayQuery->sum('amount');
 
-        $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'] + $data['serviceSale'] + $data['purchaseReturn'];
+        // Expense Supplier Advance Pay
+        $expenseSupplierAdvancePayQuery = ExpenseSupplierPayment::where('payment_type', 'advance_pay');
+        $applyDateFilter($expenseSupplierAdvancePayQuery, 'payment_date');
+        $data['expenseSupplierAdvancePay'] = $expenseSupplierAdvancePayQuery->sum('amount');
+
+        // Expense Supplier Advance Refund
+        $expenseSupplierAdvanceRefundQuery = ExpenseSupplierPayment::where('payment_type', 'advance_refund');
+        $applyDateFilter($expenseSupplierAdvanceRefundQuery, 'payment_date');
+        $data['expenseSupplierAdvanceRefund'] = $expenseSupplierAdvanceRefundQuery->sum('amount');
+
+        // Expense Payment (paid amount at time of expense creation)
+        $expensePaymentQuery = ExpenseSupplierPayment::where('payment_type', 'expense');
+        $applyDateFilter($expensePaymentQuery, 'payment_date');
+        $data['expenseSupplierPayment'] = $expensePaymentQuery->sum('amount');
+
+        $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'] + $data['expenseSupplierDuePay'] + $data['expenseSupplierAdvancePay'] + $data['expenseSupplierPayment'];
+
+        $data['totalReceive'] = $data['productSale']  + $data['balance_deposit'] + $data['customer_advance'] + $data['customer_due'] + $data['supplierAdvanceRefund'] + $data['serviceSale'] + $data['purchaseReturn'] + $data['expenseSupplierAdvanceRefund'];
 
         // Opening balance is 0 for all-time view, or calculated from the start date when filtered
         $openingBalance = $hasDateFilter && $fromDate ? $this->accountsService->getOpeningBalance($fromDate) : 0;
