@@ -11,13 +11,16 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             border: none;
         }
+
         .account-summary-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
+
         .account-summary-card .card-body {
             padding: 1.5rem;
         }
+
         .account-summary-card .icon-wrapper {
             width: 60px;
             height: 60px;
@@ -27,39 +30,50 @@
             justify-content: center;
             font-size: 24px;
         }
+
         .account-summary-card .amount {
             font-size: 1.5rem;
             font-weight: 700;
         }
+
         .account-summary-card .label {
-            font-size: 0.8rem;
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 900
         }
+
         .bg-gradient-success {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         }
+
         .bg-gradient-primary {
             background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);
         }
+
         .bg-gradient-info {
             background: linear-gradient(135deg, #17a2b8 0%, #007bff 100%);
         }
+
         .bg-gradient-warning {
             background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
         }
+
         .bg-gradient-danger {
             background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
         }
+
         .account-section-card {
             border: none;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
+
         .account-section-card .card-header {
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             padding: 1rem 1.5rem;
         }
+
         .account-section-card .section-icon {
             width: 40px;
             height: 40px;
@@ -69,6 +83,7 @@
             justify-content: center;
             margin-right: 10px;
         }
+
         .account-section-card .table thead th {
             border-top: none;
             font-weight: 600;
@@ -78,10 +93,12 @@
             color: #6c757d;
             padding: 1rem 0.75rem;
         }
+
         .account-section-card .table tbody td {
             vertical-align: middle;
             padding: 0.875rem 0.75rem;
         }
+
         .amount-badge {
             display: inline-block;
             padding: 0.35rem 0.75rem;
@@ -89,21 +106,29 @@
             font-weight: 600;
             font-size: 0.875rem;
         }
+
         .amount-positive {
             background-color: rgba(40, 167, 69, 0.1);
             color: #28a745;
         }
+
         .amount-negative {
             background-color: rgba(220, 53, 69, 0.1);
             color: #dc3545;
         }
+
         .filter-card {
             border: none;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         }
+
         .text-white-50 {
-            color: rgba(255,255,255,0.7) !important;
+            color: #fff !important;
+        }
+
+        .btn-outline-danger {
+            background: #dc3545;
         }
     </style>
 @endpush
@@ -141,9 +166,12 @@
                                     <label class="form-label text-muted small">{{ __('Per Page') }}</label>
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('All') }}</option>
-                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>10</option>
-                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>50</option>
-                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>100</option>
+                                        <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>10
+                                        </option>
+                                        <option value="50" {{ '50' == request('par-page') ? 'selected' : '' }}>50
+                                        </option>
+                                        <option value="100" {{ '100' == request('par-page') ? 'selected' : '' }}>100
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -172,11 +200,11 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="icon-wrapper bg-white bg-opacity-25 me-3">
-                            <i class="fas fa-money-bill-wave text-white"></i>
+                            <i class="fas fa-money-bill-wave text-black"></i>
                         </div>
                         <div>
-                            <p class="label mb-1 text-white-50">{{ __('Cash in Hand') }}</p>
-                            <h3 class="amount mb-0">{{ currency($cashAccount?->getBalanceBetween()) }}</h3>
+                            <p class="label mb-0 text-white-50">{{ __('Cash in Hand') }}</p>
+                            <h3 class="amount mb-0 text-white">{{ currency($cashAccount?->getBalanceBetween()) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -189,14 +217,14 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="icon-wrapper bg-white bg-opacity-25 me-3">
-                            <i class="fas fa-university text-white"></i>
+                            <i class="fas fa-university text-black"></i>
                         </div>
                         <div>
                             @php
                                 $bankTotal = $bankAccounts->sum(fn($acc) => $acc->getBalanceBetween());
                             @endphp
-                            <p class="label mb-1 text-white-50">{{ __('Bank Accounts') }}</p>
-                            <h3 class="amount mb-0">{{ currency($bankTotal) }}</h3>
+                            <p class="label mb-0 text-white-50">{{ __('Bank Accounts') }}</p>
+                            <h3 class="amount mb-0 text-white">{{ currency($bankTotal) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -209,14 +237,14 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="icon-wrapper bg-white bg-opacity-25 me-3">
-                            <i class="fas fa-mobile-alt text-white"></i>
+                            <i class="fas fa-mobile-alt text-black"></i>
                         </div>
                         <div>
                             @php
                                 $mobileTotal = $mobileAccounts->sum(fn($acc) => $acc->getBalanceBetween());
                             @endphp
-                            <p class="label mb-1 text-white-50">{{ __('Mobile Banking') }}</p>
-                            <h3 class="amount mb-0">{{ currency($mobileTotal) }}</h3>
+                            <p class="label mb-0 text-white-50">{{ __('Mobile Banking') }}</p>
+                            <h3 class="amount mb-0 text-white">{{ currency($mobileTotal) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -229,11 +257,11 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="icon-wrapper bg-white bg-opacity-25 me-3">
-                            <i class="fas fa-wallet text-white"></i>
+                            <i class="fas fa-wallet text-black"></i>
                         </div>
                         <div>
-                            <p class="label mb-1 text-white-50">{{ __('Total Balance') }}</p>
-                            <h3 class="amount mb-0">{{ currency($accountBalance) }}</h3>
+                            <p class="label mb-0 text-white-50">{{ __('Total Balance') }}</p>
+                            <h3 class="amount mb-0 text-white">{{ currency($accountBalance) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -248,7 +276,7 @@
                 <div class="card-header bg-white d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
                         <div class="section-icon bg-primary bg-opacity-10">
-                            <i class="fas fa-university text-primary"></i>
+                            <i class="fas fa-university text-white"></i>
                         </div>
                         <h5 class="mb-0 fw-bold">{{ __('Bank Accounts') }}</h5>
                     </div>
@@ -278,33 +306,36 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
-                                                    <i class="fas fa-university text-primary"></i>
-                                                </div>
                                                 <span class="fw-medium">{{ $account?->bank?->name ?? '-' }}</span>
                                             </div>
                                         </td>
-                                        <td><span class="badge bg-light text-dark">{{ $account->bank_account_type ?? '-' }}</span></td>
+                                        <td><span
+                                                class="badge bg-light text-dark">{{ $account->bank_account_type ?? '-' }}</span>
+                                        </td>
                                         <td>{{ $account->bank_account_name ?? '-' }}</td>
                                         <td><code>{{ $account->bank_account_number ?? '-' }}</code></td>
                                         <td>{{ $account->bank_account_branch ?? '-' }}</td>
                                         <td class="text-end">
-                                            <span class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
+                                            <span
+                                                class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
                                                 {{ currency($balance) }}
                                             </span>
                                         </td>
                                         <td class="text-center">
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary dropdown-toggle"
                                                         data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
                                                         @adminCan('account.edit')
                                                             <li>
-                                                                <a class="dropdown-item" href="{{ route('admin.accounts.edit', $account->id) }}">
-                                                                    <i class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.accounts.edit', $account->id) }}">
+                                                                    <i
+                                                                        class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
                                                                 </a>
                                                             </li>
                                                         @endadminCan
@@ -346,8 +377,8 @@
             <div class="card account-section-card h-100">
                 <div class="card-header bg-white d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
-                        <div class="section-icon bg-info bg-opacity-10">
-                            <i class="fas fa-mobile-alt text-info"></i>
+                        <div class="section-icon bg-primary">
+                            <i class="fas fa-mobile-alt text-white"></i>
                         </div>
                         <h5 class="mb-0 fw-bold">{{ __('Mobile Banking') }}</h5>
                     </div>
@@ -374,30 +405,31 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="bg-info bg-opacity-10 rounded-circle p-2 me-2">
-                                                    <i class="fas fa-mobile-alt text-info"></i>
-                                                </div>
                                                 <span class="fw-medium">{{ $account->mobile_bank_name }}</span>
                                             </div>
                                         </td>
                                         <td><code>{{ $account->mobile_number }}</code></td>
                                         <td class="text-end">
-                                            <span class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
+                                            <span
+                                                class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
                                                 {{ currency($balance) }}
                                             </span>
                                         </td>
                                         <td class="text-center">
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-info dropdown-toggle"
                                                         data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
                                                         @adminCan('account.edit')
                                                             <li>
-                                                                <a class="dropdown-item" href="{{ route('admin.accounts.edit', $account->id) }}">
-                                                                    <i class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.accounts.edit', $account->id) }}">
+                                                                    <i
+                                                                        class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
                                                                 </a>
                                                             </li>
                                                         @endadminCan
@@ -436,8 +468,8 @@
             <div class="card account-section-card h-100">
                 <div class="card-header bg-white d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
-                        <div class="section-icon bg-danger bg-opacity-10">
-                            <i class="fas fa-credit-card text-danger"></i>
+                        <div class="section-icon bg-primary">
+                            <i class="fas fa-credit-card text-white"></i>
                         </div>
                         <h5 class="mb-0 fw-bold">{{ __('Bank Cards') }}</h5>
                     </div>
@@ -464,33 +496,36 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-2">
-                                                    <i class="fas fa-credit-card text-danger"></i>
-                                                </div>
                                                 <div>
-                                                    <span class="fw-medium d-block">{{ $account->card_holder_name }}</span>
-                                                    <small class="text-muted">{{ $account->card_type }} - {{ $account->bank?->name }}</small>
+                                                    <span
+                                                        class="fw-medium d-block">{{ $account->card_holder_name }}</span>
+                                                    <small class="text-muted">{{ $account->card_type }} -
+                                                        {{ $account->bank?->name }}</small>
                                                 </div>
                                             </div>
                                         </td>
                                         <td><code>{{ $account->card_number }}</code></td>
                                         <td class="text-end">
-                                            <span class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
+                                            <span
+                                                class="amount-badge {{ $balance >= 0 ? 'amount-positive' : 'amount-negative' }}">
                                                 {{ currency($balance) }}
                                             </span>
                                         </td>
                                         <td class="text-center">
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-sm btn-outline-danger dropdown-toggle"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-danger dropdown-toggle"
                                                         data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
                                                         @adminCan('account.edit')
                                                             <li>
-                                                                <a class="dropdown-item" href="{{ route('admin.accounts.edit', $account->id) }}">
-                                                                    <i class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.accounts.edit', $account->id) }}">
+                                                                    <i
+                                                                        class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
                                                                 </a>
                                                             </li>
                                                         @endadminCan
