@@ -8,7 +8,11 @@
             @php
                 $list = [
                     __('Invoice No'),
-                    __('Memo No'),
+                ];
+                if ($title == 'Supplier Ledger') {
+                    $list[] = __('Memo No');
+                }
+                $list = array_merge($list, [
                     __('Date'),
                     __('Description'),
                     $title == 'Supplier Ledger'
@@ -18,7 +22,7 @@
                         ? __('Product') . ' (' . __('DEBIT') . ')'
                         : __('Sales') . ' (' . __('CREDIT') . ')',
                     __('Balance') . ($title == 'Supplier Ledger' ? ' (' . __('DUE') . ')' : ''),
-                ];
+                ]);
             @endphp
             <tr style="background-color: #003366; color: white;">
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('SN') }}</th>
@@ -34,9 +38,9 @@
                 $debit = 0;
             @endphp
             <tr>
-                <td colspan="6" class="text-center fw-bold">{{ __('Opening Balance') }}</td>
+                <td colspan="{{ $title == 'Supplier Ledger' ? 6 : 5 }}" class="text-center fw-bold">{{ __('Opening Balance') }}</td>
                 <td></td>
-                <td colspan="1" class="text-end fw-bold">{{ $opening }}</td>
+                <td colspan="1" class="text-end fw-bold">{{ currency($opening) }}</td>
             </tr>
             @foreach ($ledgers as $index => $ledger)
                 @php
@@ -47,25 +51,23 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $ledger->invoice_no }}</td>
-                    <td>{{ $ledger->purchase?->memo_no }}</td>
-                    <td>{{ $ledger->date }}</td>
+                    @if ($title == 'Supplier Ledger')
+                        <td>{{ $ledger->purchase?->memo_no }}</td>
+                    @endif
+                    <td>{{ formatDate($ledger->date) }}</td>
                     <td class="text-capitalize">{{ $ledger->invoice_type }}</td>
-                    <td>
-                        {{ $ledger->amount }}
-                    </td>
-                    <td>{{ $ledger->total_amount }}</td>
-                    <td class="text-end">{{ $opening }}</td>
+                    <td>{{ currency($ledger->amount) }}</td>
+                    <td>{{ currency($ledger->total_amount) }}</td>
+                    <td class="text-end">{{ currency($opening) }}</td>
                 </tr>
             @endforeach
             <tr>
-                <td colspan="5" class="text-center fw-bold">
+                <td colspan="{{ $title == 'Supplier Ledger' ? 5 : 4 }}" class="text-center fw-bold">
                     {{ __('Total') }}
                 </td>
-                <td colspan="1" class="fw-bold">{{ $credit }}</td>
-                <td colspan="1" class="fw-bold">
-                    {{ $debit }}
-                </td>
-                <td></td>
+                <td colspan="1" class="fw-bold">{{ currency($credit) }}</td>
+                <td colspan="1" class="fw-bold">{{ currency($debit) }}</td>
+                <td class="text-end fw-bold">{{ currency($opening) }}</td>
             </tr>
         </tbody>
     </table>

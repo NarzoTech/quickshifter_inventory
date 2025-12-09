@@ -98,7 +98,9 @@
 
                             <th title="Sl">{{ __('Sl') }}</th>
                             <th title="Invoice No">{{ __('Invoice No') }}</th>
-                            <th title="Memo No">{{ __('Memo No') }}</th>
+                            @if ($title == 'Supplier Ledger')
+                                <th title="Memo No">{{ __('Memo No') }}</th>
+                            @endif
                             <th title="Date">{{ __('Date') }}</th>
                             <th title="Note">{{ __('Description') }}</th>
                             <th title="Invoice No">
@@ -115,7 +117,7 @@
                                     {{ __('Sales') }}({{ __('CREDIT') }})
                                 @endif
                             </th>
-                            <th title="Due">{{ __('Balance') }} @if ($title == 'Supplier Ledger')
+                            <th title="Due" class="text-end">{{ __('Balance') }} @if ($title == 'Supplier Ledger')
                                     ({{ __('DUE') }})
                                 @endif
                             </th>
@@ -128,9 +130,10 @@
                             $debit = 0;
                         @endphp
                         <tr>
-                            <td colspan="6" class="text-center fw-bold">{{ __('Opening Balance') }}</td>
+                            <td colspan="{{ $title == 'Supplier Ledger' ? 6 : 5 }}" class="text-center fw-bold">
+                                {{ __('Opening Balance') }}</td>
                             <td></td>
-                            <td colspan="1" class="text-end fw-bold">{{ $opening }}</td>
+                            <td colspan="1" class="text-end fw-bold">{{ currency($opening) }}</td>
                         </tr>
 
                         @foreach ($ledgers as $index => $ledger)
@@ -143,26 +146,24 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td><a href="{{ $ledger->invoice_url }}">{{ $ledger->invoice_no }}</a></td>
-                                <td>{{ $ledger->purchase?->memo_no }}</td>
-                                <td>{{ $ledger->date }}</td>
+                                @if ($title == 'Supplier Ledger')
+                                    <td>{{ $ledger->purchase?->memo_no }}</td>
+                                @endif
+                                <td>{{ formatDate($ledger->date) }}</td>
                                 <td class="text-capitalize">{{ $ledger->invoice_type }}</td>
-                                <td>
-                                    {{ $ledger->amount }}
-                                </td>
-                                <td>{{ $ledger->total_amount }}</td>
-                                <td class="text-end">{{ $opening }}</td>
+                                <td>{{ currency($ledger->amount) }}</td>
+                                <td>{{ currency($ledger->total_amount) }}</td>
+                                <td class="text-end">{{ currency($opening) }}</td>
                             </tr>
                         @endforeach
 
                         <tr>
-                            <td colspan="5" class="text-center fw-bold">
+                            <td colspan="{{ $title == 'Supplier Ledger' ? 5 : 4 }}" class="text-center fw-bold">
                                 {{ __('Total') }}
                             </td>
                             <td colspan="1" class="fw-bold">{{ currency($credit) }}</td>
-                            <td colspan="1" class="fw-bold">
-                                {{ currency($debit) }}
-                            </td>
-                            <td></td>
+                            <td colspan="1" class="fw-bold">{{ currency($debit) }}</td>
+                            <td class="text-end fw-bold">{{ currency($opening) }}</td>
                         </tr>
                     </tbody>
                 </table>

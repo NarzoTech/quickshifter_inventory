@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\AccessPermissionDeniedException;
+use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -522,6 +523,17 @@ if (! function_exists('checkPaginate')) {
     function checkPaginate($list)
     {
         return $list instanceof \Illuminate\Pagination\LengthAwarePaginator;
+    }
+}
+
+if (! function_exists('formatDate')) {
+    function formatDate($date, $format = 'd-m-Y')
+    {
+        if (empty($date)) {
+            return null;
+        }
+
+        return Carbon::parse($date)->format($format);
     }
 }
 

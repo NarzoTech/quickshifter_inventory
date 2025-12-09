@@ -294,7 +294,7 @@
                                     <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Branch') }}</th>
                                     <th class="text-end">{{ __('Balance') }}</th>
-                                    <th class="text-center">{{ __('Action') }}</th>
+                                    <th>{{ __('Action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -321,33 +321,24 @@
                                                 {{ currency($balance) }}
                                             </span>
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-primary dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="fas fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                    <button id="btnGroupDrop{{ $account->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false">{{ __('Action') }}</button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDrop{{ $account->id }}">
                                                         @adminCan('account.edit')
-                                                            <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.accounts.edit', $account->id) }}">
-                                                                    <i
-                                                                        class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
-                                                                </a>
-                                                            </li>
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
                                                         @endadminCan
                                                         @adminCan('account.delete')
-                                                            <li>
-                                                                <a href="javascript:;" class="dropdown-item text-danger"
-                                                                    onclick="deleteData({{ $account->id }})">
-                                                                    <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
-                                                                </a>
-                                                            </li>
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $account->id }})">{{ __('Delete') }}</a>
                                                         @endadminCan
-                                                    </ul>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -393,7 +384,7 @@
                                     <th>{{ __('Provider') }}</th>
                                     <th>{{ __('Mobile Number') }}</th>
                                     <th class="text-end">{{ __('Balance') }}</th>
-                                    <th class="text-center">{{ __('Action') }}</th>
+                                    <th>{{ __('Action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -415,33 +406,24 @@
                                                 {{ currency($balance) }}
                                             </span>
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-info dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="fas fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                    <button id="btnGroupDropMobile{{ $account->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false">{{ __('Action') }}</button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDropMobile{{ $account->id }}">
                                                         @adminCan('account.edit')
-                                                            <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.accounts.edit', $account->id) }}">
-                                                                    <i
-                                                                        class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
-                                                                </a>
-                                                            </li>
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
                                                         @endadminCan
                                                         @adminCan('account.delete')
-                                                            <li>
-                                                                <a href="javascript:;" class="dropdown-item text-danger"
-                                                                    onclick="deleteData({{ $account->id }})">
-                                                                    <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
-                                                                </a>
-                                                            </li>
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $account->id }})">{{ __('Delete') }}</a>
                                                         @endadminCan
-                                                    </ul>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
@@ -484,7 +466,7 @@
                                     <th>{{ __('Card Info') }}</th>
                                     <th>{{ __('Card Number') }}</th>
                                     <th class="text-end">{{ __('Balance') }}</th>
-                                    <th class="text-center">{{ __('Action') }}</th>
+                                    <th>{{ __('Action') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -511,33 +493,24 @@
                                                 {{ currency($balance) }}
                                             </span>
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             @if (checkAdminHasPermission('account.edit') || checkAdminHasPermission('account.delete'))
                                                 <div class="btn-group" role="group">
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-danger dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="fas fa-ellipsis-v"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                    <button id="btnGroupDropCard{{ $account->id }}" type="button"
+                                                        class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false">{{ __('Action') }}</button>
+                                                    <div class="dropdown-menu"
+                                                        aria-labelledby="btnGroupDropCard{{ $account->id }}">
                                                         @adminCan('account.edit')
-                                                            <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('admin.accounts.edit', $account->id) }}">
-                                                                    <i
-                                                                        class="fas fa-edit me-2 text-warning"></i>{{ __('Edit') }}
-                                                                </a>
-                                                            </li>
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
                                                         @endadminCan
                                                         @adminCan('account.delete')
-                                                            <li>
-                                                                <a href="javascript:;" class="dropdown-item text-danger"
-                                                                    onclick="deleteData({{ $account->id }})">
-                                                                    <i class="fas fa-trash me-2"></i>{{ __('Delete') }}
-                                                                </a>
-                                                            </li>
+                                                            <a href="javascript:;" class="dropdown-item"
+                                                                onclick="deleteData({{ $account->id }})">{{ __('Delete') }}</a>
                                                         @endadminCan
-                                                    </ul>
+                                                    </div>
                                                 </div>
                                             @endif
                                         </td>
