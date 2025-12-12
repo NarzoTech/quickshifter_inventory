@@ -304,16 +304,23 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="amount">{{ __('Total Amount') }}</label>
+                                    <label for="amount">{{ __('Total Amount') }}<span class="text-danger">*</span></label>
                                     <input type="number" step="0.01" class="form-control" id="total_amount" name="amount"
+                                        value="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="paid_amount_display">{{ __('Paid Amount') }}</label>
+                                    <input type="number" step="0.01" class="form-control" id="paid_amount_display"
                                         value="0" readonly>
                                     <small class="text-muted">{{ __('Auto-calculated from payments below') }}</small>
                                 </div>
                             </div>
-                            <div class="col-md-6 paid-amount-wrapper" style="display: none;">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="paid_amount">{{ __('Paid Amount') }}</label>
-                                    <input type="number" step="0.01" class="form-control" id="paid_amount" name="paid_amount"
+                                    <label for="due_amount_display">{{ __('Due Amount') }}</label>
+                                    <input type="number" step="0.01" class="form-control" id="due_amount_display"
                                         value="0" readonly>
                                 </div>
                             </div>
@@ -390,11 +397,23 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="date">{{ __('Date') }}<span
+                                        <label for="date_edit_{{ $expense->id }}">{{ __('Date') }}<span
                                                 class="text-danger">*</span></label>
-                                        <input type="text" class="form-control datepicker" id="date"
+                                        <input type="text" class="form-control datepicker" id="date_edit_{{ $expense->id }}"
                                             name="date" value="{{ formatDate($expense->date) }}"
                                             autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="expense_supplier_id_edit_{{ $expense->id }}">{{ __('Expense Supplier') }}</label>
+                                        <select name="expense_supplier_id" id="expense_supplier_id_edit_{{ $expense->id }}" class="form-control select2"
+                                            data-dropdown-parent="#editExpense{{ $expense->id }}">
+                                            <option value="">{{ __('Select Supplier (Optional)') }}</option>
+                                            @foreach ($expenseSuppliers as $supplier)
+                                                <option value="{{ $supplier->id }}" {{ $expense->expense_supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -419,7 +438,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-12 sub-expense-wrapper-{{ $expense->id }}"
+                                <div class="col-md-6 sub-expense-wrapper-{{ $expense->id }}"
                                     style="display: {{ $expense->expenseType->children->count() > 0 ? 'block' : 'none' }};">
                                     <div class="form-group">
                                         <label
@@ -438,76 +457,165 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="payment_type">{{ __('Payment Type') }}<span
+                                        <label for="amount_edit_{{ $expense->id }}">{{ __('Total Amount') }}<span
                                                 class="text-danger">*</span></label>
-                                        <select name="payment_type" id="payment_type" class="select2" required
-                                            data-dropdown-parent="#editExpense{{ $expense->id }}"
-                                            data-expense-id="{{ $expense->id }}">
-                                            <option value="">{{ __('Payment Type') }}</option>
-                                            @foreach (accountList() as $key => $list)
-                                                <option value="{{ $key }}"
-                                                    {{ $key == $expense->payment_type ? 'selected' : '' }}>
-                                                    {{ $list }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <input type="number" step="0.01" class="form-control edit-total-amount" id="amount_edit_{{ $expense->id }}" name="amount"
+                                            value="{{ $expense->amount }}" data-expense-id="{{ $expense->id }}" required>
                                     </div>
                                 </div>
-                                <div class="col-12 accounts">
-                                    @if ($expense->payment_type == 'cash' || $expense->payment_type == 'advance')
-                                        <input type="hidden" name="account_id" value="{{ $expense->payment_type }}">
-                                    @elseif($expense->account_id)
-                                        <div class="form-group">
-                                            <label for="account_id">{{ __('Select Account') }}<span
-                                                    class="text-danger">*</span></label>
-                                            <select name="account_id" id="account_id_edit_{{ $expense->id }}"
-                                                class="form-control" required>
-                                                <option value="">{{ __('Select Account') }}</option>
-                                                @foreach ($accounts->where('account_type', $expense->payment_type) as $account)
-                                                    @if ($expense->payment_type == 'bank')
-                                                        <option value="{{ $account->id }}"
-                                                            {{ $expense->account_id == $account->id ? 'selected' : '' }}>
-                                                            {{ $account->bank_account_number }}
-                                                            ({{ $account->bank->name ?? 'N/A' }})
-                                                        </option>
-                                                    @elseif($expense->payment_type == 'mobile_banking')
-                                                        <option value="{{ $account->id }}"
-                                                            {{ $expense->account_id == $account->id ? 'selected' : '' }}>
-                                                            {{ $account->mobile_number }}
-                                                            ({{ $account->mobile_bank_name }})
-                                                        </option>
-                                                    @elseif($expense->payment_type == 'card')
-                                                        <option value="{{ $account->id }}"
-                                                            {{ $expense->account_id == $account->id ? 'selected' : '' }}>
-                                                            {{ $account->card_number }}
-                                                            ({{ $account->bank->name ?? 'N/A' }})
-                                                        </option>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="paid_amount_edit_{{ $expense->id }}">{{ __('Paid Amount') }}</label>
+                                        <input type="number" step="0.01" class="form-control" id="paid_amount_edit_{{ $expense->id }}"
+                                            value="{{ $expense->paid_amount }}" readonly>
+                                        <small class="text-muted">{{ __('Auto-calculated from payments below') }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="due_amount_edit_{{ $expense->id }}">{{ __('Due Amount') }}</label>
+                                        <input type="number" step="0.01" class="form-control" id="due_amount_edit_{{ $expense->id }}"
+                                            value="{{ $expense->due_amount }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>{{ __('Payment Details') }}</label>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered expense-payment-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 30%">{{ __('Payment Type') }}</th>
+                                                        <th style="width: 30%">{{ __('Account') }}</th>
+                                                        <th style="width: 30%">{{ __('Amount') }}</th>
+                                                        <th style="width: 10%">{{ __('Action') }}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="expensePaymentRowsEdit{{ $expense->id }}">
+                                                    @php
+                                                        $existingPayments = $expense->payments()->whereIn('payment_type', ['expense', 'direct_expense'])->get();
+                                                    @endphp
+                                                    @if($existingPayments->count() > 0)
+                                                        @foreach($existingPayments as $pIndex => $payment)
+                                                            <tr class="payment-row-edit" data-counter="{{ $pIndex + 1 }}" data-expense-id="{{ $expense->id }}">
+                                                                <td>
+                                                                    <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="{{ $expense->id }}" required>
+                                                                        <option value="">{{ __('Select') }}</option>
+                                                                        @foreach (accountList() as $key => $list)
+                                                                            @php
+                                                                                $paymentAccountType = $payment->account ? $payment->account->account_type : 'cash';
+                                                                            @endphp
+                                                                            <option value="{{ $key }}" @if ($key == $paymentAccountType) selected @endif>{{ $list }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </td>
+                                                                <td class="expense-account-info-edit">
+                                                                    @if($payment->account && !in_array($payment->account->account_type, ['cash', 'advance']))
+                                                                        <select name="account_id[]" class="form-control" required>
+                                                                            <option value="">{{ __('Select') }}</option>
+                                                                            @foreach ($accounts->where('account_type', $payment->account->account_type) as $account)
+                                                                                @if ($payment->account->account_type == 'bank')
+                                                                                    <option value="{{ $account->id }}" {{ $payment->account_id == $account->id ? 'selected' : '' }}>
+                                                                                        {{ $account->bank_account_number }} ({{ $account->bank->name ?? 'N/A' }})
+                                                                                    </option>
+                                                                                @elseif($payment->account->account_type == 'mobile_banking')
+                                                                                    <option value="{{ $account->id }}" {{ $payment->account_id == $account->id ? 'selected' : '' }}>
+                                                                                        {{ $account->mobile_number }} ({{ $account->mobile_bank_name }})
+                                                                                    </option>
+                                                                                @elseif($payment->account->account_type == 'card')
+                                                                                    <option value="{{ $account->id }}" {{ $payment->account_id == $account->id ? 'selected' : '' }}>
+                                                                                        {{ $account->card_number }} ({{ $account->bank->name ?? 'N/A' }})
+                                                                                    </option>
+                                                                                @endif
+                                                                            @endforeach
+                                                                        </select>
+                                                                    @else
+                                                                        <input type="hidden" name="account_id[]" value="cash">
+                                                                        <span class="text-muted">Cash</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="{{ $expense->id }}" placeholder="{{ __('Amount') }}" value="{{ $payment->amount }}" required>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="btn-group btn-group-sm">
+                                                                        @if($pIndex == 0)
+                                                                            <a href="javascript:;" class="btn btn-sm btn-primary add-expense-payment-edit" data-expense-id="{{ $expense->id }}">
+                                                                                <i class="fa fa-plus"></i>
+                                                                            </a>
+                                                                        @else
+                                                                            <a href="javascript:;" class="btn btn-sm btn-danger remove-expense-payment-edit" data-expense-id="{{ $expense->id }}">
+                                                                                <i class="fa fa-trash"></i>
+                                                                            </a>
+                                                                        @endif
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
+                                                        <tr class="payment-row-edit" data-counter="1" data-expense-id="{{ $expense->id }}">
+                                                            <td>
+                                                                <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="{{ $expense->id }}" required>
+                                                                    <option value="">{{ __('Select') }}</option>
+                                                                    @foreach (accountList() as $key => $list)
+                                                                        <option value="{{ $key }}" @if ($key == $expense->payment_type) selected @endif>{{ $list }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </td>
+                                                            <td class="expense-account-info-edit">
+                                                                @if($expense->payment_type == 'cash' || $expense->payment_type == 'advance' || !$expense->account_id)
+                                                                    <input type="hidden" name="account_id[]" value="{{ $expense->payment_type }}">
+                                                                    <span class="text-muted">{{ ucfirst($expense->payment_type) }}</span>
+                                                                @else
+                                                                    <select name="account_id[]" class="form-control" required>
+                                                                        <option value="">{{ __('Select') }}</option>
+                                                                        @foreach ($accounts->where('account_type', $expense->payment_type) as $account)
+                                                                            @if ($expense->payment_type == 'bank')
+                                                                                <option value="{{ $account->id }}" {{ $expense->account_id == $account->id ? 'selected' : '' }}>
+                                                                                    {{ $account->bank_account_number }} ({{ $account->bank->name ?? 'N/A' }})
+                                                                                </option>
+                                                                            @elseif($expense->payment_type == 'mobile_banking')
+                                                                                <option value="{{ $account->id }}" {{ $expense->account_id == $account->id ? 'selected' : '' }}>
+                                                                                    {{ $account->mobile_number }} ({{ $account->mobile_bank_name }})
+                                                                                </option>
+                                                                            @elseif($expense->payment_type == 'card')
+                                                                                <option value="{{ $account->id }}" {{ $expense->account_id == $account->id ? 'selected' : '' }}>
+                                                                                    {{ $account->card_number }} ({{ $account->bank->name ?? 'N/A' }})
+                                                                                </option>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    </select>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="{{ $expense->id }}" placeholder="{{ __('Amount') }}" value="{{ $expense->paid_amount }}" required>
+                                                            </td>
+                                                            <td>
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <a href="javascript:;" class="btn btn-sm btn-primary add-expense-payment-edit" data-expense-id="{{ $expense->id }}">
+                                                                        <i class="fa fa-plus"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
                                                     @endif
-                                                @endforeach
-                                            </select>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    @endif
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-group">
-                                        <label for="amount">{{ __('Amount') }}<span
-                                                class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="amount" name="amount"
-                                            value="{{ $expense->amount }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="note">{{ __('Note') }}</label>
-                                        <textarea name="note" id="note" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter note (optional)') }}">{{ $expense->note }}</textarea>
+                                        <label for="note_edit_{{ $expense->id }}">{{ __('Note') }}</label>
+                                        <textarea name="note" id="note_edit_{{ $expense->id }}" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter note (optional)') }}">{{ $expense->note }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="memo">{{ __('Memo') }}</label>
-                                        <textarea name="memo" id="memo" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter memo (optional)') }}">{{ $expense->memo }}</textarea>
+                                        <label for="memo_edit_{{ $expense->id }}">{{ __('Memo') }}</label>
+                                        <textarea name="memo" id="memo_edit_{{ $expense->id }}" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter memo (optional)') }}">{{ $expense->memo }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -691,30 +799,126 @@
                     }
                 });
 
-                // Calculate total amount from payments
+                // Calculate paid amount from payments (for add modal)
                 $(document).on('input', '.expense-paying-amount', function() {
-                    calculateTotalFromPayments();
+                    calculatePaidAndDue();
                 });
 
-                function calculateTotalFromPayments() {
-                    let total = 0;
+                // Calculate due when total amount changes (for add modal)
+                $('#total_amount').on('input', function() {
+                    calculatePaidAndDue();
+                });
+
+                function calculatePaidAndDue() {
+                    let paid = 0;
                     $('.expense-paying-amount').each(function() {
                         const val = parseFloat($(this).val()) || 0;
-                        total += val;
+                        paid += val;
                     });
-                    $('#total_amount').val(total.toFixed(2));
-                    $('#paid_amount').val(total.toFixed(2));
+                    const total = parseFloat($('#total_amount').val()) || 0;
+                    const due = total - paid;
+                    $('#paid_amount_display').val(paid.toFixed(2));
+                    $('#due_amount_display').val(due >= 0 ? due.toFixed(2) : '0.00');
                 }
 
-                // Show/hide paid amount field based on supplier selection
-                $('#expense_supplier_id_add').on('change', function() {
-                    if ($(this).val()) {
-                        $('.paid-amount-wrapper').slideDown();
+                // Edit modal - Add payment row
+                $(document).on('click', '.add-expense-payment-edit', function() {
+                    const expenseId = $(this).data('expense-id');
+                    const tbody = $(`#expensePaymentRowsEdit${expenseId}`);
+                    const counter = tbody.find('tr').length + 1;
+
+                    const newRow = `
+                        <tr class="payment-row-edit" data-counter="${counter}" data-expense-id="${expenseId}">
+                            <td>
+                                <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="${expenseId}" required>
+                                    <option value="">{{ __('Select') }}</option>
+                                    @foreach (accountList() as $key => $list)
+                                        <option value="{{ $key }}">{{ $list }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td class="expense-account-info-edit">
+                                <input type="hidden" name="account_id[]" value="">
+                                <span class="text-muted">-</span>
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="${expenseId}" placeholder="{{ __('Amount') }}" required>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="javascript:;" class="btn btn-sm btn-danger remove-expense-payment-edit" data-expense-id="${expenseId}">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(newRow);
+                });
+
+                // Edit modal - Remove payment row
+                $(document).on('click', '.remove-expense-payment-edit', function() {
+                    const expenseId = $(this).data('expense-id');
+                    $(this).closest('tr').remove();
+                    calculatePaidAndDueEdit(expenseId);
+                });
+
+                // Edit modal - Handle payment type change
+                $(document).on('change', '.expense-pay-type-edit', function() {
+                    const paymentType = $(this).val();
+                    const row = $(this).closest('tr');
+                    const accountInfoTd = row.find('.expense-account-info-edit');
+
+                    if (paymentType == '' || paymentType == 'cash' || paymentType == 'advance') {
+                        const displayText = paymentType == 'cash' ? 'Cash' : (paymentType == 'advance' ? 'Advance' : '-');
+                        accountInfoTd.html(`
+                            <input type="hidden" name="account_id[]" value="${paymentType}">
+                            <span class="text-muted">${displayText}</span>
+                        `);
                     } else {
-                        $('.paid-amount-wrapper').slideUp();
-                        $('#paid_amount').val('');
+                        const filterAccount = accounts.filter(account => account.account_type === paymentType);
+                        let selectHtml = `<select name="account_id[]" class="form-control" required><option value="">{{ __('Select') }}</option>`;
+
+                        filterAccount.forEach(account => {
+                            let optionText = '';
+                            if (paymentType == 'bank') {
+                                optionText = `${account.bank_account_number} (${account.bank?.name || 'N/A'})`;
+                            } else if (paymentType == 'mobile_banking') {
+                                optionText = `${account.mobile_number} (${account.mobile_bank_name})`;
+                            } else if (paymentType == 'card') {
+                                optionText = `${account.card_number} (${account.bank?.name || 'N/A'})`;
+                            }
+                            selectHtml += `<option value="${account.id}">${optionText}</option>`;
+                        });
+
+                        selectHtml += `</select>`;
+                        accountInfoTd.html(selectHtml);
                     }
                 });
+
+                // Edit modal - Calculate paid and due amounts
+                $(document).on('input', '.expense-paying-amount-edit', function() {
+                    const expenseId = $(this).data('expense-id');
+                    calculatePaidAndDueEdit(expenseId);
+                });
+
+                // Edit modal - Calculate due when total amount changes
+                $(document).on('input', '.edit-total-amount', function() {
+                    const expenseId = $(this).data('expense-id');
+                    calculatePaidAndDueEdit(expenseId);
+                });
+
+                function calculatePaidAndDueEdit(expenseId) {
+                    let paid = 0;
+                    $(`.expense-paying-amount-edit[data-expense-id="${expenseId}"]`).each(function() {
+                        const val = parseFloat($(this).val()) || 0;
+                        paid += val;
+                    });
+                    const total = parseFloat($(`#amount_edit_${expenseId}`).val()) || 0;
+                    const due = total - paid;
+                    $(`#paid_amount_edit_${expenseId}`).val(paid.toFixed(2));
+                    $(`#due_amount_edit_${expenseId}`).val(due >= 0 ? due.toFixed(2) : '0.00');
+                }
             });
 
             function deleteData(id) {

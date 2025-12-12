@@ -141,40 +141,43 @@ class ExpenseService
 
     public function update(Request $request, $id)
     {
-        if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
-            $account = $this->account->where('account_type', 'cash')->first();
-        } else {
-            $account = $this->account->find($request->account_id);
-        }
-
         $expense = $this->expense->find($id);
-        $oldPaidAmount = $expense->paid_amount;
-        $oldSupplierId = $expense->expense_supplier_id;
+
+        // Delete old payment records
+        $oldPayments = ExpenseSupplierPayment::where('expense_id', $id)
+            ->whereIn('payment_type', ['expense', 'direct_expense'])
+            ->get();
+
+        foreach ($oldPayments as $payment) {
+            if ($payment->ledger) {
+                $payment->ledger->details()->delete();
+                $payment->ledger->delete();
+            }
+            $payment->delete();
+        }
 
         $amount = $request->amount;
-        $paidAmount = $request->paid_amount ?? $amount;
-        $dueAmount = $amount - $paidAmount;
 
-        // If no supplier, paid amount = full amount
-        if (!$request->expense_supplier_id) {
-            $paidAmount = $amount;
-            $dueAmount = 0;
+        // Calculate total paid from multiple payments
+        $paymentTypes = $request->payment_type ?? [];
+        $accountIds = $request->account_id ?? [];
+        $payingAmounts = $request->paying_amount ?? [];
+
+        $paidAmount = 0;
+        foreach ($payingAmounts as $amt) {
+            $paidAmount += floatval($amt);
         }
 
-        // Handle payment record updates for supplier expenses
-        if ($oldSupplierId && $oldPaidAmount > 0) {
-            // Delete old payment records
-            $oldPayments = ExpenseSupplierPayment::where('expense_id', $id)
-                ->where('payment_type', 'expense')
-                ->get();
+        $dueAmount = $amount - $paidAmount;
 
-            foreach ($oldPayments as $payment) {
-                if ($payment->ledger) {
-                    $payment->ledger->details()->delete();
-                    $payment->ledger->delete();
-                }
-                $payment->delete();
-            }
+        // Get the first payment account for the expense record
+        $firstPaymentType = $paymentTypes[0] ?? 'cash';
+        $firstAccountId = $accountIds[0] ?? null;
+
+        if ($firstPaymentType == 'cash' || $firstPaymentType == 'advance') {
+            $account = $this->account->where('account_type', 'cash')->first();
+        } else {
+            $account = $this->account->find($firstAccountId);
         }
 
         // Handle document upload
@@ -192,14 +195,15 @@ class ExpenseService
             'memo'                => $request->memo,
             'document'            => $documentPath,
             'updated_by'          => auth('admin')->user()->id,
-            'account_id'          => $account->id,
-            'payment_type'        => $request->payment_type,
+            'account_id'          => $account ? $account->id : null,
+            'payment_type'        => $firstPaymentType,
             'sub_expense_type_id' => $request->sub_expense_type_id,
             'expense_type_id'     => $request->expense_type_id,
             'expense_supplier_id' => $request->expense_supplier_id,
         ]);
 
-        // Create new payment record if supplier expense
+        // Create ledger entry only for supplier expenses
+        $ledgerId = null;
         if ($request->expense_supplier_id && $paidAmount > 0) {
             $ledger = new Ledger();
             $ledger->expense_supplier_id = $request->expense_supplier_id;
@@ -216,24 +220,42 @@ class ExpenseService
 
             $ledger->invoice_url = route('admin.expense.index');
             $ledger->save();
+            $ledgerId = $ledger->id;
+
+            // Create ledger details
+            $ledger->details()->create([
+                'invoice' => 'EXP-' . $expense->id,
+                'amount' => $paidAmount,
+            ]);
+        }
+
+        // Create payment record for each payment method
+        // Use 'direct_expense' for non-supplier expenses, 'expense' for supplier expenses
+        $paymentRecordType = $request->expense_supplier_id ? 'expense' : 'direct_expense';
+
+        foreach ($paymentTypes as $index => $paymentType) {
+            $paymentAmount = floatval($payingAmounts[$index] ?? 0);
+            if ($paymentAmount <= 0) continue;
+
+            $paymentAccountId = $accountIds[$index] ?? null;
+
+            if ($paymentType == 'cash' || $paymentType == 'advance') {
+                $paymentAccount = $this->account->where('account_type', 'cash')->first();
+                $paymentAccountId = $paymentAccount ? $paymentAccount->id : null;
+            }
 
             ExpenseSupplierPayment::create([
                 'expense_id' => $expense->id,
                 'expense_supplier_id' => $request->expense_supplier_id,
-                'account_id' => $account->id,
-                'payment_type' => 'expense',
+                'account_id' => $paymentAccountId,
+                'payment_type' => $paymentRecordType,
                 'is_paid' => 1,
-                'amount' => $paidAmount,
+                'amount' => $paymentAmount,
                 'payment_date' => now()->parse($request->date),
                 'note' => $request->note,
                 'invoice' => $this->genInvoiceNumber(),
-                'ledger_id' => $ledger->id,
+                'ledger_id' => $ledgerId,
                 'created_by' => auth('admin')->user()->id,
-            ]);
-
-            $ledger->details()->create([
-                'invoice' => 'EXP-' . $expense->id,
-                'amount' => $paidAmount,
             ]);
         }
 
