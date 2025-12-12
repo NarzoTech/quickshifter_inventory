@@ -29,11 +29,7 @@ class AccountRequest extends FormRequest
                 'card_type' => 'required|string',
                 'bank_id' => 'required|integer',
                 'card_holder_name' => 'required|string',
-                'card_number' => 'required|numeric',
-                'bank_account_type' => 'required|string',
-                'bank_account_name' => 'required|string',
-                'bank_account_number' => 'required',
-                'bank_account_branch' => 'required|string',
+                'card_number' => 'required',
             ];
         }
         if ($this->account_type == 'mobile_banking') {

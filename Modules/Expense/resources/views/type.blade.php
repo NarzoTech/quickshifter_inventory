@@ -102,7 +102,7 @@
                     <tbody>
                         @forelse ($types as $index => $type)
                             <tr>
-                                <td>{{ $loop->first + $index }}</td>
+                                <td>{{ $types->firstItem() + $index }}</td>
                                 <td>{{ $type->name }}</td>
                                 <td>
                                     @if ($type->parent_id)
