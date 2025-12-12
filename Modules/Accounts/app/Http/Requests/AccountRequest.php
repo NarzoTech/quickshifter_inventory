@@ -3,6 +3,8 @@
 namespace Modules\Accounts\app\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
+use Modules\Accounts\app\Models\Account;
 
 class AccountRequest extends FormRequest
 {
@@ -44,6 +46,10 @@ class AccountRequest extends FormRequest
         if ($this->account_type == 'cash') {
             return [];
         }
+
+        return [
+            'account_type' => 'required',
+        ];
     }
 
     /**
@@ -52,6 +58,27 @@ class AccountRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            if ($this->account_type === 'cash') {
+                $query = Account::where('account_type', 'cash');
+
+                // If updating, exclude current account
+                if ($this->route('account')) {
+                    $query->where('id', '!=', $this->route('account'));
+                }
+
+                if ($query->exists()) {
+                    $validator->errors()->add('account_type', 'A cash account already exists. Only one cash account is allowed.');
+                }
+            }
+        });
     }
 
     /**
