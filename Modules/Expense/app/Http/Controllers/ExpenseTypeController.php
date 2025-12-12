@@ -30,15 +30,18 @@ class ExpenseTypeController extends Controller
             $orderBy = request('order_by', 'desc'); // Default to 'desc' if not specified
             $types   = $types->orderBy(request('order_type'), $orderBy);
         } else {
-            $types = $types->orderBy('id', 'desc');
+            $types = $types->orderBy('name', 'asc');
         }
-        if (request('par_page')) {
-            $types = $types->paginate(request('par_page'));
+        $parPage = request('par_page');
+        if ($parPage === 'all') {
+            $types = $types->get();
+        } elseif ($parPage) {
+            $types = $types->paginate((int) $parPage);
+            $types->appends(request()->query());
         } else {
             $types = $types->paginate(20);
+            $types->appends(request()->query());
         }
-
-        $types->appends(request()->query());
         $parentTypes = ExpenseType::whereNull('parent_id')->orderBy('name')->get();
 
         return view('expense::type', compact('types', 'parentTypes'));

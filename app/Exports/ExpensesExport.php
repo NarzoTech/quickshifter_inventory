@@ -14,7 +14,13 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class ExpensesExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     private $index;
-    public function __construct(private $expenses) {}
+    private $totalAmount = 0;
+
+    public function __construct(private $expenses)
+    {
+        $this->totalAmount = $expenses->sum('amount');
+    }
+
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -86,6 +92,23 @@ class ExpensesExport implements FromCollection, WithHeadings, WithMapping, WithS
         // a2 to j2, a3 to j3  will be center aligned
         $sheet->getStyle('A2:F2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('A3:F3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // Add total row
+        $highestRow = $sheet->getHighestRow();
+        $totalRow = $highestRow + 1;
+        $sheet->setCellValue('A' . $totalRow, '');
+        $sheet->setCellValue('B' . $totalRow, '');
+        $sheet->setCellValue('C' . $totalRow, '');
+        $sheet->setCellValue('D' . $totalRow, __('Total'));
+        $sheet->setCellValue('E' . $totalRow, $this->totalAmount);
+        $sheet->setCellValue('F' . $totalRow, '');
+
+        // Style the total row
+        $sheet->getStyle('A' . $totalRow . ':F' . $totalRow)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $totalRow . ':F' . $totalRow)
+            ->getBorders()
+            ->getAllBorders()
+            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
     }
 
     public function title(): string
