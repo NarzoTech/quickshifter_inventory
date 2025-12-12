@@ -159,6 +159,16 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ __('Warranty') }}</label>
+                                            <input type="text" class="form-control" name="warranty"
+                                                value="{{ old('warranty') }}" placeholder="{{ __('e.g. 1 Year, 6 Months, N/A') }}">
+                                            @error('warranty')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="short_description">{{ __('Short Description') }}</label>

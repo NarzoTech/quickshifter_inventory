@@ -34,6 +34,7 @@ class Product extends Model
         'cost',
         'price',
         'stock_alert',
+        'warranty',
         'is_imei',
         'not_selling',
         'stock',

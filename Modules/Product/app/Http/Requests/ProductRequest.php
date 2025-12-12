@@ -33,6 +33,7 @@ class ProductRequest extends FormRequest
             'cost' => 'nullable',
             'price' => 'nullable',
             'stock_alert' => 'nullable',
+            'warranty' => 'nullable|string|max:255',
             'is_imei' => 'nullable',
             'not_selling' => 'nullable',
             'stock' => 'nullable',
