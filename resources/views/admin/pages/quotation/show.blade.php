@@ -61,7 +61,7 @@
                                     Date:
                                 </span>
                                 <span class="value">
-                                    {{ formatDate($quotation->date, 'd - M - Y') }}
+                                    {{ formatDate($quotation->date) }}
                                 </span>
                             </div>
 

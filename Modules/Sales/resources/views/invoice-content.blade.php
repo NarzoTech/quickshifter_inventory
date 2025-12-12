@@ -54,7 +54,7 @@
                         Date:
                     </span>
                     <span class="value">
-                        {{ formatDate($sale->order_date, 'd - M - Y') }}
+                        {{ formatDate($sale->order_date) }}
                     </span>
                 </div>
                 <div class="property">

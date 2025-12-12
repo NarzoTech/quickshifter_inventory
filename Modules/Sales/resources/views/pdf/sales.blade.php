@@ -42,7 +42,7 @@
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ formatDate($sale->order_date, 'd-m-y') }}</td>
+                    <td>{{ formatDate($sale->order_date) }}</td>
                     <td>{{ $sale->invoice }}</td>
                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                     <td>{{ $sale->sale_note }}</td>

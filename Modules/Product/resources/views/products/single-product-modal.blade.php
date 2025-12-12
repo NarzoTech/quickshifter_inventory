@@ -12,7 +12,7 @@
                     <p class="mb-2"><b class="me-2">Brand: </b>{{ $product->brand->name }}</p>
                     <p class="mb-2"><b class="me-2">Unit: </b>{{ $product->unit->name }}</p>
                     <p class="mb-2 d-none"><b class="me-2">Available in locations: </b> Quick Shifter</p>
-                    <p class="mb-2"><b class="me-2">Created At: </b>{{ formatDate($product->created_at, 'd F, Y') }}</p>
+                    <p class="mb-2"><b class="me-2">Created At: </b>{{ formatDate($product->created_at) }}</p>
                 </div>
                 <div class="col-lg-6 invoice-col">
                     <p class="mb-2"><b class="me-2">Category: </b>{{ $product->category->name }}</p>
@@ -20,7 +20,7 @@
                     <p class="mb-2"><b class="me-2">Alert quantity: </b>{{ $product->stock_alert }} </p>
                     <p class="mb-2"><b class="me-2">Has IMEI/Model No: </b>{{ $product->hasVariant ? 'Yes' : 'No' }}
                     </p>
-                    <p class="mb-2"><b class="me-2">Updated At: </b>{{ formatDate($product->updated_at, 'd F, Y') }}</p>
+                    <p class="mb-2"><b class="me-2">Updated At: </b>{{ formatDate($product->updated_at) }}</p>
                 </div>
                 <br>
             </div>

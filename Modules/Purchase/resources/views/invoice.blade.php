@@ -44,7 +44,7 @@
                         </div>
                         <div class="property">
                             <span class="key">Date:</span>
-                            <span class="value">{{ formatDate($purchase->purchase_date, 'd - M - Y') }}</span>
+                            <span class="value">{{ formatDate($purchase->purchase_date) }}</span>
                         </div>
                         <p class="subtitle">Billing To</p>
 

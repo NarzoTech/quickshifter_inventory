@@ -107,7 +107,7 @@
                         @foreach ($payments as $payment)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ formatDate($payment->payment_date, 'd M , Y') }}
+                                <td>{{ formatDate($payment->payment_date) }}
                                 </td>
                                 <td>{{ $payment->purchase?->invoice_number }}</td>
                                 <td>{{ $payment->supplier->name }}</td>
