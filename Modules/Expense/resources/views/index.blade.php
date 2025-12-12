@@ -252,7 +252,7 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body py-0">
-                    <form action="{{ route('admin.expense.store') }}" method="POST" id="add-bank-form">
+                    <form action="{{ route('admin.expense.store') }}" method="POST" id="add-bank-form" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -304,24 +304,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="payment_type">{{ __('Payment Type') }}<span
-                                            class="text-danger">*</span></label>
-                                    <select name="payment_type" id="payment_type" class="select2" required
-                                        data-dropdown-parent="#addExpense">
-                                        <option value="">{{ __('Payment Type') }}</option>
-                                        @foreach (accountList() as $key => $list)
-                                            <option value="{{ $key }}">{{ $list }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 accounts">
-
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
                                     <label for="amount">{{ __('Total Amount') }}<span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" class="form-control" id="amount" name="amount"
+                                    <input type="number" step="0.01" class="form-control" id="total_amount" name="amount"
                                         value="{{ old('amount') }}" required>
                                 </div>
                             </div>
@@ -329,8 +313,28 @@
                                 <div class="form-group">
                                     <label for="paid_amount">{{ __('Paid Amount') }}</label>
                                     <input type="number" step="0.01" class="form-control" id="paid_amount" name="paid_amount"
-                                        value="0">
-                                    <small class="text-muted">{{ __('Leave empty or 0 for full due') }}</small>
+                                        value="0" readonly>
+                                    <small class="text-muted">{{ __('Auto-calculated from payments below') }}</small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>{{ __('Payment Details') }}<span class="text-danger">*</span></label>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered expense-payment-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 30%">{{ __('Payment Type') }}</th>
+                                                    <th style="width: 30%">{{ __('Account') }}</th>
+                                                    <th style="width: 30%">{{ __('Amount') }}</th>
+                                                    <th style="width: 10%">{{ __('Action') }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="expensePaymentRows">
+                                                @include('expense::partials.payment-row', ['counter' => 1])
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -343,6 +347,13 @@
                                 <div class="form-group">
                                     <label for="memo">{{ __('Memo') }}</label>
                                     <textarea name="memo" id="memo" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter memo (optional)') }}"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="document">{{ __('Document') }}</label>
+                                    <input type="file" class="form-control" id="document" name="document" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                    <small class="text-muted">{{ __('Accepted: PDF, JPG, PNG, DOC, DOCX') }}</small>
                                 </div>
                             </div>
                         </div>
@@ -373,7 +384,7 @@
                     <!-- Modal body -->
                     <div class="modal-body py-0">
                         <form action="{{ route('admin.expense.update', $expense->id) }}" method="POST"
-                            id="edit-type-form{{ $expense->id }}">
+                            id="edit-type-form{{ $expense->id }}" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="row">
@@ -499,6 +510,20 @@
                                         <textarea name="memo" id="memo" cols="30" rows="2" class="form-control" placeholder="{{ __('Enter memo (optional)') }}">{{ $expense->memo }}</textarea>
                                     </div>
                                 </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="document_{{ $expense->id }}">{{ __('Document') }}</label>
+                                        <input type="file" class="form-control" id="document_{{ $expense->id }}" name="document" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                        <small class="text-muted">{{ __('Accepted: PDF, JPG, PNG, DOC, DOCX') }}</small>
+                                        @if($expense->document)
+                                            <div class="mt-2">
+                                                <a href="{{ asset($expense->document) }}" target="_blank" class="btn btn-sm btn-info">
+                                                    <i class="fa fa-eye"></i> {{ __('View Current Document') }}
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -592,25 +617,101 @@
                     }
                 }
 
-                // Payment type handling
-                $('select[name="payment_type"]').on('change', function() {
+                // Multiple payment handling
+                let paymentCounter = 1;
+
+                // Add payment row
+                $(document).on('click', '.add-expense-payment', function() {
+                    paymentCounter++;
+                    const newRow = `
+                        <tr class="payment-row" data-counter="${paymentCounter}">
+                            <td>
+                                <select name="payment_type[]" class="form-control expense-pay-type" required>
+                                    <option value="">{{ __('Select') }}</option>
+                                    @foreach (accountList() as $key => $list)
+                                        <option value="{{ $key }}">{{ $list }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td class="expense-account-info">
+                                <input type="hidden" name="account_id[]" value="">
+                                <span class="text-muted">-</span>
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount" placeholder="{{ __('Amount') }}" required>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="javascript:;" class="btn btn-sm btn-danger remove-expense-payment">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    $('#expensePaymentRows').append(newRow);
+                });
+
+                // Remove payment row
+                $(document).on('click', '.remove-expense-payment', function() {
+                    $(this).closest('tr').remove();
+                    calculateTotalPaid();
+                });
+
+                // Handle payment type change for expense payments
+                $(document).on('change', '.expense-pay-type', function() {
                     const paymentType = $(this).val();
+                    const row = $(this).closest('tr');
+                    const accountInfoTd = row.find('.expense-account-info');
 
-                    if (paymentType == '') {
-                        $('.accounts').html('');
-                        return;
+                    if (paymentType == '' || paymentType == 'cash' || paymentType == 'advance') {
+                        const displayText = paymentType == 'cash' ? 'Cash' : (paymentType == 'advance' ? 'Advance' : '-');
+                        accountInfoTd.html(`
+                            <input type="hidden" name="account_id[]" value="${paymentType}">
+                            <span class="text-muted">${displayText}</span>
+                        `);
+                    } else {
+                        const filterAccount = accounts.filter(account => account.account_type === paymentType);
+                        let selectHtml = `<select name="account_id[]" class="form-control" required><option value="">{{ __('Select') }}</option>`;
+
+                        filterAccount.forEach(account => {
+                            let optionText = '';
+                            if (paymentType == 'bank') {
+                                optionText = `${account.bank_account_number} (${account.bank?.name || 'N/A'})`;
+                            } else if (paymentType == 'mobile_banking') {
+                                optionText = `${account.mobile_number} (${account.mobile_bank_name})`;
+                            } else if (paymentType == 'card') {
+                                optionText = `${account.card_number} (${account.bank?.name || 'N/A'})`;
+                            }
+                            selectHtml += `<option value="${account.id}">${optionText}</option>`;
+                        });
+
+                        selectHtml += `</select>`;
+                        accountInfoTd.html(selectHtml);
                     }
+                });
 
-                    let html = `<label for="account_id">{{ __('Select Account') }}<span class="text-danger">*</span></label>
-                    <select name="account_id" id="account_id" class="form-control form-group" required>`;
-                    const filterAccount = accounts.filter(account => account.account_type === paymentType);
-                    html = accountsType(filterAccount, html, paymentType);
-                    $('.accounts').html(html);
+                // Calculate total paid amount
+                $(document).on('input', '.expense-paying-amount', function() {
+                    calculateTotalPaid();
+                });
 
-                    if ($(this).val() == 'cash' || $(this).val() == 'advance') {
-                        const cash =
-                            `<input type="hidden" name="account_id" class="form-control" value="${$(this).val()}" readonly>`;
-                        $('.accounts').html(cash);
+                function calculateTotalPaid() {
+                    let total = 0;
+                    $('.expense-paying-amount').each(function() {
+                        const val = parseFloat($(this).val()) || 0;
+                        total += val;
+                    });
+                    $('#paid_amount').val(total.toFixed(2));
+                }
+
+                // Show/hide paid amount field based on supplier selection
+                $('#expense_supplier_id_add').on('change', function() {
+                    if ($(this).val()) {
+                        $('.paid-amount-wrapper').slideDown();
+                    } else {
+                        $('.paid-amount-wrapper').slideUp();
+                        $('#paid_amount').val('');
                     }
                 });
             });
@@ -621,16 +722,6 @@
                 $("#deleteForm").attr("action", url);
                 $('#deleteModal').modal('show');
             }
-
-            // Show/hide paid amount field based on supplier selection
-            $('#expense_supplier_id_add').on('change', function() {
-                if ($(this).val()) {
-                    $('.paid-amount-wrapper').slideDown();
-                } else {
-                    $('.paid-amount-wrapper').slideUp();
-                    $('#paid_amount').val('');
-                }
-            });
         </script>
     @endpush
 @endsection

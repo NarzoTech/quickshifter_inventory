@@ -967,9 +967,8 @@
                     }, 'service')
                 })
 
-                // extra
-
-                $(".dis-tgl").click(function() {
+                // extra - discount edit toggle
+                $(document).on('click', '.dis-tgl', function() {
                     $(".dis-form").slideToggle("fast")
                 })
 
@@ -1349,6 +1348,10 @@
                 success: function(response) {
                     $(".product-table tbody").html('')
                     totalSummery();
+                    // hide discount form and reset values
+                    $('.dis-form').hide();
+                    $('#discount_total_amount').val(0);
+                    $('#discount_type').val(1).trigger('change');
                     toastr.success("{{ __('Cart reset successfully') }}")
                 },
                 error: function(response) {
@@ -1605,6 +1608,8 @@
                         // reset discount type
                         $('#discount_type').val(0).trigger('change')
 
+                        // hide discount form
+                        $('.dis-form').hide();
 
                         // reset payment type
                         $('#paymentRow').html(`@include('pos::payment-row')`);

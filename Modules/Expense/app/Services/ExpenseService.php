@@ -24,20 +24,39 @@ class ExpenseService
 
     public function store(Request $request)
     {
-        if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
-            $account = $this->account->where('account_type', 'cash')->first();
-        } else {
-            $account = $this->account->find($request->account_id);
-        }
-
         $amount = $request->amount;
-        $paidAmount = $request->paid_amount ?? $amount;
-        $dueAmount = $amount - $paidAmount;
+
+        // Calculate total paid from multiple payments
+        $paymentTypes = $request->payment_type ?? [];
+        $accountIds = $request->account_id ?? [];
+        $payingAmounts = $request->paying_amount ?? [];
+
+        $paidAmount = 0;
+        foreach ($payingAmounts as $amt) {
+            $paidAmount += floatval($amt);
+        }
 
         // If no supplier, paid amount = full amount (immediate payment)
         if (!$request->expense_supplier_id) {
             $paidAmount = $amount;
-            $dueAmount = 0;
+        }
+
+        $dueAmount = $amount - $paidAmount;
+
+        // Get the first payment account for the expense record
+        $firstPaymentType = $paymentTypes[0] ?? 'cash';
+        $firstAccountId = $accountIds[0] ?? null;
+
+        if ($firstPaymentType == 'cash' || $firstPaymentType == 'advance') {
+            $account = $this->account->where('account_type', 'cash')->first();
+        } else {
+            $account = $this->account->find($firstAccountId);
+        }
+
+        // Handle document upload
+        $documentPath = null;
+        if ($request->hasFile('document')) {
+            $documentPath = file_upload($request->file('document'), 'uploads/expenses/documents/');
         }
 
         // Store the expense
@@ -47,19 +66,20 @@ class ExpenseService
             'amount'              => $amount,
             'paid_amount'         => $paidAmount,
             'due_amount'          => $dueAmount,
-            'account_id'          => $account->id,
-            'payment_type'        => $request->payment_type,
+            'account_id'          => $account ? $account->id : null,
+            'payment_type'        => $firstPaymentType,
             'note'                => $request->note,
             'memo'                => $request->memo,
+            'document'            => $documentPath,
             'expense_type_id'     => $request->expense_type_id,
             'sub_expense_type_id' => $request->sub_expense_type_id,
             'expense_supplier_id' => $request->expense_supplier_id,
             'created_by'          => auth('admin')->id(),
         ]);
 
-        // If supplier expense with payment, create payment record
+        // Create payment records for each payment
         if ($request->expense_supplier_id && $paidAmount > 0) {
-            // Create ledger entry
+            // Create ledger entry for total payment
             $ledger = new Ledger();
             $ledger->expense_supplier_id = $request->expense_supplier_id;
             $ledger->amount = $paidAmount;
@@ -76,20 +96,32 @@ class ExpenseService
             $ledger->invoice_url = route('admin.expense.index');
             $ledger->save();
 
-            // Create payment record
-            ExpenseSupplierPayment::create([
-                'expense_id' => $expense->id,
-                'expense_supplier_id' => $request->expense_supplier_id,
-                'account_id' => $account->id,
-                'payment_type' => 'expense',
-                'is_paid' => 1,
-                'amount' => $paidAmount,
-                'payment_date' => now()->parse($request->date),
-                'note' => $request->note,
-                'invoice' => $this->genInvoiceNumber(),
-                'ledger_id' => $ledger->id,
-                'created_by' => auth('admin')->user()->id,
-            ]);
+            // Create payment record for each payment method
+            foreach ($paymentTypes as $index => $paymentType) {
+                $paymentAmount = floatval($payingAmounts[$index] ?? 0);
+                if ($paymentAmount <= 0) continue;
+
+                $paymentAccountId = $accountIds[$index] ?? null;
+
+                if ($paymentType == 'cash' || $paymentType == 'advance') {
+                    $paymentAccount = $this->account->where('account_type', 'cash')->first();
+                    $paymentAccountId = $paymentAccount ? $paymentAccount->id : null;
+                }
+
+                ExpenseSupplierPayment::create([
+                    'expense_id' => $expense->id,
+                    'expense_supplier_id' => $request->expense_supplier_id,
+                    'account_id' => $paymentAccountId,
+                    'payment_type' => 'expense',
+                    'is_paid' => 1,
+                    'amount' => $paymentAmount,
+                    'payment_date' => now()->parse($request->date),
+                    'note' => $request->note,
+                    'invoice' => $this->genInvoiceNumber(),
+                    'ledger_id' => $ledger->id,
+                    'created_by' => auth('admin')->user()->id,
+                ]);
+            }
 
             // Create ledger details
             $ledger->details()->create([
@@ -139,6 +171,12 @@ class ExpenseService
             }
         }
 
+        // Handle document upload
+        $documentPath = $expense->document;
+        if ($request->hasFile('document')) {
+            $documentPath = file_upload($request->file('document'), 'uploads/expenses/documents/', $expense->document);
+        }
+
         $expense->update([
             'date'                => now()->parse($request->date),
             'amount'              => $amount,
@@ -146,6 +184,7 @@ class ExpenseService
             'due_amount'          => $dueAmount,
             'note'                => $request->note,
             'memo'                => $request->memo,
+            'document'            => $documentPath,
             'updated_by'          => auth('admin')->user()->id,
             'account_id'          => $account->id,
             'payment_type'        => $request->payment_type,

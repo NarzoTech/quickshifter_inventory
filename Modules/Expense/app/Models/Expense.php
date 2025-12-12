@@ -23,6 +23,7 @@ class Expense extends Model
         'payment_status',
         'note',
         'memo',
+        'document',
         'amount',
         'paid_amount',
         'due_amount',
