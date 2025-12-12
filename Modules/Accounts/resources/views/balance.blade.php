@@ -149,6 +149,7 @@
                                                     <tr>
                                                         <th>{{ __('SN') }}</th>
                                                         <th>{{ __('Date') }}</th>
+                                                        <th>{{ __('Account') }}</th>
                                                         <th>{{ __('Note') }}</th>
                                                         <th>{{ __('Amount') }}</th>
                                                         <th>{{ __('Action') }}</th>
@@ -159,6 +160,7 @@
                                                         <tr>
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ formatDate($deposit->date) }}</td>
+                                                            <td>{{ ucfirst(str_replace('_', ' ', $deposit->account->account_type ?? 'N/A')) }}</td>
                                                             <td>{{ $deposit->note }}</td>
                                                             <td>{{ currency($deposit->amount) }}</td>
                                                             <td>
@@ -192,7 +194,7 @@
                                                     @endforeach
                                                     @if ($deposits->count() > 0)
                                                         <tr class="table-success">
-                                                            <td colspan="3" class="text-end">
+                                                            <td colspan="4" class="text-end">
                                                                 <strong>{{ __('Total:') }}</strong>
                                                             </td>
                                                             <td><strong>{{ currency($totalDeposits) }}</strong></td>
@@ -218,6 +220,7 @@
                                                     <tr>
                                                         <th>{{ __('SN') }}</th>
                                                         <th>{{ __('Date') }}</th>
+                                                        <th>{{ __('Account') }}</th>
                                                         <th>{{ __('Note') }}</th>
                                                         <th>{{ __('Amount') }}</th>
                                                         <th>{{ __('Action') }}</th>
@@ -228,6 +231,7 @@
                                                         <tr>
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ formatDate($withdraw->date) }}</td>
+                                                            <td>{{ ucfirst(str_replace('_', ' ', $withdraw->account->account_type ?? 'N/A')) }}</td>
                                                             <td>{{ $withdraw->note }}</td>
                                                             <td>{{ currency($withdraw->amount) }}</td>
                                                             <td>
@@ -261,7 +265,7 @@
                                                     @endforeach
                                                     @if ($withdraws->count() > 0)
                                                         <tr class="table-danger">
-                                                            <td colspan="3" class="text-end">
+                                                            <td colspan="4" class="text-end">
                                                                 <strong>{{ __('Total:') }}</strong>
                                                             </td>
                                                             <td><strong>{{ currency($totalWithdraws) }}</strong></td>

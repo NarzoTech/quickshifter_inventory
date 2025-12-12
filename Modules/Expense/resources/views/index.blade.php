@@ -143,13 +143,14 @@
                                     <th style="width: 4%">{{ __('Sl') }}</th>
                                     <th style="width: 8%">{{ __('Invoice') }}</th>
                                     <th style="width: 8%">{{ __('Date') }}</th>
-                                    <th style="width: 12%">{{ __('Supplier') }}</th>
-                                    <th style="width: 12%">{{ __('Type') }}</th>
+                                    <th style="width: 10%">{{ __('Supplier') }}</th>
+                                    <th style="width: 10%">{{ __('Type') }}</th>
                                     <th style="width: 8%">{{ __('Amount') }}</th>
                                     <th style="width: 8%">{{ __('Paid') }}</th>
                                     <th style="width: 8%">{{ __('Due') }}</th>
-                                    <th style="width: 8%">{{ __('Status') }}</th>
-                                    <th style="width: 12%">{{ __('Memo') }}</th>
+                                    <th style="width: 6%">{{ __('Status') }}</th>
+                                    <th style="width: 10%">{{ __('Note') }}</th>
+                                    <th style="width: 10%">{{ __('Memo') }}</th>
                                     <th>{{ __('Action') }}</th>
                                 </tr>
                             </thead>
@@ -180,6 +181,7 @@
                                                 <span class="badge bg-danger">{{ __('Due') }}</span>
                                             @endif
                                         </td>
+                                        <td>{{ $expense->note }}</td>
                                         <td>{{ $expense->memo }}</td>
                                         <td>
                                             @if (checkAdminHasPermission('expense.edit') || checkAdminHasPermission('expense.delete'))
@@ -206,7 +208,7 @@
                                     </tr>
                                 @empty
                                     <x-empty-table :name="__('Expense')" route="" create="no" :message="__('No data found!')"
-                                        colspan="11"></x-empty-table>
+                                        colspan="12"></x-empty-table>
                                 @endforelse
 
                                 @if ($expenses->count() > 0)
@@ -223,7 +225,7 @@
                                         <td>
                                             <b>{{ currency($totalDue) }}</b>
                                         </td>
-                                        <td colspan="3"></td>
+                                        <td colspan="4"></td>
                                     </tr>
                                 @endif
                             </tbody>

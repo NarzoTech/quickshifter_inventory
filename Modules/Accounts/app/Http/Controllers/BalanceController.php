@@ -28,10 +28,10 @@ class BalanceController extends Controller
     {
         checkAdminHasPermissionAndThrowException('deposit.withdraw.view');
         $accounts = $this->account->all()->get();
-        $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
+        $deposits = Balance::with('account')->where('balance_type', 'deposit')->paginate(20);
         $deposits->appends(request()->query());
 
-        $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
+        $withdraws = Balance::with('account')->where('balance_type', 'withdraw')->paginate(20);
         $withdraws->appends(request()->query());
 
         $totalDeposits = Balance::where('balance_type', 'deposit')->sum('amount');
@@ -96,10 +96,10 @@ class BalanceController extends Controller
     {
         checkAdminHasPermissionAndThrowException('deposit.withdraw.edit');
         $accounts = $this->account->all()->orderBy('id', 'desc')->get();
-        $deposits = Balance::where('balance_type', 'deposit')->paginate(20);
+        $deposits = Balance::with('account')->where('balance_type', 'deposit')->paginate(20);
         $deposits->appends(request()->query());
 
-        $withdraws = Balance::where('balance_type', 'withdraw')->paginate(20);
+        $withdraws = Balance::with('account')->where('balance_type', 'withdraw')->paginate(20);
         $withdraws->appends(request()->query());
 
         $totalDeposits = Balance::where('balance_type', 'deposit')->sum('amount');
