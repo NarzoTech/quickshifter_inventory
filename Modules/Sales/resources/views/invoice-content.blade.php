@@ -201,7 +201,7 @@
                     </td>
                     <td colspan="1"
                         style="border-left: none !important; border-right: none !important; border-top: none !important"
-                        class="text-left">
+                        class="text-center">
                         @php
                             $unitName = $details->product->unit->name;
                             $unitQty = isset($unit[$unitName]) ? $unit[$unitName] : 0;
