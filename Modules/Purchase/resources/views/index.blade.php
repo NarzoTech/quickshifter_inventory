@@ -132,7 +132,7 @@
                         @foreach ($purchases as $index => $purchase)
                             <tr>
                                 <td>{{ $purchases->firstItem() + $index }}</td>
-                                <td>{{ $purchase->purchase_date }}</td>
+                                <td>{{ formatDate($purchase->purchase_date) }}</td>
                                 <td>{{ $purchase->invoice_number }}</td>
                                 <td>{{ $purchase->supplier?->company }}</td>
                                 <td>{{ $purchase->supplier?->name }}</td>

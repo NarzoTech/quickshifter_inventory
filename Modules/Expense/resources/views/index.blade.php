@@ -164,7 +164,7 @@
                                     <tr>
                                         <td>{{ $start + $index }}</td>
                                         <td>{{ $expense->invoice ?? '-' }}</td>
-                                        <td>{{ $expense->date }}</td>
+                                        <td>{{ formatDate($expense->date) }}</td>
                                         <td>{{ $expense->expenseSupplier->name ?? '-' }}</td>
                                         <td>{{ $expense->expenseType->name }}</td>
                                         <td>{{ currency($expense->amount) }}</td>

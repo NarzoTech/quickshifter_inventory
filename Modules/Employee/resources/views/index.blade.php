@@ -130,7 +130,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td>{{ $employee->join_date }}</td>
+                                        <td>{{ formatDate($employee->join_date) }}</td>
                                         <td>
                                             @if (checkAdminHasPermission('employee.view.payment') ||
                                                     checkAdminHasPermission('employee.pay.salary') ||

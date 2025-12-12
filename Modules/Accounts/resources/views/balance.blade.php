@@ -158,7 +158,7 @@
                                                     @foreach ($deposits as $deposit)
                                                         <tr>
                                                             <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ $deposit->date }}</td>
+                                                            <td>{{ formatDate($deposit->date) }}</td>
                                                             <td>{{ $deposit->note }}</td>
                                                             <td>{{ currency($deposit->amount) }}</td>
                                                             <td>
@@ -227,9 +227,9 @@
                                                     @foreach ($withdraws as $withdraw)
                                                         <tr>
                                                             <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ $withdraw->date }}</td>
+                                                            <td>{{ formatDate($withdraw->date) }}</td>
                                                             <td>{{ $withdraw->note }}</td>
-                                                            <td>TK{{ $withdraw->amount }}</td>
+                                                            <td>{{ currency($withdraw->amount) }}</td>
                                                             <td>
                                                                 @if (checkAdminHasPermission('deposit.withdraw.edit') || checkAdminHasPermission('deposit.withdraw.delete'))
                                                                     <div class="btn-group" role="group">

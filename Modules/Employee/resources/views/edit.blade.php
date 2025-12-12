@@ -78,7 +78,7 @@
                                                 <label for="">{{ __('Joining Date') }}
                                                 </label>
                                                 <input type="text" class="form-control datepicker" name="join_date"
-                                                    value="{{ $employee->join_date }}" autocomplete="off">
+                                                    value="{{ formatDate($employee->join_date) }}" autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">

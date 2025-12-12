@@ -38,7 +38,7 @@
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ $sale->return_date }}</td>
+                    <td>{{ formatDate($sale->return_date) }}</td>
                     <td>{{ $sale->invoice }}</td>
                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                     <td>{{ $sale->return_amount }}</td>

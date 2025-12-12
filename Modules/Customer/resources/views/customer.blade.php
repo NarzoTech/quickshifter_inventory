@@ -354,7 +354,7 @@
                                     <div class="form-group">
                                         <label for="date">{{ __('Date') }}</label>
                                         <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ $user->date }}" autocomplete="off">
+                                            name="date" value="{{ formatDate($user->date) }}" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

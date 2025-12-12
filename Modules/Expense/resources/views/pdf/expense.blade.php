@@ -25,7 +25,7 @@
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ $expense->date }}</td>
+                    <td>{{ formatDate($expense->date) }}</td>
                     <td>{{ $expense->createdBy->name }}</td>
                     <td>{{ $expense->expenseType->name }}</td>
                     <td>{{ $expense->amount }}</td>

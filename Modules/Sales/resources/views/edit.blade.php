@@ -496,7 +496,7 @@
                                             <td colspan="3">
                                                 <div class="form-group mb-0">
                                                     <input type="text" class="form-control datepicker" name="due_date"
-                                                        value="{{ $sale->due_date }}">
+                                                        value="{{ formatDate($sale->due_date) }}">
                                                 </div>
                                             </td>
                                         </tr>

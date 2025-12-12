@@ -75,7 +75,7 @@
                                                                         value="{{ $purchase->invoice_number }}" readonly>
                                                                 </td>
                                                                 <td>
-                                                                    {{ $purchase->purchase_date }}
+                                                                    {{ formatDate($purchase->purchase_date) }}
                                                                 </td>
                                                                 <td>
                                                                     {{ currency($purchase->total_amount) }}

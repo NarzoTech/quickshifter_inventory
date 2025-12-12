@@ -43,7 +43,7 @@
                 @endphp
                 <tr>
                     <td>
-                        {{ $dts->date }}
+                        {{ formatDate($dts->date) }}
                     </td>
                     <td>
                         {{ $dts->mode }}

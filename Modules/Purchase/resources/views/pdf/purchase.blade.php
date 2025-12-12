@@ -36,7 +36,7 @@
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ $purchase->purchase_date }}</td>
+                    <td>{{ formatDate($purchase->purchase_date) }}</td>
                     <td>{{ $purchase->invoice_number }}</td>
                     <td>{{ $purchase->supplier?->name }}</td>
                     <td>{{ currency($purchase->total_amount) }}</td>

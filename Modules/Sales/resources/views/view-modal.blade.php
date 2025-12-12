@@ -22,7 +22,7 @@
 
         <div class="col-lg-6 invoice-col">
             <b class="me-2">{{ __('Invoice No') }}:</b> {{ $sale->invoice }}<br>
-            <b class="me-2">{{ __('Date') }}:</b>{{ $sale->order_date }}<br>
+            <b class="me-2">{{ __('Date') }}:</b>{{ formatDate($sale->order_date) }}<br>
             <b class="me-2">{{ __('Created By') }}</b>: {{ $sale->createdBy->name }} <br>
             <b class="me-2">{{ __('Created At') }}</b>{{ __(':') }}
             {{ formatDate($sale->created_at, 'd-m-Y h:i A') }}

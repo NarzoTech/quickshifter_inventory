@@ -60,7 +60,7 @@
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ currency($payment->amount) }}</td>
                                 <td>{{ currency($payableSalary - $paidAmount) }}</td>
-                                <td>{{ $payment->date }}</td>
+                                <td>{{ formatDate($payment->date) }}</td>
                                 <td>{{ $payment->note }}</td>
                                 <td>
                                     <div class="btn-group">

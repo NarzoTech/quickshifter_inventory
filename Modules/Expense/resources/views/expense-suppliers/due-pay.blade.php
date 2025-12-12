@@ -76,7 +76,7 @@
                                                                     {{ $expense->expenseType->name ?? '-' }}
                                                                 </td>
                                                                 <td>
-                                                                    {{ $expense->date }}
+                                                                    {{ formatDate($expense->date) }}
                                                                 </td>
                                                                 <td>
                                                                     {{ currency($expense->amount) }}

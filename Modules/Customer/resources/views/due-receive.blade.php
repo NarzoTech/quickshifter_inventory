@@ -71,7 +71,7 @@
                                                             value="{{ $due->invoice }}" readonly>
                                                     </td>
                                                     <td>
-                                                        {{ $due->due_date }}
+                                                        {{ formatDate($due->due_date) }}
                                                     </td>
                                                     <td>
                                                         {{ currency($due->sale->grand_total) }}

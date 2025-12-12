@@ -121,8 +121,8 @@
                                 <td>{{ $holidays->firstItem() + $index }}</td>
                                 <td>{{ $day->name }}</td>
                                 <td>{{ $day->description }}</td>
-                                <td>{{ $day->start_date }}</td>
-                                <td>{{ $day->end_date }}</td>
+                                <td>{{ formatDate($day->start_date) }}</td>
+                                <td>{{ formatDate($day->end_date) }}</td>
                                 <td>{{ $day->status ? 'Active' : 'Inactive' }}</td>
                                 <td>
                                     @if (checkAdminHasPermission('attendance.setting.edit') || checkAdminHasPermission('attendance.setting.delete'))
@@ -254,7 +254,7 @@
                                         <label for="date">{{ __('Start Date') }} <span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="start_date"
-                                            name="start_date" placeholder="MM/DD/YY" value="{{ $day->start_date }}"
+                                            name="start_date" placeholder="MM/DD/YY" value="{{ formatDate($day->start_date) }}"
                                             autocomplete="off" required>
                                     </div>
                                 </div>
@@ -263,7 +263,7 @@
                                         <label for="date">{{ __('End Date') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="end_date"
-                                            name="end_date" placeholder="MM/DD/YY" value="{{ $day->end_date }}"
+                                            name="end_date" placeholder="MM/DD/YY" value="{{ formatDate($day->end_date) }}"
                                             autocomplete="off" required>
                                     </div>
                                 </div>

@@ -108,7 +108,7 @@
                                     {{ $start + $index }}
                                 </td>
                                 <td>
-                                    {{ $receive->payment_date }}
+                                    {{ formatDate($receive->payment_date) }}
                                 </td>
                                 <td>
                                     {{ ucwords($receive->payment_type) }}

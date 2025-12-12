@@ -82,7 +82,7 @@
                                                 <div class="form-group">
                                                     <label for="">Date</label>
                                                     <input type="date" class="form-control" name="date"
-                                                        value="{{ $balance->date }}" required>
+                                                        value="{{ formatDate($balance->date, 'Y-m-d') }}" required>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -168,7 +168,7 @@
                                                         @foreach ($deposits as $deposit)
                                                             <tr>
                                                                 <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ $deposit->date }}</td>
+                                                                <td>{{ formatDate($deposit->date) }}</td>
                                                                 <td>{{ $deposit->note }}</td>
                                                                 <td>{{ currency($deposit->amount) }}</td>
                                                                 <td>
@@ -211,9 +211,9 @@
                                                         @foreach ($withdraws as $withdraw)
                                                             <tr>
                                                                 <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ $withdraw->date }}</td>
+                                                                <td>{{ formatDate($withdraw->date) }}</td>
                                                                 <td>{{ $withdraw->note }}</td>
-                                                                <td>{{ $withdraw->amount }}</td>
+                                                                <td>{{ currency($withdraw->amount) }}</td>
                                                                 <td>
                                                                     <div class="d-flex gap-2">
                                                                         <a href="{{ route('admin.opening-balance.edit', $deposit->id) }}"
