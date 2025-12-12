@@ -25,7 +25,7 @@
 
                                 <p class="title">{{ html_decode($user->email) }}</p>
 
-                                <p class="title">{{ __('Joined') }} : {{ $user->created_at->format('h:iA, d M Y') }}</p>
+                                <p class="title">{{ __('Joined') }} : {{ formatDate($user->created_at, 'h:iA, d M Y') }}</p>
 
                                 @if ($user->is_banned == 'yes')
                                     <p class="title">{{ __('Banned') }} : <b>{{ __('Yes') }}</b></p>

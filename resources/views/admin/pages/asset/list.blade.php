@@ -112,7 +112,7 @@
                                         <td>{{ $loop->first + $index }}</td>
                                         <td>{{ $type->name }}</td>
                                         <td>
-                                            {{ date('d-m-Y', strtotime($type->date)) }}
+                                            {{ formatDate($type->date) }}
                                         </td>
                                         <td>{{ $type->type->name }}</td>
                                         <td>{{ $type->account->account_type }}</td>
@@ -184,7 +184,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="">{{ __('Date') }}</label>
-                                    <input type="text" name="date" value="{{ now()->format('d-m-Y') }}"
+                                    <input type="text" name="date" value="{{ formatDate(now()) }}"
                                         class="form-control datepicker" required autocomplete="off">
                                 </div>
                             </div>

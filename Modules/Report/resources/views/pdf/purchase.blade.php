@@ -42,7 +42,7 @@
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>
-                        {{ now()->parse($purchase->purchase_date)->format('d-m-Y') }}
+                        {{ formatDate($purchase->purchase_date) }}
                     </td>
                     <td>
                         {{ $purchase->invoice_number }}

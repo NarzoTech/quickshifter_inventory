@@ -27,7 +27,7 @@
                     <td>{{ ++$index }}</td>
                     <td>{{ $payment->employee?->name }}</td>
                     <td>{{ $payment->amount }}</td>
-                    <td>{{ now()->parse($payment->date)->format('d-m-Y') }}</td>
+                    <td>{{ formatDate($payment->date) }}</td>
                     <td>{{ $payment->note }}</td>
                 </tr>
             @endforeach

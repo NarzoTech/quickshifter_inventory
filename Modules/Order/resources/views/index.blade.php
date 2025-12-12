@@ -37,7 +37,7 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $order->order_id }}</td>
-                                                <td>{{ $order->created_at->format('d F, Y') }}</td>
+                                                <td>{{ formatDate($order->created_at, 'd F, Y') }}</td>
                                                 <td>{{ $order->quantity }}</td>
                                                 <td>{{ $order->amount }}</td>
 

@@ -19,7 +19,7 @@
             @foreach ($quotations as $index => $quotation)
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ date('d-m-Y', strtotime($quotation->date)) }}</td>
+                    <td>{{ formatDate($quotation->date) }}</td>
                     <td>{{ $quotation->quotation_no }}</td>
                     <td>{{ $quotation->customer->name }}</td>
                     <td>{{ $quotation->total }}</td>

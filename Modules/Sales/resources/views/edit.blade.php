@@ -433,7 +433,7 @@
                                                 <div class="form-group mb-0">
                                                     <input type="text" class="form-control datepicker"
                                                         name="sale_date"
-                                                        value="{{ now()->parse($sale->order_date)->format('d-m-Y') }}"
+                                                        value="{{ formatDate($sale->order_date) }}"
                                                         autocomplete="off">
                                                 </div>
                                             </td>

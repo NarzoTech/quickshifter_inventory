@@ -121,7 +121,7 @@
                                                     <div class="form-group">
                                                         <label>{{ __('Paying Date') }}</label>
                                                         <input type="text" class="form-control datepicker"
-                                                            name="payment_date" value="{{ now()->format('d-m-Y') }}"
+                                                            name="payment_date" value="{{ formatDate(now()) }}"
                                                             autocomplete="off">
                                                     </div>
                                                 </div>

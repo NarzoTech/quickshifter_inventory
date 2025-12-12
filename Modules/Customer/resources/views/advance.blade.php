@@ -98,7 +98,7 @@
                                                     <i class="far fa-calendar-check"></i>
                                                 </div>
                                                 <input class="form-control input_number datepicker" name="date"
-                                                    type="text" value="{{ date('d-m-Y') }}" id="date"
+                                                    type="text" value="{{ formatDate(now()) }}" id="date"
                                                     aria-required="true" aria-invalid="false" autocomplete="off">
                                             </div>
                                         </div>

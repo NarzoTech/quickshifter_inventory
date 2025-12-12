@@ -43,7 +43,7 @@
                                 <div class="form-group">
                                     <label>{{ __('Sale Date') }}</label>
                                     <input type="text" class="form-control" name="order_date"
-                                        value="{{ $sale->order_date->format('d-m-Y') }}" readonly>
+                                        value="{{ formatDate($sale->order_date) }}" readonly>
                                     @error('order_date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -54,7 +54,7 @@
                                 <div class="form-group">
                                     <label>{{ __('Return Date') }}</label>
                                     <input type="text" class="form-control datepicker" name="return_date"
-                                        value="{{ old('return_date', now()->format('d-m-Y')) }}" autocomplete="off">
+                                        value="{{ old('return_date', formatDate(now())) }}" autocomplete="off">
                                     @error('return_date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror

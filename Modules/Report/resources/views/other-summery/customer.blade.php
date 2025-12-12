@@ -213,7 +213,7 @@
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ date('d-m-Y') }}" autocomplete="off">
+                                        value="{{ formatDate(now()) }}" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6">

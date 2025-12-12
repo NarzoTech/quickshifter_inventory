@@ -264,7 +264,7 @@
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-primary fs-6 px-3 py-2">
-                                <i class="bx bx-calendar me-1"></i> {{ now()->format('l, d M Y') }}
+                                <i class="bx bx-calendar me-1"></i> {{ formatDate(now(), 'l, d M Y') }}
                             </span>
                         </div>
                     </div>
@@ -425,7 +425,7 @@
                             </div>
                         </div>
                         <div class="monthly-stat-footer">
-                            <i class="bx bx-calendar me-1"></i> {{ now()->format('F Y') }}
+                            <i class="bx bx-calendar me-1"></i> {{ formatDate(now(), 'F Y') }}
                         </div>
                     </div>
                 </div>
@@ -448,7 +448,7 @@
                             </div>
                         </div>
                         <div class="monthly-stat-footer">
-                            <i class="bx bx-calendar me-1"></i> {{ now()->format('F Y') }}
+                            <i class="bx bx-calendar me-1"></i> {{ formatDate(now(), 'F Y') }}
                         </div>
                     </div>
                 </div>
@@ -471,7 +471,7 @@
                             </div>
                         </div>
                         <div class="monthly-stat-footer">
-                            <i class="bx bx-calendar me-1"></i> {{ now()->format('F Y') }}
+                            <i class="bx bx-calendar me-1"></i> {{ formatDate(now(), 'F Y') }}
                         </div>
                     </div>
                 </div>
@@ -487,7 +487,7 @@
                                 <i class="bx bx-pie-chart-alt-2 me-2 text-primary"></i>
                                 {{ __('Income vs Expense') }}
                             </h5>
-                            <small class="text-muted">{{ now()->format('F Y') }}</small>
+                            <small class="text-muted">{{ formatDate(now(), 'F Y') }}</small>
                         </div>
                         <div class="card-body">
                             <div id="incomeExpenseChart"></div>
@@ -503,7 +503,7 @@
                                 <i class="bx bx-doughnut-chart me-2 text-danger"></i>
                                 {{ __('Expense Breakdown') }}
                             </h5>
-                            <small class="text-muted">{{ now()->format('F Y') }}</small>
+                            <small class="text-muted">{{ formatDate(now(), 'F Y') }}</small>
                         </div>
                         <div class="card-body">
                             <div id="expenseByTypeChart"></div>
@@ -538,7 +538,7 @@
                                     <i class="bx bx-line-chart me-2 text-info"></i>
                                     {{ __('Daily Sales Trend') }}
                                 </h5>
-                                <small class="text-muted">{{ now()->format('F Y') }}</small>
+                                <small class="text-muted">{{ formatDate(now(), 'F Y') }}</small>
                             </div>
                         </div>
                         <div class="card-body">
@@ -558,7 +558,7 @@
                                     <i class="bx bx-bar-chart me-2 text-warning"></i>
                                     {{ __('Year Wise Sales & Purchase') }}
                                 </h5>
-                                <small class="text-muted">{{ now()->format('Y') }}</small>
+                                <small class="text-muted">{{ formatDate(now(), 'Y') }}</small>
                             </div>
                         </div>
                         <div class="card-body">

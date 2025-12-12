@@ -43,7 +43,7 @@
                                                 <label for="date"
                                                     class="col-form-label p-0">{{ __('Salary Date') }}</label>
                                                 <input type="text" name="date" id="date"
-                                                    value="{{ old('date', Carbon\Carbon::now()->format('d-m-Y')) }}"
+                                                    value="{{ old('date', formatDate(now())) }}"
                                                     class="form-control datepicker" autocomplete="off">
                                             </div>
                                         </div>

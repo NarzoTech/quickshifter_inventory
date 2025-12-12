@@ -22,7 +22,7 @@
                                 <span><strong>{{ __('Paid By') }}:</strong>&nbsp;{{ $ledger->createdBy->name }}</span>
                             </div>
                             <div class="flex-1 d-flex flex-column">
-                                <span><strong>{{ __('Date') }}:</strong>&nbsp;{{ now()->parse($ledger->date)->format('d - M - Y') }}</span>
+                                <span><strong>{{ __('Date') }}:</strong>&nbsp;{{ formatDate($ledger->date, 'd - M - Y') }}</span>
                                 <span><strong>{{ __('Invoice No') }}:</strong>&nbsp;{{ $ledger->invoice_no }}</span>
                             </div>
                         </div>

@@ -31,7 +31,7 @@
                     <td>{{ $employee->mobile }}</td>
                     <td>{{ $employee->email }}</td>
                     <td>{{ $employee->salary }}</td>
-                    <td>{{ date('d-m-Y', strtotime($employee->join_date)) ?? __('N/A') }}</td>
+                    <td>{{ formatDate($employee->join_date) ?? __('N/A') }}</td>
                 </tr>
             @endforeach
 

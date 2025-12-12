@@ -257,7 +257,7 @@
                                 <div class="form-group">
                                     <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
-                                        value="{{ date('d-m-Y') }}" autocomplete="off" required>
+                                        value="{{ formatDate(now()) }}" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -380,7 +380,7 @@
                                         <label for="date">{{ __('Date') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ now()->parse($expense->date)->format('d-m-Y') }}"
+                                            name="date" value="{{ formatDate($expense->date) }}"
                                             autocomplete="off" required>
                                     </div>
                                 </div>

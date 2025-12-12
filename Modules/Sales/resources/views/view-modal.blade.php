@@ -25,7 +25,7 @@
             <b class="me-2">{{ __('Date') }}:</b>{{ $sale->order_date }}<br>
             <b class="me-2">{{ __('Created By') }}</b>: {{ $sale->createdBy->name }} <br>
             <b class="me-2">{{ __('Created At') }}</b>{{ __(':') }}
-            {{ $sale->created_at->format('d-m-Y h:i A') }}
+            {{ formatDate($sale->created_at, 'd-m-Y h:i A') }}
         </div>
     </div>
 

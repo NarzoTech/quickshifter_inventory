@@ -27,7 +27,7 @@
                     <td>{{ ++$index }}</td>
                     <td>{{ $type->name }}</td>
                     <td>
-                        {{ date('d-m-Y', strtotime($type->date)) }}
+                        {{ formatDate($type->date) }}
                     </td>
                     <td>{{ $type->type->name }}</td>
                     <td>{{ $type->account->account_type }}</td>

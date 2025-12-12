@@ -35,7 +35,7 @@
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>
-                        {{ date('d-m-Y', strtotime($receive->payment_date)) }}
+                        {{ formatDate($receive->payment_date) }}
                     </td>
                     <td>
                         {{ ucwords($receive->payment_type) }}

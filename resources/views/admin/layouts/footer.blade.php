@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="footer-container">
             <div class="text-body text-center w-100">
-                © {{ date('Y') }} <b>{{ $setting->app_name }}</b>
+                © {{ formatDate(now(), 'Y') }} <b>{{ $setting->app_name }}</b>
             </div>
         </div>
     </div>

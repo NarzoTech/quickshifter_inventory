@@ -59,7 +59,7 @@
                                 <div class="form-group">
                                     <label>{{ __('Purchase Date') }}</label>
                                     <input type="text" class="form-control datepicker" name="purchase_date"
-                                        value="{{ old('purchase_date', now()->format('d-m-Y')) }}" autocomplete="off">
+                                        value="{{ old('purchase_date', formatDate(now())) }}" autocomplete="off">
                                     @error('purchase_date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror

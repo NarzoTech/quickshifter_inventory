@@ -65,7 +65,7 @@
                             <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <input type="text" name="date" class="form-control datepicker"
-                                        value="{{ request()->get('date') ?? now()->format('Y-m-d') }}"
+                                        value="{{ request()->get('date') ?? formatDate(now(), 'Y-m-d') }}"
                                         placeholder="{{ __('Date') }}" data-date-end-date="0d" autocomplete="off">
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
     </div>
     <div class="row mt-5">
         @php
-            $currentDate = request()->get('date') ?? now()->format('Y-m-d');
+            $currentDate = request()->get('date') ?? formatDate(now(), 'Y-m-d');
         @endphp
         <div class="col-12">
             <div class="card  {{ !$currentDate ? 'd-none' : '' }}">

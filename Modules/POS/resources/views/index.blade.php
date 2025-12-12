@@ -491,7 +491,7 @@
                                             <td class="text-right w-40">
                                                 <div class="form-group mb-0">
                                                     <input type="text" class="form-control" name="sale_date"
-                                                        value="{{ now()->format('d-m-Y') }}" autocomplete="off">
+                                                        value="{{ formatDate(now()) }}" autocomplete="off">
                                                 </div>
                                             </td>
                                         </tr>
@@ -659,7 +659,7 @@
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $hold_sale->user?->name }}</td>
-                                        <td>{{ $hold_sale->created_at->format('d-m-Y h:i a') }}</td>
+                                        <td>{{ formatDate($hold_sale->created_at, 'd-m-Y h:i a') }}</td>
                                         <td>{{ $hold_sale->note }}</td>
                                         <td>
                                             <a href="javascript:;" class="btn btn-sm btn-danger"
@@ -1080,7 +1080,7 @@
                 })
 
 
-                $(".datepicker").datepicker("option", "dateFormat", "dd-mm-yy").val("{{ date('d-m-Y') }}");
+                $(".datepicker").datepicker("option", "dateFormat", "dd-mm-yy").val("{{ formatDate(now()) }}");
 
                 $(document).on('keydown', function(event) {
                     const keycode = event.keyCode || event.which;

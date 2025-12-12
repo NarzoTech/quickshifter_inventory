@@ -105,7 +105,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $list->invoice }}</td>
-                                        <td>{{ now()->parse($list->return_date)->format('d M, Y') }}</td>
+                                        <td>{{ formatDate($list->return_date, 'd M, Y') }}</td>
                                         <td>{{ $list->returnType?->name }}</td>
                                         <td>{{ $list->purchase?->supplier?->name }}</td>
                                         <td>{{ currency($list->return_amount) }}</td>

@@ -84,7 +84,7 @@
                                     <div class="col-md-6 text-md-right">
                                         <address>
                                             <strong>{{ __('Order Information') }}:</strong><br>
-                                            {{ __('Date') }}: {{ $order->created_at->format('d F, Y') }}<br>
+                                            {{ __('Date') }}: {{ formatDate($order->created_at, 'd F, Y') }}<br>
                                             {{ __('Shipping') }}:
                                             {{ $order->delivery_method == 1 ? __('Delivery') : __('Pick up') }}<br>
                                             {{ __('Status') }} :

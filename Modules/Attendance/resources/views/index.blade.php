@@ -65,7 +65,7 @@
                             <div class="col-xxl-2 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <input type="text" id="monthYearPicker" class="form-control"
-                                        value="{{ request()->get('month_year') ?? now()->format('m/Y') }}"
+                                        value="{{ request()->get('month_year') ?? formatDate(now(), 'm/Y') }}"
                                         name="month_year" autocomplete="off">
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                         <table class="table attendance-table">
                             <thead>
                                 @php
-                                    $month_year = request()->month_year ?? now()->format('m/Y');
+                                    $month_year = request()->month_year ?? formatDate(now(), 'm/Y');
 
                                     $date = \Carbon\Carbon::createFromFormat('m/Y', $month_year);
 
@@ -223,7 +223,7 @@
                 const date = $(this).data('date');
 
                 // check  if date is after today
-                const today = new Date("{{ now()->format('Y-m-d') }}");
+                const today = new Date("{{ formatDate(now(), 'Y-m-d') }}");
                 const selectedDate = new Date(date);
 
                 if (selectedDate > today) {

@@ -39,7 +39,7 @@
 
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ $sale->order_date->format('d-m-Y') }}</td>
+                    <td>{{ formatDate($sale->order_date) }}</td>
                     <td>{{ $sale->due_date }}</td>
                     <td>{{ $sale->invoice }}</td>
                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>

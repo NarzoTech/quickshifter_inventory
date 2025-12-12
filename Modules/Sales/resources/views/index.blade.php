@@ -113,7 +113,7 @@
                         @foreach ($sales as $key => $sale)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $sale->order_date->format('d-m-y') }}</td>
+                                <td>{{ formatDate($sale->order_date, 'd-m-y') }}</td>
                                 <td>{{ $sale->invoice }}</td>
                                 <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                 <td>{{ $sale->sale_note }}</td>

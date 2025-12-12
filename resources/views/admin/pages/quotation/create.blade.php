@@ -36,7 +36,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="date"
-                                                    value="{{ date('d-m-Y') }}" autocomplete="off">
+                                                    value="{{ formatDate(now()) }}" autocomplete="off">
                                                 @error('date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

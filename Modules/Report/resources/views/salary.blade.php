@@ -97,8 +97,8 @@
                     <tbody>
                         @php
                             $month = request('month')
-                                ? now()->parse(request('month'))->format('F')
-                                : now()->format('F');
+                                ? formatDate(request('month'), 'F')
+                                : formatDate(now(), 'F');
                         @endphp
                         @foreach ($employees as $employee)
                             <tr>

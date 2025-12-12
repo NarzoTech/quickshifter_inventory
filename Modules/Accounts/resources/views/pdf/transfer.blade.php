@@ -24,7 +24,7 @@
                     <td>{{ accountList()[$balanceTransfer->toAccount->account_type] }}</td>
                     <td>{{ $balanceTransfer->amount }}</td>
                     <td>{{ $balanceTransfer->createdBy->name }}</td>
-                    <td>{{ now()->parse($balanceTransfer->date)->format('d-m-Y') }}</td>
+                    <td>{{ formatDate($balanceTransfer->date) }}</td>
                 </tr>
             @endforeach
         </tbody>

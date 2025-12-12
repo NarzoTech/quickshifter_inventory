@@ -102,7 +102,7 @@
                         @foreach ($summeries as $summery)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ now()->parse($summery->date)->format('d-m-Y') }}</td>
+                                <td>{{ formatDate($summery->date) }}</td>
                                 <td>{{ $summery->supplier->name }}</td>
                                 <td>{{ $summery->supplier->company }}</td>
                                 <td>{{ $summery->supplier->phone }}</td>
@@ -187,7 +187,7 @@
                                         <label for="date">{{ __('Date') }}<span
                                                 class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ now()->parse($summery->date)->format('d-m-Y') }}"
+                                            name="date" value="{{ formatDate($summery->date) }}"
                                             autocomplete="off">
                                     </div>
                                 </div>

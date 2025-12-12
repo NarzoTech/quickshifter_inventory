@@ -69,7 +69,7 @@
             </div>
         </div>
         @php
-            $currentDate = request()->get('date') ?? now()->format('Y-m-d');
+            $currentDate = request()->get('date') ?? formatDate(now(), 'Y-m-d');
         @endphp
 
         <div class="col-12 mt-5">

@@ -106,7 +106,7 @@
                                         <td>{{ $payments->firstItem() + $index }}</td>
                                         <td>{{ $payment->employee?->name }}</td>
                                         <td>{{ currency($payment->amount) }}</td>
-                                        <td>{{ now()->parse($payment->date)->format('d-m-Y') }}</td>
+                                        <td>{{ formatDate($payment->date) }}</td>
                                         <td>{{ $payment->note }}</td>
                                         <td>
                                             <div class="btn-group" role="group">

@@ -99,7 +99,7 @@
                         @foreach ($quotations as $key => $quotation)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ date('d-m-Y', strtotime($quotation->date)) }}</td>
+                                <td>{{ formatDate($quotation->date) }}</td>
                                 <td>{{ $quotation->quotation_no }}</td>
                                 <td>{{ $quotation->customer->name }}</td>
                                 <td>{{ currency($quotation->total) }}</td>

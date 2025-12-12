@@ -107,7 +107,7 @@
                                             @foreach ($sales as $sale)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $sale->order_date->format('d-m-Y') }}</td>
+                                                    <td>{{ formatDate($sale->order_date) }}</td>
                                                     <td>{{ $sale->invoice }}</td>
                                                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                                     <td>{{ $sale->grand_total }}</td>

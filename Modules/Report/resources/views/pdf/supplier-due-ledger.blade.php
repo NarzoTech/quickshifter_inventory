@@ -29,7 +29,7 @@
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ now()->parse($summery->date)->format('d-m-Y') }}</td>
+                    <td>{{ formatDate($summery->date) }}</td>
                     <td>{{ $summery->supplier->name }}</td>
                     <td>{{ $summery->supplier->company }}</td>
                     <td>{{ $summery->supplier->phone }}</td>

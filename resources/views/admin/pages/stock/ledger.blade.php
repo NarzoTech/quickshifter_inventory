@@ -130,7 +130,7 @@
                             @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $stock->created_at->format('d-m-Y') }}</td>
+                                <td>{{ formatDate($stock->created_at) }}</td>
                                 <td>{{ $product->barcode }}</td>
                                 <td>
                                     <a href="{{ $stock->invoice }}">

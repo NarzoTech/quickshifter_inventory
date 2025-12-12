@@ -26,7 +26,7 @@
 
                 <tr>
                     <td>{{ ++$index }}</td>
-                    <td>{{ now()->parse($expense->date)->format('d-m-Y') }}</td>
+                    <td>{{ formatDate($expense->date) }}</td>
                     <td>{{ $expense->createdBy->name }}</td>
                     <td>{{ $expense->expenseType->name }}</td>
                     <td>{{ $expense->note }}</td>

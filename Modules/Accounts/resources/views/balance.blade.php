@@ -76,7 +76,7 @@
                                                     <div class="form-group">
                                                         <label for="">Date</label>
                                                         <input type="date" class="form-control" name="date"
-                                                            value="{{ now()->format('Y-m-d') }}" required>
+                                                            value="{{ formatDate(now(), 'Y-m-d') }}" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">

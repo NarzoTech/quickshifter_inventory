@@ -54,7 +54,7 @@
                         Date:
                     </span>
                     <span class="value">
-                        {{ now()->parse($sale->order_date)->format('d - M - Y') }}
+                        {{ formatDate($sale->order_date, 'd - M - Y') }}
                     </span>
                 </div>
                 <div class="property">
@@ -62,7 +62,7 @@
                         Time:
                     </span>
                     <span class="value">
-                        {{ $sale->created_at->format('h:i A') }}
+                        {{ formatDate($sale->created_at, 'h:i A') }}
                     </span>
                 </div>
 
