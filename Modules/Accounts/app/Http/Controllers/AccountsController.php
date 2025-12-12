@@ -205,10 +205,18 @@ class AccountsController extends Controller
         $applyDateFilter($salaryQuery, 'date');
         $data['salary'] = $salaryQuery->sum('amount');
 
-        // Expenses (only expenses WITHOUT supplier - these are paid immediately in full)
-        $expensesQuery = Expense::whereNull('expense_supplier_id');
-        $applyDateFilter($expensesQuery, 'date');
-        $data['expenses'] = $expensesQuery->sum('amount');
+        // Expenses (legacy expenses WITHOUT supplier AND without payment records)
+        $legacyExpensesQuery = Expense::whereNull('expense_supplier_id')
+            ->whereDoesntHave('payments');
+        $applyDateFilter($legacyExpensesQuery, 'date');
+        $legacyExpenses = $legacyExpensesQuery->sum('amount');
+
+        // Direct expenses (non-supplier expenses with payment records)
+        $directExpenseQuery = ExpenseSupplierPayment::where('payment_type', 'direct_expense');
+        $applyDateFilter($directExpenseQuery, 'payment_date');
+        $directExpenses = $directExpenseQuery->sum('amount');
+
+        $data['expenses'] = $legacyExpenses + $directExpenses;
 
         // Supplier Due Pay
         $supplierDuePayQuery = SupplierPayment::where('payment_type', 'due_pay');

@@ -77,9 +77,11 @@ class ExpenseService
             'created_by'          => auth('admin')->id(),
         ]);
 
-        // Create payment records for each payment
+        // Create payment records for each payment (for all expenses, not just supplier expenses)
+        $ledgerId = null;
+
+        // Create ledger entry only for supplier expenses
         if ($request->expense_supplier_id && $paidAmount > 0) {
-            // Create ledger entry for total payment
             $ledger = new Ledger();
             $ledger->expense_supplier_id = $request->expense_supplier_id;
             $ledger->amount = $paidAmount;
@@ -95,38 +97,42 @@ class ExpenseService
 
             $ledger->invoice_url = route('admin.expense.index');
             $ledger->save();
-
-            // Create payment record for each payment method
-            foreach ($paymentTypes as $index => $paymentType) {
-                $paymentAmount = floatval($payingAmounts[$index] ?? 0);
-                if ($paymentAmount <= 0) continue;
-
-                $paymentAccountId = $accountIds[$index] ?? null;
-
-                if ($paymentType == 'cash' || $paymentType == 'advance') {
-                    $paymentAccount = $this->account->where('account_type', 'cash')->first();
-                    $paymentAccountId = $paymentAccount ? $paymentAccount->id : null;
-                }
-
-                ExpenseSupplierPayment::create([
-                    'expense_id' => $expense->id,
-                    'expense_supplier_id' => $request->expense_supplier_id,
-                    'account_id' => $paymentAccountId,
-                    'payment_type' => 'expense',
-                    'is_paid' => 1,
-                    'amount' => $paymentAmount,
-                    'payment_date' => now()->parse($request->date),
-                    'note' => $request->note,
-                    'invoice' => $this->genInvoiceNumber(),
-                    'ledger_id' => $ledger->id,
-                    'created_by' => auth('admin')->user()->id,
-                ]);
-            }
+            $ledgerId = $ledger->id;
 
             // Create ledger details
             $ledger->details()->create([
                 'invoice' => 'EXP-' . $expense->id,
                 'amount' => $paidAmount,
+            ]);
+        }
+
+        // Create payment record for each payment method (always, for proper account tracking)
+        // Use 'direct_expense' for non-supplier expenses, 'expense' for supplier expenses
+        $paymentRecordType = $request->expense_supplier_id ? 'expense' : 'direct_expense';
+
+        foreach ($paymentTypes as $index => $paymentType) {
+            $paymentAmount = floatval($payingAmounts[$index] ?? 0);
+            if ($paymentAmount <= 0) continue;
+
+            $paymentAccountId = $accountIds[$index] ?? null;
+
+            if ($paymentType == 'cash' || $paymentType == 'advance') {
+                $paymentAccount = $this->account->where('account_type', 'cash')->first();
+                $paymentAccountId = $paymentAccount ? $paymentAccount->id : null;
+            }
+
+            ExpenseSupplierPayment::create([
+                'expense_id' => $expense->id,
+                'expense_supplier_id' => $request->expense_supplier_id,
+                'account_id' => $paymentAccountId,
+                'payment_type' => $paymentRecordType,
+                'is_paid' => 1,
+                'amount' => $paymentAmount,
+                'payment_date' => now()->parse($request->date),
+                'note' => $request->note,
+                'invoice' => $this->genInvoiceNumber(),
+                'ledger_id' => $ledgerId,
+                'created_by' => auth('admin')->user()->id,
             ]);
         }
 

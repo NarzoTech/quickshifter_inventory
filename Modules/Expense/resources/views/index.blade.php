@@ -304,9 +304,10 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="amount">{{ __('Total Amount') }}<span class="text-danger">*</span></label>
+                                    <label for="amount">{{ __('Total Amount') }}</label>
                                     <input type="number" step="0.01" class="form-control" id="total_amount" name="amount"
-                                        value="{{ old('amount') }}" required>
+                                        value="0" readonly>
+                                    <small class="text-muted">{{ __('Auto-calculated from payments below') }}</small>
                                 </div>
                             </div>
                             <div class="col-md-6 paid-amount-wrapper" style="display: none;">
@@ -314,7 +315,6 @@
                                     <label for="paid_amount">{{ __('Paid Amount') }}</label>
                                     <input type="number" step="0.01" class="form-control" id="paid_amount" name="paid_amount"
                                         value="0" readonly>
-                                    <small class="text-muted">{{ __('Auto-calculated from payments below') }}</small>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -691,17 +691,18 @@
                     }
                 });
 
-                // Calculate total paid amount
+                // Calculate total amount from payments
                 $(document).on('input', '.expense-paying-amount', function() {
-                    calculateTotalPaid();
+                    calculateTotalFromPayments();
                 });
 
-                function calculateTotalPaid() {
+                function calculateTotalFromPayments() {
                     let total = 0;
                     $('.expense-paying-amount').each(function() {
                         const val = parseFloat($(this).val()) || 0;
                         total += val;
                     });
+                    $('#total_amount').val(total.toFixed(2));
                     $('#paid_amount').val(total.toFixed(2));
                 }
 

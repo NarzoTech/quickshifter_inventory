@@ -83,9 +83,11 @@ class Account extends Model
 
     public function expenses()
     {
-        // Only expenses WITHOUT supplier (those are paid immediately in full)
-        // Expenses WITH supplier are tracked via ExpenseSupplierPayment
-        return $this->hasMany(Expense::class, 'account_id')->whereNull('expense_supplier_id');
+        // Expenses are now tracked via ExpenseSupplierPayment for proper multi-account support
+        // Only return expenses that have NO payment records (legacy data only)
+        return $this->hasMany(Expense::class, 'account_id')
+            ->whereNull('expense_supplier_id')
+            ->whereDoesntHave('payments');
     }
     public function salary()
     {
