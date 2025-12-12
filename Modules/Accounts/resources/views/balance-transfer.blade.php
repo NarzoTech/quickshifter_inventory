@@ -280,7 +280,7 @@
                                             class="form-control me-2 from_account_type">
                                             @foreach (accountList() as $key => $list)
                                                 <option value="{{ $key }}"
-                                                    @if ($key == 'cash') selected @endif
+                                                    @if ($key == $transfer->fromAccount->account_type) selected @endif
                                                     data-name="{{ $list }}">
                                                     {{ $list }}
                                                 </option>
@@ -295,7 +295,7 @@
                                             class="form-control me-2 to_account_type">
                                             @foreach (accountList() as $key => $list)
                                                 <option value="{{ $key }}"
-                                                    @if ($key == 'cash') selected @endif
+                                                    @if ($key == $transfer->toAccount->account_type) selected @endif
                                                     data-name="{{ $list }}">
                                                     {{ $list }}
                                                 </option>
@@ -306,8 +306,8 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="from_account">{{ __('From Account') }}</label>
-                                        <select name="from_account" id="from_account" class="form-control">
+                                        <label for="from_account_{{ $transfer->id }}">{{ __('From Account') }}</label>
+                                        <select name="from_account" id="from_account_{{ $transfer->id }}" class="form-control from_account_select">
                                             {!! selectedAccount($transfer->fromAccount->account_type, $transfer->from_account_id) !!}
                                         </select>
                                     </div>
@@ -315,8 +315,8 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="to_account">{{ __('To Account') }}</label>
-                                        <select name="to_account" id="to_account" class="form-control">
+                                        <label for="to_account_{{ $transfer->id }}">{{ __('To Account') }}</label>
+                                        <select name="to_account" id="to_account_{{ $transfer->id }}" class="form-control to_account_select">
                                             {!! selectedAccount($transfer->toAccount->account_type, $transfer->to_account_id) !!}
                                         </select>
                                     </div>
@@ -400,7 +400,9 @@
                 }
 
                 const accounts = accountsList.filter(account => account.account_type == $(this).val());
-                const accountInput = $(this).parent().parent().find(`#${placeName}`);
+                // Use closest to find the modal-body, then find the select by class
+                const selectClass = placeName === 'from_account' ? '.from_account_select' : '.to_account_select';
+                const accountInput = $(this).closest('.modal-body').find(selectClass);
                 if (accounts) {
                     let html = ``;
                     accounts.forEach(account => {

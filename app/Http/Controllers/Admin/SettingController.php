@@ -15,11 +15,13 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Models\BalanceTransfer;
 use Modules\Customer\app\Models\CustomerDue;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
+use Modules\Expense\app\Models\ExpenseSupplierPayment;
 use Modules\GlobalSetting\app\Enums\AllTimeZoneEnum;
 use Modules\GlobalSetting\app\Enums\CountryEnum;
 use Modules\Purchase\app\Models\Purchase;
@@ -91,6 +93,7 @@ class SettingController extends Controller
         BalanceTransfer::truncate();
         EmployeeSalary::truncate();
         Expense::truncate();
+        ExpenseSupplierPayment::truncate();
         Ledger::truncate();
         Payment::truncate();
 
@@ -104,6 +107,13 @@ class SettingController extends Controller
             '--force' => true,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Ensure a cash account exists for balance transfers
+        if (!Account::where('account_type', 'cash')->exists()) {
+            Account::create([
+                'account_type' => 'cash',
+            ]);
+        }
 
         // cache clear
         Cache::clear();

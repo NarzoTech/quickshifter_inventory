@@ -13,6 +13,7 @@ use Modules\Employee\app\Models\EmployeeSalary;
 use Modules\Expense\app\Models\Expense;
 use Modules\Expense\app\Models\ExpenseSupplierPayment;
 use Modules\Supplier\app\Models\SupplierPayment;
+use Modules\Accounts\app\Models\BalanceTransfer;
 
 class Account extends Model
 {
@@ -71,8 +72,12 @@ class Account extends Model
         $asset = $this->assets()->sum('amount');
         $expenses = $this->expenses->sum('amount');
 
-        $balance = ($receive + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived)
-            - ($paid + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $expenseSupplierPaymentsPaid);
+        // Balance Transfers
+        $transfersIn = $this->transfersIn()->sum('amount');
+        $transfersOut = $this->transfersOut()->sum('amount');
+
+        $balance = ($receive + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived + $transfersIn)
+            - ($paid + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $expenseSupplierPaymentsPaid + $transfersOut);
         return $balance;
     }
 
@@ -115,6 +120,22 @@ class Account extends Model
     public function assets()
     {
         return $this->hasMany(Asset::class, 'account_id');
+    }
+
+    /**
+     * Transfers where this account is the source (money going out)
+     */
+    public function transfersOut()
+    {
+        return $this->hasMany(BalanceTransfer::class, 'from_account_id');
+    }
+
+    /**
+     * Transfers where this account is the destination (money coming in)
+     */
+    public function transfersIn()
+    {
+        return $this->hasMany(BalanceTransfer::class, 'to_account_id');
     }
 
     public function getOpeningBalance($startDate)
@@ -184,9 +205,18 @@ class Account extends Model
             ->where('date', '<', $startDate)
             ->sum('amount');
 
+        // Balance Transfers before the start date
+        $transfersIn = $this->transfersIn()
+            ->where('date', '<', $startDate)
+            ->sum('amount');
+
+        $transfersOut = $this->transfersOut()
+            ->where('date', '<', $startDate)
+            ->sum('amount');
+
         // Calculate Opening Balance
-        $openingBalance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived)
-            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary + $expenseSupplierPaymentsPaid);
+        $openingBalance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived + $transfersIn)
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary + $expenseSupplierPaymentsPaid + $transfersOut);
         return $openingBalance;
     }
 
@@ -269,9 +299,21 @@ class Account extends Model
         $expenses = $expensesQuery->sum('amount');
         $salary = $salaryQuery->sum('amount');
 
+        // Balance Transfers
+        $transfersInQuery = $this->transfersIn();
+        $transfersOutQuery = $this->transfersOut();
+
+        if ($hasDateFilter && $startDate && $endDate) {
+            $transfersInQuery->whereBetween('date', [$startDate, $endDate]);
+            $transfersOutQuery->whereBetween('date', [$startDate, $endDate]);
+        }
+
+        $transfersIn = $transfersInQuery->sum('amount');
+        $transfersOut = $transfersOutQuery->sum('amount');
+
         // Calculate Balance
-        $balance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived)
-            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary + $expenseSupplierPaymentsPaid);
+        $balance = ($receivedPayments + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived + $transfersIn)
+            - ($paidPayments + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $salary + $expenseSupplierPaymentsPaid + $transfersOut);
 
         return $balance;
     }

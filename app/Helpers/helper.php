@@ -111,6 +111,11 @@ if (! function_exists('selectedAccount')) {
 
         if (! empty($accounts)) {
             foreach ($accounts as $account) {
+                // Only process accounts that match the input type
+                if ($account->account_type !== $inputValue) {
+                    continue;
+                }
+
                 $isSelected = $account->id == $selectedId ? 'selected' : '';
 
                 switch ($inputValue) {

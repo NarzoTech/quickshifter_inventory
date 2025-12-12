@@ -258,20 +258,20 @@
                         <tr>
                             <td>
                                 <img src="{{ asset('backend/img/cash-flow/8.png') }}" class="icon-img" />
-                                Balance Transfer
+                                Balance Transfer (In)
                             </td>
                             <td>
                                 <span>
-                                    TK 0.00
+                                    {{ currency($data['balance_transfer'] ?? 0) }}
                                 </span>
                             </td>
                             <td>
                                 <img src="{{ asset('backend/img/cash-flow/17.png') }}" class="icon-img" />
-                                Balance Transfer
+                                Balance Transfer (Out)
                             </td>
                             <td>
                                 <span>
-                                    TK 0.00
+                                    {{ currency($data['balance_transfer'] ?? 0) }}
                                 </span>
                             </td>
                         </tr>

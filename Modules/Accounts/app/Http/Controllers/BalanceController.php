@@ -191,6 +191,17 @@ class BalanceController extends Controller
     public function transferStore(Request $request)
     {
         checkAdminHasPermissionAndThrowException('balance.transfer.create');
+
+        // Validate required fields
+        $request->validate([
+            'date' => 'required',
+            'amount' => 'required|numeric|min:0.01',
+            'from_account_type' => 'required',
+            'to_account_type' => 'required',
+            'from_account' => 'required_unless:from_account_type,cash',
+            'to_account' => 'required_unless:to_account_type,cash',
+        ]);
+
         $data = $request->except('_token');
         $data['created_by'] = auth('admin')->id();
         $data['date'] = now()->parse($request->date);
@@ -205,6 +216,10 @@ class BalanceController extends Controller
             $fromAccount = $fromAccount->where('id', $request->from_account)->first();
         }
 
+        if (!$fromAccount) {
+            return back()->with(['messege' => 'From account not found.', 'alert-type' => 'error']);
+        }
+
         $data['from_account_id'] = $fromAccount->id;
 
         // to account
@@ -214,6 +229,10 @@ class BalanceController extends Controller
             $toAccount = $toAccount->first();
         } else {
             $toAccount = $toAccount->where('id', $request->to_account)->first();
+        }
+
+        if (!$toAccount) {
+            return back()->with(['messege' => 'To account not found. Please make sure the account exists.', 'alert-type' => 'error']);
         }
 
         $data['to_account_id'] = $toAccount->id;
@@ -227,6 +246,17 @@ class BalanceController extends Controller
     public function transferUpdate(Request $request, $id)
     {
         checkAdminHasPermissionAndThrowException('balance.transfer.edit');
+
+        // Validate required fields
+        $request->validate([
+            'date' => 'required',
+            'amount' => 'required|numeric|min:0.01',
+            'from_account_type' => 'required',
+            'to_account_type' => 'required',
+            'from_account' => 'required_unless:from_account_type,cash',
+            'to_account' => 'required_unless:to_account_type,cash',
+        ]);
+
         $data = $request->except('_token');
 
         $data['date'] = now()->parse($request->date);
@@ -242,6 +272,10 @@ class BalanceController extends Controller
             $fromAccount = $fromAccount->where('id', $request->from_account)->first();
         }
 
+        if (!$fromAccount) {
+            return back()->with(['messege' => 'From account not found.', 'alert-type' => 'error']);
+        }
+
         $data['from_account_id'] = $fromAccount->id;
 
 
@@ -250,6 +284,10 @@ class BalanceController extends Controller
             $toAccount = $toAccount->first();
         } else {
             $toAccount = $toAccount->where('id', $request->to_account)->first();
+        }
+
+        if (!$toAccount) {
+            return back()->with(['messege' => 'To account not found. Please make sure the account exists.', 'alert-type' => 'error']);
         }
 
         $data['to_account_id'] = $toAccount->id;

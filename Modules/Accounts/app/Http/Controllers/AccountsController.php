@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Modules\Accounts\app\Http\Requests\AccountRequest;
+use Modules\Accounts\app\Models\BalanceTransfer;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Accounts\app\Services\BankService;
 use Modules\Customer\app\Models\CustomerPayment;
@@ -253,6 +254,11 @@ class AccountsController extends Controller
         $expensePaymentQuery = ExpenseSupplierPayment::where('payment_type', 'expense');
         $applyDateFilter($expensePaymentQuery, 'payment_date');
         $data['expenseSupplierPayment'] = $expensePaymentQuery->sum('amount');
+
+        // Balance Transfers (for visibility - these are internal movements)
+        $balanceTransferQuery = BalanceTransfer::query();
+        $applyDateFilter($balanceTransferQuery, 'date');
+        $data['balance_transfer'] = $balanceTransferQuery->sum('amount');
 
         $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'] + $data['expenseSupplierDuePay'] + $data['expenseSupplierAdvancePay'] + $data['expenseSupplierPayment'];
 
