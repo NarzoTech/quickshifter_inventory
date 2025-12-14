@@ -601,5 +601,138 @@
             profit = profit.toFixed(2)
             tr.find('input[name="profit[]"]').val(profit);
         });
+
+        // Form validation
+        function validatePurchaseForm() {
+            let errors = [];
+
+            // Supplier validation
+            if (!$('[name="supplier_id"]').val()) {
+                errors.push('{{ __("Supplier is required") }}');
+                $('[name="supplier_id"]').closest('.form-group').find('.text-danger').remove();
+                $('[name="supplier_id"]').closest('.form-group').append('<span class="text-danger">{{ __("Supplier is required") }}</span>');
+            } else {
+                $('[name="supplier_id"]').closest('.form-group').find('.text-danger').remove();
+            }
+
+            // Invoice number validation
+            if (!$('[name="invoice_number"]').val()) {
+                errors.push('{{ __("Invoice number is required") }}');
+                $('[name="invoice_number"]').closest('.form-group').find('.text-danger').remove();
+                $('[name="invoice_number"]').closest('.form-group').append('<span class="text-danger">{{ __("Invoice number is required") }}</span>');
+            } else {
+                $('[name="invoice_number"]').closest('.form-group').find('.text-danger').remove();
+            }
+
+            // Purchase date validation
+            if (!$('[name="purchase_date"]').val()) {
+                errors.push('{{ __("Purchase date is required") }}');
+                $('[name="purchase_date"]').closest('.form-group').find('.text-danger').remove();
+                $('[name="purchase_date"]').closest('.form-group').append('<span class="text-danger">{{ __("Purchase date is required") }}</span>');
+            } else {
+                $('[name="purchase_date"]').closest('.form-group').find('.text-danger').remove();
+            }
+
+            // Products validation
+            if ($('#purchase_table tr').length === 0) {
+                errors.push('{{ __("At least one product is required") }}');
+            }
+
+            // Quantity validation
+            let quantityValid = true;
+            $('input[name="quantity[]"]').each(function() {
+                if (!$(this).val() || parseFloat($(this).val()) <= 0) {
+                    quantityValid = false;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            if (!quantityValid) {
+                errors.push('{{ __("Quantity must be greater than 0") }}');
+            }
+
+            // Payment type validation
+            let paymentTypeValid = true;
+            $('[name="payment_type[]"]').each(function() {
+                if (!$(this).val()) {
+                    paymentTypeValid = false;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            if (!paymentTypeValid) {
+                errors.push('{{ __("Payment type is required") }}');
+            }
+
+            // Paid amount validation
+            let paidAmountValid = true;
+            $('[name="paid_amount[]"]').each(function() {
+                if ($(this).val() === '' || $(this).val() === null) {
+                    paidAmountValid = false;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            if (!paidAmountValid) {
+                errors.push('{{ __("Paid amount is required") }}');
+            }
+
+            return errors;
+        }
+
+        // Form submit handler
+        $('form').on('submit', function(e) {
+            let errors = validatePurchaseForm();
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                errors.forEach(function(error) {
+                    toastr.error(error);
+                });
+                return false;
+            }
+
+            return true;
+        });
+
+        // Real-time validation on field change
+        $(document).on('change', '[name="supplier_id"]', function() {
+            if ($(this).val()) {
+                $(this).closest('.form-group').find('.text-danger').remove();
+            }
+        });
+
+        $(document).on('input', '[name="invoice_number"]', function() {
+            if ($(this).val()) {
+                $(this).closest('.form-group').find('.text-danger').remove();
+            }
+        });
+
+        $(document).on('change', '[name="purchase_date"]', function() {
+            if ($(this).val()) {
+                $(this).closest('.form-group').find('.text-danger').remove();
+            }
+        });
+
+        $(document).on('change', '[name="payment_type[]"]', function() {
+            if ($(this).val()) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        $(document).on('input', '[name="paid_amount[]"]', function() {
+            if ($(this).val() !== '') {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        $(document).on('input', '[name="quantity[]"]', function() {
+            if ($(this).val() && parseFloat($(this).val()) > 0) {
+                $(this).removeClass('is-invalid');
+            }
+        });
     </script>
 @endpush
