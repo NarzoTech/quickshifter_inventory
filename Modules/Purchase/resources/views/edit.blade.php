@@ -3,6 +3,63 @@
     <title>{{ __('Edit Purchase') }}</title>
 @endsection
 
+@push('css')
+<style>
+    .product-name-wrapper {
+        position: relative;
+    }
+    .product-name-wrapper .product-tooltip {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        color: #333;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        z-index: 1000;
+        transition: opacity 0.3s, visibility 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        margin-bottom: 8px;
+        min-width: 150px;
+        max-width: 250px;
+        width: max-content;
+        text-align: center;
+    }
+    .product-name-wrapper .product-tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px;
+        border-style: solid;
+        border-color: #fff transparent transparent transparent;
+    }
+    .product-name-wrapper .product-tooltip img {
+        max-width: 120px;
+        max-height: 120px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        object-fit: cover;
+    }
+    .product-name-wrapper .product-tooltip .tooltip-name {
+        font-weight: 600;
+        word-wrap: break-word;
+        white-space: normal;
+        max-width: 200px;
+        overflow-wrap: break-word;
+    }
+    .product-name-wrapper:hover .product-tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+@endpush
+
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -138,10 +195,16 @@
                                                             @endphp
                                                             <tr>
                                                                 <td>
-                                                                    <input type="text" class="form-control"
-                                                                        name="product_name[]"
-                                                                        value="{{ $purchaseDetail->product->name }}"
-                                                                        readonly>
+                                                                    <div class="product-name-wrapper">
+                                                                        <input type="text" class="form-control"
+                                                                            name="product_name[]"
+                                                                            value="{{ $purchaseDetail->product->name }}"
+                                                                            readonly>
+                                                                        <div class="product-tooltip">
+                                                                            <img src="{{ $purchaseDetail->product->singleImage }}" alt="{{ $purchaseDetail->product->name }}" onerror="this.src='{{ asset('backend/img/image_icon.png') }}'">
+                                                                            <div class="tooltip-name">{{ $purchaseDetail->product->name }}</div>
+                                                                        </div>
+                                                                    </div>
                                                                     <input type="hidden" name="product_id[]"
                                                                         value="{{ $purchaseDetail->product_id }}">
                                                                 </td>
@@ -314,7 +377,13 @@
             let tr = `
                 <tr>
                     <td>
-                        <input type="text" class="form-control" name="product_name[]" value="${product.name}" readonly>
+                        <div class="product-name-wrapper">
+                            <input type="text" class="form-control" name="product_name[]" value="${product.name}" readonly>
+                            <div class="product-tooltip">
+                                <img src="${product.single_image}" alt="${product.name}" onerror="this.src='{{ asset('backend/img/image_icon.png') }}'">
+                                <div class="tooltip-name">${product.name}</div>
+                            </div>
+                        </div>
                         <input type="hidden" name="product_id[]" value="${product.id}">
                     </td>
                     <td>
