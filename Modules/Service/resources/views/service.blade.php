@@ -317,6 +317,21 @@
                 $("#deleteForm").attr("action", url);
                 $('#deleteModal').modal('show');
             }
+
+            // Initialize Select2 inside modals with dropdownParent to fix z-index issue
+            $('#addService').on('shown.bs.modal', function() {
+                $(this).find('.select2').select2({
+                    dropdownParent: $('#addService')
+                });
+            });
+
+            @foreach ($services as $service)
+                $('#editService{{ $service->id }}').on('shown.bs.modal', function() {
+                    $(this).find('.select2').select2({
+                        dropdownParent: $('#editService{{ $service->id }}')
+                    });
+                });
+            @endforeach
         </script>
     @endpush
 @endsection
