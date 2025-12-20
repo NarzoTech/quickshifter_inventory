@@ -87,11 +87,14 @@ class Product extends Model
 
     public function getTotalPurchaseAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $purchase = $this->purchaseDetails;
 
-        // Fetch totals in a single query
-        $purchase = $this->purchaseDetails->whereBetween('created_at', [$fromDate, $toDate]);
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $purchase = $purchase->whereBetween('created_at', [$fromDate, $toDate]);
+        }
 
         $price = $purchase->sum('sub_total');
         $qty = $purchase->sum('quantity');
@@ -105,19 +108,20 @@ class Product extends Model
 
     public function getPurchasePriceAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $query = $this->purchaseDetails();
 
-        // Fetch totals in a single query
-        $purchase = $this->purchaseDetails()
-            ->whereHas('purchase', function ($query) use ($fromDate, $toDate) {
-                $query->whereBetween('purchase_date', [$fromDate, $toDate]);
-            })
-            ->selectRaw('SUM(purchase_price) as total_price, COUNT(*) as total_quantity')
-            ->first();
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $query = $query->whereHas('purchase', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('purchase_date', [$fromDate, $toDate]);
+            });
+        }
 
+        $purchase = $query->selectRaw('SUM(purchase_price) as total_price, COUNT(*) as total_quantity')->first();
 
-        $totalPrice = $purchase->total_price ?? 0; // Use null coalescing to avoid null values
+        $totalPrice = $purchase->total_price ?? 0;
         $totalQuantity = $purchase->total_quantity ?? 0;
 
         return $totalQuantity > 0 ? $totalPrice / $totalQuantity : 0;
@@ -128,15 +132,19 @@ class Product extends Model
 
     public function getSalesAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $sales = $this->salesDetails;
 
-        $sales = $this->salesDetails->whereBetween('created_at', [$fromDate, $toDate]);
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $sales = $sales->whereBetween('created_at', [$fromDate, $toDate]);
+        }
 
         $price = $sales->sum('sub_total');
         $qty = $sales->sum('quantity');
         return [
-            'qty' => $qty, // Use null coalescing to avoid null values
+            'qty' => $qty ?? 0,
             'price' => $price ?? 0
         ];
     }
@@ -146,18 +154,20 @@ class Product extends Model
 
     public function getSalesReturnAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $sales = $this->salesReturnDetails;
 
-
-
-        $sales = $this->salesReturnDetails->whereBetween('created_at', [$fromDate, $toDate]);
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $sales = $sales->whereBetween('created_at', [$fromDate, $toDate]);
+        }
 
         $price = $sales->sum('sub_total');
         $qty = $sales->sum('quantity');
 
         return [
-            'qty' => $qty ?? 0, // Use null coalescing to avoid null values
+            'qty' => $qty ?? 0,
             'price' => $price ?? 0
         ];
     }
@@ -166,19 +176,20 @@ class Product extends Model
 
     public function getPurchaseReturnAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+        $purchase = $this->purchaseReturnDetails;
 
-        // Fetch totals in a single query
-
-
-        $purchase = $this->purchaseReturnDetails->whereBetween('created_at', [$fromDate, $toDate]);
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $purchase = $purchase->whereBetween('created_at', [$fromDate, $toDate]);
+        }
 
         $price = $purchase->sum('total');
         $qty = $purchase->sum('quantity');
 
         return [
-            'qty' => $qty ?? 0, // Use null coalescing to avoid null values
+            'qty' => $qty ?? 0,
             'price' => $price ?? 0
         ];
     }

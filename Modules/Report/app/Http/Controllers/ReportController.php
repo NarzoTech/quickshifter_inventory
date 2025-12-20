@@ -452,60 +452,97 @@ class ReportController extends Controller
         $products = $this->productService->getProducts();
         $products = $products->where('status', 1);
 
+        // Calculate totals from ALL products before pagination
+        $allProducts = $products->get();
+
+        $totalSalePrice = 0;
+        $totalSaleQty = 0;
+        $totalReturnPrice = 0;
+        $totalReturnQty = 0;
+        $totalPurchasePrice = 0;
+        $totalPurchaseQty = 0;
+
+        foreach ($allProducts as $product) {
+            $totalSalePrice += (int) $product->sales['price'];
+            $totalSaleQty += $product->sales['qty'];
+            $totalReturnPrice += (int) $product->sales_return['price'];
+            $totalReturnQty += $product->sales_return['qty'];
+            $totalPurchasePrice += (int) $product->total_purchase['price'];
+            $totalPurchaseQty += $product->total_purchase['qty'];
+        }
+
+        $data = [
+            'totalSalePrice' => $totalSalePrice,
+            'totalSaleQty' => $totalSaleQty,
+            'totalReturnPrice' => $totalReturnPrice,
+            'totalReturnQty' => $totalReturnQty,
+            'totalPurchasePrice' => $totalPurchasePrice,
+            'totalPurchaseQty' => $totalPurchaseQty,
+        ];
+
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
             $parpage = 20;
         }
         if ($parpage === null) {
-            $products = $products->get();
+            $products = $allProducts;
         } else {
-            $products = $products->paginate($parpage);
+            $products = $this->productService->getProducts()->where('status', 1)->paginate($parpage);
             $products->appends(request()->query());
         }
 
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'barcode-wise-product-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new BarcodeWiseProductExport($products), $fileName);
+                return Excel::download(new BarcodeWiseProductExport($allProducts, $data), $fileName);
             }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.barcode-wise-product', [
-                    'products' => $products
+                    'products' => $allProducts,
+                    'data' => $data
                 ]);
             }
         }
 
 
-        return view('report::barcode-wise-product', compact('products'));
+        return view('report::barcode-wise-product', compact('products', 'data'));
     }
 
     public function barcodeSale()
     {
         $products = $this->productService->getProducts();
         $products = $products->where('status', 1);
-        $totalProducts = $products->get();
+        $allProducts = $products->get();
 
         $totalStock = 0;
         $sellCount = 0;
         $sellPrice = 0;
         $totalPurchasePrice = 0;
+        $totalProfitLoss = 0;
 
-        $totalProducts->map(function ($product) use (&$totalStock, &$sellCount, &$sellPrice, &$totalPurchasePrice) {
+        foreach ($allProducts as $product) {
             $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
-            $sellCount += $sellQty;
-
-            $sellPrice += $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
-
-            $totalPurchasePrice += $sellCount * $product->purchase_price;
+            $sellingPrice = $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
+            $profitLoss = $sellQty * $sellingPrice - $sellQty * $product->purchase_price;
 
             $totalStock += $product->stock_count;
+            $sellCount += $sellQty;
+            $sellPrice += $sellingPrice;
+            $totalPurchasePrice += $product->purchase_price;
+            $totalProfitLoss += $profitLoss;
+        }
 
-            return;
-        });
+        $data = [
+            'totalStock' => $totalStock,
+            'sellCount' => $sellCount,
+            'sellPrice' => $sellPrice,
+            'totalPurchasePrice' => $totalPurchasePrice,
+            'totalProfitLoss' => $totalProfitLoss,
+        ];
 
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
@@ -513,22 +550,23 @@ class ReportController extends Controller
             $parpage = 20;
         }
         if ($parpage === null) {
-            $products = $products->get();
+            $products = $allProducts;
         } else {
-            $products = $products->paginate($parpage);
+            $products = $this->productService->getProducts()->where('status', 1)->paginate($parpage);
             $products->appends(request()->query());
         }
 
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'barcode-wise-sale-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new BarcodeWiseSaleExport($products), $fileName);
+                return Excel::download(new BarcodeWiseSaleExport($allProducts, $data), $fileName);
             }
         }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.barcode-sale', [
-                    'products' => $products
+                    'products' => $allProducts,
+                    'data' => $data
                 ]);
             }
         }

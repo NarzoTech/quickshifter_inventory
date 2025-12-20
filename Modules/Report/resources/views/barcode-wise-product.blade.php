@@ -91,7 +91,7 @@
                             <th>{{ __('Sl') }}</th>
                             <th>{{ __('Product Name') }}</th>
                             <th>{{ __('Attribute') }}</th>
-                            <th>{{ __('Sku') }}</th>
+                            <th>{{ __('Barcode') }}</th>
                             <th>{{ __('Brand Name') }}</th>
                             <th>{{ __('Sale') }}</th>
                             <th>{{ __('Sale Return') }}</th>
@@ -100,12 +100,15 @@
 
                     </thead>
                     <tbody>
-                        @foreach ($products as $product)
+                        @php
+                            $start = checkPaginate($products) ? $products->firstItem() : 1;
+                        @endphp
+                        @foreach ($products as $index => $product)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $start + $index }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->attribute }}</td>
-                                <td>{{ $product->sku }}</td>
+                                <td>{{ $product->barcode }}</td>
                                 <td>{{ $product->brand->name ?? 'N/A' }}</td>
                                 <td>{{ currency((int) $product->sales['price']) }}({{ $product->sales['qty'] }})
                                 </td>
@@ -115,6 +118,20 @@
                                 </td>
                             </tr>
                         @endforeach
+                        <tr>
+                            <td colspan="5" class="text-end">
+                                <b>{{ __('Total') }}</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($data['totalSalePrice']) }}({{ $data['totalSaleQty'] }})</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($data['totalReturnPrice']) }}({{ $data['totalReturnQty'] }})</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($data['totalPurchasePrice']) }}({{ $data['totalPurchaseQty'] }})</b>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

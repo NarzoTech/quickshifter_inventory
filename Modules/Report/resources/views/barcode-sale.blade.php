@@ -91,7 +91,7 @@
                             <th>{{ __('Sl') }}</th>
                             <th>{{ __('Product Name') }}</th>
                             <th>{{ __('Attribute') }}</th>
-                            <th>{{ __('Sku') }}</th>
+                            <th>{{ __('Barcode') }}</th>
                             <th>{{ __('Brand Name') }}</th>
                             <th>{{ __('Stock Qty') }}</th>
                             <th>{{ __('Selling Qty') }}</th>
@@ -117,7 +117,7 @@
                                 <td>{{ $start + $index }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->attribute }}</td>
-                                <td>{{ $product->sku }}</td>
+                                <td>{{ $product->barcode }}</td>
                                 <td>{{ $product->brand->name ?? 'N/A' }}</td>
                                 <td>{{ $product->stock_count }}</td>
                                 <td>{{ $sellQty }}</td>

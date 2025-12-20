@@ -9,7 +9,7 @@
                 $list = [
                     __('Product Name'),
                     __('Attribute'),
-                    __('Sku'),
+                    __('Barcode'),
                     __('Brand Name'),
                     __('Sale'),
                     __('Sale Return'),
@@ -30,7 +30,7 @@
                     <td>{{ ++$index }}</td>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->attribute }}</td>
-                    <td>{{ $product->sku }}</td>
+                    <td>{{ $product->barcode }}</td>
                     <td>{{ $product->brand->name ?? 'N/A' }}</td>
                     <td>{{ currency((int) $product->sales['price']) }}({{ $product->sales['qty'] }})
                     </td>
@@ -40,6 +40,12 @@
                     </td>
                 </tr>
             @endforeach
+            <tr style="font-weight: bold;">
+                <td colspan="5" style="text-align: right;">{{ __('Total') }}</td>
+                <td>{{ currency($data['totalSalePrice']) }}({{ $data['totalSaleQty'] }})</td>
+                <td>{{ currency($data['totalReturnPrice']) }}({{ $data['totalReturnQty'] }})</td>
+                <td>{{ currency($data['totalPurchasePrice']) }}({{ $data['totalPurchaseQty'] }})</td>
+            </tr>
         </tbody>
     </table>
 @endsection

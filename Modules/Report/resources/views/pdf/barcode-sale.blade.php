@@ -8,7 +8,7 @@
             @php
                 $list = [
                     __('Product Name'),
-                    __('Sku'),
+                    __('Barcode'),
                     __('Brand Name'),
                     __('Stock Qty'),
                     __('Selling Qty'),
@@ -25,37 +25,21 @@
             </tr>
         </thead>
         <tbody>
-            @php
-                $totalStock = 0;
-                $sellCount = 0;
-                $sellPrice = 0;
-                $totalPurchasePrice = 0;
-            @endphp
             @foreach ($products as $index => $product)
                 @php
                     $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
-
                     $sellingPrice = $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
-
-                    $totalStock += $product->stock_count;
-                    $sellCount += $sellQty;
-                    $sellPrice += $sellingPrice;
-                    $totalPurchasePrice += $product->purchase_price;
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ $product->sku }}</td>
+                    <td>{{ $product->barcode }}</td>
                     <td>{{ $product->brand->name ?? 'N/A' }}</td>
                     <td>{{ $product->stock_count }}</td>
                     <td>{{ $sellQty }}</td>
-
-                    <td>{{ $sellingPrice }}
-                    </td>
+                    <td>{{ $sellingPrice }}</td>
                     <td>{{ $product->purchase_price }}</td>
-                    <td>
-                        {{ $sellQty * $sellingPrice - $sellQty * $product->purchase_price }}
-                    </td>
+                    <td>{{ $sellQty * $sellingPrice - $sellQty * $product->purchase_price }}</td>
                 </tr>
             @endforeach
             <tr>
@@ -63,19 +47,19 @@
                     <b>Total</b>
                 </td>
                 <td>
-                    <b>{{ $totalStock }}</b>
+                    <b>{{ $data['totalStock'] }}</b>
                 </td>
                 <td>
-                    <b>{{ $sellCount }}</b>
+                    <b>{{ $data['sellCount'] }}</b>
                 </td>
                 <td>
-                    <b>{{ $sellPrice }}</b>
+                    <b>{{ $data['sellPrice'] }}</b>
                 </td>
                 <td>
-                    <b> {{ $totalPurchasePrice }}</b>
+                    <b>{{ $data['totalPurchasePrice'] }}</b>
                 </td>
                 <td>
-                    <b>{{ $sellPrice - $totalPurchasePrice }}</b>
+                    <b>{{ $data['totalProfitLoss'] }}</b>
                 </td>
             </tr>
         </tbody>

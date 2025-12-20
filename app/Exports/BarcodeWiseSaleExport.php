@@ -7,12 +7,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class BarcodeWiseSaleExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class BarcodeWiseSaleExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $products) {}
+    private $products;
+    private $data;
+
+    public function __construct($products, $data = null)
+    {
+        $this->products = $products;
+        $this->data = $data;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -30,7 +39,7 @@ class BarcodeWiseSaleExport implements FromCollection, WithHeadings, WithMapping
             [
                 __('SN'),
                 __('Product Name'),
-                __('Sku'),
+                __('Barcode'),
                 __('Brand Name'),
                 __('Stock Qty'),
                 __('Selling Qty'),
@@ -43,21 +52,40 @@ class BarcodeWiseSaleExport implements FromCollection, WithHeadings, WithMapping
     public function map($product): array
     {
         $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
-
         $sellingPrice = $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
+        $profitLoss = $sellQty * $sellingPrice - $sellQty * $product->purchase_price;
+
         // Map the data to match your format
         return [
             ++$this->index,
             $product->name,
-            $product->sku,
+            $product->barcode,
             $product->brand->name ?? 'N/A',
             $product->stock_count ?? '0',
             $sellQty,
-
             $sellingPrice,
             $product->purchase_price,
+            $profitLoss,
+        ];
+    }
 
-            $sellQty * $sellingPrice - $sellQty * $product->purchase_price,
+    public function registerEvents(): array
+    {
+        $data = $this->data;
+        return [
+            AfterSheet::class => function (AfterSheet $event) use ($data) {
+                $lastRow = $event->sheet->getHighestRow() + 1;
+                $event->sheet->setCellValue('A' . $lastRow, '');
+                $event->sheet->setCellValue('B' . $lastRow, '');
+                $event->sheet->setCellValue('C' . $lastRow, '');
+                $event->sheet->setCellValue('D' . $lastRow, 'Total');
+                $event->sheet->setCellValue('E' . $lastRow, $data['totalStock'] ?? 0);
+                $event->sheet->setCellValue('F' . $lastRow, $data['sellCount'] ?? 0);
+                $event->sheet->setCellValue('G' . $lastRow, $data['sellPrice'] ?? 0);
+                $event->sheet->setCellValue('H' . $lastRow, $data['totalPurchasePrice'] ?? 0);
+                $event->sheet->setCellValue('I' . $lastRow, $data['totalProfitLoss'] ?? 0);
+                $event->sheet->getStyle('A' . $lastRow . ':I' . $lastRow)->getFont()->setBold(true);
+            },
         ];
     }
     public function styles(Worksheet $sheet)

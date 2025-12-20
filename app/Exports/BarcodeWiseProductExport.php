@@ -7,12 +7,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class BarcodeWiseProductExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class BarcodeWiseProductExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $products) {}
+    private $products;
+    private $data;
+
+    public function __construct($products, $data = null)
+    {
+        $this->products = $products;
+        $this->data = $data;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -31,7 +40,7 @@ class BarcodeWiseProductExport implements FromCollection, WithHeadings, WithMapp
                 __('SN'),
                 __('Product Name'),
                 __('Attribute'),
-                __('Sku'),
+                __('Barcode'),
                 __('Brand Name'),
                 __('Sale'),
                 __('Sale Return'),
@@ -46,11 +55,30 @@ class BarcodeWiseProductExport implements FromCollection, WithHeadings, WithMapp
             ++$this->index,
             $product->name,
             $product->attribute,
-            $product->sku,
+            $product->barcode,
             $product->brand->name ?? 'N/A',
             currency((int) $product->sales['price']) . "({$product->sales['qty']})",
             currency((int) $product->sales_return['price']) . "({$product->sales_return['qty']})",
             currency((int) $product->total_purchase['price']) . "({$product->total_purchase['qty']})"
+        ];
+    }
+
+    public function registerEvents(): array
+    {
+        $data = $this->data;
+        return [
+            AfterSheet::class => function (AfterSheet $event) use ($data) {
+                $lastRow = $event->sheet->getHighestRow() + 1;
+                $event->sheet->setCellValue('A' . $lastRow, '');
+                $event->sheet->setCellValue('B' . $lastRow, '');
+                $event->sheet->setCellValue('C' . $lastRow, '');
+                $event->sheet->setCellValue('D' . $lastRow, '');
+                $event->sheet->setCellValue('E' . $lastRow, 'Total');
+                $event->sheet->setCellValue('F' . $lastRow, currency($data['totalSalePrice'] ?? 0) . "({$data['totalSaleQty'] ?? 0})");
+                $event->sheet->setCellValue('G' . $lastRow, currency($data['totalReturnPrice'] ?? 0) . "({$data['totalReturnQty'] ?? 0})");
+                $event->sheet->setCellValue('H' . $lastRow, currency($data['totalPurchasePrice'] ?? 0) . "({$data['totalPurchaseQty'] ?? 0})");
+                $event->sheet->getStyle('A' . $lastRow . ':H' . $lastRow)->getFont()->setBold(true);
+            },
         ];
     }
     public function styles(Worksheet $sheet)
