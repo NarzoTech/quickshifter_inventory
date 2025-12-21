@@ -197,7 +197,14 @@ class Product extends Model
 
     public function getStockCountAttribute()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
+        // If no dates provided, return total stock count (all time)
+        if (!request('from_date') && !request('to_date')) {
+            $totalInQty = $this->stockDetails->sum('in_quantity') ?? 0;
+            $totalOutQty = $this->stockDetails->sum('out_quantity') ?? 0;
+            return $totalInQty - $totalOutQty;
+        }
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
         $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
 
         // Get all stock data within the date range in a single query

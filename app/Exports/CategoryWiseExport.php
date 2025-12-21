@@ -7,12 +7,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class CategoryWiseExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class CategoryWiseExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $categories) {}
+    private $categories;
+    private $data;
+
+    public function __construct($categories, $data = null)
+    {
+        $this->categories = $categories;
+        $this->data = $data;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -50,6 +59,24 @@ class CategoryWiseExport implements FromCollection, WithHeadings, WithMapping, W
             currency($category->sales_amount),
         ];
     }
+
+    public function registerEvents(): array
+    {
+        $data = $this->data;
+        return [
+            AfterSheet::class => function (AfterSheet $event) use ($data) {
+                $lastRow = $event->sheet->getHighestRow() + 1;
+                $event->sheet->setCellValue('A' . $lastRow, '');
+                $event->sheet->setCellValue('B' . $lastRow, 'Total');
+                $event->sheet->setCellValue('C' . $lastRow, $data['totalPurchaseCount'] ?? 0);
+                $event->sheet->setCellValue('D' . $lastRow, $data['totalSalesCount'] ?? 0);
+                $event->sheet->setCellValue('E' . $lastRow, currency($data['totalPurchaseAmount'] ?? 0));
+                $event->sheet->setCellValue('F' . $lastRow, currency($data['totalSalesAmount'] ?? 0));
+                $event->sheet->getStyle('A' . $lastRow . ':F' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle

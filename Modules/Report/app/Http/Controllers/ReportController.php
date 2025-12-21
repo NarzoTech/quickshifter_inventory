@@ -57,14 +57,12 @@ class ReportController extends Controller
     public function otherIncome()
     {
         checkAdminHasPermissionAndThrowException('other.income.view');
-        $from_date = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : date('Y-m-d');
-        $to_date = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
         $categories = $this->categoryService->getAllProductCategoriesForSelect();
         $brands = $this->brandService->getActiveBrands();
 
         $sort = request()->order_by ? request()->order_by : 'desc';
         $reports = ProductSale::with('product', 'sale')->where('source', 2)
-            ->where(function ($query)  use ($from_date, $to_date, $sort) {
+            ->where(function ($query)  use ($sort) {
                 $query->whereHas('product', function ($q) {
                     $q->with(['brand'])->where('name', 'like', '%' . request()->keyword . '%')
 
@@ -77,11 +75,15 @@ class ReportController extends Controller
                         $q->orWhere('category_id', request('category_id'));
                     }
                 })
-                    ->whereHas('sale', function ($q)  use ($from_date, $to_date, $sort) {
-                        $q->where('order_date', '>=', $from_date)
-                            ->where('order_date', '<=', $to_date)
-                            ->orderBy('order_date', $sort)
-                        ;
+                    ->whereHas('sale', function ($q)  use ($sort) {
+                        // Only filter by date if dates are provided
+                        if (request('from_date') || request('to_date')) {
+                            $from_date = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : now()->subYear()->format('Y-m-d');
+                            $to_date = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
+                            $q->where('order_date', '>=', $from_date)
+                                ->where('order_date', '<=', $to_date);
+                        }
+                        $q->orderBy('order_date', $sort);
                     });
             });
 
@@ -579,6 +581,22 @@ class ReportController extends Controller
     {
         $categories = $this->categoryService->getCategories();
 
+        // Calculate totals from ALL categories before pagination
+        $allCategories = $categories->get();
+
+        $data = [
+            'totalPurchaseCount' => 0,
+            'totalSalesCount' => 0,
+            'totalPurchaseAmount' => 0,
+            'totalSalesAmount' => 0,
+        ];
+
+        foreach ($allCategories as $category) {
+            $data['totalPurchaseCount'] += $category->PurchaseSummary['count'];
+            $data['totalSalesCount'] += $category->sales_count;
+            $data['totalPurchaseAmount'] += $category->PurchaseSummary['amount'];
+            $data['totalSalesAmount'] += $category->sales_amount;
+        }
 
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
@@ -586,29 +604,28 @@ class ReportController extends Controller
             $parpage = 20;
         }
         if ($parpage === null) {
-            $categories = $categories->get();
+            $categories = $allCategories;
         } else {
-            $categories = $categories->paginate($parpage);
+            $categories = $this->categoryService->getCategories()->paginate($parpage);
             $categories->appends(request()->query());
         }
-
-
 
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'category-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new CategoryWiseExport($categories), $fileName);
+                return Excel::download(new CategoryWiseExport($allCategories, $data), $fileName);
             }
         }
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.categories', [
-                    'categories' => $categories
+                    'categories' => $allCategories,
+                    'data' => $data
                 ]);
             }
         }
 
-        return view('report::categories', compact('categories'));
+        return view('report::categories', compact('categories', 'data'));
     }
     public function customers(Request $request)
     {
@@ -670,9 +687,6 @@ class ReportController extends Controller
 
     public function receivable()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-
         $sales = Sale::with('customer')->where('payment_status', 1)->where('due_amount', '>', 0);
 
         if (request()->keyword) {
@@ -682,7 +696,12 @@ class ReportController extends Controller
                 ->orWhere('invoice', request()->keyword);
         }
 
-        $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
 
         $totalDues = $sales->sum('due_amount');
 
@@ -717,11 +736,14 @@ class ReportController extends Controller
 
     public function detailsSale()
     {
+        $sales = Sale::with(['customer', 'payment', 'payment.account', 'saleReturns']);
 
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-
-        $sales = Sale::with(['customer', 'payment', 'payment.account', 'saleReturns'])->whereBetween('order_date', [$fromDate, $toDate]);
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
 
         if (request()->keyword) {
             $sales = $sales->whereHas('customer', function ($q) {
@@ -776,9 +798,14 @@ class ReportController extends Controller
 
     public function dueDateSale()
     {
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-        $sales = Sale::with(['customer', 'payment', 'payment.account', 'saleReturns'])->where('due_amount', '>', 0)->whereBetween('order_date', [$fromDate, $toDate]);
+        $sales = Sale::with(['customer', 'payment', 'payment.account', 'saleReturns'])->where('due_amount', '>', 0);
+
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
 
         if (request()->keyword) {
             $sales = $sales->whereHas('customer', function ($q) {

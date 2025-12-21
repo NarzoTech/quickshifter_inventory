@@ -27,6 +27,13 @@
                     <td>{{ currency($category->sales_amount) }}</td>
                 </tr>
             @endforeach
+            <tr style="font-weight: bold;">
+                <td colspan="2" style="text-align: right;">{{ __('Total') }}</td>
+                <td>{{ $data['totalPurchaseCount'] }}</td>
+                <td>{{ $data['totalSalesCount'] }}</td>
+                <td>{{ currency($data['totalPurchaseAmount']) }}</td>
+                <td>{{ currency($data['totalSalesAmount']) }}</td>
+            </tr>
         </tbody>
     </table>
 @endsection
