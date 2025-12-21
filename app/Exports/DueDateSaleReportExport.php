@@ -7,12 +7,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class DueDateSaleReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class DueDateSaleReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $sales) {}
+    private $sales;
+    private $data;
+
+    public function __construct($sales, $data = null)
+    {
+        $this->sales = $sales;
+        $this->data = $data;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -59,7 +68,7 @@ class DueDateSaleReportExport implements FromCollection, WithHeadings, WithMappi
             $sale->due_date,
             $sale->invoice,
             $sale?->customer?->name ?? 'Guest',
-            $sale->customer->phone,
+            $sale->customer->phone ?? '',
             $sale->grand_total,
             $sale->paid_amount,
             $paymentMethods,
@@ -68,6 +77,30 @@ class DueDateSaleReportExport implements FromCollection, WithHeadings, WithMappi
             $sale->due_amount == 0 ? 'Paid' : 'Due',
         ];
     }
+
+    public function registerEvents(): array
+    {
+        $data = $this->data;
+        return [
+            AfterSheet::class => function (AfterSheet $event) use ($data) {
+                $lastRow = $event->sheet->getHighestRow() + 1;
+                $event->sheet->setCellValue('A' . $lastRow, '');
+                $event->sheet->setCellValue('B' . $lastRow, '');
+                $event->sheet->setCellValue('C' . $lastRow, '');
+                $event->sheet->setCellValue('D' . $lastRow, '');
+                $event->sheet->setCellValue('E' . $lastRow, '');
+                $event->sheet->setCellValue('F' . $lastRow, '');
+                $event->sheet->setCellValue('G' . $lastRow, '');
+                $event->sheet->setCellValue('H' . $lastRow, '');
+                $event->sheet->setCellValue('I' . $lastRow, 'Total');
+                $event->sheet->setCellValue('J' . $lastRow, currency($data['due'] ?? 0));
+                $event->sheet->setCellValue('K' . $lastRow, '');
+                $event->sheet->setCellValue('L' . $lastRow, '');
+                $event->sheet->getStyle('A' . $lastRow . ':L' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle

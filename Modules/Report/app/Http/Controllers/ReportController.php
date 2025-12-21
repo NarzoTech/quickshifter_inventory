@@ -845,7 +845,7 @@ class ReportController extends Controller
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'due-date-sale-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new DueDateSaleReportExport($sales), $fileName);
+                return Excel::download(new DueDateSaleReportExport($sales, $data), $fileName);
             }
         }
 
