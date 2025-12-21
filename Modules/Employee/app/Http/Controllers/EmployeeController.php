@@ -92,6 +92,7 @@ class EmployeeController extends Controller
         try {
             $data = $request->validated();
             $data['join_date'] = now()->parse($request->join_date);
+            $data['yearly_leaves'] = $request->yearly_leaves ?? 0;
             if ($request->hasFile('image')) {
                 $data['image'] = file_upload($request->file('image'));
             }
@@ -125,6 +126,7 @@ class EmployeeController extends Controller
         try {
             $data = $request->validated();
             $data['join_date'] = now()->parse($request->join_date);
+            $data['yearly_leaves'] = $request->yearly_leaves ?? 0;
             if ($request->hasFile('image')) {
                 $data['image'] = file_upload($request->file('image'), oldFile: $this->employee->find($id)->image);
             }
