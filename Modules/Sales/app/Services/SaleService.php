@@ -449,7 +449,7 @@ class SaleService
         $ledger->note = $request->note;
         $ledger->due_amount = $dueAmount;
         $ledger->total_amount = $total_amount;
-        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->sale_date);
+        $ledger->date = $this->parseDate($request->sale_date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
     }
