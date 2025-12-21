@@ -7,12 +7,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SalaryReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class SalaryReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $employees) {}
+    private $employees;
+    private $data;
+
+    public function __construct($employees, $data = null)
+    {
+        $this->employees = $employees;
+        $this->data = $data;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -41,10 +50,26 @@ class SalaryReportExport implements FromCollection, WithHeadings, WithMapping, W
         return [
             ++$this->index,
             $employee->name,
-            $employee->total_salary,
-            $employee->paid_salary,
+            currency($employee->total_salary),
+            currency($employee->paid_salary),
         ];
     }
+
+    public function registerEvents(): array
+    {
+        $data = $this->data;
+        return [
+            AfterSheet::class => function (AfterSheet $event) use ($data) {
+                $lastRow = $event->sheet->getHighestRow() + 1;
+                $event->sheet->setCellValue('A' . $lastRow, '');
+                $event->sheet->setCellValue('B' . $lastRow, 'Total');
+                $event->sheet->setCellValue('C' . $lastRow, currency($data['total_salary'] ?? 0));
+                $event->sheet->setCellValue('D' . $lastRow, currency($data['paid_salary'] ?? 0));
+                $event->sheet->getStyle('A' . $lastRow . ':D' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle
@@ -67,15 +92,15 @@ class SalaryReportExport implements FromCollection, WithHeadings, WithMapping, W
         // Column Widths (Optional)
         $sheet->getColumnDimension('A')->setWidth(5);
         $sheet->getColumnDimension('B')->setWidth(25);
-        $sheet->getColumnDimension('C')->setWidth(25);
-        $sheet->getColumnDimension('D')->setWidth(25);
+        $sheet->getColumnDimension('C')->setWidth(20);
+        $sheet->getColumnDimension('D')->setWidth(20);
 
 
 
-        // a1 to j1 will be center aligned
+        // a1 to d1 will be center aligned
         $sheet->getStyle('A1:D1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-        // a2 to j2, a3 to j3  will be center aligned
+        // a2 to d2, a3 to d3  will be center aligned
         $sheet->getStyle('A2:D2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('A3:D3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     }

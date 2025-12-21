@@ -7,12 +7,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SuppliersReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class SuppliersReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $suppliers) {}
+    private $suppliers;
+    private $data;
+
+    public function __construct($suppliers, $data = null)
+    {
+        $this->suppliers = $suppliers;
+        $this->data = $data;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -48,11 +57,31 @@ class SuppliersReportExport implements FromCollection, WithHeadings, WithMapping
             $supplier->company,
             $supplier->phone,
             $supplier->purchases->count(),
-            $supplier->purchases->sum('total_amount'),
-            $supplier->total_paid ?? 0,
-            $supplier->total_due,
+            currency($supplier->purchases->sum('total_amount')),
+            currency($supplier->total_paid ?? 0),
+            currency($supplier->total_due),
         ];
     }
+
+    public function registerEvents(): array
+    {
+        $data = $this->data;
+        return [
+            AfterSheet::class => function (AfterSheet $event) use ($data) {
+                $lastRow = $event->sheet->getHighestRow() + 1;
+                $event->sheet->setCellValue('A' . $lastRow, '');
+                $event->sheet->setCellValue('B' . $lastRow, '');
+                $event->sheet->setCellValue('C' . $lastRow, '');
+                $event->sheet->setCellValue('D' . $lastRow, 'Total');
+                $event->sheet->setCellValue('E' . $lastRow, $data['purchase_count'] ?? 0);
+                $event->sheet->setCellValue('F' . $lastRow, currency($data['totalPurchase'] ?? 0));
+                $event->sheet->setCellValue('G' . $lastRow, currency($data['pay'] ?? 0));
+                $event->sheet->setCellValue('H' . $lastRow, currency($data['total_due'] ?? 0));
+                $event->sheet->getStyle('A' . $lastRow . ':H' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle

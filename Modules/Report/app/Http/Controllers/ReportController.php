@@ -1186,6 +1186,8 @@ class ReportController extends Controller
     {
         $suppliers = $this->supplierService->allSupplier();
 
+        // Get all suppliers for calculations
+        $allSuppliers = $suppliers->get();
 
         $data['totalPurchase'] = 0;
         $data['pay'] = 0;
@@ -1194,9 +1196,7 @@ class ReportController extends Controller
         $data['total_due'] = 0;
         $data['purchase_count'] = 0;
 
-        $supplierData = request()->order_type ? $suppliers : $suppliers->get();
-
-        foreach ($supplierData as $supplier) {
+        foreach ($allSuppliers as $supplier) {
             $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
             $data['pay'] += $supplier->payments->sum('amount');
 
@@ -1211,31 +1211,33 @@ class ReportController extends Controller
             $data['purchase_count'] += $supplier->purchases->count();
         }
 
+        // Export with ALL suppliers (not paginated)
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'suppliers-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SuppliersReportExport($allSuppliers, $data), $fileName);
+            }
+        }
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.supplier', [
+                    'suppliers' => $allSuppliers,
+                    'data' => $data
+                ]);
+            }
+        }
+
+        // Paginate for view
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
             $parpage = 20;
         }
         if ($parpage === null) {
-            $suppliers = $suppliers->get();
+            $suppliers = $allSuppliers;
         } else {
             $suppliers = $suppliers->paginate($parpage);
             $suppliers->appends(request()->query());
-        }
-
-
-        if (checkAdminHasPermission('report.excel.download')) {
-            if (request('export')) {
-                $fileName = 'suppliers-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new SuppliersReportExport($suppliers), $fileName);
-            }
-        }
-        if (checkAdminHasPermission('report.pdf.download')) {
-            if (request('export_pdf')) {
-                return view('report::pdf.supplier', [
-                    'suppliers' => $suppliers
-                ]);
-            }
         }
 
         return view('report::supplier', compact('suppliers', 'data'));
@@ -1245,9 +1247,6 @@ class ReportController extends Controller
 
     public function supplierPayment()
     {
-
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
         $supplierPayments = Purchase::with(['supplier', 'purchaseReturn']);
 
         if (request()->keyword) {
@@ -1258,48 +1257,58 @@ class ReportController extends Controller
                     ->orWhere('invoice_number', request()->keyword);
             });
         }
+
+        // Only filter by date if dates are provided
         if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
             $supplierPayments = $supplierPayments->whereBetween('purchase_date', [$fromDate, $toDate]);
         }
 
+        // Get all data for calculations and export
+        $allSupplierPayments = $supplierPayments->get();
 
-        $data['total'] = $supplierPayments->sum('total_amount');
+        $data['total'] = 0;
         $data['paid_amount'] = 0;
         $data['due_amount'] = 0;
         $data['return_amount'] = 0;
 
-        foreach ($supplierPayments->get() as $payment) {
+        foreach ($allSupplierPayments as $payment) {
+            $data['total'] += $payment->total_amount;
             $data['paid_amount'] += $payment->paid_amount;
             $data['due_amount'] += $payment->due_amount - $payment->purchaseReturn->sum('return_amount') + $payment->purchaseReturn->sum('received_amount');
             $data['return_amount'] += $payment->purchaseReturn->sum('return_amount');
         }
 
-        $totalAmount = $supplierPayments->sum('total_amount');
+        $totalAmount = $data['total'];
 
+        // Export with ALL data (not paginated)
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'suppliers-payment-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new SuppliersPaymentReportExport($allSupplierPayments, $data), $fileName);
+            }
+        }
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.supplier-payment', [
+                    'supplierPayments' => $allSupplierPayments,
+                    'data' => $data
+                ]);
+            }
+        }
+
+        // Paginate for view
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
             $parpage = 20;
         }
         if ($parpage === null) {
-            $supplierPayments = $supplierPayments->get();
+            $supplierPayments = $allSupplierPayments;
         } else {
             $supplierPayments = $supplierPayments->paginate($parpage);
             $supplierPayments->appends(request()->query());
-        }
-
-        if (checkAdminHasPermission('report.excel.download')) {
-            if (request('export')) {
-                $fileName = 'suppliers-payment-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new SuppliersPaymentReportExport($supplierPayments), $fileName);
-            }
-        }
-        if (checkAdminHasPermission('report.pdf.download')) {
-            if (request('export_pdf')) {
-                return view('report::pdf.supplier-payment', [
-                    'supplierPayments' => $supplierPayments
-                ]);
-            }
         }
 
         return view('report::supplier-payment', compact('supplierPayments', 'totalAmount', 'data'));
@@ -1367,23 +1376,29 @@ class ReportController extends Controller
             return $employee;
         });
 
+        // Calculate totals
+        $data = [
+            'total_salary' => $employees->sum('total_salary'),
+            'paid_salary' => $employees->sum('paid_salary'),
+        ];
 
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'salaries-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new SalaryReportExport($employees), $fileName);
+                return Excel::download(new SalaryReportExport($employees, $data), $fileName);
             }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.salary', [
-                    'employees' => $employees
+                    'employees' => $employees,
+                    'data' => $data
                 ]);
             }
         }
 
 
-        return view('report::salary', compact('employees'));
+        return view('report::salary', compact('employees', 'data'));
     }
 }
