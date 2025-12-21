@@ -1106,7 +1106,7 @@ class ReportController extends Controller
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'received-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new TotalReceiveReportExport($totalReceive), $fileName);
+                return Excel::download(new TotalReceiveReportExport($totalReceive, $data), $fileName);
             }
         }
 
@@ -1169,7 +1169,7 @@ class ReportController extends Controller
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'purchase-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new PurchaseReportExport($purchases), $fileName);
+                return Excel::download(new PurchaseReportExport($purchases, $data), $fileName);
             }
         }
         if (checkAdminHasPermission('report.pdf.download')) {
