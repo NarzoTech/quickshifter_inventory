@@ -98,11 +98,11 @@ class EmployeeController extends Controller
             }
             $this->employee->store($data);
             saveLog('Employee added successfully');
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => 'Employee added successfully', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['message' => 'Employee added successfully', 'alert-type' => 'success']);
         } catch (\Exception $e) {
 
             saveLog($e->getMessage(), 'error');
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => $e->getMessage(), 'alert-type' => 'danger']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['message' => $e->getMessage(), 'alert-type' => 'danger']);
         }
     }
 
@@ -132,11 +132,11 @@ class EmployeeController extends Controller
             }
             $this->employee->update($id, $data);
             saveLog('Employee updated successfully');
-            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee updated successfully', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => 'Employee updated successfully', 'alert-type' => 'success']);
         } catch (\Throwable $th) {
 
             saveLog($th->getMessage(), 'error');
-            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => $th->getMessage(), 'alert-type' => 'danger']);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => $th->getMessage(), 'alert-type' => 'danger']);
         }
     }
 
@@ -147,13 +147,13 @@ class EmployeeController extends Controller
     {
         checkAdminHasPermissionAndThrowException('employee.delete');
         $this->employee->destroy($id);
-        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['messege' => 'Employee deleted successfully', 'alert-type' => 'success']);
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Employee deleted successfully', 'alert-type' => 'success']);
     }
 
     public function status($id)
     {
         checkAdminHasPermissionAndThrowException('employee.status');
         $this->employee->changeStatus($id);
-        return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee status updated successfully', 'alert-type' => 'success']);
+        return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => 'Employee status updated successfully', 'alert-type' => 'success']);
     }
 }

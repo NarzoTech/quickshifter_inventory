@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Modules\Attendance\app\Models\Attendance;
 use Modules\Attendance\app\Models\WeekendSetup;
+use Modules\Employee\app\Models\Employee;
 use Modules\Employee\app\Services\EmployeeService;
 
 class AttendanceController extends Controller
@@ -68,18 +69,32 @@ class AttendanceController extends Controller
         $date = $request->date;
         $employees = $request->employee_id;
         $attendances = $request->attendance;
+        $parsedDate = now()->parse($date);
 
         // get all attendances for the date
-        $attendancesList = Attendance::where('date', now()->parse($date))->pluck('employee_id')->toArray();
+        $attendancesList = Attendance::where('date', $parsedDate)->pluck('employee_id')->toArray();
 
+        // Get employee join dates for validation
+        $employeeData = Employee::whereIn('id', $employees)->pluck('join_date', 'id');
 
-
+        $errors = [];
 
         foreach ($employees as $key => $employee) {
 
+            // Check if attendance date is before employee's join date
+            $joinDate = isset($employeeData[$employee]) ? now()->parse($employeeData[$employee]) : null;
+            if ($joinDate && $parsedDate->lt($joinDate)) {
+                $emp = Employee::find($employee);
+                $errors[] = __(':name cannot be marked attendance before joining date (:date)', [
+                    'name' => $emp->name ?? 'Employee',
+                    'date' => $joinDate->format('Y-m-d')
+                ]);
+                continue;
+            }
+
             // check if attendance is clear
             if ($attendances[$key] == 'clear') {
-                Attendance::where('date', now()->parse($date))->where('employee_id', $employee)->delete();
+                Attendance::where('date', $parsedDate)->where('employee_id', $employee)->delete();
                 continue;
             }
 
@@ -87,16 +102,20 @@ class AttendanceController extends Controller
             // check if member has already taken attendance for the date
             if (in_array($employee, $attendancesList)) {
                 // update attendance
-                $attendance = Attendance::where('date', now()->parse($date))->where('employee_id', $employee)->first();
+                $attendance = Attendance::where('date', $parsedDate)->where('employee_id', $employee)->first();
                 $attendance->update(['status' => $attendances[$key]]);
                 continue;
             }
 
             Attendance::create([
-                'date' => now()->parse($date),
+                'date' => $parsedDate,
                 'status' => $attendances[$key],
                 'employee_id' => $employee
             ]);
+        }
+
+        if (!empty($errors)) {
+            return response()->json(['message' => implode(', ', $errors), 'success' => false], 422);
         }
 
         return response()->json(['message' => __('Attendance Taken'), 'success' => true]);
@@ -117,6 +136,6 @@ class AttendanceController extends Controller
             'is_weekend' => 'required|boolean'
         ]);
         WeekendSetup::updateOrCreate(['id' => $id], $request->except('_token'));
-        return back()->with(['messege' => 'Weekend days updated successfully', 'alert-type' => 'success']);
+        return back()->with(['message' => 'Weekend days updated successfully', 'alert-type' => 'success']);
     }
 }

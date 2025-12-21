@@ -42,7 +42,7 @@ class EmployeeSalaryController extends Controller
      */
     public function create($id)
     {
-        if (!checkAdminHasPermission('employee.pay.salary') || !checkAdminHasPermission('employee.pay.advance')) {
+        if (!checkAdminHasPermission('employee.pay.salary') && !checkAdminHasPermission('employee.pay.advance')) {
             abort(403);
         }
 
@@ -58,17 +58,17 @@ class EmployeeSalaryController extends Controller
      */
     public function store(EmployeeSalaryRequest $request, $id): RedirectResponse
     {
-        if (!checkAdminHasPermission('employee.pay.salary') || !checkAdminHasPermission('employee.pay.advance')) {
+        if (!checkAdminHasPermission('employee.pay.salary') && !checkAdminHasPermission('employee.pay.advance')) {
             abort(403);
         }
         try {
             $employee = $this->employee->find($id);
             $this->employee->addSalary($request, $employee);
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => 'Employee salary added successfully', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['message' => 'Employee salary added successfully', 'alert-type' => 'success']);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
 
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['messege' => $ex->getMessage(), 'alert-type' => 'error']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['message' => $ex->getMessage(), 'alert-type' => 'error']);
         }
     }
 
@@ -88,16 +88,16 @@ class EmployeeSalaryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(EmployeeSalaryRequest $request, $id): RedirectResponse
     {
         checkAdminHasPermissionAndThrowException('employee.edit.salary');
         try {
             $payment = EmployeeSalary::with('account')->find($id);
             $this->employee->updateSalary($request, $payment);
-            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => 'Employee salary updated successfully', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => 'Employee salary updated successfully', 'alert-type' => 'success']);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
-            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['messege' => $ex->getMessage(), 'alert-type' => 'error']);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => $ex->getMessage(), 'alert-type' => 'error']);
         }
     }
 
@@ -109,7 +109,7 @@ class EmployeeSalaryController extends Controller
         checkAdminHasPermissionAndThrowException('employee.delete.salary');
         $salary = EmployeeSalary::find($id);
         $salary->delete();
-        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['messege' => 'Employee salary deleted successfully', 'alert-type' => 'success']);
+        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Employee salary deleted successfully', 'alert-type' => 'success']);
     }
 
     public function salaryInfo(Request $request, $id)
@@ -135,8 +135,7 @@ class EmployeeSalaryController extends Controller
                 $query->where('amount', 'like', "%{$keyword}%")
                     ->orWhereHas('employee', function ($q) use ($keyword) {
                         $q->where('name', 'like', "%{$keyword}%");
-                    })
-                    ->orWhere('amount', 'like', "%{$keyword}%");
+                    });
             });
         }
         $sort = request()->order_by ? request()->order_by : 'desc';

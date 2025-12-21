@@ -158,20 +158,25 @@
                                                     ->where('date', $date->format('Y-m-d'))
                                                     ->first();
 
+                                                $joinDate = $employee->join_date ? \Carbon\Carbon::parse($employee->join_date) : null;
+                                                $isBeforeJoinDate = $joinDate && $date->lt($joinDate);
                                             @endphp
                                             <td class="text-center">
                                                 <div class="dropdown">
-                                                    <a class="btn  dropdown-toggle {{ $isPresent ? 'present' : ($isAbsent ? 'absent' : ($isWeekend ? 'weekend' : '')) }}"
-                                                        href="javascript:;" role="button" data-bs-toggle="dropdown"
+                                                    <a class="btn {{ !$isBeforeJoinDate ? 'dropdown-toggle' : '' }} {{ $isPresent ? 'present' : ($isAbsent ? 'absent' : ($isWeekend ? 'weekend' : '')) }}"
+                                                        href="javascript:;" role="button" {{ !$isBeforeJoinDate ? 'data-bs-toggle=dropdown' : '' }}
                                                         aria-expanded="false"
-                                                        style="background:{{ $isPresent ? 'green' : ($isAbsent ? 'red' : ($isWeekend ? '#e69500' : '')) }}; color:{{ $isPresent || $isAbsent ? 'white' : 'black' }}">
+                                                        style="background:{{ $isBeforeJoinDate ? '#ccc' : ($isPresent ? 'green' : ($isAbsent ? 'red' : ($isWeekend ? '#e69500' : ''))) }}; color:{{ $isPresent || $isAbsent ? 'white' : 'black' }}; {{ $isBeforeJoinDate ? 'cursor: not-allowed; opacity: 0.5;' : '' }}"
+                                                        {{ $isBeforeJoinDate ? 'title=Before joining date' : '' }}>
                                                     </a>
                                                     @adminCan('attendance.create')
+                                                        @if(!$isBeforeJoinDate)
                                                         <ul class="dropdown-menu">
 
                                                             <li><a class="dropdown-item attendance" href="javascript:;"
                                                                     data-employee-id={{ $employee->id }}
                                                                     data-date={{ $date->format('Y-m-d') }}
+                                                                    data-join-date="{{ $employee->join_date ? \Carbon\Carbon::parse($employee->join_date)->format('Y-m-d') : '' }}"
                                                                     data-value="present">{{ __('Present') }}</a>
                                                             </li>
 
@@ -179,21 +184,25 @@
                                                                 <a class="dropdown-item attendance" href="javascript:;"
                                                                     data-employee-id={{ $employee->id }}
                                                                     data-date={{ $date->format('Y-m-d') }}
+                                                                    data-join-date="{{ $employee->join_date ? \Carbon\Carbon::parse($employee->join_date)->format('Y-m-d') : '' }}"
                                                                     data-value="absent">{{ __('Absent') }}</a>
                                                             </li>
                                                             <li>
                                                                 <a class="dropdown-item attendance" href="javascript:;"
                                                                     data-employee-id={{ $employee->id }}
                                                                     data-date={{ $date->format('Y-m-d') }}
+                                                                    data-join-date="{{ $employee->join_date ? \Carbon\Carbon::parse($employee->join_date)->format('Y-m-d') : '' }}"
                                                                     data-value="weekend">{{ __('Weekend') }}</a>
                                                             </li>
                                                             <li>
                                                                 <a class="dropdown-item attendance text-danger"
                                                                     href="javascript:;" data-employee-id={{ $employee->id }}
                                                                     data-date={{ $date->format('Y-m-d') }}
+                                                                    data-join-date="{{ $employee->join_date ? \Carbon\Carbon::parse($employee->join_date)->format('Y-m-d') : '' }}"
                                                                     data-value="clear">{{ __('Clear Attendance') }}</a>
                                                             </li>
                                                         </ul>
+                                                        @endif
                                                     @endadminCan
                                                 </div>
                                             </td>
@@ -221,6 +230,7 @@
             $(document).on('click', '.attendance', function() {
                 const id = $(this).data('employee-id');
                 const date = $(this).data('date');
+                const joinDate = $(this).data('join-date');
 
                 // check  if date is after today
                 const today = new Date("{{ formatDate(now(), 'Y-m-d') }}");
@@ -229,6 +239,15 @@
                 if (selectedDate > today) {
                     toastr.warning("{{ __('You can not mark attendance for future date') }}", '', options);
                     return;
+                }
+
+                // check if date is before join date
+                if (joinDate) {
+                    const employeeJoinDate = new Date(joinDate);
+                    if (selectedDate < employeeJoinDate) {
+                        toastr.warning("{{ __('You can not mark attendance before employee joining date') }}", '', options);
+                        return;
+                    }
                 }
 
                 const value = $(this).data('value');

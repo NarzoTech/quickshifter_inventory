@@ -65,7 +65,7 @@ class HolidaysController extends Controller
             HolidaySetup::create($data);
 
             $notification = [
-                'messege' => 'Holiday created successfully',
+                'message' => 'Holiday created successfully',
                 'alert-type' => 'success',
             ];
             saveLog('Holiday created successfully', 'info');
@@ -73,7 +73,7 @@ class HolidaysController extends Controller
         } catch (\Exception $e) {
             saveLog($e->getMessage(), 'error');
             $notification = [
-                'messege' => $e->getMessage(),
+                'message' => $e->getMessage(),
                 'alert-type' => 'error',
             ];
             return back()->with($notification);
@@ -93,7 +93,7 @@ class HolidaysController extends Controller
             HolidaySetup::where('id', $id)->update($data);
 
             $notification = [
-                'messege' => 'Holiday updated successfully',
+                'message' => 'Holiday updated successfully',
                 'alert-type' => 'success',
             ];
             saveLog('Holiday updated successfully', 'info');
@@ -101,7 +101,7 @@ class HolidaysController extends Controller
         } catch (\Exception $e) {
             saveLog($e->getMessage(), 'error');
             $notification = [
-                'messege' => $e->getMessage(),
+                'message' => $e->getMessage(),
                 'alert-type' => 'error',
             ];
             return back()->with($notification);

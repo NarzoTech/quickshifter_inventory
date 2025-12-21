@@ -77,8 +77,9 @@ class EmployeeService
 
         $data = $request->except('_token');
         $data['date'] = now()->parse($request->date);
-        $data['month'] = now()->parse($request->date)->format('F');
-        $data['year'] = now()->parse($request->date)->format('Y');
+        $data['month'] = $request->month ? now()->parse($request->month)->format('F') : now()->parse($request->date)->format('F');
+        $data['year'] = $request->year ?? now()->parse($request->date)->format('Y');
+        $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
         $data['payment_type'] = $request->payment_type;
         $data['amount'] = $request->amount;
         $data['note'] = $request->note;
@@ -96,21 +97,21 @@ class EmployeeService
 
         $payment->update($data);
 
-        return back()->with(['messege' => 'Salary updated successfully', 'alert-type' => 'success']);
+        return back()->with(['message' => 'Salary updated successfully', 'alert-type' => 'success']);
     }
 
 
     public function calculateSalary(Request $request, $id)
     {
 
-        // check if weekend days is in cache
+        // check if weekend days is in cache (expires after 1 hour)
         if (!Cache::has('weekends')) {
             $weekends = WeekendSetup::where('is_weekend', 1)->pluck('name')->toArray();
-            Cache::put('weekends', $weekends);
+            Cache::put('weekends', $weekends, 3600);
         }
 
         // get the  weekend days
-        $weekends = cache('weekends');
+        $weekends = Cache::get('weekends');
 
         $employee = $this->employee->find($id);
         $month = $request->month ?? now()->format('F');
@@ -135,51 +136,73 @@ class EmployeeService
 
         $totalWeekends = 0;
 
-        $startOfMonth = now()->month($monthNumber)->year($year)->startOfMonth();
-        $endOfMonth = now()->month($monthNumber)->year($year)->endOfMonth();
-        $currentDate = now();
+        $startOfMonth = now()->month($monthNumber)->year($year)->startOfMonth()->copy();
+        $endOfMonth = now()->month($monthNumber)->year($year)->endOfMonth()->copy();
+        $currentDate = now()->copy();
         $currentYear = $currentDate->year;
         $currentMonth = $currentDate->month;
         $searchMonth = $startOfMonth->month;
         $searchYear = $startOfMonth->year;
 
 
-        if ($searchYear <= $currentYear && ($searchYear <= $currentYear && $searchMonth <= $currentMonth)) {
-            $totalDaysOfTheMonth = $endOfMonth;
-            if ($endOfMonth->month == $currentMonth) {
+        if ($searchYear < $currentYear || ($searchYear == $currentYear && $searchMonth <= $currentMonth)) {
+            $totalDaysOfTheMonth = $endOfMonth->copy();
+            if ($searchYear == $currentYear && $searchMonth == $currentMonth) {
                 $currentDay = $currentDate->day;
-                $endDay =  $endOfMonth->day;
-                $totalDaysOfTheMonth = $totalDaysOfTheMonth->subDays($endDay - $currentDay);
+                $endDay = $endOfMonth->day;
+                $totalDaysOfTheMonth = $endOfMonth->copy()->subDays($endDay - $currentDay);
             }
-            for ($date = $startOfMonth; $date <= $totalDaysOfTheMonth; $date->addDay()) {
-                if (in_array($date->dayOfWeek, $weekendDays)) {
+            $loopDate = $startOfMonth->copy();
+            while ($loopDate <= $totalDaysOfTheMonth) {
+                if (in_array($loopDate->dayOfWeek, $weekendDays)) {
                     $totalWeekends++;
                 }
+                $loopDate->addDay();
             }
         } else {
             $totalWeekends = 0;
         }
 
-        $holidays = HolidaySetup::where(function ($query) use ($monthNumber, $year) {
-            $query->whereMonth('start_date', $monthNumber)
-                ->whereYear('start_date', $year);
+        // Get holidays that overlap with the current month (start in this month OR end in this month OR span across this month)
+        $monthStart = now()->month($monthNumber)->year($year)->startOfMonth()->format('Y-m-d');
+        $monthEnd = now()->month($monthNumber)->year($year)->endOfMonth()->format('Y-m-d');
+
+        $holidays = HolidaySetup::where(function ($query) use ($monthStart, $monthEnd) {
+            $query->where(function ($q) use ($monthStart, $monthEnd) {
+                // Holiday starts within this month
+                $q->whereBetween('start_date', [$monthStart, $monthEnd]);
+            })->orWhere(function ($q) use ($monthStart, $monthEnd) {
+                // Holiday ends within this month
+                $q->whereBetween('end_date', [$monthStart, $monthEnd]);
+            })->orWhere(function ($q) use ($monthStart, $monthEnd) {
+                // Holiday spans the entire month
+                $q->where('start_date', '<', $monthStart)
+                  ->where('end_date', '>', $monthEnd);
+            });
         })->get();
 
 
-        // count total holidays
+        // count total holidays (only count days within the current month)
         $totalHolidays = 0;
+        $monthStartDate = now()->month($monthNumber)->year($year)->startOfMonth();
+        $monthEndDate = now()->month($monthNumber)->year($year)->endOfMonth();
 
         foreach ($holidays as $holiday) {
-            // defecrence between start date and end date
-            $difference = now()->parse($holiday->end_date)->diffInDays($holiday->start_date);
+            $holidayStart = now()->parse($holiday->start_date);
+            $holidayEnd = now()->parse($holiday->end_date);
 
-            for ($date = now()->parse($holiday->start_date); $date <= now()->parse($holiday->end_date); $date->addDay()) {
-                if (in_array($date->dayOfWeek, $weekendDays)) {
-                    $difference--;
+            // Clamp holiday dates to current month boundaries
+            $effectiveStart = $holidayStart->lt($monthStartDate) ? $monthStartDate->copy() : $holidayStart->copy();
+            $effectiveEnd = $holidayEnd->gt($monthEndDate) ? $monthEndDate->copy() : $holidayEnd->copy();
+
+            $loopDate = $effectiveStart->copy();
+            while ($loopDate <= $effectiveEnd) {
+                // Only count if not a weekend day
+                if (!in_array($loopDate->dayOfWeek, $weekendDays)) {
+                    $totalHolidays++;
                 }
+                $loopDate->addDay();
             }
-
-            $totalHolidays += $difference + 1;
         }
 
 

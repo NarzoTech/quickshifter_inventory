@@ -51,12 +51,11 @@ class Employee extends Model
         $month = $month ?? now()->format('F');
         $year = $year ?? now()->format('Y');
 
-        if ($this->employeeSalary->count()) {
-            return $this->employeeSalary->where('type', 'advance')->where('month', $month)->where('year', $year)->sum('amount');
-        } else {
-
-            return 0;
-        }
+        return $this->currentSalary
+            ->where('type', 'advance')
+            ->where('month', $month)
+            ->where('year', $year)
+            ->sum('amount');
     }
 
     // due amount
@@ -87,6 +86,11 @@ class Employee extends Model
         $year = $date->year;
 
 
-        return $this->hasMany(Attendance::class, 'employee_id', 'id')->whereMonth('date', $month)->whereYear('date', $year)->where('status', 'present')->orWhere('status', 'weekend');
+        return $this->hasMany(Attendance::class, 'employee_id', 'id')
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->where(function ($query) {
+                $query->where('status', 'present')->orWhere('status', 'weekend');
+            });
     }
 }
