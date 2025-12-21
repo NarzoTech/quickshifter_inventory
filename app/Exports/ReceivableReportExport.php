@@ -7,12 +7,21 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ReceivableReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class ReceivableReportExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $sales) {}
+    private $sales;
+    private $data;
+
+    public function __construct($sales, $data = null)
+    {
+        $this->sales = $sales;
+        $this->data = $data;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -80,6 +89,22 @@ class ReceivableReportExport implements FromCollection, WithHeadings, WithMappin
         // a2 to j2, a3 to j3  will be center aligned
         $sheet->getStyle('A2:E2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('A3:E3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    }
+
+    public function registerEvents(): array
+    {
+        $data = $this->data;
+        return [
+            AfterSheet::class => function (AfterSheet $event) use ($data) {
+                $lastRow = $event->sheet->getHighestRow() + 1;
+                $event->sheet->setCellValue('A' . $lastRow, '');
+                $event->sheet->setCellValue('B' . $lastRow, '');
+                $event->sheet->setCellValue('C' . $lastRow, '');
+                $event->sheet->setCellValue('D' . $lastRow, 'Total');
+                $event->sheet->setCellValue('E' . $lastRow, currency($data['totalDues'] ?? 0));
+                $event->sheet->getStyle('A' . $lastRow . ':E' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
     }
 
     public function title(): string

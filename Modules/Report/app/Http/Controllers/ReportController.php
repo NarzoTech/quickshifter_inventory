@@ -89,13 +89,16 @@ class ReportController extends Controller
             });
 
 
+        // Get all data for calculations and export
+        $allReports = $reports->get();
+
         $data['quantity'] = 0;
         $data['sale_return'] = 0;
         $data['purchase_price'] = 0;
         $data['sale_price'] = 0;
         $data['total'] = 0;
 
-        foreach ($reports->get() as $key => $report) {
+        foreach ($allReports as $key => $report) {
             $data['quantity'] += $report->quantity;
             $data['sale_return'] += $report->sale_return;
             $data['purchase_price'] += $report->purchase_price;
@@ -103,31 +106,33 @@ class ReportController extends Controller
             $data['total'] += $report->sub_total - $report->purchase_price * $report->quantity;
         }
 
+        // Export with ALL data (not paginated)
+        if (checkAdminHasPermission('other.income.excel.download')) {
+            if (request('export')) {
+                $fileName = 'other-income-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new OtherIncomeExport($allReports, $data), $fileName);
+            }
+        }
+        if (checkAdminHasPermission('other.income.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.other-income', [
+                    'reports' => $allReports,
+                    'data' => $data
+                ]);
+            }
+        }
 
+        // Paginate for view
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
             $parpage = 20;
         }
         if ($parpage === null) {
-            $reports = $reports->get();
+            $reports = $allReports;
         } else {
             $reports = $reports->paginate($parpage);
             $reports->appends(request()->query());
-        }
-
-        if (checkAdminHasPermission('other.income.excel.download')) {
-            if (request('export')) {
-                $fileName = 'other-income-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new OtherIncomeExport($reports), $fileName);
-            }
-        }
-        if (checkAdminHasPermission('other.income.pdf.download')) {
-            if (request('export_pdf')) {
-                return view('report::pdf.other-income', [
-                    'reports' => $reports,
-                ]);
-            }
         }
 
         return view('report::other-income', compact('reports', 'data'));
@@ -713,32 +718,39 @@ class ReportController extends Controller
             $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
         }
 
-        $totalDues = $sales->sum('due_amount');
+        // Get all data for calculations and export
+        $allSales = $sales->get();
+        $totalDues = $allSales->sum('due_amount');
 
+        $data = ['totalDues' => $totalDues];
+
+        // Export with ALL data (not paginated)
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'receivable-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new ReceivableReportExport($allSales, $data), $fileName);
+            }
+        }
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.receivable', [
+                    'sales' => $allSales,
+                    'data' => $data
+                ]);
+            }
+        }
+
+        // Paginate for view
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
             $parpage = 20;
         }
         if ($parpage === null) {
-            $sales = $sales->get();
+            $sales = $allSales;
         } else {
             $sales = $sales->paginate($parpage);
             $sales->appends(request()->query());
-        }
-
-        if (checkAdminHasPermission('report.excel.download')) {
-            if (request('export')) {
-                $fileName = 'receivable-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new ReceivableReportExport($sales), $fileName);
-            }
-        }
-        if (checkAdminHasPermission('report.pdf.download')) {
-            if (request('export_pdf')) {
-                return view('report::pdf.receivable', [
-                    'sales' => $sales
-                ]);
-            }
         }
 
         return view('report::receiveable', compact('sales', 'totalDues'));
@@ -762,13 +774,15 @@ class ReportController extends Controller
                 ->orWhere('invoice', request()->keyword);
         }
 
+        // Get all data for calculations and export
+        $allSales = $sales->get();
 
         $data['sale_amount'] = 0;
         $data['total_amount'] = 0;
         $data['paid_amount'] = 0;
         $data['due_amount'] = 0;
         $data['return_amount'] = 0;
-        foreach ($sales->get() as $sale) {
+        foreach ($allSales as $sale) {
             $data['sale_amount'] += $sale->total_price;
             $data['total_amount'] += $sale->grand_total;
             $data['paid_amount'] += $sale->paid_amount;
@@ -776,33 +790,36 @@ class ReportController extends Controller
             $data['return_amount'] += $sale->saleReturns->sum('return_amount');
         }
 
-        if (request('par-page')) {
-            $parpage = request('par-page') == 'all' ? null : request('par-page');
-        } else {
-            $parpage = 20;
-        }
-        if ($parpage === null) {
-            $sales = $sales->get();
-        } else {
-            $sales = $sales->paginate($parpage);
-            $sales->appends(request()->query());
-        }
-
-
+        // Export with ALL data (not paginated)
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'details-sale-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new DetailsSaleReportExport($sales, $data), $fileName);
+                return Excel::download(new DetailsSaleReportExport($allSales, $data), $fileName);
             }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.details-sale', [
-                    'sales' => $sales
+                    'sales' => $allSales,
+                    'data' => $data
                 ]);
             }
         }
+
+        // Paginate for view
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $sales = $allSales;
+        } else {
+            $sales = $sales->paginate($parpage);
+            $sales->appends(request()->query());
+        }
+
         return view('report::details-sale', compact('sales', 'data'));
     }
 
@@ -824,47 +841,49 @@ class ReportController extends Controller
                 ->orWhere('invoice', request()->keyword);
         }
 
+        // Get all data for calculations and export
+        $allSales = $sales->get();
+
         $data['due'] = 0;
-        foreach ($sales->get() as $sale) {
+        foreach ($allSales as $sale) {
             $data['due'] += $sale->due_amount;
         }
 
-
-        if (request('par-page')) {
-            $parpage = request('par-page') == 'all' ? null : request('par-page');
-        } else {
-            $parpage = 20;
-        }
-        if ($parpage === null) {
-            $sales = $sales->get();
-        } else {
-            $sales = $sales->paginate($parpage);
-            $sales->appends(request()->query());
-        }
-
-
+        // Export with ALL data (not paginated)
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'due-date-sale-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new DueDateSaleReportExport($sales, $data), $fileName);
+                return Excel::download(new DueDateSaleReportExport($allSales, $data), $fileName);
             }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.due-date-sale', [
-                    'sales' => $sales
+                    'sales' => $allSales,
+                    'data' => $data
                 ]);
             }
         }
+
+        // Paginate for view
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $sales = $allSales;
+        } else {
+            $sales = $sales->paginate($parpage);
+            $sales->appends(request()->query());
+        }
+
         return view('report::due-date-sale', compact('sales', 'data'));
     }
 
     public function expense()
     {
-
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subDay();
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
         $expenses = Expense::with('createdBy', 'expenseType');
 
         if (request()->keyword) {
@@ -876,36 +895,49 @@ class ReportController extends Controller
             });
         }
 
+        // Only filter by date if dates are provided
         if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
             $expenses = $expenses->whereBetween('date', [$fromDate, $toDate]);
         }
-        $totalAmount = $expenses->sum('amount');
 
-        if (request('par-page')) {
-            $parpage = request('par-page') == 'all' ? null : request('par-page');
-        } else {
-            $parpage = 20;
-        }
-        if ($parpage === null) {
-            $expenses = $expenses->get();
-        } else {
-            $expenses = $expenses->paginate($parpage);
-            $expenses->appends(request()->query());
-        }
+        // Get all data for calculations and export
+        $allExpenses = $expenses->get();
+        $totalAmount = $allExpenses->sum('amount');
+
+        $data = ['totalAmount' => $totalAmount];
+
+        // Export with ALL data (not paginated)
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'expense-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new ExpenseReportExport($expenses), $fileName);
+                return Excel::download(new ExpenseReportExport($allExpenses, $data), $fileName);
             }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.expense', [
-                    'expenses' => $expenses
+                    'expenses' => $allExpenses,
+                    'data' => $data
                 ]);
             }
         }
+
+        // Paginate for view
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $expenses = $allExpenses;
+        } else {
+            $expenses = $expenses->paginate($parpage);
+            $expenses->appends(request()->query());
+        }
+
         return view('report::expense', compact('expenses', 'totalAmount'));
     }
 
@@ -1084,38 +1116,38 @@ class ReportController extends Controller
             });
         }
 
-        $data['receive'] = 0;
+        // Get all data for calculations and export
+        $allReceive = $totalReceive->get();
 
-        foreach ($totalReceive->get() as $receive) {
-            $data['receive'] += $receive->amount;
-        }
+        $data['receive'] = $allReceive->sum('amount');
 
-
-        if (request('par-page')) {
-            $parpage = request('par-page') == 'all' ? null : request('par-page');
-        } else {
-            $parpage = 20;
-        }
-        if ($parpage === null) {
-            $totalReceive = $totalReceive->get();
-        } else {
-            $totalReceive = $totalReceive->paginate($parpage);
-            $totalReceive->appends(request()->query());
-        }
-
+        // Export with ALL data (not paginated)
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'received-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new TotalReceiveReportExport($totalReceive, $data), $fileName);
+                return Excel::download(new TotalReceiveReportExport($allReceive, $data), $fileName);
             }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.received-report', [
-                    'totalReceive' => $totalReceive
+                    'totalReceive' => $allReceive
                 ]);
             }
+        }
+
+        // Paginate for view
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $totalReceive = $allReceive;
+        } else {
+            $totalReceive = $totalReceive->paginate($parpage);
+            $totalReceive->appends(request()->query());
         }
 
         return view('report::received-report', compact('totalReceive', 'data'));
@@ -1140,45 +1172,41 @@ class ReportController extends Controller
             });
         }
 
-        $totalAmount = $purchases->sum('total_amount');
+        // Get all data for calculations and export
+        $allPurchases = $purchases->get();
 
-        $data['total_amount'] = 0;
-        $data['paid_amount'] = 0;
-        $data['due_amount'] = 0;
+        $data['total_amount'] = $allPurchases->sum('total_amount');
+        $data['paid_amount'] = $allPurchases->sum('paid_amount');
+        $data['due_amount'] = $allPurchases->sum('due_amount');
 
-        foreach ($purchases->get() as $purchase) {
-
-            $data['total_amount'] += $purchase->total_amount;
-            $data['paid_amount'] += $purchase->paid_amount;
-            $data['due_amount'] += $purchase->due_amount;
+        // Export with ALL data (not paginated)
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'purchase-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new PurchaseReportExport($allPurchases, $data), $fileName);
+            }
+        }
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.purchase', [
+                    'purchases' => $allPurchases
+                ]);
+            }
         }
 
+        // Paginate for view
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
             $parpage = 20;
         }
         if ($parpage === null) {
-            $purchases = $purchases->get();
+            $purchases = $allPurchases;
         } else {
             $purchases = $purchases->paginate($parpage);
             $purchases->appends(request()->query());
         }
 
-
-        if (checkAdminHasPermission('report.excel.download')) {
-            if (request('export')) {
-                $fileName = 'purchase-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new PurchaseReportExport($purchases, $data), $fileName);
-            }
-        }
-        if (checkAdminHasPermission('report.pdf.download')) {
-            if (request('export_pdf')) {
-                return view('report::pdf.purchase', [
-                    'purchases' => $purchases
-                ]);
-            }
-        }
         return view('report::purchase', compact('purchases', 'data'));
     }
 
