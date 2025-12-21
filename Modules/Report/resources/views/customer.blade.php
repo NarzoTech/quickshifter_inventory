@@ -90,7 +90,6 @@
                         <tr>
                             <th>{{ __('Sl') }}</th>
                             <th>{{ __('Name') }}</th>
-                            <th>{{ __('Company') }}</th>
                             <th>{{ __('Phone') }}</th>
                             <th>{{ __('Total Sales') }}</th>
                             <th>{{ __('Total') }}</th>
@@ -106,19 +105,17 @@
                             <tr>
                                 <td>{{ $start + $key }}</td>
                                 <td>{{ $customer->name }}</td>
-                                <td>{{ $customer->company }}</td>
                                 <td>{{ $customer->phone }}</td>
                                 <td>{{ $customer->sales->count() }}</td>
                                 <td>{{ currency($customer->sales->sum('grand_total')) }}</td>
-
                                 <td>{{ currency($customer->total_paid) }}</td>
                                 <td>{{ currency($customer->total_due) }}</td>
                             </tr>
                         @endforeach
 
                         <tr>
-                            <td colspan="4" class="text-end">
-                                <b>Total</b>
+                            <td colspan="3" class="text-end">
+                                <b>{{ __('Total') }}</b>
                             </td>
                             <td>
                                 <b>{{ $totalSales }}</b>

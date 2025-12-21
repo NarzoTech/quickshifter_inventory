@@ -640,6 +640,9 @@ class ReportController extends Controller
                 ->orWhere('address', 'like', '%' . $request->keyword . '%');
         });
 
+        // Order by name ascending
+        $query->orderBy('name', 'asc');
+
         $allCustomers = $query->get();
 
         $totalSales = 0;
@@ -653,31 +656,37 @@ class ReportController extends Controller
             $totalDue += $customer->total_due;
         }
 
+        $data = [
+            'totalSales' => $totalSales,
+            'totalAmount' => $totalAmount,
+            'totalPaid' => $totalPaid,
+            'totalDue' => $totalDue,
+        ];
+
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
             $parpage = 20;
         }
         if ($parpage === null) {
-            $customers = $query->get();
+            $customers = $allCustomers;
         } else {
-            $customers = $query->paginate($parpage);
+            $customers = User::with(['sales', 'payment'])->orderBy('name', 'asc')->paginate($parpage);
             $customers->appends(request()->query());
         }
-
-
 
         if (checkAdminHasPermission('report.excel.download')) {
             if (request('export')) {
                 $fileName = 'customers-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-                return Excel::download(new CustomerReportExport($customers), $fileName);
+                return Excel::download(new CustomerReportExport($allCustomers, $data), $fileName);
             }
         }
 
         if (checkAdminHasPermission('report.pdf.download')) {
             if (request('export_pdf')) {
                 return view('report::pdf.customer-report', [
-                    'customers' => $customers
+                    'customers' => $allCustomers,
+                    'data' => $data
                 ]);
             }
         }

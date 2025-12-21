@@ -86,29 +86,13 @@ class User extends Model
 
     public function sales()
     {
-
-        $from_date = null;
-        $to_date = null;
-        if (request()->from_date) {
-            $from_date = now()->parse(request()->from_date);
-        }
-        if (request()->to_date) {
-            $to_date = now()->parse(request()->to_date);
-        }
-
-        // current route
-        $route = request()->route()->getName();
-
-
         $sales = $this->hasMany(Sale::class, 'customer_id');
 
-        if ($from_date || $to_date) {
+        // Only filter by date if dates are provided
+        if (request()->from_date || request()->to_date) {
+            $from_date = request()->from_date ? now()->parse(request()->from_date) : now()->subYear();
+            $to_date = request()->to_date ? now()->parse(request()->to_date) : now();
             $sales = $sales->whereBetween('order_date', [$from_date, $to_date]);
-        }
-
-        if ($route == 'admin.report.customers') {
-
-            return $sales->whereBetween('order_date', [$from_date, $to_date]);
         }
 
         return $sales->with('saleReturns');
@@ -156,20 +140,13 @@ class User extends Model
 
     public function payment()
     {
-        // Parse date filters only once
-        $from_date = request()->from_date ? \Carbon\Carbon::parse(request()->from_date)->startOfDay() : null;
-        $to_date = request()->to_date ? \Carbon\Carbon::parse(request()->to_date)->endOfDay() : null;
-
         // Initialize the relationship query
         $payment = $this->hasMany(CustomerPayment::class, 'customer_id');
 
-        // Apply date range filter if dates are provided
-        if ($from_date && $to_date) {
-            $payment->whereBetween('payment_date', [$from_date, $to_date]);
-        }
-
-        // Apply additional filters for specific routes
-        if (request()->route()->getName() === 'admin.report.customers') {
+        // Only apply date range filter if dates are provided
+        if (request()->from_date || request()->to_date) {
+            $from_date = request()->from_date ? \Carbon\Carbon::parse(request()->from_date)->startOfDay() : now()->subYear()->startOfDay();
+            $to_date = request()->to_date ? \Carbon\Carbon::parse(request()->to_date)->endOfDay() : now()->endOfDay();
             $payment->whereBetween('payment_date', [$from_date, $to_date]);
         }
 

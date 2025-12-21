@@ -59,7 +59,7 @@ class SalesController extends Controller
             $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
         }
         $sort = request()->order_by ? request()->order_by : 'desc';
-        $sales = $sales->orderBy('order_date', $sort);
+        $sales = $sales->orderBy('order_date', $sort)->orderBy('invoice', $sort);
 
         $data['sale_amount'] = 0;
         $data['total_amount'] = 0;
