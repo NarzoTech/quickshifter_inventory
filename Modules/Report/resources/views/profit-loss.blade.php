@@ -104,8 +104,8 @@
                             <table class="table mb-0">
                                 <tbody>
                                     <tr>
-                                        <td>{{ __('Total Purchases') }}</td>
-                                        <td class="text-end">{{ currency($data['totalPurchases']) }}</td>
+                                        <td>{{ __('Cost of Goods Sold') }} <small class="text-muted">({{ __('COGS') }})</small></td>
+                                        <td class="text-end">{{ currency($data['cogs']) }}</td>
                                     </tr>
                                     <tr>
                                         <td>{{ __('Operating Expenses') }}</td>
@@ -116,8 +116,8 @@
                                         <td class="text-end">{{ currency($data['salaries']) }}</td>
                                     </tr>
                                     <tr class="table-secondary">
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
+                                        <td><strong>{{ __('Gross Profit') }}</strong> <small class="text-muted">({{ __('Net Sales - COGS') }})</small></td>
+                                        <td class="text-end"><strong>{{ currency($data['grossProfit']) }}</strong></td>
                                     </tr>
                                     <tr class="table-danger">
                                         <td><strong>{{ __('Total Expenses') }}</strong></td>
@@ -177,6 +177,10 @@
                                     <td>{{ __('Sales Returns') }}</td>
                                     <td class="text-end text-danger">- {{ currency($data['salesReturns']) }}</td>
                                 </tr>
+                                <tr class="table-secondary">
+                                    <td><strong>{{ __('Net Sales') }}</strong></td>
+                                    <td class="text-end"><strong>{{ currency($data['netSales']) }}</strong></td>
+                                </tr>
                                 <tr>
                                     <td>{{ __('Purchase Returns') }}</td>
                                     <td class="text-end">{{ currency($data['purchaseReturns']) }}</td>
@@ -186,8 +190,12 @@
                                     <td class="text-end"><strong>{{ currency($data['totalIncome']) }}</strong></td>
                                 </tr>
                                 <tr>
-                                    <td>{{ __('Total Purchases') }}</td>
-                                    <td class="text-end">{{ currency($data['totalPurchases']) }}</td>
+                                    <td>{{ __('Cost of Goods Sold (COGS)') }}</td>
+                                    <td class="text-end">{{ currency($data['cogs']) }}</td>
+                                </tr>
+                                <tr class="table-secondary">
+                                    <td><strong>{{ __('Gross Profit') }}</strong></td>
+                                    <td class="text-end"><strong>{{ currency($data['grossProfit']) }}</strong></td>
                                 </tr>
                                 <tr>
                                     <td>{{ __('Operating Expenses') }}</td>

@@ -22,21 +22,22 @@ class ProfitLossExport implements FromArray, WithHeadings, WithStyles, WithTitle
         return [
             // Income Section
             [__('INCOME'), ''],
-            [__('Total Sales'), $this->data['totalSales']],
-            [__('Sales Returns') . ' (' . __('Deduction') . ')', -$this->data['salesReturns']],
-            [__('Net Sales'), $this->data['netSales']],
-            [__('Purchase Returns') . ' (' . __('Refund from Supplier') . ')', $this->data['purchaseReturns']],
-            [__('Total Income'), $this->data['totalIncome']],
+            [__('Total Sales'), currency($this->data['totalSales'])],
+            [__('Sales Returns') . ' (' . __('Deduction') . ')', '- ' . currency($this->data['salesReturns'])],
+            [__('Net Sales'), currency($this->data['netSales'])],
+            [__('Purchase Returns') . ' (' . __('Refund from Supplier') . ')', currency($this->data['purchaseReturns'])],
+            [__('Total Income'), currency($this->data['totalIncome'])],
             ['', ''],
             // Expense Section
             [__('EXPENSES'), ''],
-            [__('Total Purchases'), $this->data['totalPurchases']],
-            [__('Operating Expenses'), $this->data['expenses']],
-            [__('Employee Salaries'), $this->data['salaries']],
-            [__('Total Expenses'), $this->data['totalExpenses']],
+            [__('Cost of Goods Sold (COGS)'), currency($this->data['cogs'])],
+            [__('Gross Profit') . ' (' . __('Net Sales - COGS') . ')', currency($this->data['grossProfit'])],
+            [__('Operating Expenses'), currency($this->data['expenses'])],
+            [__('Employee Salaries'), currency($this->data['salaries'])],
+            [__('Total Expenses'), currency($this->data['totalExpenses'])],
             ['', ''],
             // Profit/Loss
-            [__('NET PROFIT / LOSS'), $this->data['profitLoss']],
+            [__('NET PROFIT / LOSS'), currency($this->data['profitLoss'])],
         ];
     }
 
@@ -75,7 +76,7 @@ class ProfitLossExport implements FromArray, WithHeadings, WithStyles, WithTitle
             ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
         // Column Widths
-        $sheet->getColumnDimension('A')->setWidth(40);
+        $sheet->getColumnDimension('A')->setWidth(45);
         $sheet->getColumnDimension('B')->setWidth(20);
 
         // Center align title rows
@@ -87,31 +88,36 @@ class ProfitLossExport implements FromArray, WithHeadings, WithStyles, WithTitle
         // Right align amount column
         $sheet->getStyle('B6:B' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-        // Style section headers (Income, Expenses)
+        // Style section headers (Income - row 6)
         $sheet->getStyle('A6')->getFont()->setBold(true);
         $sheet->getStyle('A6:B6')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('D4EDDA');
 
-        $sheet->getStyle('A13')->getFont()->setBold(true);
-        $sheet->getStyle('A13:B13')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F8D7DA');
-
-        // Style Total Income row
+        // Style Total Income row (row 11)
         $sheet->getStyle('A11')->getFont()->setBold(true);
         $sheet->getStyle('A11:B11')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('C3E6CB');
 
-        // Style Total Expenses row
-        $sheet->getStyle('A17')->getFont()->setBold(true);
-        $sheet->getStyle('A17:B17')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F5C6CB');
+        // Style Expenses header (row 13)
+        $sheet->getStyle('A13')->getFont()->setBold(true);
+        $sheet->getStyle('A13:B13')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F8D7DA');
 
-        // Style Net Profit/Loss row
-        $sheet->getStyle('A19')->getFont()->setBold(true)->setSize(12);
-        $sheet->getStyle('B19')->getFont()->setBold(true)->setSize(12);
+        // Style Gross Profit row (row 15)
+        $sheet->getStyle('A15')->getFont()->setBold(true);
+        $sheet->getStyle('A15:B15')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F8F9FA');
+
+        // Style Total Expenses row (row 18)
+        $sheet->getStyle('A18')->getFont()->setBold(true);
+        $sheet->getStyle('A18:B18')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F5C6CB');
+
+        // Style Net Profit/Loss row (row 20)
+        $sheet->getStyle('A20')->getFont()->setBold(true)->setSize(12);
+        $sheet->getStyle('B20')->getFont()->setBold(true)->setSize(12);
 
         if ($this->data['profitLoss'] >= 0) {
-            $sheet->getStyle('A19:B19')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('28A745');
-            $sheet->getStyle('A19:B19')->getFont()->getColor()->setRGB('FFFFFF');
+            $sheet->getStyle('A20:B20')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('28A745');
+            $sheet->getStyle('A20:B20')->getFont()->getColor()->setRGB('FFFFFF');
         } else {
-            $sheet->getStyle('A19:B19')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('DC3545');
-            $sheet->getStyle('A19:B19')->getFont()->getColor()->setRGB('FFFFFF');
+            $sheet->getStyle('A20:B20')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('DC3545');
+            $sheet->getStyle('A20:B20')->getFont()->getColor()->setRGB('FFFFFF');
         }
     }
 

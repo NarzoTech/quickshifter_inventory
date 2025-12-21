@@ -50,8 +50,12 @@
                 </td>
             </tr>
             <tr>
-                <td style="border: 1px solid #ddd; padding: 8px;">{{ __('Total Purchases') }}</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ currency($data['totalPurchases']) }}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">{{ __('Cost of Goods Sold (COGS)') }}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ currency($data['cogs']) }}</td>
+            </tr>
+            <tr style="background-color: #f8f9fa;">
+                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">{{ __('Gross Profit') }} ({{ __('Net Sales - COGS') }})</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">{{ currency($data['grossProfit']) }}</td>
             </tr>
             <tr>
                 <td style="border: 1px solid #ddd; padding: 8px;">{{ __('Operating Expenses') }}</td>

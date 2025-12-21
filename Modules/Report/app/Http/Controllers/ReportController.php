@@ -38,6 +38,7 @@ use Modules\Purchase\app\Models\PurchaseReturn;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
+use Modules\Sales\app\Models\SalesReturnDetails;
 use Modules\Service\app\Models\Service;
 use Modules\Supplier\app\Services\SupplierService;
 use Maatwebsite\Excel\Facades\Excel;
@@ -940,35 +941,84 @@ class ReportController extends Controller
     {
         checkAdminHasPermissionAndThrowException('report.view');
 
-        // Date filtering - default to current date
-        $fromDate = request('from_date') ? Carbon::parse(request('from_date'))->startOfDay() : now()->startOfDay();
-        $toDate = request('to_date') ? Carbon::parse(request('to_date'))->endOfDay() : now()->endOfDay();
+        // Build base queries
+        $salesQuery = Sale::query();
+        $productSaleQuery = ProductSale::whereNotNull('product_id')->where('source', 1);
+        $salesReturnQuery = SalesReturn::query();
+        $salesReturnDetailsQuery = SalesReturnDetails::whereNotNull('product_id')->where('source', 1);
+        $purchaseReturnQuery = PurchaseReturn::query();
+        $expenseQuery = Expense::query();
+        $salaryQuery = EmployeeSalary::query();
 
-        // Income
-        $data['totalSales'] = Sale::whereBetween('order_date', [$fromDate, $toDate])->sum('grand_total');
-        $data['salesReturns'] = SalesReturn::whereBetween('created_at', [$fromDate, $toDate])->sum('return_amount');
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? Carbon::parse(request('from_date'))->startOfDay() : now()->subYear()->startOfDay();
+            $toDate = request('to_date') ? Carbon::parse(request('to_date'))->endOfDay() : now()->endOfDay();
+
+            $salesQuery->whereBetween('order_date', [$fromDate, $toDate]);
+            $productSaleQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('order_date', [$fromDate, $toDate]);
+            });
+            $salesReturnQuery->whereBetween('created_at', [$fromDate, $toDate]);
+            $salesReturnDetailsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('created_at', [$fromDate, $toDate]);
+            });
+            $purchaseReturnQuery->whereBetween('created_at', [$fromDate, $toDate]);
+            $expenseQuery->whereBetween('date', [$fromDate, $toDate]);
+            $salaryQuery->whereBetween('date', [$fromDate, $toDate]);
+
+            $data['fromDate'] = $fromDate->format('d-m-Y');
+            $data['toDate'] = $toDate->format('d-m-Y');
+        } else {
+            $data['fromDate'] = __('All Time');
+            $data['toDate'] = now()->format('d-m-Y');
+        }
+
+        // Income - Total Sales Revenue
+        $data['totalSales'] = $salesQuery->sum('grand_total');
+        $data['salesReturns'] = $salesReturnQuery->sum('return_amount');
         $data['netSales'] = $data['totalSales'] - $data['salesReturns'];
 
-        // Purchase Returns (income - money received back from supplier)
-        $data['purchaseReturns'] = PurchaseReturn::whereBetween('created_at', [$fromDate, $toDate])->sum('return_amount');
+        // Purchase Returns (money received back from supplier)
+        $data['purchaseReturns'] = $purchaseReturnQuery->sum('return_amount');
 
         // Total Income
         $data['totalIncome'] = $data['netSales'] + $data['purchaseReturns'];
 
-        // Expenses
-        $data['totalPurchases'] = Purchase::whereBetween('purchase_date', [$fromDate, $toDate])->sum('total_amount');
-        $data['expenses'] = Expense::whereBetween('date', [$fromDate, $toDate])->sum('amount');
-        $data['salaries'] = EmployeeSalary::whereBetween('date', [$fromDate, $toDate])->sum('amount');
+        // Cost of Goods Sold (COGS) - based on sold products purchase price, not all purchases
+        $productSales = $productSaleQuery->with('product')->get();
+        $cogs = 0;
+        foreach ($productSales as $sale) {
+            // Use purchase_price from ProductSale if available, otherwise get from Product model
+            $purchasePrice = $sale->purchase_price;
+            if (!$purchasePrice && $sale->product) {
+                $purchasePrice = $sale->product->LastPurchasePrice ?: $sale->product->cost;
+            }
+            $cogs += (float) remove_comma($purchasePrice ?? 0) * abs($sale->quantity);
+        }
 
-        // Total Expenses
-        $data['totalExpenses'] = $data['totalPurchases'] + $data['expenses'] + $data['salaries'];
+        // Reduce COGS for returned items (they go back to inventory)
+        $returnDetails = $salesReturnDetailsQuery->with('product')->get();
+        $returnsCogs = 0;
+        foreach ($returnDetails as $detail) {
+            $purchasePrice = $detail->product->LastPurchasePrice ?: $detail->product->cost;
+            $returnsCogs += (float) remove_comma($purchasePrice ?? 0) * abs($detail->quantity);
+        }
 
-        // Profit/Loss Calculation
+        $data['cogs'] = $cogs - $returnsCogs;
+
+        // Gross Profit = Net Sales - COGS
+        $data['grossProfit'] = $data['netSales'] - $data['cogs'];
+
+        // Operating Expenses
+        $data['expenses'] = $expenseQuery->sum('amount');
+        $data['salaries'] = $salaryQuery->sum('amount');
+
+        // Total Expenses = COGS + Operating Expenses + Salaries
+        $data['totalExpenses'] = $data['cogs'] + $data['expenses'] + $data['salaries'];
+
+        // Net Profit/Loss = Total Income - Total Expenses
         $data['profitLoss'] = $data['totalIncome'] - $data['totalExpenses'];
-
-        // Date range for display
-        $data['fromDate'] = $fromDate->format('d-m-Y');
-        $data['toDate'] = $toDate->format('d-m-Y');
 
         // Excel Export
         if (checkAdminHasPermission('report.excel.download')) {
