@@ -11,6 +11,25 @@
         .ui-autocomplete {
             z-index: 215000000 !important;
         }
+        .produt_card {
+            position: relative;
+        }
+        .card-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: inherit;
+        }
+        .card-loader.d-none {
+            display: none !important;
+        }
     </style>
 @endpush
 @section('content')
@@ -753,11 +772,28 @@
         // load products
         (function($) {
             "use strict";
+
             $(document).ready(function() {
                 totalSummery();
-                loadProudcts();
+                // Only load products tab initially (active tab)
+                loadTabData('products');
                 $("#flatpickr-date,[name='sale_date']").flatpickr({
                     dateFormat: "d-m-Y",
+                });
+
+                // Lazy load tabs on click
+                $('#myTab button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    const tabId = $(e.target).attr('id');
+                    const tabMap = {
+                        'products-tab': 'products',
+                        'favoriteProducts-tab': 'favorites',
+                        'service-tab': 'services',
+                        'favoriteService-tab': 'favorite_services'
+                    };
+                    const tab = tabMap[tabId];
+                    if (tab && !loadedTabs[tab]) {
+                        loadTabData(tab);
+                    }
                 });
 
                 // update pos quantity
@@ -766,37 +802,27 @@
                     if (quantity < 1) {
                         return;
                     }
-                    $('.preloader_area').removeClass('d-none');
-                    let parernt_td = $(this).parents('td');
-                    let rowid = parernt_td.data('rowid')
-                    const pos = getCurrentPos();
+                    let parent_td = $(this).parents('td');
+                    let rowid = parent_td.data('rowid');
+                    let row = $(this).closest('tr');
+
+                    // Get current price and update subtotal in DOM immediately
+                    let price = parseFloat(row.find('.price input').val()) || 0;
+                    let subtotal = price * quantity;
+                    row.find('.row_total').text(currencyFormat(subtotal));
+                    totalSummery();
+
+                    // Sync to server in background
                     $.ajax({
                         type: 'get',
-                        data: {
-                            rowid,
-                            quantity
-                        },
+                        data: { rowid, quantity },
                         url: "{{ route('admin.cart-quantity-update') }}",
-                        success: function(response) {
-                            $(".product-table-container").html(response)
-                            $('[name="source"]').niceSelect();
-                            totalSummery();
-                            console.log(pos);
-                            scrollToCurrent(pos)
-                            $('.preloader_area').addClass('d-none');
-                        },
                         error: function(response) {
-                            if (response.status == 500) {
+                            if (response.status == 500 || response.status == 403) {
                                 toastr.error("{{ __('Server error occurred') }}")
                             }
-
-                            if (response.status == 403) {
-                                toastr.error("{{ __('Server error occurred') }}")
-                            }
-                            $('.preloader_area').addClass('d-none');
                         }
                     });
-
                 });
 
                 // load customer address
@@ -946,25 +972,34 @@
                     const brand = $('#brand_id').val();
                     const name = $('#name').val();
 
-                    loadProudcts({
+                    // Only reload products tab when filtering
+                    loadTabData('products', {
                         category_id,
                         brand,
                         name
-                    })
+                    });
                 })
 
-                $("#service_category_id,#service_name,#favorite_service_name").on('input', function() {
+                $("#service_category_id,#service_name").on('input', function() {
                     const category_id = $('#service_category_id').val();
-                    let name = null;
-                    if (this.id != 'service_category_id') {
-                        name = $(this).val();
-                    }
+                    const name = $('#service_name').val();
 
-
-                    loadProudcts({
+                    // Only reload services tab when filtering
+                    loadTabData('services', {
                         service_category_id: category_id,
                         service_name: name
-                    }, 'service')
+                    });
+                })
+
+                $("#favorite_service_name,#favorite_service_category_id").on('input', function() {
+                    const category_id = $('#favorite_service_category_id').val();
+                    const name = $('#favorite_service_name').val();
+
+                    // Only reload favorite services tab when filtering
+                    loadTabData('favorite_services', {
+                        service_category_id: category_id,
+                        service_name: name
+                    });
                 })
 
                 // extra - discount edit toggle
@@ -1133,32 +1168,44 @@
             $.ajax({
                 url: "{{ route('admin.cart.hold.edit', '') }}/" + id,
                 success: function(response) {
-                    $(".product-table-container").html(response)
+                    if (response.success) {
+                        // Clear current cart and rebuild from hold data
+                        $('.pos_pro_list_table tbody').empty();
 
-                    $('[name="source"]').niceSelect();
-                    totalSummery();
+                        // Add each item to DOM
+                        response.cart.forEach(function(item, index) {
+                            const rowHtml = getCartRowHtml(item, index + 1);
+                            $('.pos_pro_list_table tbody').append(rowHtml);
+                        });
 
-                    $(parent).parents('tr').remove()
-                    $('#hold-list-modal').modal('hide')
+                        $('[name="source"]').niceSelect();
+                        totalSummery();
+                    }
 
+                    $(parent).parents('tr').remove();
+                    $('#hold-list-modal').modal('hide');
                 }
             });
         }
 
         function updatePrice(rowId, price) {
-            const pos = getCurrentPos();
+            const row = $(`tr[data-rowid="${rowId}"]`);
+            const qty = parseInt(row.find('.pos_input_qty').val()) || 1;
+            const subtotal = parseFloat(price) * qty;
+
+            // Update DOM immediately
+            row.find('.price span').text(currencyFormat(price));
+            row.find('.price input').val(price);
+            row.find('.row_total').text(currencyFormat(subtotal));
+            totalSummery();
+
+            // Sync to server in background
             $.ajax({
                 type: 'get',
-                data: {
-                    rowId,
-                    price
-                },
+                data: { rowId, price },
                 url: "{{ route('admin.cart-price-update') }}",
-                success: function(response) {
-                    $(".product-table-container").html(response)
-                    $('[name="source"]').niceSelect();
-                    scrollToCurrent(pos)
-                    totalSummery();
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}")
                 }
             });
         }
@@ -1204,17 +1251,14 @@
         }
 
         function removeCartItem(rowId) {
-            const pos = getCurrentPos();
+            // Remove from DOM immediately
+            removeCartItemFromDOM(rowId);
+            toastr.success("{{ __('Remove successfully') }}");
+
+            // Sync to server in background
             $.ajax({
                 type: 'get',
                 url: "{{ url('admin/pos/remove-cart-item') }}" + "/" + rowId,
-                success: function(response) {
-                    $(".product-table-container").html(response)
-                    $('[name="source"]').niceSelect();
-                    totalSummery();
-                    scrollToCurrent(pos)
-                    toastr.success("{{ __('Remove successfully') }}")
-                },
                 error: function(response) {
                     toastr.error("{{ __('Server error occurred') }}")
                 }
@@ -1256,24 +1300,62 @@
         }
 
 
-        function loadProudcts(data = null, type = 'product') {
+        // Load specific tab data
+        function loadTabData(tab, data = {}) {
             $('.preloader_area').removeClass('d-none');
+            data.tab = tab;
             $.ajax({
                 type: 'get',
                 url: "{{ route('admin.load-products') }}",
                 data: data,
                 success: function(response) {
-
-                    $("#products .product_body").html(response.productView)
-                    $("#favoriteProducts .product_body").html(response.favProductView)
-                    $(".service_body").html(response.serviceView)
-                    $(".favorite_service_body").html(response.favoriteServiceView)
+                    if (response.productView) {
+                        $("#products .product_body").html(response.productView);
+                        loadedTabs.products = true;
+                    }
+                    if (response.favProductView) {
+                        $("#favoriteProducts .product_body").html(response.favProductView);
+                        loadedTabs.favorites = true;
+                    }
+                    if (response.serviceView) {
+                        $(".service_body").html(response.serviceView);
+                        loadedTabs.services = true;
+                    }
+                    if (response.favoriteServiceView) {
+                        $(".favorite_service_body").html(response.favoriteServiceView);
+                        loadedTabs.favorite_services = true;
+                    }
                     $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}");
+                    $('.preloader_area').addClass('d-none');
+                }
+            });
+        }
 
-                    toastr.error("{{ __('Server error occurred') }}")
-                    location.reload();
+        // Track loaded tabs globally
+        const loadedTabs = { products: false, favorites: false, services: false, favorite_services: false };
+
+        function loadProudcts(data = null, type = 'product') {
+            // Load all tabs (for search/filter operations)
+            $('.preloader_area').removeClass('d-none');
+            data = data || {};
+            data.tab = 'all';
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.load-products') }}",
+                data: data,
+                success: function(response) {
+                    if (response.productView) $("#products .product_body").html(response.productView);
+                    if (response.favProductView) $("#favoriteProducts .product_body").html(response.favProductView);
+                    if (response.serviceView) $(".service_body").html(response.serviceView);
+                    if (response.favoriteServiceView) $(".favorite_service_body").html(response.favoriteServiceView);
+                    $('.preloader_area').addClass('d-none');
+                },
+                error: function(response) {
+                    toastr.error("{{ __('Server error occurred') }}");
+                    $('.preloader_area').addClass('d-none');
                 }
             });
         }
@@ -1360,8 +1442,13 @@
             });
         }
 
-        function singleAddToCart(id, serviceType = 'product') {
-            $('.preloader_area').removeClass('d-none');
+        function singleAddToCart(id, serviceType = 'product', element = null) {
+            // Show loader on the card
+            if (element) {
+                $(element).find('.card-loader').removeClass('d-none');
+            }
+
+            // Make background AJAX call to sync with server
             $.ajax({
                 type: 'get',
                 data: {
@@ -1371,23 +1458,30 @@
                 },
                 url: "{{ url('/admin/pos/add-to-cart') }}",
                 success: function(response) {
-                    $(".product-table-container").html(response)
-
-                    $('[name="source"]').niceSelect();
-                    toastr.success("{{ __('Item added successfully') }}")
-                    totalSummery();
-                    $('.preloader_area').addClass('d-none');
-                    scrollToCurrent();
+                    if (response.success) {
+                        if (response.action === 'add') {
+                            // Add new item to DOM
+                            addCartItemToDOM(response.item);
+                        } else if (response.action === 'update') {
+                            // Update existing item quantity in DOM
+                            updateCartItemInDOM(response.item);
+                        }
+                        toastr.success("{{ __('Item added successfully') }}");
+                    }
                 },
                 error: function(response) {
                     if (response.status == 500) {
                         toastr.error("{{ __('Server error occurred') }}")
                     }
-
                     if (response.status == 403) {
                         toastr.error(response.responseJSON.message)
                     }
-                    $('.preloader_area').addClass('d-none');
+                },
+                complete: function() {
+                    // Hide loader when done
+                    if (element) {
+                        $(element).find('.card-loader').addClass('d-none');
+                    }
                 }
             });
         }
@@ -1734,15 +1828,26 @@
                 success: function(response) {
                     if (response['alert-type'] == 'success') {
                         toastr.success(response.message)
-                        loadProudcts();
+                        // Only reload affected tabs (products & favorites)
+                        loadedTabs.products = false;
+                        loadedTabs.favorites = false;
+                        // Get active tab and reload it
+                        const activeTab = $('#myTab button.active').attr('id');
+                        if (activeTab === 'products-tab') {
+                            loadTabData('products');
+                        } else if (activeTab === 'favoriteProducts-tab') {
+                            loadTabData('favorites');
+                        }
                     } else {
                         toastr.error(response.message)
                     }
+                    $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
                     if (response.status == 500) {
                         toastr.error("{{ __('Server error occurred') }}")
                     }
+                    $('.preloader_area').addClass('d-none');
                 }
             });
         }
@@ -1765,19 +1870,107 @@
                 success: function(response) {
                     if (response['alert-type'] == 'success') {
                         toastr.success(response.message)
-                        loadProudcts();
+                        // Only reload affected tabs (services & favorite services)
+                        loadedTabs.services = false;
+                        loadedTabs.favorite_services = false;
+                        // Get active tab and reload it
+                        const activeTab = $('#myTab button.active').attr('id');
+                        if (activeTab === 'service-tab') {
+                            loadTabData('services');
+                        } else if (activeTab === 'favoriteService-tab') {
+                            loadTabData('favorite_services');
+                        }
                     } else {
                         toastr.error(response.message)
                     }
+                    $('.preloader_area').addClass('d-none');
                 },
                 error: function(response) {
                     if (response.status == 500) {
                         toastr.error("{{ __('Server error occurred') }}")
                     }
+                    $('.preloader_area').addClass('d-none');
                 }
             });
         }
 
+
+        // Cart DOM manipulation functions
+        function getCartRowHtml(item, index) {
+            const variantHtml = item.variant && item.variant.attribute ?
+                `<span>${item.variant.attribute}</span>` : '';
+
+            const sourceSelect = item.type === 'product' ?
+                `<select name="source" id="source">
+                    <option value="1" ${item.source == '1' ? 'selected' : ''}>From Stock</option>
+                    <option value="2" ${item.source == '2' ? 'selected' : ''}>From Out Side</option>
+                </select>` : '';
+
+            const editBtnClass = item.source == '2' ? '' : 'd-none';
+
+            return `<tr data-rowid="${item.rowid}">
+                <td><p>${index}</p></td>
+                <td>
+                    <p>${item.name}</p>
+                    ${variantHtml}
+                </td>
+                <td>${sourceSelect}</td>
+                <td data-rowid="${item.rowid}" class="px-3">
+                    <input min="1" type="number" value="${item.qty}" class="pos_input_qty form-control">
+                </td>
+                <td class="px-3">${item.unit || ''}</td>
+                <td class="price">
+                    <span>${currencyFormat(item.price)}</span>
+                    <input type="text" value="${item.price}" name="table_price[]" style="width:100px" data-rowid="${item.rowid}" class="d-none">
+                </td>
+                <td class="row_total">${currencyFormat(item.sub_total)}</td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                        <a href="javascript:;" onclick="removeCartItem('${item.rowid}')" class="d-block p-2">
+                            <i class="fa fa-trash text-danger" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:;" class="edit-btn ${editBtnClass}" data-purchase="${item.purchase_price}" data-selling="${item.selling_price}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>`;
+        }
+
+        function currencyFormat(amount) {
+            return '{{ currency_icon() }}' + parseFloat(amount).toFixed(2);
+        }
+
+        function addCartItemToDOM(item) {
+            const tbody = $('.pos_pro_list_table tbody');
+            const rowCount = tbody.find('tr').length + 1;
+            const rowHtml = getCartRowHtml(item, rowCount);
+            tbody.append(rowHtml);
+            $('[name="source"]').niceSelect();
+            totalSummery();
+            scrollToCurrent();
+        }
+
+        function updateCartItemInDOM(item) {
+            const row = $(`tr[data-rowid="${item.rowid}"]`);
+            if (row.length) {
+                row.find('.pos_input_qty').val(item.qty);
+                row.find('.row_total').text(currencyFormat(item.sub_total));
+                row.find('.price span').text(currencyFormat(item.price));
+                row.find('.price input').val(item.price);
+                totalSummery();
+            }
+        }
+
+        function removeCartItemFromDOM(rowid) {
+            const row = $(`tr[data-rowid="${rowid}"]`);
+            row.remove();
+            // Re-number rows
+            $('.pos_pro_list_table tbody tr').each(function(index) {
+                $(this).find('td:first p').text(index + 1);
+            });
+            totalSummery();
+        }
 
         function scrollToCurrent(pos = 'scroll') {
             const $current = $('.pos_pro_list_table tbody tr:last-child');

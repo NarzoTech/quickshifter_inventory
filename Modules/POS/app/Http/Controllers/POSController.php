@@ -128,78 +128,83 @@ class POSController extends Controller
     {
         Paginator::useBootstrap();
 
-        $products = Product::where('status', 1)->whereHas('category', function ($query) {
-            $query->where('status', 1);
-        })->orderBy('stock', 'desc');
+        // Tab-based lazy loading: only load data for requested tab
+        $tab = $request->tab ?? 'all';
 
-        if ($request->category_id) {
-            $products = $products->where(function ($query) use ($request) {
-                $query->where('category_id', $request->category_id)->where('status', 1);
-            });
+        $response = [];
+
+        // Load products only if needed
+        if (in_array($tab, ['all', 'products', 'favorites'])) {
+            $products = Product::where('status', 1)->whereHas('category', function ($query) {
+                $query->where('status', 1);
+            })->orderBy('stock', 'desc');
+
+            if ($request->category_id) {
+                $products = $products->where(function ($query) use ($request) {
+                    $query->where('category_id', $request->category_id)->where('status', 1);
+                });
+            }
+
+            if ($request->brand) {
+                $products = $products->where('brand_id', $request->brand);
+            }
+
+            if ($request->name) {
+                $products = $products->where(function ($q) use ($request) {
+                    $q->where('name', 'LIKE', '%' . $request->name . '%')
+                        ->orWhere('sku', 'LIKE', '%' . $request->name . '%');
+                });
+            }
+
+            if ($tab === 'products' || $tab === 'all') {
+                $nonFavoriteProducts = (clone $products)->paginate(15);
+                $nonFavoriteProducts->appends(request()->query());
+                $response['productView'] = view('pos::ajax_products')->with([
+                    'products' => $nonFavoriteProducts,
+                ])->render();
+            }
+
+            if ($tab === 'favorites' || $tab === 'all') {
+                $favoriteProducts = (clone $products)->where('is_favorite', 1)->paginate(15);
+                $favoriteProducts->appends(request()->query());
+                $response['favProductView'] = view('pos::ajax_products')->with([
+                    'products' => $favoriteProducts,
+                ])->render();
+            }
         }
 
-        if ($request->brand) {
-            $products = $products->where('brand_id', $request->brand);
+        // Load services only if needed
+        if (in_array($tab, ['all', 'services', 'favorite_services'])) {
+            $services = $this->services->all()->where('status', 1);
+
+            if ($request->service_name) {
+                $services = $services->where(function ($q) use ($request) {
+                    $q->where('name', 'LIKE', '%' . $request->service_name . '%');
+                });
+            }
+
+            if ($request->service_category_id) {
+                $services = $services->where('category_id', $request->service_category_id);
+            }
+
+            if ($tab === 'services' || $tab === 'all') {
+                $paginatedServices = (clone $services)->paginate(15);
+                $paginatedServices->appends(request()->query());
+                $response['serviceView'] = view('pos::ajax_service')->with([
+                    'services' => $paginatedServices,
+                ])->render();
+            }
+
+            if ($tab === 'favorite_services' || $tab === 'all') {
+                $favoriteServices = (clone $services)->where('is_favourite', 1)->paginate(15);
+                $favoriteServices->appends(request()->query());
+                $response['favoriteServiceView'] = view('pos::ajax_service')->with([
+                    'services' => $favoriteServices,
+                ])->render();
+            }
         }
 
-        if ($request->name) {
-            $products = $products->where(function ($q) use ($request) {
-                $q->where('name', 'LIKE', '%' . $request->name . '%')
-                    ->orWhere('sku', 'LIKE', '%' . $request->name . '%');
-            });
-        }
-
-
-        // Paginate favorite products (clone to avoid modifying original query)
-        $favoriteProducts = (clone $products)->where('is_favorite', 1)->paginate(15);
-        $favoriteProducts->appends(request()->query());  // Append request parameters
-
-        // Paginate non-favorite products (use clone of original query)
-        $nonFavoriteProducts = (clone $products)->paginate(15);
-        $nonFavoriteProducts->appends(request()->query()); // Append request parameters
-
-
-
-        $services = $this->services->all()->where('status', 1);
-
-        if ($request->service_name) {
-            $services = $services->where(function ($q) use ($request) {
-                $q->where('name', 'LIKE', '%' . $request->service_name . '%');
-            });
-        }
-
-
-        if ($request->service_category_id) {
-            $services = $services->where('category_id', $request->service_category_id);
-        }
-
-
-        $favoriteServices = clone $services; // Clone the query to avoid conflicts
-        $favoriteServices = $favoriteServices->where('is_favourite', 1)->paginate(15);
-        $favoriteServices->appends(request()->query());
-
-
-        $services = $services->paginate(15);
-        $services->appends(request()->query());
-
-
-        $serviceView = view('pos::ajax_service')->with([
-            'services' => $services,
-        ])->render();
-
-        $favoriteServiceView = view('pos::ajax_service')->with([
-            'services' => $favoriteServices,
-        ])->render();
-
-        $productView =  view('pos::ajax_products')->with([
-            'products' => $nonFavoriteProducts,
-        ])->render();
-
-        $favProductView =  view('pos::ajax_products')->with([
-            'products' => $favoriteProducts,
-        ])->render();
-
-        return response()->json(['productView' => $productView, 'serviceView' => $serviceView, 'favProductView' => $favProductView, 'favoriteServiceView' => $favoriteServiceView]);
+        return response()->json($response);
     }
 
     public function favoriteProducts($products)
@@ -289,19 +294,29 @@ class POSController extends Controller
 
         // check if item already exist in cart
         $item_exist = false;
+        $existing_rowid = null;
         $sku = $type != 'service' ? ($request->variant_sku ? $request->variant_sku : $product->sku) : '';
         if (count($cart_contents) > 0) {
             foreach ($cart_contents as $index => $cart_content) {
                 if (($sku && $cart_content['sku'] == $sku) || ($service && $cart_content['id'] == $service->id && $cart_content['type'] == 'service')) {
                     $item_exist = true;
+                    $existing_rowid = $index;
                 }
             }
         }
 
-        // if ($item_exist) {
-        //     $notification = trans('Item already added');
-        //     return response()->json(['message' => $notification, 'cart' => session()->get('POSCART')], 403);
-        // }
+        // If item exists, increment quantity
+        if ($item_exist && $existing_rowid) {
+            $cart_contents[$existing_rowid]['qty'] += $request->qty ? $request->qty : 1;
+            $cart_contents[$existing_rowid]['sub_total'] = (float)$cart_contents[$existing_rowid]['price'] * $cart_contents[$existing_rowid]['qty'];
+            session()->put($cartName, $cart_contents);
+
+            return response()->json([
+                'success' => true,
+                'action' => 'update',
+                'item' => $cart_contents[$existing_rowid]
+            ]);
+        }
 
         $data = array();
         $data["rowid"] = uniqid();
@@ -326,10 +341,10 @@ class POSController extends Controller
 
         session()->put($cartName, [...$cart_contents, $data["rowid"] => $data]);
 
-        $cart_contents = session($cartName);
-
-        return view('pos::ajax_cart')->with([
-            'cart_contents' => $cart_contents,
+        return response()->json([
+            'success' => true,
+            'action' => 'add',
+            'item' => $data
         ]);
     }
 
@@ -348,10 +363,9 @@ class POSController extends Controller
 
         session()->put($cartName, $cart_contents);
 
-        $cart_contents = session()->get($cartName);
-
-        return view('pos::ajax_cart')->with([
-            'cart_contents' => $cart_contents,
+        return response()->json([
+            'success' => true,
+            'item' => $cart_contents[$request->rowid]
         ]);
     }
 
@@ -366,10 +380,9 @@ class POSController extends Controller
         unset($cart_contents[$rowId]);
         session()->put($cartName, $cart_contents);
 
-        $cart_contents = session()->get($cartName);
-
-        return view('pos::ajax_cart')->with([
-            'cart_contents' => $cart_contents,
+        return response()->json([
+            'success' => true,
+            'rowid' => $rowId
         ]);
     }
 
@@ -577,12 +590,17 @@ class POSController extends Controller
             $cart_contents[$request->rowId] = $item;
 
             session()->put($cartName, $cart_contents);
-        }
-        $cart_contents = session()->get($cartName);
 
-        return view('pos::ajax_cart')->with([
-            'cart_contents' => $cart_contents,
-        ]);
+            return response()->json([
+                'success' => true,
+                'item' => $item
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Item not found'
+        ], 404);
     }
 
     public function cartHold(Request $request)
@@ -626,8 +644,9 @@ class POSController extends Controller
         $cartHold->delete();
         $cart_contents = session()->get('POSCART');
 
-        return view('pos::ajax_cart')->with([
-            'cart_contents' => $cart_contents,
+        return response()->json([
+            'success' => true,
+            'cart' => array_values($cart_contents)
         ]);
     }
 

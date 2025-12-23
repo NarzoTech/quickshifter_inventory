@@ -2,8 +2,13 @@
     <div class="row">
         @foreach ($products as $product_index => $product)
             <div class="col-6 col-md-4 col-lg-4">
-                <div class="card produt_card cursor-pointer"
-                    @if ($product->has_variant) onclick="load_product_model({{ $product->id }})" @else onclick="singleAddToCart({{ $product->id }})" @endif>
+                <div class="card produt_card cursor-pointer" data-product-id="{{ $product->id }}"
+                    @if ($product->has_variant) onclick="load_product_model({{ $product->id }})" @else onclick="singleAddToCart({{ $product->id }}, 'product', this)" @endif>
+                    <div class="card-loader d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="w-100 produt_card_img">
                         <img src="{{ $product->singleImage }}" class="card-img-top" alt="Product">
                         @if ($product->is_favorite)

@@ -106,10 +106,14 @@
                         data: $('#modal_add_to_cart_form').serialize(),
                         url: "{{ url('/admin/pos/add-to-cart') }}",
                         success: function(response) {
-                            $(".shopping-card-body").html(response)
-                            toastr.success("{{ __('Item added successfully') }}")
-                            calculateTotalFee();
-
+                            if (response.success) {
+                                if (response.action === 'add') {
+                                    addCartItemToDOM(response.item);
+                                } else if (response.action === 'update') {
+                                    updateCartItemInDOM(response.item);
+                                }
+                                toastr.success("{{ __('Item added successfully') }}");
+                            }
                             $("#cartModal").modal('hide');
                         },
                         error: function(response) {

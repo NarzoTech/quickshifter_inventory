@@ -2,7 +2,12 @@
     <div class="row">
         @foreach ($services as $index => $service)
             <div class="col-6 col-md-4 col-lg-4">
-                <div class="card produt_card cursor-pointer" onclick="singleAddToCart({{ $service->id }}, 'service')">
+                <div class="card produt_card cursor-pointer" data-product-id="{{ $service->id }}" onclick="singleAddToCart({{ $service->id }}, 'service', this)">
+                    <div class="card-loader d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <div class="w-100 produt_card_img">
                         <img src="{{ $service->singleImage }}" class="card-img-top" alt="Product">
                         @if ($service->is_favourite)
