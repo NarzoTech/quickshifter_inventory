@@ -6,7 +6,9 @@
       "Bash(php artisan make:migration:*)",
       "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
     ]
   }
 }

@@ -90,4 +90,45 @@ class ProfileController extends Controller
             return redirect()->back()->with($notification);
         }
     }
+
+    public function update_security_question(Request $request)
+    {
+        checkAdminHasPermissionAndThrowException('admin.profile.update');
+
+        $admin = Auth::guard('admin')->user();
+
+        $rules = [
+            'security_question' => 'required|string|max:255',
+        ];
+
+        // Only require answer confirmation if answer is provided
+        if ($request->filled('security_answer')) {
+            $rules['security_answer'] = 'required|string|min:2|confirmed';
+        } elseif (!$admin->security_answer) {
+            // If no existing answer, require one
+            $rules['security_answer'] = 'required|string|min:2|confirmed';
+        }
+
+        $customMessages = [
+            'security_question.required' => __('Security question is required'),
+            'security_answer.required' => __('Security answer is required'),
+            'security_answer.confirmed' => __('Security answer confirmation does not match'),
+            'security_answer.min' => __('Security answer must be at least 2 characters'),
+        ];
+
+        $this->validate($request, $rules, $customMessages);
+
+        $admin->security_question = $request->security_question;
+
+        if ($request->filled('security_answer')) {
+            $admin->security_answer = Hash::make($request->security_answer);
+        }
+
+        $admin->save();
+
+        $notification = __('Security question updated successfully');
+        $notification = ['messege' => $notification, 'alert-type' => 'success'];
+
+        return $this->redirectWithMessage(RedirectType::UPDATE->value, '', [], $notification);
+    }
 }

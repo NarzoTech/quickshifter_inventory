@@ -98,6 +98,58 @@
     </div>
 
     {{-- edit password area --}}
+
+    {{-- security question area --}}
+    <div class="card mt-5">
+        <div class="card-header">
+            <h5>{{ __('Security Question') }}</h5>
+            <p class="text-muted mb-0">{{ __('Set a security question to recover your account if you forget your password.') }}</p>
+        </div>
+        <div class="card-body">
+            <form @adminCan('admin.profile.edit') action="{{ route('admin.update-security-question') }}" @endadminCan
+                method="POST">
+                @csrf
+                @method('PUT')
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>{{ __('Security Question') }} <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="security_question"
+                                value="{{ $admin->security_question }}"
+                                placeholder="{{ __('e.g., What is your pet\'s name?') }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>{{ __('Security Answer') }} <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" name="security_answer"
+                                placeholder="{{ __('Enter your answer') }}" {{ $admin->security_answer ? '' : 'required' }}>
+                            @if($admin->security_answer)
+                                <small class="text-muted">{{ __('Leave blank to keep current answer') }}</small>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label>{{ __('Confirm Answer') }} <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" name="security_answer_confirmation"
+                                placeholder="{{ __('Confirm your answer') }}" {{ $admin->security_answer ? '' : 'required' }}>
+                        </div>
+                    </div>
+                </div>
+                @adminCan('admin.profile.edit')
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-primary">{{ __('Update Security Question') }}</button>
+                        </div>
+                    </div>
+                @endadminCan
+            </form>
+        </div>
+    </div>
+    {{-- security question area --}}
 @endsection
 @push('js')
     <script>

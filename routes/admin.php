@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 /*  Start Admin panel Controller  */
 use App\Http\Controllers\Admin\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Admin\Auth\SecurityQuestionResetController;
 use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NoticeController;
@@ -33,6 +34,12 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::post('/forget-password', [PasswordResetLinkController::class, 'custom_forget_password'])->name('forget-password');
     Route::get('reset-password/{token}', [NewPasswordController::class, 'custom_reset_password_page'])->name('password.reset');
     Route::post('/reset-password-store/{token}', [NewPasswordController::class, 'custom_reset_password_store'])->name('password.reset-store');
+
+    /* Security Question Reset Routes */
+    Route::get('security-reset', [SecurityQuestionResetController::class, 'showEmailForm'])->name('security-reset');
+    Route::post('security-reset/verify-email', [SecurityQuestionResetController::class, 'verifyEmail'])->name('security-reset.verify-email');
+    Route::post('security-reset/verify-answer', [SecurityQuestionResetController::class, 'verifyAnswer'])->name('security-reset.verify-answer');
+    Route::post('security-reset/reset-password', [SecurityQuestionResetController::class, 'resetPassword'])->name('security-reset.reset-password');
     /* End admin auth route */
 
     Route::middleware(['auth:admin'])->group(function () {
@@ -51,6 +58,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
             Route::get('edit-profile', 'edit_profile')->name('edit-profile');
             Route::put('profile-update', 'profile_update')->name('profile-update');
             Route::put('update-password', 'update_password')->name('update-password');
+            Route::put('update-security-question', 'update_security_question')->name('update-security-question');
         });
 
         Route::get('role/assign', [RolesController::class, 'assignRoleView'])->name('role.assign');
