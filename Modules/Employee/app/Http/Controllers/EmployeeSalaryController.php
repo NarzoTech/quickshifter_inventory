@@ -141,7 +141,14 @@ class EmployeeSalaryController extends Controller
         $sort = request()->order_by ? request()->order_by : 'desc';
 
         if (request('order_type')) {
-            $payments = $payments->orderBy(request('order_type'), $sort);
+            $orderType = request('order_type');
+            if ($orderType === 'name') {
+                $payments = $payments->join('employees', 'employee_salaries.employee_id', '=', 'employees.id')
+                    ->orderBy('employees.name', $sort)
+                    ->select('employee_salaries.*');
+            } else {
+                $payments = $payments->orderBy($orderType, $sort);
+            }
         } else {
             $payments = $payments->orderBy('id', $sort);
         }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Modules\Accounts\app\Models\Account;
 use Modules\Attendance\app\Models\HolidaySetup;
 use Modules\Attendance\app\Models\WeekendSetup;
+use Modules\Attendance\app\Models\Attendance;
 use Modules\Employee\app\Models\Employee;
 use Modules\Employee\app\Models\EmployeeSalary;
 
@@ -123,8 +124,14 @@ class EmployeeService
             ->get();
 
 
-        // total attendance of employee in that month
-        $totalAttendance = $employee->attendance()->whereMonth('date', $monthNumber)->where('employee_id', $id)->whereYear('date', $year)->count();
+        // total attendance of employee in that month (query directly to avoid relationship's built-in month filter)
+        $totalAttendance = Attendance::where('employee_id', $id)
+            ->whereMonth('date', $monthNumber)
+            ->whereYear('date', $year)
+            ->where(function ($query) {
+                $query->where('status', 'present')->orWhere('status', 'weekend');
+            })
+            ->count();
 
 
 
