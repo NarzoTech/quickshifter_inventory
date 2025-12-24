@@ -472,12 +472,49 @@ class ReportController extends Controller
         $totalPurchaseQty = 0;
 
         foreach ($allProducts as $product) {
-            $totalSalePrice += (int) $product->sales['price'];
-            $totalSaleQty += $product->sales['qty'];
-            $totalReturnPrice += (int) $product->sales_return['price'];
-            $totalReturnQty += $product->sales_return['qty'];
-            $totalPurchasePrice += (int) $product->total_purchase['price'];
-            $totalPurchaseQty += $product->total_purchase['qty'];
+            // Only count sales from own inventory (source = 1)
+            $ownSalesQuery = ProductSale::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            $ownSalesReturnsQuery = SalesReturnDetails::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            // Apply date filters if provided
+            if (request('from_date') || request('to_date')) {
+                $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+                $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+                
+                $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('order_date', [$fromDate, $toDate]);
+                });
+                
+                $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('created_at', [$fromDate, $toDate]);
+                });
+            }
+            
+            $ownSales = $ownSalesQuery->get();
+            $ownSalesReturns = $ownSalesReturnsQuery->get();
+            
+            // Calculate sales
+            $saleQty = $ownSales->sum('quantity');
+            $salePrice = $ownSales->sum('sub_total');
+            
+            // Calculate returns
+            $returnQty = $ownSalesReturns->sum('quantity');
+            $returnPrice = $ownSalesReturns->sum('sub_total');
+            
+            // Get purchase data (keep the existing logic for purchases)
+            $purchasePrice = (int) $product->total_purchase['price'];
+            $purchaseQty = $product->total_purchase['qty'];
+            
+            // Accumulate totals
+            $totalSalePrice += $salePrice;
+            $totalSaleQty += $saleQty;
+            $totalReturnPrice += $returnPrice;
+            $totalReturnQty += $returnQty;
+            $totalPurchasePrice += $purchasePrice;
+            $totalPurchaseQty += $purchaseQty;
         }
 
         $data = [

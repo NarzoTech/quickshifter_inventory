@@ -50,6 +50,42 @@ class BarcodeWiseProductExport implements FromCollection, WithHeadings, WithMapp
     }
     public function map($product): array
     {
+        // Only count sales from own inventory (source = 1)
+        $ownSalesQuery = \Modules\Sales\app\Models\ProductSale::where('product_id', $product->id)
+            ->where('source', 1);
+        
+        $ownSalesReturnsQuery = \Modules\Sales\app\Models\SalesReturnDetails::where('product_id', $product->id)
+            ->where('source', 1);
+        
+        // Apply date filters if provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            
+            $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('order_date', [$fromDate, $toDate]);
+            });
+            
+            $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('created_at', [$fromDate, $toDate]);
+            });
+        }
+        
+        $ownSales = $ownSalesQuery->get();
+        $ownSalesReturns = $ownSalesReturnsQuery->get();
+        
+        // Calculate sales
+        $saleQty = $ownSales->sum('quantity');
+        $salePrice = $ownSales->sum('sub_total');
+        
+        // Calculate returns
+        $returnQty = $ownSalesReturns->sum('quantity');
+        $returnPrice = $ownSalesReturns->sum('sub_total');
+        
+        // Get purchase data
+        $purchasePrice = (int) $product->total_purchase['price'];
+        $purchaseQty = $product->total_purchase['qty'];
+        
         // Map the data to match your format
         return [
             ++$this->index,
@@ -57,9 +93,9 @@ class BarcodeWiseProductExport implements FromCollection, WithHeadings, WithMapp
             $product->attribute,
             $product->barcode,
             $product->brand->name ?? 'N/A',
-            currency((int) $product->sales['price']) . "({$product->sales['qty']})",
-            currency((int) $product->sales_return['price']) . "({$product->sales_return['qty']})",
-            currency((int) $product->total_purchase['price']) . "({$product->total_purchase['qty']})"
+            currency($salePrice) . "(" . number_format($saleQty, 0) . ")",
+            currency($returnPrice) . "(" . number_format($returnQty, 0) . ")",
+            currency($purchasePrice) . "(" . number_format($purchaseQty, 0) . ")"
         ];
     }
 
@@ -74,9 +110,17 @@ class BarcodeWiseProductExport implements FromCollection, WithHeadings, WithMapp
                 $event->sheet->setCellValue('C' . $lastRow, '');
                 $event->sheet->setCellValue('D' . $lastRow, '');
                 $event->sheet->setCellValue('E' . $lastRow, 'Total');
-                $event->sheet->setCellValue('F' . $lastRow, currency($data['totalSalePrice'] ?? 0) . "({$data['totalSaleQty'] ?? 0})");
-                $event->sheet->setCellValue('G' . $lastRow, currency($data['totalReturnPrice'] ?? 0) . "({$data['totalReturnQty'] ?? 0})");
-                $event->sheet->setCellValue('H' . $lastRow, currency($data['totalPurchasePrice'] ?? 0) . "({$data['totalPurchaseQty'] ?? 0})");
+                
+                $totalSalePrice = isset($data['totalSalePrice']) ? $data['totalSalePrice'] : 0;
+                $totalSaleQty = isset($data['totalSaleQty']) ? $data['totalSaleQty'] : 0;
+                $totalReturnPrice = isset($data['totalReturnPrice']) ? $data['totalReturnPrice'] : 0;
+                $totalReturnQty = isset($data['totalReturnQty']) ? $data['totalReturnQty'] : 0;
+                $totalPurchasePrice = isset($data['totalPurchasePrice']) ? $data['totalPurchasePrice'] : 0;
+                $totalPurchaseQty = isset($data['totalPurchaseQty']) ? $data['totalPurchaseQty'] : 0;
+                
+                $event->sheet->setCellValue('F' . $lastRow, currency($totalSalePrice) . "(" . $totalSaleQty . ")");
+                $event->sheet->setCellValue('G' . $lastRow, currency($totalReturnPrice) . "(" . $totalReturnQty . ")");
+                $event->sheet->setCellValue('H' . $lastRow, currency($totalPurchasePrice) . "(" . $totalPurchaseQty . ")");
                 $event->sheet->getStyle('A' . $lastRow . ':H' . $lastRow)->getFont()->setBold(true);
             },
         ];

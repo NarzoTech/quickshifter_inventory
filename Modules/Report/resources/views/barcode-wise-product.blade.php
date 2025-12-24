@@ -104,17 +104,54 @@
                             $start = checkPaginate($products) ? $products->firstItem() : 1;
                         @endphp
                         @foreach ($products as $index => $product)
+                            @php
+                                // Only count sales from own inventory (source = 1)
+                                $ownSalesQuery = \Modules\Sales\app\Models\ProductSale::where('product_id', $product->id)
+                                    ->where('source', 1);
+                                
+                                $ownSalesReturnsQuery = \Modules\Sales\app\Models\SalesReturnDetails::where('product_id', $product->id)
+                                    ->where('source', 1);
+                                
+                                // Apply date filters if provided
+                                if (request('from_date') || request('to_date')) {
+                                    $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+                                    $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+                                    
+                                    $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                                        $q->whereBetween('order_date', [$fromDate, $toDate]);
+                                    });
+                                    
+                                    $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                                        $q->whereBetween('created_at', [$fromDate, $toDate]);
+                                    });
+                                }
+                                
+                                $ownSales = $ownSalesQuery->get();
+                                $ownSalesReturns = $ownSalesReturnsQuery->get();
+                                
+                                // Calculate sales
+                                $saleQty = $ownSales->sum('quantity');
+                                $salePrice = $ownSales->sum('sub_total');
+                                
+                                // Calculate returns
+                                $returnQty = $ownSalesReturns->sum('quantity');
+                                $returnPrice = $ownSalesReturns->sum('sub_total');
+                                
+                                // Get purchase data
+                                $purchasePrice = (int) $product->total_purchase['price'];
+                                $purchaseQty = $product->total_purchase['qty'];
+                            @endphp
                             <tr>
                                 <td>{{ $start + $index }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->attribute }}</td>
                                 <td>{{ $product->barcode }}</td>
                                 <td>{{ $product->brand->name ?? 'N/A' }}</td>
-                                <td>{{ currency((int) $product->sales['price']) }}({{ $product->sales['qty'] }})
+                                <td>{{ currency($salePrice) }}({{ number_format($saleQty, 0) }})
                                 </td>
-                                <td>{{ currency((int) $product->sales_return['price']) }}({{ $product->sales_return['qty'] }})
+                                <td>{{ currency($returnPrice) }}({{ number_format($returnQty, 0) }})
                                 </td>
-                                <td>{{ currency((int) $product->total_purchase['price']) }}({{ $product->total_purchase['qty'] }})
+                                <td>{{ currency($purchasePrice) }}({{ number_format($purchaseQty, 0) }})
                                 </td>
                             </tr>
                         @endforeach
