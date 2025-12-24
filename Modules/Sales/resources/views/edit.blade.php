@@ -450,7 +450,7 @@
                                             </th>
                                             <td class="text-right w-40">
                                                 <div class="form-group mb-0">
-                                                    <input type="text" class="form-control datepicker"
+                                                    <input type="text" class="form-control"
                                                         name="sale_date"
                                                         value="{{ formatDate($sale->order_date) }}"
                                                         autocomplete="off">
@@ -627,6 +627,11 @@
         (function($) {
             "use strict";
             $(document).ready(function() {
+                // Initialize flatpickr for sale_date (same as POS)
+                $("[name='sale_date']").flatpickr({
+                    dateFormat: "d-m-Y",
+                });
+                
                 totalSummery();
                 loadProudcts();
 
