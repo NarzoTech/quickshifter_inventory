@@ -51,9 +51,46 @@ class BarcodeWiseSaleExport implements FromCollection, WithHeadings, WithMapping
     }
     public function map($product): array
     {
-        $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
-        $sellingPrice = $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
-        $profitLoss = $sellQty * $sellingPrice - $sellQty * $product->purchase_price;
+        // Only count sales from own inventory (source = 1)
+        $ownSalesQuery = \Modules\Sales\app\Models\ProductSale::where('product_id', $product->id)
+            ->where('source', 1);
+        
+        $ownSalesReturnsQuery = \Modules\Sales\app\Models\SalesReturnDetails::where('product_id', $product->id)
+            ->where('source', 1);
+        
+        // Apply date filters if provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            
+            $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('order_date', [$fromDate, $toDate]);
+            });
+            
+            $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('created_at', [$fromDate, $toDate]);
+            });
+        }
+        
+        $ownSales = $ownSalesQuery->get();
+        $ownSalesReturns = $ownSalesReturnsQuery->get();
+        
+        // Calculate quantities
+        $sellQty = $ownSales->sum('quantity') - $ownSalesReturns->sum('quantity');
+        $totalSalesPrice = $ownSales->sum('sub_total');
+        $totalSalesReturnPrice = $ownSalesReturns->sum('sub_total');
+        
+        // Net sales price after returns
+        $netSalesPrice = $totalSalesPrice - $totalSalesReturnPrice;
+        
+        // Average selling price per unit
+        $avgSellingPrice = $sellQty > 0 ? $netSalesPrice / $sellQty : 0;
+        
+        // Get purchase price
+        $purchasePrice = $product->LastPurchasePrice ?: $product->cost;
+        
+        // Calculate profit/loss
+        $profitLoss = $netSalesPrice - ($sellQty * $purchasePrice);
 
         // Map the data to match your format
         return [
@@ -63,9 +100,9 @@ class BarcodeWiseSaleExport implements FromCollection, WithHeadings, WithMapping
             $product->brand->name ?? 'N/A',
             $product->stock_count ?? '0',
             $sellQty,
-            $sellingPrice,
-            $product->purchase_price,
-            $profitLoss,
+            currency($avgSellingPrice),
+            currency($purchasePrice),
+            currency($profitLoss),
         ];
     }
 
@@ -81,9 +118,9 @@ class BarcodeWiseSaleExport implements FromCollection, WithHeadings, WithMapping
                 $event->sheet->setCellValue('D' . $lastRow, 'Total');
                 $event->sheet->setCellValue('E' . $lastRow, $data['totalStock'] ?? 0);
                 $event->sheet->setCellValue('F' . $lastRow, $data['sellCount'] ?? 0);
-                $event->sheet->setCellValue('G' . $lastRow, $data['sellPrice'] ?? 0);
-                $event->sheet->setCellValue('H' . $lastRow, $data['totalPurchasePrice'] ?? 0);
-                $event->sheet->setCellValue('I' . $lastRow, $data['totalProfitLoss'] ?? 0);
+                $event->sheet->setCellValue('G' . $lastRow, currency($data['sellPrice'] ?? 0));
+                $event->sheet->setCellValue('H' . $lastRow, currency($data['totalPurchasePrice'] ?? 0));
+                $event->sheet->setCellValue('I' . $lastRow, currency($data['totalProfitLoss'] ?? 0));
                 $event->sheet->getStyle('A' . $lastRow . ':I' . $lastRow)->getFont()->setBold(true);
             },
         ];

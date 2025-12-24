@@ -27,19 +27,57 @@
         <tbody>
             @foreach ($products as $index => $product)
                 @php
-                    $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
-                    $sellingPrice = $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
+                    // Only count sales from own inventory (source = 1)
+                    $ownSalesQuery = \Modules\Sales\app\Models\ProductSale::where('product_id', $product->id)
+                        ->where('source', 1);
+                    
+                    $ownSalesReturnsQuery = \Modules\Sales\app\Models\SalesReturnDetails::where('product_id', $product->id)
+                        ->where('source', 1);
+                    
+                    // Apply date filters if provided
+                    if (request('from_date') || request('to_date')) {
+                        $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+                        $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+                        
+                        $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                            $q->whereBetween('order_date', [$fromDate, $toDate]);
+                        });
+                        
+                        $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                            $q->whereBetween('created_at', [$fromDate, $toDate]);
+                        });
+                    }
+                    
+                    $ownSales = $ownSalesQuery->get();
+                    $ownSalesReturns = $ownSalesReturnsQuery->get();
+                    
+                    // Calculate quantities
+                    $sellQty = $ownSales->sum('quantity') - $ownSalesReturns->sum('quantity');
+                    $totalSalesPrice = $ownSales->sum('sub_total');
+                    $totalSalesReturnPrice = $ownSalesReturns->sum('sub_total');
+                    
+                    // Net sales price after returns
+                    $netSalesPrice = $totalSalesPrice - $totalSalesReturnPrice;
+                    
+                    // Average selling price per unit
+                    $avgSellingPrice = $sellQty > 0 ? $netSalesPrice / $sellQty : 0;
+                    
+                    // Get purchase price
+                    $purchasePrice = $product->LastPurchasePrice ?: $product->cost;
+                    
+                    // Calculate profit/loss
+                    $profitLoss = $netSalesPrice - ($sellQty * $purchasePrice);
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->barcode }}</td>
                     <td>{{ $product->brand->name ?? 'N/A' }}</td>
-                    <td>{{ $product->stock_count }}</td>
-                    <td>{{ $sellQty }}</td>
-                    <td>{{ $sellingPrice }}</td>
-                    <td>{{ $product->purchase_price }}</td>
-                    <td>{{ $sellQty * $sellingPrice - $sellQty * $product->purchase_price }}</td>
+                    <td>{{ number_format($product->stock_count, 0) }}</td>
+                    <td>{{ number_format($sellQty, 0) }}</td>
+                    <td>{{ currency($avgSellingPrice) }}</td>
+                    <td>{{ currency($purchasePrice) }}</td>
+                    <td>{{ currency($profitLoss) }}</td>
                 </tr>
             @endforeach
             <tr>
@@ -47,19 +85,19 @@
                     <b>Total</b>
                 </td>
                 <td>
-                    <b>{{ $data['totalStock'] }}</b>
+                    <b>{{ number_format($data['totalStock'], 0) }}</b>
                 </td>
                 <td>
-                    <b>{{ $data['sellCount'] }}</b>
+                    <b>{{ number_format($data['sellCount'], 0) }}</b>
                 </td>
                 <td>
-                    <b>{{ $data['sellPrice'] }}</b>
+                    <b>{{ currency($data['sellPrice']) }}</b>
                 </td>
                 <td>
-                    <b>{{ $data['totalPurchasePrice'] }}</b>
+                    <b>{{ currency($data['totalPurchasePrice']) }}</b>
                 </td>
                 <td>
-                    <b>{{ $data['totalProfitLoss'] }}</b>
+                    <b>{{ currency($data['totalProfitLoss']) }}</b>
                 </td>
             </tr>
         </tbody>

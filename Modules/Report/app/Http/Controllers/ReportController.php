@@ -534,14 +534,52 @@ class ReportController extends Controller
         $totalProfitLoss = 0;
 
         foreach ($allProducts as $product) {
-            $sellQty = $product->sales['qty'] - $product->sales_return['qty'];
-            $sellingPrice = $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
-            $profitLoss = $sellQty * $sellingPrice - $sellQty * $product->purchase_price;
+            // Only count sales from own inventory (source = 1)
+            $ownSalesQuery = ProductSale::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            $ownSalesReturnsQuery = SalesReturnDetails::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            // Apply date filters if provided
+            if (request('from_date') || request('to_date')) {
+                $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+                $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+                
+                $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('order_date', [$fromDate, $toDate]);
+                });
+                
+                $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('created_at', [$fromDate, $toDate]);
+                });
+            }
+            
+            $ownSales = $ownSalesQuery->get();
+            $ownSalesReturns = $ownSalesReturnsQuery->get();
+            
+            // Calculate quantities
+            $sellQty = $ownSales->sum('quantity') - $ownSalesReturns->sum('quantity');
+            $totalSalesPrice = $ownSales->sum('sub_total');
+            $totalSalesReturnPrice = $ownSalesReturns->sum('sub_total');
+            
+            // Net sales price after returns
+            $netSalesPrice = $totalSalesPrice - $totalSalesReturnPrice;
+            
+            // Average selling price per unit
+            $avgSellingPrice = $sellQty > 0 ? $netSalesPrice / $sellQty : 0;
+            
+            // Get purchase price (use LastPurchasePrice or cost)
+            $purchasePrice = $product->LastPurchasePrice ?: $product->cost;
+            
+            // Calculate profit/loss: Net sales price - (sell quantity * purchase price)
+            $profitLoss = $netSalesPrice - ($sellQty * $purchasePrice);
 
+            // Accumulate totals
             $totalStock += $product->stock_count;
             $sellCount += $sellQty;
-            $sellPrice += $sellingPrice;
-            $totalPurchasePrice += $product->purchase_price;
+            $sellPrice += $netSalesPrice;
+            $totalPurchasePrice += ($sellQty * $purchasePrice);
             $totalProfitLoss += $profitLoss;
         }
 
@@ -580,7 +618,7 @@ class ReportController extends Controller
             }
         }
 
-        return view('report::barcode-sale', compact('products', 'totalStock', 'sellCount', 'sellPrice', 'totalPurchasePrice'));
+        return view('report::barcode-sale', compact('products', 'data'));
     }
 
 
