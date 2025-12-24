@@ -62,7 +62,31 @@ class Category extends Model
         $this->ensureProductsLoaded();
         $count = 0;
         foreach ($this->products as $product) {
-            $count += $product->sales['qty'];
+            // Only count sales from own inventory (source = 1)
+            $ownSalesQuery = \Modules\Sales\app\Models\ProductSale::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            $ownSalesReturnsQuery = \Modules\Sales\app\Models\SalesReturnDetails::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            // Apply date filters if provided
+            if (request('from_date') || request('to_date')) {
+                $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+                $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+                
+                $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('order_date', [$fromDate, $toDate]);
+                });
+                
+                $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('created_at', [$fromDate, $toDate]);
+                });
+            }
+            
+            $saleQty = $ownSalesQuery->sum('quantity');
+            $returnQty = $ownSalesReturnsQuery->sum('quantity');
+            
+            $count += ($saleQty - $returnQty);
         }
 
         return $count;
@@ -74,7 +98,31 @@ class Category extends Model
         $this->ensureProductsLoaded();
         $amount = 0;
         foreach ($this->products as $product) {
-            $amount += $product->sales['price'];
+            // Only count sales from own inventory (source = 1)
+            $ownSalesQuery = \Modules\Sales\app\Models\ProductSale::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            $ownSalesReturnsQuery = \Modules\Sales\app\Models\SalesReturnDetails::where('product_id', $product->id)
+                ->where('source', 1);
+            
+            // Apply date filters if provided
+            if (request('from_date') || request('to_date')) {
+                $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+                $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+                
+                $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('order_date', [$fromDate, $toDate]);
+                });
+                
+                $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                    $q->whereBetween('created_at', [$fromDate, $toDate]);
+                });
+            }
+            
+            $saleAmount = $ownSalesQuery->sum('sub_total');
+            $returnAmount = $ownSalesReturnsQuery->sum('sub_total');
+            
+            $amount += ($saleAmount - $returnAmount);
         }
 
         return $amount;
