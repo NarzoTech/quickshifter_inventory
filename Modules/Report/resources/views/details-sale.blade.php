@@ -113,23 +113,23 @@
                                 <td>{{ $sale->invoice }}</td>
                                 <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                 <td>
-                                    {{ $sale->grand_total }}
+                                    {{ currency($sale->grand_total) }}
                                 </td>
                                 <td>
-                                    {{ $sale->paid_amount }}
+                                    {{ currency($sale->paid_amount) }}
                                 </td>
                                 <td>
                                     @foreach ($sale->payment as $payment)
                                         {{ $payment->account->account_type }} :
-                                        {{ $payment->amount }}
+                                        {{ currency($payment->amount) }}
                                         <br>
                                     @endforeach
                                 </td>
                                 <td>
-                                    {{ $sale->due_amount }}
+                                    {{ currency($sale->due_amount) }}
                                 </td>
                                 <td>
-                                    {{ $sale->saleReturns->sum('return_amount') }}
+                                    {{ currency($sale->saleReturns->sum('return_amount')) }}
                                 </td>
                                 <td>
                                     {{ $sale->due_amount == 0 ? 'Paid' : 'Due' }}

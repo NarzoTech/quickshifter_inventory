@@ -46,23 +46,23 @@
                     <td>{{ $sale->invoice }}</td>
                     <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                     <td>
-                        {{ $sale->grand_total }}
+                        {{ currency($sale->grand_total) }}
                     </td>
                     <td>
-                        {{ $sale->paid_amount }}
+                        {{ currency($sale->paid_amount) }}
                     </td>
                     <td>
                         @foreach ($sale->payment as $payment)
                             {{ $payment->account->account_type }} :
-                            {{ $payment->amount }}
+                            {{ currency($payment->amount) }}
                             <br>
                         @endforeach
                     </td>
                     <td>
-                        {{ $sale->due_amount }}
+                        {{ currency($sale->due_amount) }}
                     </td>
                     <td>
-                        {{ $sale->saleReturns->sum('return_amount') }}
+                        {{ currency($sale->saleReturns->sum('return_amount')) }}
                     </td>
                     <td>
                         {{ $sale->due_amount == 0 ? 'Paid' : 'Due' }}
@@ -74,17 +74,17 @@
                     <b> {{ __('Total') }}</b>
                 </td>
                 <td colspan="1">
-                    <b>{{ $data['total_amount'] }}</b>
+                    <b>{{ currency($data['total_amount']) }}</b>
                 </td>
                 <td colspan="1">
-                    <b>{{ $data['paid_amount'] }}</b>
+                    <b>{{ currency($data['paid_amount']) }}</b>
                 </td>
                 <td colspan="1"></td>
                 <td colspan="1">
-                    <b>{{ $data['due_amount'] }}</b>
+                    <b>{{ currency($data['due_amount']) }}</b>
                 </td>
                 <td colspan="1">
-                    <b>{{ $data['return_amount'] }}</b>
+                    <b>{{ currency($data['return_amount']) }}</b>
                 </td>
             </tr>
         </tbody>

@@ -56,7 +56,7 @@ class DetailsSaleReportExport implements FromCollection, WithHeadings, WithMappi
 
         foreach ($sale->payment as $payment) {
             if ($payment->amount == 0) continue;
-            $paymentMethods .= $payment->account->account_type . ':' . $payment->amount . ', ';
+            $paymentMethods .= $payment->account->account_type . ':' . currency($payment->amount) . ', ';
         }
         $paymentMethods = rtrim($paymentMethods, ', ');
 
@@ -66,11 +66,11 @@ class DetailsSaleReportExport implements FromCollection, WithHeadings, WithMappi
             $sale->order_date->format('d-m-Y'),
             $sale->invoice,
             $sale?->customer?->name ?? 'Guest',
-            $sale->grand_total,
-            $sale->paid_amount,
+            currency($sale->grand_total),
+            currency($sale->paid_amount),
             $paymentMethods,
-            $sale->due_amount,
-            $sale->saleReturns->sum('return_amount'),
+            currency($sale->due_amount),
+            currency($sale->saleReturns->sum('return_amount')),
             $sale->due_amount == 0 ? 'Paid' : 'Due',
         ];
     }
