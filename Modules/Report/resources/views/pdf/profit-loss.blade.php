@@ -38,6 +38,10 @@
                 <td style="border: 1px solid #ddd; padding: 8px;">{{ __('Purchase Returns') }} ({{ __('Refund from Supplier') }})</td>
                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ currency($data['purchaseReturns']) }}</td>
             </tr>
+            <tr>
+                <td style="border: 1px solid #ddd; padding: 8px;">{{ __('Outside Sales Profit') }} ({{ __('Selling') }}: {{ currency($data['outsideSellingPrice']) }} - {{ __('Purchase') }}: {{ currency($data['outsidePurchaseCost']) }})</td>
+                <td style="border: 1px solid #ddd; padding: 8px; text-align: right; color: green;">{{ currency($data['outsideProfit']) }}</td>
+            </tr>
             <tr style="background-color: #c3e6cb;">
                 <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">{{ __('Total Income') }}</td>
                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; color: green;">{{ currency($data['totalIncome']) }}</td>
@@ -50,7 +54,7 @@
                 </td>
             </tr>
             <tr>
-                <td style="border: 1px solid #ddd; padding: 8px;">{{ __('Cost of Goods Sold (COGS)') }}</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">{{ __('Cost of Goods Sold (COGS - Own Inventory)') }}</td>
                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ currency($data['cogs']) }}</td>
             </tr>
             <tr style="background-color: #f8f9fa;">

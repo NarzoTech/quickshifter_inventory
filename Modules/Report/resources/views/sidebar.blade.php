@@ -77,6 +77,7 @@
         'admin.report.supplier',
         'admin.report.supplier-payment',
         'admin.report.salary',
+        'admin.report.other-sales',
     ];
 @endphp
 @adminCan('report.view')
@@ -176,6 +177,11 @@
             <li class="{{ Route::is('admin.report.salary') ? 'active' : '' }} menu-item">
                 <a href="{{ route('admin.report.salary') }}" class="menu-link">
                     {{ __('Salary Report') }}
+                </a>
+            </li>
+            <li class="{{ Route::is('admin.report.other-sales') ? 'active' : '' }} menu-item">
+                <a href="{{ route('admin.report.other-sales') }}" class="menu-link">
+                    {{ __('Other Sales Report') }}
                 </a>
             </li>
             {{-- <li class="{{ Route::is('admin.report.dts') ? 'active' : '' }}  menu-item">

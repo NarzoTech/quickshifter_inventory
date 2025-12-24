@@ -26,11 +26,12 @@ class ProfitLossExport implements FromArray, WithHeadings, WithStyles, WithTitle
             [__('Sales Returns') . ' (' . __('Deduction') . ')', '- ' . currency($this->data['salesReturns'])],
             [__('Net Sales'), currency($this->data['netSales'])],
             [__('Purchase Returns') . ' (' . __('Refund from Supplier') . ')', currency($this->data['purchaseReturns'])],
+            [__('Outside Sales Profit') . ' (' . __('Selling') . ': ' . currency($this->data['outsideSellingPrice']) . ' - ' . __('Purchase') . ': ' . currency($this->data['outsidePurchaseCost']) . ')', currency($this->data['outsideProfit'])],
             [__('Total Income'), currency($this->data['totalIncome'])],
             ['', ''],
             // Expense Section
             [__('EXPENSES'), ''],
-            [__('Cost of Goods Sold (COGS)'), currency($this->data['cogs'])],
+            [__('Cost of Goods Sold (COGS - Own Inventory)'), currency($this->data['cogs'])],
             [__('Gross Profit') . ' (' . __('Net Sales - COGS') . ')', currency($this->data['grossProfit'])],
             [__('Operating Expenses'), currency($this->data['expenses'])],
             [__('Employee Salaries'), currency($this->data['salaries'])],
@@ -92,32 +93,32 @@ class ProfitLossExport implements FromArray, WithHeadings, WithStyles, WithTitle
         $sheet->getStyle('A6')->getFont()->setBold(true);
         $sheet->getStyle('A6:B6')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('D4EDDA');
 
-        // Style Total Income row (row 11)
-        $sheet->getStyle('A11')->getFont()->setBold(true);
-        $sheet->getStyle('A11:B11')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('C3E6CB');
+        // Style Total Income row (row 12)
+        $sheet->getStyle('A12')->getFont()->setBold(true);
+        $sheet->getStyle('A12:B12')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('C3E6CB');
 
-        // Style Expenses header (row 13)
-        $sheet->getStyle('A13')->getFont()->setBold(true);
-        $sheet->getStyle('A13:B13')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F8D7DA');
+        // Style Expenses header (row 14)
+        $sheet->getStyle('A14')->getFont()->setBold(true);
+        $sheet->getStyle('A14:B14')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F8D7DA');
 
-        // Style Gross Profit row (row 15)
-        $sheet->getStyle('A15')->getFont()->setBold(true);
-        $sheet->getStyle('A15:B15')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F8F9FA');
+        // Style Gross Profit row (row 16)
+        $sheet->getStyle('A16')->getFont()->setBold(true);
+        $sheet->getStyle('A16:B16')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F8F9FA');
 
-        // Style Total Expenses row (row 18)
-        $sheet->getStyle('A18')->getFont()->setBold(true);
-        $sheet->getStyle('A18:B18')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F5C6CB');
+        // Style Total Expenses row (row 19)
+        $sheet->getStyle('A19')->getFont()->setBold(true);
+        $sheet->getStyle('A19:B19')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('F5C6CB');
 
-        // Style Net Profit/Loss row (row 20)
-        $sheet->getStyle('A20')->getFont()->setBold(true)->setSize(12);
-        $sheet->getStyle('B20')->getFont()->setBold(true)->setSize(12);
+        // Style Net Profit/Loss row (row 21)
+        $sheet->getStyle('A21')->getFont()->setBold(true)->setSize(12);
+        $sheet->getStyle('B21')->getFont()->setBold(true)->setSize(12);
 
         if ($this->data['profitLoss'] >= 0) {
-            $sheet->getStyle('A20:B20')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('28A745');
-            $sheet->getStyle('A20:B20')->getFont()->getColor()->setRGB('FFFFFF');
+            $sheet->getStyle('A21:B21')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('28A745');
+            $sheet->getStyle('A21:B21')->getFont()->getColor()->setRGB('FFFFFF');
         } else {
-            $sheet->getStyle('A20:B20')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('DC3545');
-            $sheet->getStyle('A20:B20')->getFont()->getColor()->setRGB('FFFFFF');
+            $sheet->getStyle('A21:B21')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('DC3545');
+            $sheet->getStyle('A21:B21')->getFont()->getColor()->setRGB('FFFFFF');
         }
     }
 

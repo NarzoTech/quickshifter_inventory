@@ -17,6 +17,7 @@ use App\Exports\SalaryReportExport;
 use App\Exports\SuppliersPaymentReportExport;
 use App\Exports\SuppliersReportExport;
 use App\Exports\TotalReceiveReportExport;
+use App\Exports\OtherSalesReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
@@ -1006,18 +1007,49 @@ class ReportController extends Controller
             $data['toDate'] = now()->format('d-m-Y');
         }
 
-        // Income - Total Sales Revenue
-        $data['totalSales'] = $salesQuery->sum('grand_total');
+        // Calculate profit from outside sales (source = 2) FIRST
+        // For outside sales, we only count profit as income, not the full sale amount
+        $outsideSalesQuery = ProductSale::where('source', 2);
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? Carbon::parse(request('from_date'))->startOfDay() : now()->subYear()->startOfDay();
+            $toDate = request('to_date') ? Carbon::parse(request('to_date'))->endOfDay() : now()->endOfDay();
+            
+            $outsideSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('order_date', [$fromDate, $toDate]);
+            });
+        }
+        
+        $outsideSales = $outsideSalesQuery->get();
+        $data['outsideProfit'] = 0;
+        $data['outsidePurchaseCost'] = 0;
+        $data['outsideSellingPrice'] = 0;
+        
+        foreach ($outsideSales as $sale) {
+            $purchasePrice = $sale->purchase_price ?? 0;
+            $sellingPrice = $sale->selling_price ?? 0;
+            $quantity = abs($sale->quantity);
+            
+            $data['outsidePurchaseCost'] += $purchasePrice * $quantity;
+            $data['outsideSellingPrice'] += $sellingPrice * $quantity;
+            $data['outsideProfit'] += ($sellingPrice - $purchasePrice) * $quantity;
+        }
+
+        // Income - Total Sales Revenue (excluding outside sales full amount)
+        // We need to subtract the outside sales selling price from total sales
+        // because we only want to count the profit from outside sales
+        $totalSalesAll = $salesQuery->sum('grand_total');
+        $data['totalSales'] = $totalSalesAll - $data['outsideSellingPrice'];
         $data['salesReturns'] = $salesReturnQuery->sum('return_amount');
         $data['netSales'] = $data['totalSales'] - $data['salesReturns'];
 
         // Purchase Returns (money received back from supplier)
         $data['purchaseReturns'] = $purchaseReturnQuery->sum('return_amount');
 
-        // Total Income
-        $data['totalIncome'] = $data['netSales'] + $data['purchaseReturns'];
+        // Total Income (including outside sales profit)
+        $data['totalIncome'] = $data['netSales'] + $data['purchaseReturns'] + $data['outsideProfit'];
 
         // Cost of Goods Sold (COGS) - based on sold products purchase price, not all purchases
+        // Only for source = 1 (from stock)
         $productSales = $productSaleQuery->with('product')->get();
         $cogs = 0;
         foreach ($productSales as $sale) {
@@ -1039,7 +1071,7 @@ class ReportController extends Controller
 
         $data['cogs'] = $cogs - $returnsCogs;
 
-        // Gross Profit = Net Sales - COGS
+        // Gross Profit = Net Sales - COGS (outside profit already in netSales via totalIncome)
         $data['grossProfit'] = $data['netSales'] - $data['cogs'];
 
         // Operating Expenses
@@ -1047,6 +1079,7 @@ class ReportController extends Controller
         $data['salaries'] = $salaryQuery->sum('amount');
 
         // Total Expenses = COGS + Operating Expenses + Salaries
+        // Note: Outside sales purchase cost is NOT added to total expenses as it's already factored in the profit
         $data['totalExpenses'] = $data['cogs'] + $data['expenses'] + $data['salaries'];
 
         // Net Profit/Loss = Total Income - Total Expenses
@@ -1428,5 +1461,85 @@ class ReportController extends Controller
 
 
         return view('report::salary', compact('employees', 'data'));
+    }
+
+    public function otherSales()
+    {
+        checkAdminHasPermissionAndThrowException('report.view');
+        
+        // Get sales that have products from outside (source = 2)
+        $sales = Sale::with(['customer', 'payment', 'payment.account', 'saleReturns', 'details' => function($query) {
+                $query->where('source', 2);
+            }])
+            ->whereHas('details', function ($query) {
+                $query->where('source', 2);
+            });
+
+        // Only filter by date if dates are provided
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+            $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
+
+        if (request()->keyword) {
+            $sales = $sales->whereHas('customer', function ($q) {
+                $q->where('name', 'like', '%' . request()->keyword . '%');
+            })
+                ->orWhere('invoice', request()->keyword);
+        }
+
+        // Get all data for calculations and export
+        $allSales = $sales->get();
+
+        // Calculate amounts only from outside sales (source = 2)
+        $data['total_selling'] = 0;
+        $data['total_purchase'] = 0;
+        $data['total_profit'] = 0;
+        $data['total_quantity'] = 0;
+        
+        foreach ($allSales as $sale) {
+            // Calculate only for products from outside (source = 2)
+            $outsideProducts = $sale->details->where('source', 2);
+            
+            foreach ($outsideProducts as $detail) {
+                $data['total_quantity'] += $detail->quantity;
+                $data['total_selling'] += ($detail->selling_price * $detail->quantity);
+                $data['total_purchase'] += ($detail->purchase_price * $detail->quantity);
+                $data['total_profit'] += (($detail->selling_price - $detail->purchase_price) * $detail->quantity);
+            }
+        }
+
+        // Export with ALL data (not paginated)
+        if (checkAdminHasPermission('report.excel.download')) {
+            if (request('export')) {
+                $fileName = 'other-sales-report-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+                return Excel::download(new OtherSalesReportExport($allSales, $data), $fileName);
+            }
+        }
+
+        if (checkAdminHasPermission('report.pdf.download')) {
+            if (request('export_pdf')) {
+                return view('report::pdf.other-sales', [
+                    'sales' => $allSales,
+                    'data' => $data
+                ]);
+            }
+        }
+
+        // Paginate for view
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $sales = $allSales;
+        } else {
+            $sales = $sales->paginate($parpage);
+            $sales->appends(request()->query());
+        }
+
+        return view('report::other-sales', compact('sales', 'data'));
     }
 }

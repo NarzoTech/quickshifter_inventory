@@ -83,6 +83,10 @@
                                                 class="text-muted">({{ __('Refund from Supplier') }})</small></td>
                                         <td class="text-end">{{ currency($data['purchaseReturns']) }}</td>
                                     </tr>
+                                    <tr>
+                                        <td>{{ __('Outside Sales Profit') }} <small class="text-muted">({{ __('From Outside') }})</small></td>
+                                        <td class="text-end text-success">{{ currency($data['outsideProfit']) }}</td>
+                                    </tr>
                                     <tr class="table-success">
                                         <td><strong>{{ __('Total Income') }}</strong></td>
                                         <td class="text-end"><strong
@@ -104,8 +108,12 @@
                             <table class="table mb-0">
                                 <tbody>
                                     <tr>
-                                        <td>{{ __('Cost of Goods Sold') }} <small class="text-muted">({{ __('COGS') }})</small></td>
+                                        <td>{{ __('Cost of Goods Sold') }} <small class="text-muted">({{ __('COGS - Own Inventory') }})</small></td>
                                         <td class="text-end">{{ currency($data['cogs']) }}</td>
+                                    </tr>
+                                    <tr class="table-secondary">
+                                        <td><strong>{{ __('Gross Profit') }}</strong> <small class="text-muted">({{ __('Net Sales - COGS') }})</small></td>
+                                        <td class="text-end"><strong>{{ currency($data['grossProfit']) }}</strong></td>
                                     </tr>
                                     <tr>
                                         <td>{{ __('Operating Expenses') }}</td>
@@ -114,10 +122,6 @@
                                     <tr>
                                         <td>{{ __('Employee Salaries') }}</td>
                                         <td class="text-end">{{ currency($data['salaries']) }}</td>
-                                    </tr>
-                                    <tr class="table-secondary">
-                                        <td><strong>{{ __('Gross Profit') }}</strong> <small class="text-muted">({{ __('Net Sales - COGS') }})</small></td>
-                                        <td class="text-end"><strong>{{ currency($data['grossProfit']) }}</strong></td>
                                     </tr>
                                     <tr class="table-danger">
                                         <td><strong>{{ __('Total Expenses') }}</strong></td>
@@ -185,12 +189,16 @@
                                     <td>{{ __('Purchase Returns') }}</td>
                                     <td class="text-end">{{ currency($data['purchaseReturns']) }}</td>
                                 </tr>
+                                <tr>
+                                    <td>{{ __('Outside Sales Profit') }} <small class="text-muted">({{ __('Selling') }}: {{ currency($data['outsideSellingPrice']) }} - {{ __('Purchase') }}: {{ currency($data['outsidePurchaseCost']) }})</small></td>
+                                    <td class="text-end text-success">{{ currency($data['outsideProfit']) }}</td>
+                                </tr>
                                 <tr class="table-info">
                                     <td><strong>{{ __('Total Income') }}</strong></td>
                                     <td class="text-end"><strong>{{ currency($data['totalIncome']) }}</strong></td>
                                 </tr>
                                 <tr>
-                                    <td>{{ __('Cost of Goods Sold (COGS)') }}</td>
+                                    <td>{{ __('Cost of Goods Sold (COGS - Own Inventory)') }}</td>
                                     <td class="text-end">{{ currency($data['cogs']) }}</td>
                                 </tr>
                                 <tr class="table-secondary">
