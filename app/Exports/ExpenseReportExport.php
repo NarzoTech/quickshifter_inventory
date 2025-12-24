@@ -51,7 +51,7 @@ class ExpenseReportExport implements FromCollection, WithHeadings, WithMapping, 
             $expense->createdBy->name,
             $expense->expenseType->name,
             $expense->note,
-            $expense->amount,
+            currency($expense->amount),
         ];
     }
     public function styles(Worksheet $sheet)
@@ -98,7 +98,7 @@ class ExpenseReportExport implements FromCollection, WithHeadings, WithMapping, 
         $sheet->setCellValue('C' . $totalRow, '');
         $sheet->setCellValue('D' . $totalRow, '');
         $sheet->setCellValue('E' . $totalRow, __('Total'));
-        $sheet->setCellValue('F' . $totalRow, $this->totalAmount);
+        $sheet->setCellValue('F' . $totalRow, currency($this->totalAmount));
 
         // Style the total row
         $sheet->getStyle('A' . $totalRow . ':F' . $totalRow)->getFont()->setBold(true);

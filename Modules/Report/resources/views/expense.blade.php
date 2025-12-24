@@ -106,7 +106,7 @@
                                 <td>{{ $expense->createdBy->name }}</td>
                                 <td>{{ $expense->expenseType->name }}</td>
                                 <td>{{ $expense->note }}</td>
-                                <td>{{ $expense->amount }}</td>
+                                <td>{{ currency($expense->amount) }}</td>
                             </tr>
                         @endforeach
 
