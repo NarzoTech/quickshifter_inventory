@@ -16,14 +16,27 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $totalSalary = 0;
+                $totalPaidSalary = 0;
+            @endphp
             @foreach ($employees as $index => $employee)
+                @php
+                    $totalSalary += $employee->total_salary;
+                    $totalPaidSalary += $employee->paid_salary;
+                @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>{{ $employee->name }}</td>
-                    <td>{{ $employee->total_salary }}</td>
-                    <td>{{ $employee->paid_salary }}</td>
+                    <td>{{ currency($employee->total_salary) }}</td>
+                    <td>{{ currency($employee->paid_salary) }}</td>
                 </tr>
             @endforeach
+            <tr style="background-color: #f0f0f0; font-weight: bold;">
+                <td colspan="2" style="text-align: right; padding: 8px;">{{ __('Total') }}</td>
+                <td style="padding: 8px;">{{ currency($totalSalary) }}</td>
+                <td style="padding: 8px;">{{ currency($totalPaidSalary) }}</td>
+            </tr>
 
         </tbody>
     </table>

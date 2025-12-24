@@ -100,15 +100,34 @@
                                 ? formatDate(request('month'), 'F')
                                 : formatDate(now(), 'F');
                         @endphp
+                        @php
+                            $totalSalary = 0;
+                            $totalPaidSalary = 0;
+                        @endphp
                         @foreach ($employees as $employee)
+                            @php
+                                $totalSalary += $employee->total_salary;
+                                $totalPaidSalary += $employee->paid_salary;
+                            @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 {{-- <td>{{ $month }}</td> --}}
                                 <td>{{ $employee->name }}</td>
-                                <td>{{ $employee->total_salary }}</td>
-                                <td>{{ $employee->paid_salary }}</td>
+                                <td>{{ currency($employee->total_salary) }}</td>
+                                <td>{{ currency($employee->paid_salary) }}</td>
                             </tr>
                         @endforeach
+                        <tr>
+                            <td colspan="2" class="text-end">
+                                <b>{{ __('Total') }}</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($totalSalary) }}</b>
+                            </td>
+                            <td>
+                                <b>{{ currency($totalPaidSalary) }}</b>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
