@@ -109,11 +109,11 @@
                                 <td>{{ formatDate($supplierPayment->purchase_date) }}</td>
                                 <td>{{ $supplierPayment->invoice_number }}</td>
                                 <td>{{ $supplierPayment->supplier->name }}</td>
-                                <td>{{ $supplierPayment->total_amount }}</td>
-                                <td>{{ $supplierPayment->paid_amount }}</td>
-                                <td>{{ $supplierPayment->due_amount - $supplierPayment->purchaseReturn->sum('return_amount') + $supplierPayment->purchaseReturn->sum('received_amount') }}
+                                <td>{{ currency($supplierPayment->total_amount) }}</td>
+                                <td>{{ currency($supplierPayment->paid_amount) }}</td>
+                                <td>{{ currency($supplierPayment->due_amount - $supplierPayment->purchaseReturn->sum('return_amount') + $supplierPayment->purchaseReturn->sum('received_amount')) }}
                                 </td>
-                                <td>{{ $supplierPayment->purchaseReturn->sum('return_amount') }}</td>
+                                <td>{{ currency($supplierPayment->purchaseReturn->sum('return_amount')) }}</td>
                             </tr>
                         @endforeach
                         <tr>
