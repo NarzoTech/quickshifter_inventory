@@ -56,7 +56,7 @@ class TotalReceiveReportExport implements FromCollection, WithHeadings, WithMapp
             ucwords($receive->payment_type),
             $receive->invoice ?? $receive->sale->invoice ?? '',
             $receive->customer->name ?? 'Guest',
-            $receive->amount,
+            currency($receive->amount),
             $receive->account->account_type ?? '',
         ];
     }

@@ -47,7 +47,7 @@
                         {{ $receive->customer->name }}
                     </td>
                     <td>
-                        {{ $receive->amount }}
+                        {{ currency($receive->amount) }}
                     </td>
                     <td>
                         {{ $receive->account->account_type }}
@@ -59,7 +59,7 @@
                     <b>{{ __('Total Amount') }}</b>
                 </td>
                 <td>
-                    <b>{{ $data['receive'] }}</b>
+                    <b>{{ currency($data['receive']) }}</b>
                 </td>
             </tr>
         </tbody>

@@ -120,7 +120,7 @@
                                     {{ $receive->customer->name }}
                                 </td>
                                 <td>
-                                    {{ $receive->amount }}
+                                    {{ currency($receive->amount) }}
                                 </td>
                                 <td>
                                     {{ $receive->account->account_type }}
