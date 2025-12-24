@@ -46,9 +46,9 @@ class LedgerExport implements FromArray, WithHeadings, WithStyles, WithTitle
             $row = array_merge($row, [
                 formatDate($ledger->date),
                 $ledger->invoice_type,
-                $ledger->amount,
-                $ledger->total_amount,
-                $opening,
+                currency($ledger->amount),
+                currency($ledger->total_amount),
+                currency($opening),
             ]);
 
             $data[] = $row;
@@ -67,9 +67,9 @@ class LedgerExport implements FromArray, WithHeadings, WithStyles, WithTitle
         $totalRow = array_merge($totalRow, [
             '',
             __('Total'),
-            $credit,
-            $debit,
-            $opening,
+            currency($credit),
+            currency($debit),
+            currency($opening),
         ]);
 
         $data[] = $totalRow;
