@@ -171,7 +171,7 @@ class PurchaseService
     {
         $purchase = $this->purchase->find($id);
 
-        $attachment_name = null;
+        $attachment_name = $purchase->attachment; // Keep existing attachment by default
         if ($request->hasFile('attachment')) {
             $attachment      = $request->file('attachment');
             $attachment_name = file_upload($attachment, oldFile: $purchase->attachment);
@@ -189,7 +189,7 @@ class PurchaseService
         $purchase->total_amount   = $request->total_amount;
         $purchase->paid_amount    = $paidAmount;
         $purchase->due_amount     = $request->due_amount;
-        $purchase->payment_status = $request->paid_amount == $request->total_amount ? 'paid' : 'due';
+        $purchase->payment_status = $paidAmount == $request->total_amount ? 'paid' : 'due';
         $purchase->payment_type   = $request->payment_type;
         $purchase->note           = $request->note;
         $purchase->updated_by     = Auth::id();
@@ -296,16 +296,17 @@ class PurchaseService
         Stock::where('purchase_id', $id)?->delete();
         SupplierPayment::where('purchase_id', $id)?->delete();
 
-        // delete ledger
-        $ledger = Ledger::where('invoice_type', 'purchase')->orWhere('invoice_type', 'purchase payment')
-            ->where('invoice_no', $purchase->invoice_number)
-            ->get();
+        // delete ledger and ledger details
+        $ledgers = Ledger::where(function ($query) use ($purchase) {
+            $query->where('invoice_type', 'purchase')
+                  ->orWhere('invoice_type', 'purchase payment');
+        })->where('invoice_no', $purchase->invoice_number)->get();
 
-        $ledger = Ledger::where('invoice_type', 'purchase')->orWhere('invoice_type', 'purchase payment')
-            ->where('invoice_no', $purchase->invoice_number)
-            ->get();
-        foreach ($ledger as $item) {
-            $item->delete();
+        foreach ($ledgers as $ledger) {
+            // Delete ledger details first
+            $ledger->details()->delete();
+            // Then delete the ledger
+            $ledger->delete();
         }
 
         return $purchase->delete();
@@ -465,21 +466,84 @@ class PurchaseService
             'received_amount' => $request->received_amount,
             'return_amount'   => $request->invoice_amount,
             'shipping_cost'   => $request->shipping_cost,
-            'invoice'         => $this->returnInvoice(),
         ]);
 
-        // restore product stock
-
+        // restore product stock from old return
         foreach ($return->purchaseDetails as $purchaseDetail) {
             $product = Product::find($purchaseDetail->product_id);
             $product->stock += $purchaseDetail->quantity;
             $product->save();
         }
 
-        // delete old purchase details
+        // delete old purchase return details, payments, and stock
         $return->purchaseDetails()->delete();
         $return->payments()?->delete();
         $return->stock()->delete();
+
+        // create new purchase return details
+        foreach ($request->product_id as $index => $val) {
+            $return->purchaseDetails()->create([
+                'product_id'  => $val,
+                'purchase_id' => $request->purchase_id,
+                'quantity'    => $request->return_quantity[$index],
+                'total'       => $request->return_subtotal[$index],
+            ]);
+
+            // update product stock with new return quantities
+            $prod        = Product::find($val);
+            $prod->stock = $prod->stock - $request->return_quantity[$index];
+            $prod->save();
+
+            // create new stock entries
+            Stock::create([
+                'invoice_number'     => $return->invoice,
+                'purchase_return_id' => $return->id,
+                'type'               => 'purchase return',
+                'product_id'         => $val,
+                'date'               => now(),
+                'out_quantity'       => $request->return_quantity[$index],
+                'sku'                => $prod->sku,
+                'created_by'         => auth('admin')->user()->id,
+            ]);
+        }
+
+        // create new payment if received amount is provided
+        if ($request->received_amount) {
+            $account = Account::where('account_type', $request->payment_type);
+            if ($request->payment_type == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id)->first();
+            }
+
+            // update or create ledger
+            $ledger = Ledger::where('supplier_id', $request->supplier_id)
+                ->where('invoice_no', $return->invoice)
+                ->where('invoice_type', 'purchase return')
+                ->first();
+
+            if (!$ledger) {
+                $ledger = $this->purchaseReturnLedger($request, $return->id, $request->received_amount, 'purchase return', 0);
+            } else {
+                $ledger->amount = $request->received_amount;
+                $ledger->save();
+            }
+
+            SupplierPayment::create([
+                'payment_type'       => 'purchase_receive',
+                'purchase_return_id' => $request->purchase_id,
+                'supplier_id'        => $return->supplier_id,
+                'account_id'         => $account->id,
+                'is_received'        => 1,
+                'account_type'       => accountList()[$request->payment_type],
+                'amount'             => $request->received_amount,
+                'payment_date'       => now(),
+                'created_by'         => auth('admin')->user()->id,
+                'ledger_id'          => $ledger->id,
+            ]);
+        }
+
+        return $return;
     }
 
     public function getPurchaseReturn($id)
@@ -579,15 +643,34 @@ class PurchaseService
         $return = $this->purchaseReturn->find($id);
 
         // restore product stock
-
         foreach ($return->purchaseDetails as $purchaseDetail) {
             $product = Product::find($purchaseDetail->product_id);
             $product->stock += $purchaseDetail->quantity;
             $product->save();
         }
 
+        // delete stock records
+        Stock::where('purchase_return_id', $id)->delete();
+
+        // delete ledger and ledger details
+        $ledgers = Ledger::where('invoice_type', 'purchase return')
+            ->where('invoice_no', $return->invoice)
+            ->get();
+
+        foreach ($ledgers as $ledger) {
+            // Delete ledger details first
+            $ledger->details()->delete();
+            // Then delete the ledger
+            $ledger->delete();
+        }
+
+        // delete payments
         $return->payment()->delete();
+        
+        // delete purchase return details
         $return->purchaseDetails()->delete();
+        
+        // delete the return itself
         $return->delete();
     }
 
