@@ -109,6 +109,28 @@ class ProductService
             $data
         );
 
+        // Update stock if stock value is provided and changed
+        if ($request->has('stock') && $request->stock != $product->stock) {
+            $stockDifference = $request->stock - $product->getOriginal('stock');
+            
+            // Create stock adjustment entry
+            Stock::create([
+                'purchase_id' => null,
+                'product_id' => $product->id,
+                'date' => now(),
+                'type' => $stockDifference > 0 ? 'Stock Adjustment (Add)' : 'Stock Adjustment (Subtract)',
+                'in_quantity' => $stockDifference > 0 ? $stockDifference : 0,
+                'out_quantity' => $stockDifference < 0 ? abs($stockDifference) : 0,
+                'available_qty' => $request->stock,
+                'sku' => $product->sku,
+                'purchase_price' => $product->cost ?? 0,
+                'rate' => $product->cost ?? 0,
+                'sale_price' => $product->price ?? 0,
+                'tax' => $product->tax ?? 0,
+                'created_by' => auth('admin')->user()->id,
+            ]);
+        }
+
         return $product;
     }
 

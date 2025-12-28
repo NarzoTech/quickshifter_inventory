@@ -21,6 +21,8 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productId = $this->route('product'); // Get product ID from route parameter
+        
         return [
             'name' => 'required',
             'short_description' => 'nullable',
@@ -38,8 +40,8 @@ class ProductRequest extends FormRequest
             'not_selling' => 'nullable',
             'stock' => 'nullable',
             'stock_status' => 'nullable',
-            'sku' => 'required',
-            'barcode' => 'required',
+            'sku' => 'required|unique:products,sku,' . $productId,
+            'barcode' => 'required|unique:products,barcode,' . $productId,
             'status' => 'required',
             "tax_type" => 'nullable',
             "tax" => 'nullable',
@@ -54,8 +56,10 @@ class ProductRequest extends FormRequest
             'unit_id.required' => 'Product unit is required',
             'unit_sale_id.required' => 'Product sale unit is required',
             'unit_purchase_id.required' => 'Product purchase unit is required',
-            'sku.required' => 'Product sku is required',
+            'sku.required' => 'Product SKU is required',
+            'sku.unique' => 'This SKU is already used by another product',
             'barcode.required' => 'Product barcode is required',
+            'barcode.unique' => 'This barcode is already used by another product',
             'status.required' => 'Product status is required',
             'image.size' => 'Image size must be less than 2MB',
         ];

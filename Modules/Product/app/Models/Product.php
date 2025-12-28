@@ -354,9 +354,11 @@ class Product extends Model
         $this->attributes['attributes'] = json_encode($value);
     }
 
-    public function getPriceAttribute()
+    public function getPriceAttribute($value)
     {
-        return $this->getSellingPriceAttribute();
+        // Return the actual database value for the price column
+        // This allows the price to be updated and retrieved correctly
+        return $value;
     }
 
     public function getStockAttribute($value)
