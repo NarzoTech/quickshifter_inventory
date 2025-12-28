@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\QuotationController;
 use App\Http\Controllers\Admin\RolesController;
+use Modules\Product\app\Http\Controllers\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\WarehouseController;
 use App\Http\Controllers\StockController;
@@ -52,6 +53,8 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
 
         Route::put('/stock/reset/', [StockController::class, 'resetAll'])->name('stock.reset.all');
         Route::resource('quotation', QuotationController::class);
+        Route::post('quotation/{id}/convert-to-sale', [QuotationController::class, 'convertToSale'])->name('quotation.convert-to-sale');
+        Route::post('quotation/product-search', [ProductController::class, 'searchProducts'])->name('quotation.product.search');
         Route::resource('asset-category', AssetTypeController::class);
         Route::resource('assets', AssetController::class);
         Route::controller(AdminProfileController::class)->group(function () {

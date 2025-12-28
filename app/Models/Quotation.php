@@ -12,6 +12,7 @@ class Quotation extends Model
     protected $fillable = [
         'customer_id',
         'date',
+        'expiry_date',
         'note',
         'reference_note',
         'subtotal',
@@ -22,7 +23,8 @@ class Quotation extends Model
         'created_by',
         'updated_by',
         'warehouse_id',
-        'quotation_no'
+        'quotation_no',
+        'status'
     ];
 
     public function customer()
@@ -43,5 +45,31 @@ class Quotation extends Model
     public function details()
     {
         return $this->hasMany(QuotationDetails::class);
+    }
+
+    /**
+     * Check if quotation is expired
+     */
+    public function isExpired()
+    {
+        if (!$this->expiry_date) {
+            return false;
+        }
+        return now()->greaterThan($this->expiry_date);
+    }
+
+    /**
+     * Get status badge color
+     */
+    public function getStatusColorAttribute()
+    {
+        return match($this->status) {
+            'draft' => 'secondary',
+            'sent' => 'info',
+            'accepted' => 'success',
+            'rejected' => 'danger',
+            'expired' => 'warning',
+            default => 'secondary'
+        };
     }
 }

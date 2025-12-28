@@ -88,10 +88,10 @@ class QuotationController extends Controller
     public function create()
     {
         checkAdminHasPermissionAndThrowException('quotation.create');
-        $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
+        $customers = User::orderBy('name', 'asc')->where('status', 1)->get();
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
-        })->orderBy('id', 'desc')->get();
+        })->orderBy('name', 'asc')->get();
         return view('admin.pages.quotation.create', compact('customers', 'products'));
     }
 
@@ -125,6 +125,7 @@ class QuotationController extends Controller
             $quotation = Quotation::create([
                 'customer_id' => $request->customer_id,
                 'date' => now()->parse($request->date),
+                'expiry_date' => $request->expiry_date ? now()->parse($request->expiry_date) : null,
                 'note' => $request->note,
                 'subtotal' => $request->subtotal ?? 0,
                 'discount' => $request->discount ?? 0,
@@ -133,6 +134,7 @@ class QuotationController extends Controller
                 'total' => $request->total_amount ?? 0,
                 'created_by' => auth('admin')->user()->id,
                 'quotation_no' => $quotation_no,
+                'status' => $request->status ?? 'draft',
                 // 'warehouse_id' => $request->warehouse_id,
             ]);
 
@@ -182,10 +184,10 @@ class QuotationController extends Controller
     {
         checkAdminHasPermissionAndThrowException('quotation.edit');
         $quotation = Quotation::find($id);
-        $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
+        $customers = User::orderBy('name', 'asc')->where('status', 1)->get();
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
-        })->orderBy('id', 'desc')->get();
+        })->orderBy('name', 'asc')->get();
         return view('admin.pages.quotation.edit', compact('quotation', 'customers', 'products'));
     }
 
@@ -213,6 +215,7 @@ class QuotationController extends Controller
             $quotation->update([
                 'customer_id' => $request->customer_id,
                 'date' => now()->parse($request->date),
+                'expiry_date' => $request->expiry_date ? now()->parse($request->expiry_date) : null,
                 'note' => $request->note,
                 'subtotal' => $request->subtotal ?? 0,
                 'discount' => $request->discount ?? 0,
@@ -220,6 +223,7 @@ class QuotationController extends Controller
                 'vat' => $request->vat ?? 0,
                 'total' => $request->total_amount ?? 0,
                 'updated_by' => auth('admin')->user()->id,
+                'status' => $request->status ?? $quotation->status,
             ]); // update quotation
 
             $quotation->details()->delete();
@@ -262,6 +266,60 @@ class QuotationController extends Controller
         return redirect()->back()->with([
             'alert-type' => 'success',
             'messege' => 'Quotation Deleted Successfully'
+        ]);
+    }
+
+    /**
+     * Convert quotation to sale
+     */
+    public function convertToSale(string $id)
+    {
+        checkAdminHasPermissionAndThrowException('sale.create');
+        
+        $quotation = Quotation::with('details.product')->findOrFail($id);
+        
+        // Check if quotation is expired
+        if ($quotation->isExpired()) {
+            return redirect()->back()->with([
+                'alert-type' => 'error',
+                'messege' => 'Cannot convert expired quotation to sale'
+            ]);
+        }
+        
+        // Check if quotation is already accepted or rejected
+        if (in_array($quotation->status, ['rejected'])) {
+            return redirect()->back()->with([
+                'alert-type' => 'error',
+                'messege' => 'Cannot convert rejected quotation to sale'
+            ]);
+        }
+        
+        // Redirect to sale create page with quotation data pre-filled
+        $products = [];
+        foreach ($quotation->details as $detail) {
+            $products[] = [
+                'product_id' => $detail->product_id,
+                'product_name' => $detail->product->name,
+                'quantity' => $detail->quantity,
+                'price' => $detail->price,
+                'sub_total' => $detail->sub_total,
+            ];
+        }
+        
+        return redirect()->route('admin.sales.create')->with([
+            'quotation_data' => [
+                'quotation_id' => $quotation->id,
+                'customer_id' => $quotation->customer_id,
+                'products' => $products,
+                'subtotal' => $quotation->subtotal,
+                'discount' => $quotation->discount,
+                'after_discount' => $quotation->after_discount,
+                'vat' => $quotation->vat,
+                'total' => $quotation->total,
+                'note' => $quotation->note,
+            ],
+            'alert-type' => 'info',
+            'messege' => 'Quotation data loaded. Complete the sale details below.'
         ]);
     }
 }
