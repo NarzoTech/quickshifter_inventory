@@ -7,9 +7,11 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
     public function __construct(private $payments) {}
@@ -83,6 +85,30 @@ class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping,
         $sheet->getStyle('A3:E3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     }
 
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                // Calculate the row number where we need to add the total
+                // 4 header rows + number of payment rows + 1
+                $lastRow = 4 + $this->payments->count() + 1;
+                
+                // Calculate total
+                $total = $this->payments->sum('amount');
+                
+                // Add total row
+                $event->sheet->getDelegate()->setCellValue('A' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('B' . $lastRow, 'Total');
+                $event->sheet->getDelegate()->setCellValue('C' . $lastRow, $total);
+                $event->sheet->getDelegate()->setCellValue('D' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('E' . $lastRow, '');
+                
+                // Make the total row bold
+                $event->sheet->getDelegate()->getStyle('B' . $lastRow . ':C' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+    
     public function title(): string
     {
         return 'Employee Paid Salary List';

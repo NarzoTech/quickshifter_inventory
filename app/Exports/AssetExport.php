@@ -7,9 +7,11 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class AssetExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class AssetExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
     public function __construct(private $assets) {}
@@ -89,6 +91,32 @@ class AssetExport implements FromCollection, WithHeadings, WithMapping, WithStyl
         $sheet->getStyle('A3:G3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     }
 
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                // Calculate the row number where we need to add the total
+                // 4 header rows + number of asset rows + 1
+                $lastRow = 4 + $this->assets->count() + 1;
+                
+                // Calculate total
+                $total = $this->assets->sum('amount');
+                
+                // Add total row
+                $event->sheet->getDelegate()->setCellValue('A' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('B' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('C' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('D' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('E' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('F' . $lastRow, 'Total');
+                $event->sheet->getDelegate()->setCellValue('G' . $lastRow, $total);
+                
+                // Make the total row bold
+                $event->sheet->getDelegate()->getStyle('F' . $lastRow . ':G' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+    
     public function title(): string
     {
         return 'Asset List';

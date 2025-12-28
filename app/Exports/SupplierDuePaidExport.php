@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 class SupplierDuePaidExport implements FromCollection, WithHeadings, WithMapping, WithTitle, WithEvents
 {
     private Collection|Arrayable $payments;
+    private int $rowCount = 0;
 
     public function __construct(Collection|Arrayable $payments)
     {
@@ -39,9 +40,11 @@ class SupplierDuePaidExport implements FromCollection, WithHeadings, WithMapping
     }
     public function map($payment): array
     {
+        $this->rowCount++;
+        
         // Map the data to match your format
         return [
-            $payment->id,
+            $this->rowCount,
             now()->parse($payment->payment_date)->format('d M , Y'),
             $payment->purchase?->invoice_number,
             $payment->supplier->name,
