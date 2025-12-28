@@ -167,17 +167,17 @@
                                     <img src="{{ asset($product->single_image) }}" alt="Product Picture" width="100">
                                 </td>
                                 <td>{{ $product->name }}</td>
-                                <td>{{ $product->avg_purchase_price }}</td>
-                                <td>{{ $product->last_purchase_price }}</td>
-                                <td>{{ $product->selling_price }}</td>
+                                <td>{{ currency($product->avg_purchase_price) }}</td>
+                                <td>{{ currency($product->last_purchase_price) }}</td>
+                                <td>{{ currency($product->selling_price) }}</td>
                                 <td>{{ $product->stockDetails->sum('in_quantity') }}</td>
                                 <td>{{ $product->stockDetails->sum('out_quantity') }}
                                 </td>
                                 <td>{{ $product->stock }}</td>
-                                <td>{{ remove_comma($stock) * remove_comma($product->avg_purchase_price) }}
+                                <td>{{ currency(remove_comma($stock) * remove_comma($product->avg_purchase_price)) }}
                                 </td>
                                 <td>
-                                    {{ remove_comma($stock) * remove_comma($selling_price) }}
+                                    {{ currency(remove_comma($stock) * remove_comma($selling_price)) }}
                                 </td>
                                 <td>
                                     <div class="btn-group" role="group">
@@ -219,8 +219,8 @@
                             <td><b>{{ $totals['totalInQty'] }}</b></td>
                             <td><b>{{ $totals['totalOutQty'] }}</b></td>
                             <td><b>{{ $totals['totalStock'] }}</b></td>
-                            <td><b>{{ $totals['totalStockPP'] }}</b></td>
-                            <td><b>{{ $totals['totalStockSP'] }}</b></td>
+                            <td><b>{{ currency($totals['totalStockPP']) }}</b></td>
+                            <td><b>{{ currency($totals['totalStockSP']) }}</b></td>
                             <td></td>
                         </tr>
                     </tbody>

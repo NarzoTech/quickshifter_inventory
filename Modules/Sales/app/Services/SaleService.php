@@ -336,8 +336,7 @@ class SaleService
     {
         $sale = $this->sale->find($id);
 
-        // delete sales related all info
-
+        // restore product stock
         foreach ($sale->products as $item) {
             $product = Product::where('id', $item->product_id)->first();
             if ($product != null && $item->source == 1) {
@@ -345,6 +344,18 @@ class SaleService
                 $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
                 $product->save();
             }
+        }
+
+        // delete ledger and ledger details
+        $ledgers = Ledger::where('invoice_type', 'sale')
+            ->where('invoice_no', $sale->invoice)
+            ->get();
+
+        foreach ($ledgers as $ledger) {
+            // Delete ledger details first
+            $ledger->details()->delete();
+            // Then delete the ledger
+            $ledger->delete();
         }
 
         // delete payments

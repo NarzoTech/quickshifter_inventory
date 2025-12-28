@@ -232,25 +232,27 @@ class SalesReturnController extends Controller
         checkAdminHasPermissionAndThrowException('sales.return.delete');
         $return = SalesReturn::find($id);
 
-        // delete return details
-        $return->details()->delete();
-
-        // delete ledger
-        $return->ledger->delete();
-
-        // delete payments
-        $return->payments()->delete();
-
-
-        // update stock
+        // IMPORTANT: Restore stock BEFORE deleting details
         foreach ($return->details as $detail) {
             $product = $detail->product;
             $product->stock = $product->stock - $detail->quantity;
             $product->save();
         }
 
-        // delete stock
+        // delete stock records
         $return->stock()->delete();
+
+        // delete return details
+        $return->details()->delete();
+
+        // delete ledger and ledger details
+        if ($return->ledger) {
+            $return->ledger->details()->delete();
+            $return->ledger->delete();
+        }
+
+        // delete payments
+        $return->payments()->delete();
 
         // delete return
         $return->delete();
