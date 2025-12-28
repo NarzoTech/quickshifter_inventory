@@ -79,10 +79,17 @@ class Supplier extends Model
 
     public function getTotalPaidAttribute()
     {
-        // Only count payments that reduce purchase due (purchase payments + due payments)
-        return $this->payments
-            ->whereIn('payment_type', ['purchase', 'due_pay'])
+        // Count all payments including advances (purchase, due_pay, and advance_pay)
+        // Subtract any advance refunds
+        $totalPaid = $this->payments
+            ->whereIn('payment_type', ['purchase', 'due_pay', 'advance_pay'])
             ->sum('amount');
+        
+        $advanceRefunds = $this->payments
+            ->where('payment_type', 'advance_refund')
+            ->sum('amount');
+        
+        return $totalPaid - $advanceRefunds;
     }
 
     public function getTotalDueAttribute()

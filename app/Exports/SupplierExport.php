@@ -7,12 +7,15 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use Modules\Supplier\app\Services\SupplierService;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 
-class SupplierExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class SupplierExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
+    private int $rowNumber = 0;
 
     public function __construct(private $supplier) {}
     /**
@@ -41,13 +44,15 @@ class SupplierExport implements FromCollection, WithHeadings, WithMapping, WithS
 
     public function map($supplier): array
     {
+        $this->rowNumber++;
+        
         $totalReturn = $supplier->purchaseReturn->sum('return_amount');
         $totalReturnPaid = $supplier->purchaseReturn->sum(
             'received_amount',
         );
         // Map the data to match your format
         return [
-            $supplier->id,                        // SL
+            $this->rowNumber,                     // SL (serial number)
             $supplier->name,                      // Name
             $supplier->phone,                    // Mobile
             $supplier->area->name,                      // Area
@@ -59,6 +64,54 @@ class SupplierExport implements FromCollection, WithHeadings, WithMapping, WithS
             $supplier->total_due - $totalReturn ?? 0,                 // Total Due
         ];
     }
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $suppliers = $this->collection();
+                
+                // Calculate the row number where we need to add the total
+                // 5 header rows + number of supplier rows + 1
+                $lastRow = 5 + $suppliers->count() + 1;
+                
+                // Calculate totals
+                $totalPurchase = 0;
+                $totalPaid = 0;
+                $totalReturnAmount = 0;
+                $totalReturnPaid = 0;
+                $totalAdvance = 0;
+                $totalDue = 0;
+                
+                foreach ($suppliers as $supplier) {
+                    $returnAmount = $supplier->purchaseReturn->sum('return_amount');
+                    $returnPaid = $supplier->purchaseReturn->sum('received_amount');
+                    
+                    $totalPurchase += $supplier->total_purchase ?? 0;
+                    $totalPaid += $supplier->total_paid ?? 0;
+                    $totalReturnAmount += $returnAmount;
+                    $totalReturnPaid += $returnPaid;
+                    $totalAdvance += $supplier->advance ?? 0;
+                    $totalDue += ($supplier->total_due - $returnAmount) ?? 0;
+                }
+                
+                // Add total row
+                $event->sheet->getDelegate()->setCellValue('A' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('B' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('C' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('D' . $lastRow, 'Total');
+                $event->sheet->getDelegate()->setCellValue('E' . $lastRow, $totalPurchase);
+                $event->sheet->getDelegate()->setCellValue('F' . $lastRow, $totalPaid);
+                $event->sheet->getDelegate()->setCellValue('G' . $lastRow, $totalReturnAmount);
+                $event->sheet->getDelegate()->setCellValue('H' . $lastRow, $totalReturnPaid);
+                $event->sheet->getDelegate()->setCellValue('I' . $lastRow, $totalAdvance);
+                $event->sheet->getDelegate()->setCellValue('J' . $lastRow, $totalDue);
+                
+                // Make the total row bold
+                $event->sheet->getDelegate()->getStyle('D' . $lastRow . ':J' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+    
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle

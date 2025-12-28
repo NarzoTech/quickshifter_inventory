@@ -7,9 +7,11 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class SupplierOtherDueExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class SupplierOtherDueExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
     public function __construct(private $summeries) {}
@@ -51,6 +53,43 @@ class SupplierOtherDueExport implements FromCollection, WithHeadings, WithMappin
             $summery->otherSummery->sum('due') ?? 0,
         ];
     }
+    
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                $summeries = $this->collection();
+                
+                // Calculate the row number where we need to add the total
+                // 4 header rows + number of supplier rows + 1
+                $lastRow = 4 + $summeries->count() + 1;
+                
+                // Calculate totals
+                $totalAmount = 0;
+                $totalPaid = 0;
+                $totalDue = 0;
+                
+                foreach ($summeries as $summery) {
+                    $totalAmount += $summery->otherSummery->sum('amount');
+                    $totalPaid += $summery->otherSummery->sum('paid');
+                    $totalDue += $summery->otherSummery->sum('due') ?? 0;
+                }
+                
+                // Add total row
+                $event->sheet->getDelegate()->setCellValue('A' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('B' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('C' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('D' . $lastRow, 'Total');
+                $event->sheet->getDelegate()->setCellValue('E' . $lastRow, $totalAmount);
+                $event->sheet->getDelegate()->setCellValue('F' . $lastRow, $totalPaid);
+                $event->sheet->getDelegate()->setCellValue('G' . $lastRow, $totalDue);
+                
+                // Make the total row bold
+                $event->sheet->getDelegate()->getStyle('D' . $lastRow . ':G' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+    
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle

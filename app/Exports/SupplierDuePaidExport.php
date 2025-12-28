@@ -8,8 +8,10 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 
-class SupplierDuePaidExport implements FromCollection, WithHeadings, WithMapping, WithTitle
+class SupplierDuePaidExport implements FromCollection, WithHeadings, WithMapping, WithTitle, WithEvents
 {
     private Collection|Arrayable $payments;
 
@@ -37,7 +39,6 @@ class SupplierDuePaidExport implements FromCollection, WithHeadings, WithMapping
     }
     public function map($payment): array
     {
-
         // Map the data to match your format
         return [
             $payment->id,
@@ -48,8 +49,35 @@ class SupplierDuePaidExport implements FromCollection, WithHeadings, WithMapping
             $payment->createdBy->name
         ];
     }
+    
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                // Calculate the row number where we need to add the total
+                // 4 header rows + number of payment rows + 1
+                $lastRow = 4 + $this->payments->count() + 1;
+                
+                // Calculate total
+                $total = $this->payments->sum('amount');
+                
+                // Add total row
+                $event->sheet->getDelegate()->setCellValue('A' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('B' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('C' . $lastRow, '');
+                $event->sheet->getDelegate()->setCellValue('D' . $lastRow, 'Total');
+                $event->sheet->getDelegate()->setCellValue('E' . $lastRow, $total);
+                $event->sheet->getDelegate()->setCellValue('F' . $lastRow, '');
+                
+                // Make the total row bold
+                $event->sheet->getDelegate()->getStyle('D' . $lastRow . ':E' . $lastRow)->getFont()->setBold(true);
+            },
+        ];
+    }
+    
     public function title(): string
     {
         return 'Supplier List';  // Sheet title
     }
 }
+

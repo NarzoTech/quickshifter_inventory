@@ -169,8 +169,10 @@
                                                         data-bs-target="#editSupplier{{ $supplier->id }}">{{ __('Edit') }}</a>
                                                 @endadminCan
                                                 @adminCan('supplier.advance')
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('admin.suppliers.advance', $supplier->id) }}">{{ __('Advance') }}</a>
+                                                    @if (($supplier->total_due - $totalReturn) <= 0)
+                                                        <a class="dropdown-item"
+                                                            href="{{ route('admin.suppliers.advance', $supplier->id) }}">{{ __('Advance') }}</a>
+                                                    @endif
                                                 @endadminCan
                                                 @adminCan('supplier.ledger')
                                                     <a class="dropdown-item"

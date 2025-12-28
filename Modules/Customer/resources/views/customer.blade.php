@@ -205,8 +205,10 @@
                                                     href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
                                             @endadminCan
                                             @adminCan('customer.advance')
-                                                <a class="dropdown-item"
-                                                    href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
+                                                @if ($user->total_due <= 0)
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
+                                                @endif
                                             @endadminCan
                                             @adminCan('customer.delete')
                                                 <a href="javascript:;" class="dropdown-item"

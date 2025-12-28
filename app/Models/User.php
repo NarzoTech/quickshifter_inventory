@@ -71,9 +71,14 @@ class User extends Model
         $prevDue = $this->wallet_balance ?? 0;
         $totalSales = $this->total_sales;
 
-        // Payments that reduce customer due (sale payments + due receive)
+        // Payments that reduce customer due (sale payments + due receive + advance receive)
+        // Subtract any advance refunds
         $totalPaid = $this->payment
-            ->whereIn('payment_type', ['sale', 'due_receive'])
+            ->whereIn('payment_type', ['sale', 'due_receive', 'advance_receive'])
+            ->sum('amount');
+        
+        $advanceRefunds = $this->payment
+            ->where('payment_type', 'advance_refund')
             ->sum('amount');
 
         // Sale returns reduce the amount customer owes
@@ -81,7 +86,7 @@ class User extends Model
             return $sale->saleReturns->sum('return_amount');
         });
 
-        return $totalSales - $totalPaid - $totalSaleReturn + $prevDue;
+        return $totalSales - $totalPaid + $advanceRefunds - $totalSaleReturn + $prevDue;
     }
 
     public function sales()
