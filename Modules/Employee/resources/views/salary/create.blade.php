@@ -177,6 +177,16 @@
                     toastr.error('{{ __("Please select a payment type") }}');
                     return false;
                 }
+
+                // Prevent double submission
+                const $submitBtn = $(this).find('button[type="submit"]');
+                if ($submitBtn.data('submitting')) {
+                    e.preventDefault();
+                    return false;
+                }
+                $submitBtn.data('submitting', true);
+                $submitBtn.prop('disabled', true);
+                $submitBtn.html('<i class="fa fa-spinner fa-spin me-2"></i> {{ __("Processing...") }}');
             });
 
             // Remove required attribute to prevent browser validation on hidden element
