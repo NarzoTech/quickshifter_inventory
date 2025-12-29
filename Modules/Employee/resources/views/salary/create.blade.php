@@ -158,14 +158,30 @@
             </div>
         </section>
     </div>
-@endsection
 
+
+    @include('components.admin.preloader')
+@endsection
 
 @push('js')
     <script>
         $(document).ready(function() {
 
             const accountsList = @json($accounts);
+
+            // Custom form validation to handle hidden select elements
+            $('form').on('submit', function(e) {
+                const paymentType = $('#payment_type').val();
+                if (!paymentType) {
+                    e.preventDefault();
+                    toastr.error('{{ __("Please select a payment type") }}');
+                    return false;
+                }
+            });
+
+            // Remove required attribute to prevent browser validation on hidden element
+            $('#payment_type').removeAttr('required');
+
             $('[name="payment_type"]').on('change', function() {
                 const accounts = accountsList.filter(account => account.account_type == $(this).val());
                 const accountInput = $('#account');
@@ -208,6 +224,10 @@
             $('#month, #year').on('change', function() {
                 const month = $('#month').val();
                 const year = $('#year').val();
+
+                // Show full page loader
+                $('.preloader_area').removeClass('d-none');
+
                 $.ajax({
                     type: "GET",
                     url: "{{ route('admin.employee.salary.info', $employee->id) }}",
@@ -220,6 +240,10 @@
                         $('#already_salary').val(data.advanceAmount);
                         $('#amount').val(data.dueAmount);
                         $('#payable_salary').val(data.payableSalary);
+                    },
+                    complete: function() {
+                        // Hide full page loader
+                        $('.preloader_area').addClass('d-none');
                     }
                 })
             })

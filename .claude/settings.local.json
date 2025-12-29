@@ -8,7 +8,8 @@
       "Bash(find:*)",
       "Bash(php artisan:*)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(cat:*)"
     ]
   }
 }

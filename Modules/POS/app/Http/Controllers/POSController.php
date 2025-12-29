@@ -292,32 +292,9 @@ class POSController extends Controller
         $cart_contents = $cart_contents ? $cart_contents : [];
 
 
-        // check if item already exist in cart
-        $item_exist = false;
-        $existing_rowid = null;
         $sku = $type != 'service' ? ($request->variant_sku ? $request->variant_sku : $product->sku) : '';
-        if (count($cart_contents) > 0) {
-            foreach ($cart_contents as $index => $cart_content) {
-                if (($sku && $cart_content['sku'] == $sku) || ($service && $cart_content['id'] == $service->id && $cart_content['type'] == 'service')) {
-                    $item_exist = true;
-                    $existing_rowid = $index;
-                }
-            }
-        }
 
-        // If item exists, increment quantity
-        if ($item_exist && $existing_rowid) {
-            $cart_contents[$existing_rowid]['qty'] += $request->qty ? $request->qty : 1;
-            $cart_contents[$existing_rowid]['sub_total'] = (float)$cart_contents[$existing_rowid]['price'] * $cart_contents[$existing_rowid]['qty'];
-            session()->put($cartName, $cart_contents);
-
-            return response()->json([
-                'success' => true,
-                'action' => 'update',
-                'item' => $cart_contents[$existing_rowid]
-            ]);
-        }
-
+        // Always add as a new line item (allows same product multiple times)
         $data = array();
         $data["rowid"] = uniqid();
         $data['id'] = $type == 'service' ? $service->id : $product->id;

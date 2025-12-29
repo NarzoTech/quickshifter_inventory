@@ -162,7 +162,7 @@
                                 $selling_price = $product->selling_price ?? 0;
                             @endphp
                             <tr>
-                                <td>{{ $products->firstItem() + $index }}</td>
+                                <td>{{ method_exists($products, 'firstItem') ? $products->firstItem() + $index : $index + 1 }}</td>
                                 <td>
                                     <img src="{{ asset($product->single_image) }}" alt="Product Picture" width="100">
                                 </td>

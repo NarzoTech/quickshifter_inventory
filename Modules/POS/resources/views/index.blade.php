@@ -366,6 +366,14 @@
                                                     {{ currency($cumalitive_sub_total) }}
                                                 </td>
                                             </tr>
+                                            <tr class="customer-due-row d-none">
+                                                <td colspan="3" class="text-danger">
+                                                    <strong>{{ __('Customer Due') }}</strong>
+                                                </td>
+                                                <td class="text-danger">
+                                                    <strong><span id="customer_due_display">{{ currency(0) }}</span></strong>
+                                                </td>
+                                            </tr>
 
                                         </tbody>
                                     </table>
@@ -836,6 +844,9 @@
                         $('#discount_total_amount').val(discount);
                         updateDiscountType(2);
                     }
+
+                    // Load and display customer due
+                    loadCustomerDue(customer_id ? customer_id : 'walk-in-customer');
                 })
 
                 // add new customer modal
@@ -1780,7 +1791,27 @@
             $('#titems').text(products.length)
         }
 
-        // load customer
+        // Load and display customer due in the main POS summary
+        function loadCustomerDue(id) {
+            if (id && id != 'walk-in-customer') {
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ route('admin.customer.single', '') }}/" + id,
+                    success: function(response) {
+                        let totalDue = parseFloat(response.total_due) || 0;
+                        if (totalDue > 0) {
+                            $('#customer_due_display').text('{{ currency_icon() }}' + totalDue.toFixed(2));
+                            $('.customer-due-row').removeClass('d-none');
+                        } else {
+                            $('.customer-due-row').addClass('d-none');
+                        }
+                    }
+                })
+            } else {
+                $('.customer-due-row').addClass('d-none');
+            }
+        }
+
         function loadCustomer(id) {
             if (id != 'walk-in-customer') {
                 $.ajax({
