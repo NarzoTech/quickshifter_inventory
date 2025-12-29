@@ -327,8 +327,10 @@ class PurchaseService
 
             // split the invoice number
             $split_invoice  = explode('-', $purchaseInvoice);
-            $invoice_number = (int) $split_invoice[1] + 1;
-            $invoice_number = $prefix . $invoice_number;
+            if (isset($split_invoice[1])) {
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
         }
 
         return $invoice_number;

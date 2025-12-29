@@ -203,11 +203,7 @@
                         style="border-left: none !important; border-right: none !important; border-top: none !important"
                         class="text-center">
                         @php
-                            $unitName = $details->product->unit->name;
-                            $unitQty = isset($unit[$unitName]) ? $unit[$unitName] : 0;
-                            $newQty = $details->quantity + $unitQty;
-                            $unit[$unitName] = $newQty;
-
+                            $unitName = $sale->products->first()?->product?->unit?->name ?? '';
                         @endphp
                         {{ $sale->quantity }} {{ $unitName }}
                     </td>

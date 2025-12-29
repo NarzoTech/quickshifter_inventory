@@ -131,7 +131,7 @@
                     <tbody>
                         @foreach ($purchases as $index => $purchase)
                             <tr>
-                                <td>{{ request()->get('par-page') === 'all' ? $index + 1 : $purchases->firstItem() + $index }}</td>
+                                <td>{{ method_exists($purchases, 'firstItem') ? $purchases->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ formatDate($purchase->purchase_date) }}</td>
                                 <td>{{ $purchase->invoice_number }}</td>
                                 <td>{{ $purchase->supplier?->company }}</td>

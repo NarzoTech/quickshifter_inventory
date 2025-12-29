@@ -137,7 +137,7 @@
                                 $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
                             @endphp
                             <tr>
-                                <td>{{ $suppliers->firstItem() + $index }}</td>
+                                <td>{{ method_exists($suppliers, 'firstItem') ? $suppliers->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ $supplier->company }}</td>
                                 <td>{{ $supplier->name }}</td>
                                 <td>{{ $supplier->phone }}</td>

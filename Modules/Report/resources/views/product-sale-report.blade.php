@@ -114,7 +114,7 @@
                                                         $sellQty > 0 ? $product->sales['price'] / $sellQty : 0;
                                                 @endphp
                                                 <tr>
-                                                    <td>{{ $products->firstItem() + $loop->iteration - 1 }}</td>
+                                                    <td>{{ method_exists($products, 'firstItem') ? $products->firstItem() + $loop->iteration - 1 : $loop->iteration }}</td>
                                                     <td>{{ $product->name }}</td>
                                                     <td>{{ $product->sku }}</td>
                                                     <td>{{ $product->brand->name ?? 'N/A' }}</td>

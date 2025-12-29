@@ -50,9 +50,9 @@ class EmployeeService
 
         $data = $request->except('_token');
         $data['employee_id'] = $employee->id;
-        $data['date'] = now()->parse($request->date);
-        $data['month'] = now()->parse($request->month)->format('F');
-        $data['year'] = now()->parse($request->date)->format('Y');
+        $data['date'] = $request->date ? now()->parse($request->date) : now();
+        $data['month'] = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
+        $data['year'] = $request->date ? now()->parse($request->date)->format('Y') : now()->format('Y');
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
         $data['salary'] = $request->salary;
         $data['payable_salary'] = $request->payable_salary;
@@ -77,9 +77,9 @@ class EmployeeService
     {
 
         $data = $request->except('_token');
-        $data['date'] = now()->parse($request->date);
-        $data['month'] = $request->month ? now()->parse($request->month)->format('F') : now()->parse($request->date)->format('F');
-        $data['year'] = $request->year ?? now()->parse($request->date)->format('Y');
+        $data['date'] = $request->date ? now()->parse($request->date) : now();
+        $data['month'] = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
+        $data['year'] = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
         $data['payment_type'] = $request->payment_type;
         $data['amount'] = $request->amount;

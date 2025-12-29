@@ -110,7 +110,7 @@
                                             class="custom-control-label">&nbsp;</label>
                                     </div>
                                 </td>
-                                <td>{{ $index + $brands->firstItem() }}</td>
+                                <td>{{ method_exists($brands, 'firstItem') ? $index + $brands->firstItem() : $index + 1 }}</td>
                                 <td><img src="{{ $brand->image_url }}" alt="" class="img-fluid"
                                         style="width: 80px"></td>
                                 <td class="text-left">{{ $brand->name }}</td>

@@ -18,6 +18,7 @@
             <tbody>
                 @php
                     $cumalitive_sub_total = $cumalitive_sub_total ?? 0;
+                    $cart_contents = $cart_contents ?? [];
 
                     // set rowid
                     foreach ($cart_contents as $key => $cart_content) {

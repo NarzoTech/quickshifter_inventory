@@ -108,6 +108,11 @@ class EmployeeSalaryController extends Controller
     {
         checkAdminHasPermissionAndThrowException('employee.delete.salary');
         $salary = EmployeeSalary::find($id);
+
+        if (!$salary) {
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Salary record not found', 'alert-type' => 'error']);
+        }
+
         $salary->delete();
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Employee salary deleted successfully', 'alert-type' => 'success']);
     }

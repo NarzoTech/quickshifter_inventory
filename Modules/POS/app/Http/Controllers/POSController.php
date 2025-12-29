@@ -335,6 +335,14 @@ class POSController extends Controller
 
         $cart_contents = $cart_contents ? $cart_contents : [];
 
+        // Check if item exists in cart
+        if (!isset($cart_contents[$request->rowid])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Item not found in cart'
+            ], 404);
+        }
+
         $cart_contents[$request->rowid]['qty'] = $request->quantity;
         $cart_contents[$request->rowid]['sub_total'] = (float)$cart_contents[$request->rowid]['price'] * $request->quantity;
 
@@ -560,7 +568,7 @@ class POSController extends Controller
         // get the item
         $cart_contents = session()->get($cartName);
 
-        if ($cart_contents != null && count($cart_contents) > 0) {
+        if ($cart_contents != null && count($cart_contents) > 0 && isset($cart_contents[$request->rowId])) {
             $item = $cart_contents[$request->rowId];
             $item['price'] = $request->price;
             $item['sub_total'] = $request->price * $item['qty'];
@@ -576,7 +584,7 @@ class POSController extends Controller
 
         return response()->json([
             'success' => false,
-            'message' => 'Item not found'
+            'message' => 'Item not found in cart'
         ], 404);
     }
 
@@ -637,6 +645,11 @@ class POSController extends Controller
 
         $cart_contents = $cart_contents ? $cart_contents : [];
 
+        // Check if item exists in cart
+        if (!isset($cart_contents[$request->rowid])) {
+            return response()->json(['status' => false, 'message' => 'Item not found in cart'], 404);
+        }
+
         $cart_contents[$request->rowid]['source'] = $request->source;
 
         session()->put($cartName, $cart_contents);
@@ -652,6 +665,12 @@ class POSController extends Controller
         }
         $cart_contents = session()->get($cartName);
         $cart_contents = $cart_contents ? $cart_contents : [];
+
+        // Check if item exists in cart
+        if (!isset($cart_contents[$request->rowid])) {
+            return response()->json(['status' => false, 'message' => 'Item not found in cart'], 404);
+        }
+
         $cart_contents[$request->rowid]['purchase_price'] = $request->purchase_price;
         $cart_contents[$request->rowid]['selling_price'] = $request->selling_price;
         $cart_contents[$request->rowid]['price'] = $request->val;

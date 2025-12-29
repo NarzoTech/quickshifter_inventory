@@ -118,7 +118,7 @@
                     <tbody>
                         @foreach ($holidays as $index => $day)
                             <tr>
-                                <td>{{ $holidays->firstItem() + $index }}</td>
+                                <td>{{ method_exists($holidays, 'firstItem') ? $holidays->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ $day->name }}</td>
                                 <td>{{ $day->description }}</td>
                                 <td>{{ formatDate($day->start_date) }}</td>

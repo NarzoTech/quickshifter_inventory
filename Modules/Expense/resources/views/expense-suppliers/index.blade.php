@@ -111,7 +111,7 @@
                     <tbody>
                         @foreach ($suppliers as $index => $supplier)
                             <tr>
-                                <td>{{ $suppliers->firstItem() + $index }}</td>
+                                <td>{{ method_exists($suppliers, 'firstItem') ? $suppliers->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ $supplier->name }}</td>
                                 <td>{{ $supplier->company }}</td>
                                 <td>{{ $supplier->phone }}</td>

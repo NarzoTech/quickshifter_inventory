@@ -96,7 +96,7 @@
                     <tbody>
                         @foreach ($payments as $index => $payment)
                             <tr>
-                                <td>{{ $payments->firstItem() + $index }}</td>
+                                <td>{{ method_exists($payments, 'firstItem') ? $payments->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ $payment->invoice }}</td>
                                 <td>{{ $payment->expenseSupplier->name }}</td>
                                 <td>EXP-{{ $payment->expense_id }}</td>

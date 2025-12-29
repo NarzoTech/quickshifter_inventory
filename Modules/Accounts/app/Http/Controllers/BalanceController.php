@@ -57,7 +57,10 @@ class BalanceController extends Controller
             if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
                 $account = $this->account->all()->where('account_type', 'cash')->first();
             } else {
-                $account = $this->account->find($request->account_id);
+                if (!$request->account_id) {
+                    return back()->with(['message' => 'Please select an account', 'alert-type' => 'error']);
+                }
+                $account = $this->account->find((int) $request->account_id);
             }
 
             // balance

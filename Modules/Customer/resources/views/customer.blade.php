@@ -139,7 +139,7 @@
                     <tbody>
                         @foreach ($users as $index => $user)
                             <tr>
-                                <td>{{ $users->firstItem() + $index }}</td>
+                                <td>{{ method_exists($users, 'firstItem') ? $users->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->area->name }}</td>

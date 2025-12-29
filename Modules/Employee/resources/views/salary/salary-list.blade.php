@@ -103,7 +103,7 @@
                             <tbody>
                                 @forelse ($payments as $index => $payment)
                                     <tr>
-                                        <td>{{ $payments->firstItem() + $index }}</td>
+                                        <td>{{ method_exists($payments, 'firstItem') ? $payments->firstItem() + $index : $index + 1 }}</td>
                                         <td>{{ $payment->employee?->name }}</td>
                                         <td>{{ currency($payment->amount) }}</td>
                                         <td>{{ formatDate($payment->date) }}</td>
