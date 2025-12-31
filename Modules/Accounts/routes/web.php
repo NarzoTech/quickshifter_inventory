@@ -16,7 +16,7 @@ use Modules\Accounts\app\Http\Controllers\BankController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('accounts', AccountsController::class)->names('accounts');
     Route::get('opening-balance', [BalanceController::class, 'openingBalance'])->name('opening-balance');
     Route::post('opening-balance', [BalanceController::class, 'store'])->name('opening-balance.store');

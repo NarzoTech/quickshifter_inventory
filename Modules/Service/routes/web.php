@@ -15,7 +15,7 @@ use Modules\Service\app\Http\Controllers\ServiceController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
     Route::post('service/wishlist/{id}', [ServiceController::class, 'addToWishlist'])->name('service.wishlist');
     Route::resource('service', ServiceController::class)->names('service');
     Route::resource('serviceCategory', ServiceCategoryController::class);

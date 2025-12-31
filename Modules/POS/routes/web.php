@@ -15,7 +15,7 @@ use Modules\POS\app\Http\Controllers\PosSettingsController;
 |
  */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix()], function () {
     Route::prefix('pos')->group(function () {
         Route::get('/', [POSController::class, 'index'])->name('pos');
         Route::get('/load-products', [POSController::class, 'load_products'])->name('load-products');

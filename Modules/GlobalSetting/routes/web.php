@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\GlobalSetting\app\Http\Controllers\EmailSettingController;
 use Modules\GlobalSetting\app\Http\Controllers\GlobalSettingController;
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
 
     Route::controller(GlobalSettingController::class)->group(function () {
 

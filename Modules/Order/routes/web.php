@@ -14,7 +14,7 @@ use Modules\Order\app\Http\Controllers\OrderController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin']], function () {
 
     Route::controller(OrderController::class)->group(function () {
         Route::get('/orders', 'index')->name('orders');

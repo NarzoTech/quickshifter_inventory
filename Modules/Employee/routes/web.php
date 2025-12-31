@@ -15,7 +15,7 @@ use Modules\Employee\app\Http\Controllers\EmployeeSalaryController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('employee', EmployeeController::class)->names('employee');
     Route::get('employee/status/{id}', [EmployeeController::class, 'status'])->name('employee.status');
     Route::get('employee/{id}/salary-view/', [EmployeeSalaryController::class, 'index'])->name('employee.salary.view');

@@ -817,6 +817,22 @@ if (! function_exists('routeList')) {
     }
 }
 
+if (! function_exists('getAdminRoutePrefix')) {
+    /**
+     * Get the admin route prefix from settings
+     * Returns empty string if no prefix is set, otherwise returns the prefix
+     *
+     * @return string
+     */
+    function getAdminRoutePrefix(): string
+    {
+        $setting = cache('setting');
+        $prefix = $setting->admin_route_prefix ?? 'admin';
+
+        return $prefix;
+    }
+}
+
 if (! function_exists('generateInvoiceNumber')) {
     /**
      * Generate a unique invoice number for any model

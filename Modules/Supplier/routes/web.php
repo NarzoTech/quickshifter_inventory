@@ -15,7 +15,7 @@ use Modules\Supplier\app\Http\Controllers\SupplierGroupController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix()], function () {
 
     Route::get('suppliers/import', [SupplierController::class, 'bulkImport'])->name('suppliers.import');
     Route::post('suppliers/import', [SupplierController::class, 'bulkImportStore'])->name('suppliers.import.store');

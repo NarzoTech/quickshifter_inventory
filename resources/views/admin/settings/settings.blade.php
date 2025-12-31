@@ -248,6 +248,17 @@
                                                 </span>
                                             </div>
                                         </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="">Admin Route Prefix</label>
+                                                <input type="text" name="admin_route_prefix"
+                                                    value="{{ $setting->admin_route_prefix ?? 'admin' }}" class="form-control"
+                                                    placeholder="EX: admin">
+                                                <span class="text-info mb-0">
+                                                    Leave empty for no prefix. Default is "admin". Requires cache clear after change.
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-1 col-md-2 col-sm-4">

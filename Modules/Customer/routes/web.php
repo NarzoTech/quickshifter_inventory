@@ -17,7 +17,7 @@ use Modules\Customer\app\Http\Controllers\VehicleController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
     Route::get('customers/import', [CustomerController::class, 'bulkImport'])->name('customers.import');
     Route::post('customers/import', [CustomerController::class, 'bulkImportStore'])->name('customers.import.store');
 

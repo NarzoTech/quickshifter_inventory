@@ -16,7 +16,7 @@ use Modules\Expense\app\Http\Controllers\ExpenseSupplierController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('expense', ExpenseController::class)->names('expense');
     Route::resource('expenseType', ExpenseTypeController::class)->names('expense.type');
     Route::get('expense-types/{id}/children', [ExpenseTypeController::class, 'getChildren'])

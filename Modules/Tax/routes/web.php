@@ -14,7 +14,7 @@ use Modules\Tax\app\Http\Controllers\TaxController;
 |
 */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth:admin', 'translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
     Route::resource('tax', TaxController::class)->names('tax');
     Route::put('tax/status/{id}', [TaxController::class, 'taxStatus'])->name('tax.status');
 });

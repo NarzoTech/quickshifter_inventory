@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin'], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix()], function () {
     /* Start admin auth route */
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('store-login', [AuthenticatedSessionController::class, 'store'])->name('store-login');

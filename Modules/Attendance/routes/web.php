@@ -17,7 +17,7 @@ use Modules\Attendance\app\Http\Controllers\HolidaysController;
 
 Route::middleware(['auth:admin', 'translation'])
     ->name('admin.')
-    ->prefix('admin')
+    ->prefix(getAdminRoutePrefix())
     ->group(function () {
         Route::resource('attendance', AttendanceController::class)->only('index', 'create', 'store')->names('attendance');
 

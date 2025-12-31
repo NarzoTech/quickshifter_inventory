@@ -14,7 +14,7 @@ use Modules\Media\app\Http\Controllers\MediaController;
 |
  */
 
-Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['translation']], function () {
+Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['translation']], function () {
     Route::resource('media', MediaController::class)->names('media');
     Route::get('media/search/{keyword}', [MediaController::class, 'media_search'])->name('media.search');
     Route::delete('media/multi/delete', [MediaController::class, 'media_multi_delete'])->name('media.multi.delete');
