@@ -11,7 +11,8 @@
       "Bash(findstr:*)",
       "Bash(cat:*)",
       "Bash(php test_invoice.php:*)",
-      "Bash(del /f \"E:\\\\work\\\\quickshifter_inventory\\\\test_invoice.php\")"
+      "Bash(del /f \"E:\\\\work\\\\quickshifter_inventory\\\\test_invoice.php\")",
+      "Bash(git checkout:*)"
     ]
   }
 }
