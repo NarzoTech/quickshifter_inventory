@@ -5,14 +5,6 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return to_route('admin.dashboard');
-})->name('home');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth:web', 'verified'])->name('dashboard');
-
 //maintenance mode route
 Route::get('/maintenance-mode', function () {
     $setting = Illuminate\Support\Facades\Cache::get('setting', null);
@@ -35,26 +27,7 @@ Route::get('set-language', [DashboardController::class, 'setLanguage'])->name('s
 
 Route::post('apply-coupon', [PaymentController::class, 'apply_coupon'])->name('apply-coupon');
 
-/**payment related route start */
-
-Route::get('payment', [PaymentController::class, 'payment'])->name('payment');
-Route::post('pay-via-stripe', [PaymentController::class, 'pay_via_stripe'])->name('pay-via-stripe');
-
-Route::get('pay-via-paypal', [PaymentController::class, 'pay_via_paypal'])->name('pay-via-paypal');
-
-Route::post('pay-via-bank', [PaymentController::class, 'pay_via_bank'])->name('pay-via-bank');
-
-Route::post('pay-via-razorpay', [PaymentController::class, 'pay_via_razorpay'])->name('pay-via-razorpay');
-
-Route::get('pay-via-mollie', [PaymentController::class, 'pay_via_mollie'])->name('pay-via-mollie');
-Route::get('pay-via-instamojo', [PaymentController::class, 'pay_via_instamojo'])->name('pay-via-instamojo');
-
-Route::get('/payment-addon-success', [PaymentController::class, 'payment_addon_success'])->name('payment-addon-success');
-Route::get('/payment-addon-faild', [PaymentController::class, 'payment_addon_faild'])->name('payment-addon-faild');
-
 /**payment related route end */
-
-require __DIR__ . '/auth.php';
 
 require __DIR__ . '/admin.php';
 

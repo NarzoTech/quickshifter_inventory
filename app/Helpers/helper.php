@@ -820,16 +820,30 @@ if (! function_exists('routeList')) {
 if (! function_exists('getAdminRoutePrefix')) {
     /**
      * Get the admin route prefix from settings
-     * Returns empty string if no prefix is set, otherwise returns the prefix
+     * Returns 'admin' as default if no prefix is set
      *
      * @return string
      */
     function getAdminRoutePrefix(): string
     {
-        $setting = cache('setting');
-        $prefix = $setting->admin_route_prefix ?? 'admin';
+        try {
+            // Try to get from cache first
+            $setting = cache('setting');
 
-        return $prefix;
+            if ($setting && isset($setting->admin_route_prefix)) {
+                return $setting->admin_route_prefix;
+            }
+
+            // If not in cache, query database directly
+            $prefix = \Illuminate\Support\Facades\DB::table('settings')
+                ->where('key', 'admin_route_prefix')
+                ->value('value');
+
+            return $prefix ?? 'admin';
+        } catch (\Exception $e) {
+            // Fallback to 'admin' if database is not available
+            return 'admin';
+        }
     }
 }
 
