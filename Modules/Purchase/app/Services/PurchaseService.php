@@ -314,26 +314,7 @@ class PurchaseService
 
     public function genInvoiceNumber()
     {
-        $setting = cache('setting');
-        $number  = $setting->invoice_suffix ? $setting->invoice_suffix : 1;
-        $prefix  = $setting->invoice_prefix ? $setting->invoice_prefix : 'INV-';
-
-        $invoice_number = $prefix . $number;
-
-        $purchase = $this->purchase->latest()->first();
-
-        if ($purchase) {
-            $purchaseInvoice = $purchase->invoice_number;
-
-            // split the invoice number
-            $split_invoice  = explode('-', $purchaseInvoice);
-            if (isset($split_invoice[1])) {
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(Purchase::class, 'invoice_number');
     }
 
     public function getPurchase($id)
@@ -676,22 +657,8 @@ class PurchaseService
         $return->delete();
     }
 
-    public function returnInvoice($id = 0)
+    public function returnInvoice()
     {
-        $number         = 1;
-        $prefix         = 'INV-';
-        $invoice_number = $prefix . $number;
-
-        $return = $this->purchaseReturn->find($id);
-        if ($return) {
-            $purchaseInvoice = $return->invoice;
-
-            // split the invoice number
-            $split_invoice  = explode($prefix, $purchaseInvoice);
-            $invoice_number = (int) $split_invoice[1] + 1;
-            $invoice_number = $prefix . $invoice_number;
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(PurchaseReturn::class);
     }
 }

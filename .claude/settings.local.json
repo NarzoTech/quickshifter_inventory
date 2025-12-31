@@ -9,7 +9,9 @@
       "Bash(php artisan:*)",
       "Bash(dir:*)",
       "Bash(findstr:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(php test_invoice.php:*)",
+      "Bash(del /f \"E:\\\\work\\\\quickshifter_inventory\\\\test_invoice.php\")"
     ]
   }
 }

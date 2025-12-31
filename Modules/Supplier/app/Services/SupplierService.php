@@ -317,24 +317,7 @@ class SupplierService
 
     public function genInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'INV-';
-        $invoice_number = $prefix . $number;
-
-        $purchase = SupplierPayment::latest()->first();
-
-        if ($purchase) {
-            $purchaseInvoice = $purchase->invoice;
-
-            if ($purchaseInvoice) {
-                // split the invoice number
-                $split_invoice = explode('-', $purchaseInvoice);
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(SupplierPayment::class);
     }
 
 
@@ -396,23 +379,7 @@ class SupplierService
 
     public function genLedgerInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'INV-';
-        $invoice_number = $prefix . $number;
-
-        $purchase = Ledger::where('invoice_type', 'Due Payment')->latest()->first();
-        if ($purchase) {
-            $purchaseInvoice = $purchase->invoice_no;
-
-            if ($purchaseInvoice) {
-                // split the invoice number
-                $split_invoice = explode('-', $purchaseInvoice);
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', null, ['invoice_type' => 'Due Payment']);
     }
 
 

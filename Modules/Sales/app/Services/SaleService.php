@@ -376,21 +376,7 @@ class SaleService
 
     public function genInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'INV-';
-        $invoice_number = $prefix . $number;
-
-        $sale = $this->sale->latest()->first();
-        if ($sale) {
-            $saleInvoice = $sale->invoice;
-
-            // split the invoice number
-            $split_invoice = explode('-', $saleInvoice);
-            $invoice_number = (int) $split_invoice[1] + 1;
-            $invoice_number = $prefix . $invoice_number;
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(Sale::class);
     }
     public function editSale($id)
     {

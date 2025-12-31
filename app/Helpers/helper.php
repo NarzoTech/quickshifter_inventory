@@ -816,3 +816,48 @@ if (! function_exists('routeList')) {
         return (object) $route_list;
     }
 }
+
+if (! function_exists('generateInvoiceNumber')) {
+    /**
+     * Generate a unique invoice number for any model
+     *
+     * @param string $modelClass The fully qualified model class name
+     * @param string $invoiceColumn The column name that stores the invoice number (default: 'invoice')
+     * @param string|null $prefix The prefix for the invoice number (default: uses setting's invoice_prefix or 'INV-')
+     * @param array $whereConditions Additional where conditions as key-value pairs
+     * @return string The generated invoice number
+     */
+    function generateInvoiceNumber(string $modelClass, string $invoiceColumn = 'invoice', ?string $prefix = null, array $whereConditions = []): string
+    {
+        // Get prefix from settings if not provided
+        if ($prefix === null) {
+            $setting = cache('setting');
+            $prefix = $setting->invoice_prefix ?? 'INV-';
+        }
+
+        $number = 1;
+        $invoice_number = $prefix . $number;
+
+        $query = $modelClass::whereNotNull($invoiceColumn);
+
+        // Apply additional where conditions if provided
+        foreach ($whereConditions as $column => $value) {
+            $query->where($column, $value);
+        }
+
+        $latestRecord = $query->latest()->first();
+
+        if ($latestRecord) {
+            $latestInvoice = $latestRecord->{$invoiceColumn};
+
+            // Split the invoice number by '-' and get the numeric part
+            $split_invoice = explode('-', $latestInvoice);
+            if (isset($split_invoice[1])) {
+                $invoice_number = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $invoice_number;
+            }
+        }
+
+        return $invoice_number;
+    }
+}

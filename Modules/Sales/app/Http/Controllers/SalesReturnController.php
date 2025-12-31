@@ -262,43 +262,11 @@ class SalesReturnController extends Controller
 
     public function genLedgerInvoiceNumber($type = 'Sale Payment')
     {
-        $number = 001;
-        $prefix = 'INV-';
-        $invoice_number = $prefix . $number;
-
-        $purchase = Ledger::where('invoice_type', $type)->latest()->first();
-        if ($purchase) {
-            $purchaseInvoice = $purchase->invoice_no;
-
-            if ($purchaseInvoice) {
-                // split the invoice number
-                $split_invoice = explode('-', $purchaseInvoice);
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', null, ['invoice_type' => $type]);
     }
 
     public function returnInvoice()
     {
-        $number = 1;
-        $prefix = 'INV-';
-        $invoice_number = $prefix . $number;
-
-        $return = SalesReturn::latest()->first();
-        if ($return) {
-            $purchaseInvoice = $return->invoice;
-
-            if ($purchaseInvoice) {
-                // split the invoice number
-                $split_invoice = explode($prefix, $purchaseInvoice);
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(SalesReturn::class);
     }
 }
