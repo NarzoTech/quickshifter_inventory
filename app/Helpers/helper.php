@@ -859,14 +859,21 @@ if (! function_exists('generateInvoiceNumber')) {
      */
     function generateInvoiceNumber(string $modelClass, string $invoiceColumn = 'invoice', ?string $prefix = null, array $whereConditions = []): string
     {
+        // Get settings
+        $setting = cache('setting');
+
         // Get prefix from settings if not provided
         if ($prefix === null) {
-            $setting = cache('setting');
             $prefix = $setting->invoice_prefix ?? 'INV-';
         }
 
-        $number = 1;
-        $invoice_number = $prefix . $number;
+        // Get starting number from invoice_suffix setting, default to 1
+        $startNumber = (int) ($setting->invoice_suffix ?? 1);
+        if ($startNumber < 1) {
+            $startNumber = 1;
+        }
+
+        $invoice_number = $prefix . $startNumber;
 
         $query = $modelClass::whereNotNull($invoiceColumn);
 
@@ -883,8 +890,8 @@ if (! function_exists('generateInvoiceNumber')) {
             // Split the invoice number by '-' and get the numeric part
             $split_invoice = explode('-', $latestInvoice);
             if (isset($split_invoice[1])) {
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
+                $newNumber = (int) $split_invoice[1] + 1;
+                $invoice_number = $prefix . $newNumber;
             }
         }
 
