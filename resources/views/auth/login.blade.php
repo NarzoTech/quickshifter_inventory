@@ -8,23 +8,11 @@
             <div class="col-12">
                 <div class="form-group inflanar-form-input mg-top-20">
                     <label>{{ __('Email') }}*</label>
-                    @if (env('APP_MODE') == 'DEMO')
-                        <input class="ecom-wc__form-input" type="email" name="email" value="client@gmail.com">
-                    @else
-                        <input class="ecom-wc__form-input" type="email" name="email">
-                    @endif
-
+                    <input class="ecom-wc__form-input" type="email" name="email" value="{{ old('email') }}" autocomplete="off">
                 </div>
                 <div class="form-group inflanar-form-input mg-top-20">
                     <label>{{ __('Password') }}*</label>
-                    @if (env('APP_MODE') == 'DEMO')
-                        <input class="inflanar-signin__form-input" id="password-field" type="password" name="password"
-                            value="1234">
-                    @else
-                        <input class="inflanar-signin__form-input" id="password-field" type="password" name="password">
-                    @endif
-
-
+                    <input class="inflanar-signin__form-input" id="password-field" type="password" name="password" autocomplete="off">
                 </div>
                 <div class="form-group mg-top-20">
                     <div class="inflanar-signin__check-inline">
