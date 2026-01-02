@@ -150,7 +150,7 @@
                     _token: '{{ csrf_token() }}',
                     column: type
                 },
-                url: "{{ url('/admin/languages/update-status') }}" + "/" + id,
+                url: "{{ route('admin.languages.update-status', '') }}/" + id,
                 success: function(response) {
                     if (response.status) {
                         toastr.success(response.message);

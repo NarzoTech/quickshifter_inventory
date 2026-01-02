@@ -373,7 +373,7 @@
         }
 
         function deleteData(id) {
-            $("#deleteForm").attr("action", '{{ url('/admin/media/') }}' + "/" + id)
+            $("#deleteForm").attr("action", '{{ route('admin.media.destroy', '') }}/' + id)
         }
 
         $.ajaxSetup({
@@ -552,7 +552,7 @@
             var alt_text = $(this).data('alt_text');
             var title = $(this).data('title');
             var mime_type = $(this).data('mime_type');
-            let link = '{{ url('/admin/media/') }}' + "/" + $(this).data('id');
+            let link = '{{ route('admin.media.show', '') }}/' + $(this).data('id');
 
             $('#viewData').empty();
 
@@ -568,7 +568,7 @@
         //Delete single media item
         $(document).on('click', '.media_item .destroy', function(event) {
             event.stopPropagation();
-            $("#deleteForm").attr("action", '{{ url('/admin/media/') }}' + "/" + $(this).data('id'));
+            $("#deleteForm").attr("action", '{{ route('admin.media.destroy', '') }}/' + $(this).data('id'));
         });
 
         //select media image for delete

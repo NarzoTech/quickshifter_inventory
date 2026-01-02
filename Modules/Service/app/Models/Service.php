@@ -31,9 +31,17 @@ class Service extends Model
 
     public function getSingleImageAttribute()
     {
-        if (!$this->image) {
+        $image = $this->image;
+
+        // Skip invalid paths (temp files, null, empty)
+        if (!$image || str_starts_with($image, '/tmp/') || str_starts_with($image, 'C:\\')) {
             return asset('backend/img/service.png');
         }
-        return asset($this->image);
+
+        if (file_exists(public_path($image))) {
+            return asset($image);
+        }
+
+        return asset('backend/img/service.png');
     }
 }

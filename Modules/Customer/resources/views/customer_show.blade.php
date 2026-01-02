@@ -280,7 +280,7 @@
     @push('js')
         <script>
             function deleteData(id) {
-                $("#deleteForm").attr("action", '{{ url('/admin/customer-delete/') }}' + "/" + id)
+                $("#deleteForm").attr("action", '{{ route('admin.customers.destroy', '') }}/' + id)
                 $('#deleteModal').modal('show');
             }
         </script>

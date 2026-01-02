@@ -48,24 +48,29 @@ class Admin extends Authenticatable
     ];
 
     public function getImageUrlAttribute()
-    {;
+    {
         $setting = cache('setting');
-        $value = $this->attributes['image'];
+        $value = $this->attributes['image'] ?? null;
 
-        // check if file is exists
-        if ($value && !file_exists(public_path($value))) {
-            if (str_contains($value, 'https:/')) {
-                $value = $value;
-            } else {
-                $value = $this->media?->path;
-                if ($value) {
-                    $value = asset($value);
-                }
-            }
-        } else if ($value) {
-            $value = asset($value);
+        // Skip invalid paths (temp files, null, empty)
+        if (!$value || str_starts_with($value, '/tmp/') || str_starts_with($value, 'C:\\')) {
+            return asset($setting->default_avatar ?? 'backend/img/image_icon.png');
         }
-        return $value ? $value : asset($setting->default_avatar);
+
+        // Check if file exists
+        if (!file_exists(public_path($value))) {
+            if (str_contains($value, 'https://') || str_contains($value, 'http://')) {
+                return $value;
+            }
+            // Try media path
+            $mediaPath = $this->media?->path;
+            if ($mediaPath && file_exists(public_path($mediaPath))) {
+                return asset($mediaPath);
+            }
+            return asset($setting->default_avatar ?? 'backend/img/image_icon.png');
+        }
+
+        return asset($value);
     }
     public static function getPermissionGroup()
     {

@@ -1467,7 +1467,7 @@
                     type: 'single',
                     serviceType: serviceType
                 },
-                url: "{{ url('/admin/pos/add-to-cart') }}",
+                url: "{{ route('admin.add-to-cart') }}",
                 success: function(response) {
                     if (response.success) {
                         if (response.action === 'add') {

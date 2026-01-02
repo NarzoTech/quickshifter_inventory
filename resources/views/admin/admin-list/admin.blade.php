@@ -110,7 +110,7 @@
                 data: {
                     _token: '{{ csrf_token() }}'
                 },
-                url: "{{ url('/admin/admin-status/') }}" + "/" + id,
+                url: "{{ route('admin.admin.status', '') }}/" + id,
                 success: function(response) {
                     toastr.success(response.message)
                 },

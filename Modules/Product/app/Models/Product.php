@@ -49,9 +49,14 @@ class Product extends Model
 
     public function getSingleImageAttribute()
     {
+        $imageUrl = $this->getImagesUrlAttribute();
 
-        $imageUrl =  $this->getImagesUrlAttribute();
-        if ($imageUrl && file_exists(public_path($imageUrl))) {
+        // Skip invalid paths (temp files, null, empty)
+        if (!$imageUrl || str_starts_with($imageUrl, '/tmp/') || str_starts_with($imageUrl, 'C:\\')) {
+            return asset('backend/img/image_icon.png');
+        }
+
+        if (file_exists(public_path($imageUrl))) {
             return asset($imageUrl);
         }
         return asset('backend/img/image_icon.png');
@@ -345,7 +350,14 @@ class Product extends Model
 
     public function getImageUrlAttribute()
     {
-        return $this->image;
+        $image = $this->image;
+
+        // Skip invalid paths (temp files, null, empty)
+        if (!$image || str_starts_with($image, '/tmp/') || str_starts_with($image, 'C:\\')) {
+            return 'backend/img/image_icon.png';
+        }
+
+        return $image;
     }
 
 

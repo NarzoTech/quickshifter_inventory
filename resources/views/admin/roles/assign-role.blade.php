@@ -92,7 +92,7 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                     },
-                    url: "{{ url('/admin/role/assign') }}" + "/" + id,
+                    url: "{{ route('admin.role.assign.admin', '') }}/" + id,
                     beforeSend: function() {
                         $('#update-btn').prop('disabled', true);
                     },

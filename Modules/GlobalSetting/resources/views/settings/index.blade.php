@@ -82,7 +82,7 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                 },
-                url: "{{ url('/admin/update-maintenance-mode-status') }}",
+                url: "{{ route('admin.update-maintenance-mode') }}",
                 success: function(response) {
                     if (response.success) {
                         toastr.success(response.message);
