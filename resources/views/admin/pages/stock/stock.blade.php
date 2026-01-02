@@ -144,6 +144,7 @@
                             <th>{{ __('Sl') }}</th>
                             <th>{{ __('Picture') }}</th>
                             <th>{{ __('Name') }}</th>
+                            <th>{{ __('Category') }}</th>
                             <th>{{ __('Avg P.P') }}</th>
                             <th>{{ __('L. P.P') }}</th>
                             <th>{{ __('Selling Price') }}</th>
@@ -167,6 +168,7 @@
                                     <img src="{{ asset($product->single_image) }}" alt="Product Picture" width="100">
                                 </td>
                                 <td>{{ $product->name }}</td>
+                                <td>{{ $product->category->name ?? '' }}</td>
                                 <td>{{ currency($product->avg_purchase_price) }}</td>
                                 <td>{{ currency($product->last_purchase_price) }}</td>
                                 <td>{{ currency($product->selling_price) }}</td>
@@ -213,7 +215,7 @@
                         @endforeach
 
                         <tr>
-                            <td colspan="6" class="text-center">
+                            <td colspan="7" class="text-center">
                                 <b>{{ __('Total') }}</b>
                             </td>
                             <td><b>{{ $totals['totalInQty'] }}</b></td>

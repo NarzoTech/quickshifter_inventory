@@ -34,6 +34,7 @@ class StockExport implements FromArray, WithHeadings, WithStyles, WithTitle
             $rows[] = [
                 $index + 1,                                                    // SL (Serial Number)
                 $product->name,                                                // Name
+                $product->category->name ?? '',                                // Category
                 $product->avg_purchase_price ?? 0,                             // Avg P.P
                 $product->last_purchase_price ?? 0,                            // L. P.P
                 $product->selling_price ?? 0,                                  // Selling Price
@@ -49,6 +50,7 @@ class StockExport implements FromArray, WithHeadings, WithStyles, WithTitle
         $rows[] = [
             '',                                          // SL
             '',                                          // Name
+            '',                                          // Category
             '',                                          // Avg P.P
             '',                                          // L. P.P
             'Total',                                     // Selling Price column used for label
@@ -72,6 +74,7 @@ class StockExport implements FromArray, WithHeadings, WithStyles, WithTitle
             [
                 __('SL.'),
                 __('Name'),
+                __('Category'),
                 __('Avg P.P'),
                 __('L. P.P'),
                 __('Selling Price'),
@@ -87,7 +90,7 @@ class StockExport implements FromArray, WithHeadings, WithStyles, WithTitle
     public function styles(Worksheet $sheet)
     {
         $lastRow = $sheet->getHighestRow();
-        $lastCol = 'J';
+        $lastCol = 'K';
 
         // Merge cells for title and subtitle
         $sheet->mergeCells('A1:' . $lastCol . '1');  // Title
@@ -116,22 +119,23 @@ class StockExport implements FromArray, WithHeadings, WithStyles, WithTitle
 
         // Style the totals row (last row) - bold
         $sheet->getStyle('A' . $lastRow . ':' . $lastCol . $lastRow)->getFont()->setBold(true);
-        $sheet->getStyle('E' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+        $sheet->getStyle('F' . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
         // Column Widths
         $sheet->getColumnDimension('A')->setWidth(6);   // SL
         $sheet->getColumnDimension('B')->setWidth(30);  // Name
-        $sheet->getColumnDimension('C')->setWidth(12);  // Avg P.P
-        $sheet->getColumnDimension('D')->setWidth(12);  // L. P.P
-        $sheet->getColumnDimension('E')->setWidth(14);  // Selling Price
-        $sheet->getColumnDimension('F')->setWidth(12);  // In Quantity
-        $sheet->getColumnDimension('G')->setWidth(12);  // Out Quantity
-        $sheet->getColumnDimension('H')->setWidth(10);  // Stock
-        $sheet->getColumnDimension('I')->setWidth(12);  // Stock P.P
-        $sheet->getColumnDimension('J')->setWidth(12);  // Stock S.P
+        $sheet->getColumnDimension('C')->setWidth(18);  // Category
+        $sheet->getColumnDimension('D')->setWidth(12);  // Avg P.P
+        $sheet->getColumnDimension('E')->setWidth(12);  // L. P.P
+        $sheet->getColumnDimension('F')->setWidth(14);  // Selling Price
+        $sheet->getColumnDimension('G')->setWidth(12);  // In Quantity
+        $sheet->getColumnDimension('H')->setWidth(12);  // Out Quantity
+        $sheet->getColumnDimension('I')->setWidth(10);  // Stock
+        $sheet->getColumnDimension('J')->setWidth(12);  // Stock P.P
+        $sheet->getColumnDimension('K')->setWidth(12);  // Stock S.P
 
-        // Right align numeric columns (C to J) from row 5 to last row
-        $sheet->getStyle('C5:' . $lastCol . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+        // Right align numeric columns (D to K) from row 5 to last row
+        $sheet->getStyle('D5:' . $lastCol . $lastRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
     }
 
     public function title(): string

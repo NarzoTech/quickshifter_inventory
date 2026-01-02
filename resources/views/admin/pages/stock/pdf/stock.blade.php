@@ -8,6 +8,7 @@
             @php
                 $list = [
                     __('Name'),
+                    __('Category'),
                     __('Avg P.P'),
                     __('L. P.P'),
                     __('Selling Price'),
@@ -35,6 +36,7 @@
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>{{ $product->name }}</td>
+                    <td>{{ $product->category->name ?? '' }}</td>
                     <td>{{ currency($product->avg_purchase_price) }}</td>
                     <td>{{ currency($product->last_purchase_price) }}</td>
                     <td>{{ currency($product->selling_price) }}</td>
@@ -47,7 +49,7 @@
             @endforeach
 
             <tr style="font-weight: bold; background-color: #f0f0f0;">
-                <td colspan="5" style="text-align: right; padding: 8px;">{{ __('Total') }}</td>
+                <td colspan="6" style="text-align: right; padding: 8px;">{{ __('Total') }}</td>
                 <td style="padding: 8px;">{{ $totals['totalInQty'] ?? 0 }}</td>
                 <td style="padding: 8px;">{{ $totals['totalOutQty'] ?? 0 }}</td>
                 <td style="padding: 8px;">{{ $totals['totalStock'] ?? 0 }}</td>
