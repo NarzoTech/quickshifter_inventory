@@ -133,9 +133,15 @@
                                 <td>{{ formatDate($stock->created_at) }}</td>
                                 <td>{{ $product->barcode }}</td>
                                 <td>
-                                    <a href="{{ $stock->invoice }}">
-                                        {{ $stock->purchase->invoice_number ?? '' }}
-                                    </a>
+                                    @if($stock->purchase_id)
+                                        <a href="{{ $stock->invoice }}">
+                                            {{ $stock->purchase->invoice_number ?? '' }}
+                                        </a>
+                                    @elseif($stock->sale_id)
+                                        <a href="{{ $stock->invoice }}">
+                                            {{ $stock->sale->invoice ?? '' }}
+                                        </a>
+                                    @endif
                                 </td>
                                 <td>{{ ucwords($stock->type) }}</td>
                                 <td>{{ $stock->in_quantity }}</td>

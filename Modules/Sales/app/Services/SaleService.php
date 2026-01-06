@@ -5,6 +5,7 @@ namespace Modules\Sales\app\Services;
 use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
+use App\Services\TransactionLoggerService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,7 +22,10 @@ use Modules\Service\app\Models\Service;
 
 class SaleService
 {
-    public function __construct(private Sale $sale) {}
+    public function __construct(
+        private Sale $sale,
+        private TransactionLoggerService $transactionLogger
+    ) {}
 
     private function parseDate($date)
     {
@@ -177,6 +181,10 @@ class SaleService
             // $this->updateLedger($request, $sale->id, $user, 'sale');
             $this->salesLedger($request, $sale, array_sum($request->paying_amount), $request->total_amount, 'sale', 1, $due);
         }
+
+        // Log sale transaction
+        $this->transactionLogger->logSale('create', array_merge($request->all(), ['cart' => $cart]), $sale);
+
         return $sale;
     }
 
@@ -323,6 +331,9 @@ class SaleService
                 ]);
             }
 
+            // Log sale transaction update
+            $this->transactionLogger->logSale('update', array_merge($request->all(), ['cart' => $cart]), $sale);
+
             DB::commit();
             return $sale;
         } catch (Exception $ex) {
@@ -335,6 +346,9 @@ class SaleService
     public function deleteSale($id): void
     {
         $sale = $this->sale->find($id);
+
+        // Log sale deletion before deleting
+        $this->transactionLogger->logSale('delete', [], $sale);
 
         // restore product stock
         foreach ($sale->products as $item) {

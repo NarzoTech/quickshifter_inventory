@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Product\app\Models\Product;
 use Modules\Purchase\app\Models\Purchase;
+use Modules\Sales\app\Models\Sale;
 
 class Stock extends Model
 {
@@ -44,6 +45,11 @@ class Stock extends Model
     public function purchase()
     {
         return $this->belongsTo(Purchase::class, 'purchase_id')->withDefault();
+    }
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'sale_id')->withDefault();
     }
 
     public function warehouse()

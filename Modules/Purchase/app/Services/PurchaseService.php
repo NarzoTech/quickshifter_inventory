@@ -5,6 +5,7 @@ use App\Models\Ledger;
 use App\Models\Payment;
 use App\Models\Stock;
 use App\Models\Warehouse;
+use App\Services\TransactionLoggerService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,7 @@ class PurchaseService
         private AccountsService $accountsService,
         private PurchaseReturn $purchaseReturn,
         private PurchaseReturnDetails $purchaseReturnDetials,
+        private TransactionLoggerService $transactionLogger,
     ) {}
 
     public function all()
@@ -164,6 +166,9 @@ class PurchaseService
             }
         }
 
+        // Log purchase transaction
+        $this->transactionLogger->logPurchase('create', $request->all(), $purchase);
+
         return $purchase;
     }
 
@@ -278,12 +283,18 @@ class PurchaseService
         //     $this->purchaseLedger($request, $purchase->id, -$paidAmount, 'purchase payment', 1, $request->due_amount, $ledger);
         // }
 
+        // Log purchase transaction update
+        $this->transactionLogger->logPurchase('update', $request->all(), $purchase);
+
         return $purchase;
     }
 
     public function destroy($id)
     {
         $purchase = $this->purchase->find($id);
+
+        // Log purchase deletion before deleting
+        $this->transactionLogger->logPurchase('delete', [], $purchase);
 
         // restore product stock
         foreach ($this->purchase->find($id)->purchaseDetails as $purchaseDetail) {
