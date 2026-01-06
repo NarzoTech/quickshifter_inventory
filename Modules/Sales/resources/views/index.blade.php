@@ -55,12 +55,25 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <select class="form-control select2" name="product_id">
-                                        <option value="" selected disabled>{{ __('Product') }}</option>
+                                        <option value="">{{ __('Product') }}</option>
                                         @foreach ($products as $product)
                                             <option value="{{ $product->id }}"
                                                 {{ request('product_id') == $product->id ? 'selected' : '' }}>
                                                 {{ $product->name }}
                                                 ({{ $product->sku }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <select class="form-control select2" name="customer">
+                                        <option value="">{{ __('Customer') }}</option>
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->id }}"
+                                                {{ request('customer') == $customer->id ? 'selected' : '' }}>
+                                                {{ $customer->name }}
                                             </option>
                                         @endforeach
                                     </select>

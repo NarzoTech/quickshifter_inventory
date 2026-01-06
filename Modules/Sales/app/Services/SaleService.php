@@ -418,7 +418,7 @@ class SaleService
             $cart_contents = $cart_contents ? $cart_contents : [];
             session()->put('UPDATE_CART', [...$cart_contents, $data["rowid"] => $data]);
         }
-        $cart_contents = session()->get('UPDATE_CART');
+        $cart_contents = session()->get('UPDATE_CART', []);
         return [$cart_contents, $sale];
     }
 

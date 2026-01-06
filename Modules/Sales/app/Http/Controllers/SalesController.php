@@ -57,6 +57,11 @@ class SalesController extends Controller
             });
         }
 
+        // Filter by customer
+        if (request()->customer) {
+            $sales = $sales->where('customer_id', request('customer'));
+        }
+
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
 
@@ -109,7 +114,8 @@ class SalesController extends Controller
 
         $title = 'Sales List';
         $products = Product::where('status', 1)->orderBy('id', 'desc')->get();
-        return view('sales::index', compact('sales', 'title', 'data', 'products'));
+        $customers = User::where('status', 1)->orderBy('name', 'asc')->get();
+        return view('sales::index', compact('sales', 'title', 'data', 'products', 'customers'));
     }
 
     /**

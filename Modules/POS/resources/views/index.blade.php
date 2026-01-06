@@ -315,7 +315,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>Items</td>
-                                                <td><span id="titems">{{ count($cart_contents) }}</span> </td>
+                                                <td><span id="titems">{{ is_countable($cart_contents) ? count($cart_contents) : 0 }}</span> </td>
                                                 <td class="custom_width">Total</td>
                                                 <td> <span id="total">{{ currency($cumalitive_sub_total) }}</span>
                                                 </td>
