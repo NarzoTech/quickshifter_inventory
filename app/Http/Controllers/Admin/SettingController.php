@@ -33,6 +33,7 @@ use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
 use Modules\Sales\app\Models\SalesReturnDetails;
 use Modules\Supplier\app\Models\SupplierPayment;
+use Modules\Product\app\Models\Product;
 
 class SettingController extends Controller
 {
@@ -86,6 +87,8 @@ class SettingController extends Controller
         SalesReturnDetails::truncate();
         // truncate sale stock
         Stock::truncate();
+        // Reset product stock values
+        Product::query()->update(['stock' => 0, 'stock_status' => 'out_of_stock']);
         // supplier payment
         SupplierPayment::truncate();
         Asset::truncate();
@@ -117,6 +120,6 @@ class SettingController extends Controller
 
         // cache clear
         Cache::clear();
-        return back()->with(['alert-type' => 'success', 'messege' => 'Database cleared successfully.']);
+        return redirect()->route('admin.reset.database')->with(['alert-type' => 'success', 'messege' => 'Database cleared successfully.']);
     }
 }

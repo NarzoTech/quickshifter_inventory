@@ -45,7 +45,10 @@
                         <div class="modal-footer bg-whitesmoke br">
                             <button type="button" class="btn btn-primary"
                                 data-bs-dismiss="modal">{{ __('Close') }}</button>
-                            <button type="submit" class="btn btn-danger m-0">{{ __('Yes, Clear') }}</button>
+                            <button type="submit" class="btn btn-danger m-0" id="clearDbBtn">
+                                <span class="btn-text">{{ __('Yes, Clear') }}</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -53,3 +56,24 @@
         </section>
     </div>
 @endsection
+
+@push('js')
+    <script>
+        $(document).ready(function() {
+            'use strict';
+            $('#clearDatabaseModal form').on('submit', function() {
+                var btn = $('#clearDbBtn');
+                btn.prop('disabled', true);
+                btn.find('.btn-text').text('{{ __("Clearing...") }}');
+                btn.find('.spinner-border').removeClass('d-none');
+            });
+
+            $('#clearDatabaseModal').on('hidden.bs.modal', function() {
+                var btn = $('#clearDbBtn');
+                btn.prop('disabled', false);
+                btn.find('.btn-text').text('{{ __("Yes, Clear") }}');
+                btn.find('.spinner-border').addClass('d-none');
+            });
+        });
+    </script>
+@endpush

@@ -253,7 +253,10 @@
                         @method('PUT')
                         <button type="button" class="btn btn-danger"
                             data-bs-dismiss="modal">{{ __('Close') }}</button>
-                        <button type="submit" class="btn btn-primary">{{ __('Yes, Reset') }}</button>
+                        <button type="submit" class="btn btn-primary" id="resetSubmitBtn">
+                            <span class="btn-text">{{ __('Yes, Reset') }}</span>
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -288,5 +291,19 @@
         function resetStock(id) {
             $('#resetForm').attr('action', "{{ route('admin.stock.reset', ':id') }}".replace(':id', id));
         }
+
+        $('#resetForm').on('submit', function() {
+            var btn = $('#resetSubmitBtn');
+            btn.prop('disabled', true);
+            btn.find('.btn-text').text('{{ __("Resetting...") }}');
+            btn.find('.spinner-border').removeClass('d-none');
+        });
+
+        $('#stockModal').on('hidden.bs.modal', function() {
+            var btn = $('#resetSubmitBtn');
+            btn.prop('disabled', false);
+            btn.find('.btn-text').text('{{ __("Yes, Reset") }}');
+            btn.find('.spinner-border').addClass('d-none');
+        });
     </script>
 @endpush
