@@ -367,10 +367,10 @@
                                                 </td>
                                             </tr>
                                             <tr class="customer-due-row d-none">
-                                                <td colspan="3" class="text-danger">
+                                                <td colspan="3">
                                                     <strong>{{ __('Customer Due') }}</strong>
                                                 </td>
-                                                <td class="text-danger">
+                                                <td>
                                                     <strong><span id="customer_due_display">{{ currency(0) }}</span></strong>
                                                 </td>
                                             </tr>

@@ -26,6 +26,9 @@
                             {{ $product->name }} <br>
                         </p>
                         <p class="price">{{ currency($product->current_price) }}</p>
+                        @if ($product->stock <= 0)
+                            <span class="badge bg-danger">{{ __('Out of Stock') }}</span>
+                        @endif
                     </div>
                 </div>
             </div>

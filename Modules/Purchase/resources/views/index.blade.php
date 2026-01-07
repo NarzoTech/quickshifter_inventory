@@ -156,7 +156,7 @@
                                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $purchase->id }}">
                                                 @adminCan('purchase.view')
                                                     <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
-                                                        data-bs-target="#showCustomer{{ $purchase->id }}">{{ __('Show') }}</a>
+                                                        data-bs-target="#showSupplier{{ $purchase->id }}">{{ __('Show') }}</a>
                                                 @endadminCan
                                                 @adminCan('purchase.invoice')
                                                     <a class="dropdown-item"
@@ -208,14 +208,14 @@
         </div>
     </div>
 
-    {{-- Show customer --}}
+    {{-- Show Supplier --}}
     @foreach ($purchases as $index => $purchase)
-        <div class="modal fade" id="showCustomer{{ $purchase->id }}">
+        <div class="modal fade" id="showSupplier{{ $purchase->id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">{{ __('Customer') }}</h4>
+                        <h4 class="modal-title">{{ __('Supplier') }}</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
@@ -227,32 +227,36 @@
                                 <div class="table-responsive">
                                     <table class="table">
                                         <tr>
+                                            <th>{{ __('Company') }}</th>
+                                            <td>{{ $purchase->supplier?->company }}</td>
+                                        </tr>
+                                        <tr>
                                             <th>{{ __('Name') }}</th>
-                                            <td>{{ $purchase->name }}</td>
+                                            <td>{{ $purchase->supplier?->name }}</td>
                                         </tr>
                                         <tr>
                                             <th>{{ __('Phone') }}</th>
-                                            <td>{{ $purchase->phone }}</td>
+                                            <td>{{ $purchase->supplier?->phone }}</td>
                                         </tr>
                                         <tr>
                                             <th>{{ __('Email') }}</th>
-                                            <td>{{ $purchase->email }}</td>
+                                            <td>{{ $purchase->supplier?->email }}</td>
                                         </tr>
                                         <tr>
                                             <th>{{ __('City') }}</th>
-                                            <td>{{ $purchase->city }}</td>
+                                            <td>{{ $purchase->supplier?->city }}</td>
                                         </tr>
                                         <tr>
                                             <th>{{ __('Tax Number') }}</th>
-                                            <td>{{ $purchase->tax_number }}</td>
+                                            <td>{{ $purchase->supplier?->tax_number }}</td>
                                         </tr>
                                         <tr>
                                             <th>{{ __('Status') }}</th>
-                                            <td>{{ $purchase->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                            <td>{{ $purchase->supplier?->status == 1 ? 'Active' : 'Inactive' }}</td>
                                         </tr>
                                         <tr>
                                             <th>{{ __('Address') }}</th>
-                                            <td>{{ $purchase->address }}</td>
+                                            <td>{{ $purchase->supplier?->address }}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -262,7 +266,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
                     </div>
 
                 </div>
