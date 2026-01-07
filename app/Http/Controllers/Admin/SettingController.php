@@ -8,7 +8,6 @@ use App\Models\Asset;
 use App\Models\Balance;
 use App\Models\Ledger;
 use App\Models\Payment;
-use App\Models\Stock;
 use App\Traits\RedirectHelperTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -33,7 +32,6 @@ use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
 use Modules\Sales\app\Models\SalesReturnDetails;
 use Modules\Supplier\app\Models\SupplierPayment;
-use Modules\Product\app\Models\Product;
 
 class SettingController extends Controller
 {
@@ -85,10 +83,6 @@ class SettingController extends Controller
         ProductSale::truncate();
         SalesReturn::truncate();
         SalesReturnDetails::truncate();
-        // truncate sale stock
-        Stock::truncate();
-        // Reset product stock values
-        Product::query()->update(['stock' => 0, 'stock_status' => 'out_of_stock']);
         // supplier payment
         SupplierPayment::truncate();
         Asset::truncate();
