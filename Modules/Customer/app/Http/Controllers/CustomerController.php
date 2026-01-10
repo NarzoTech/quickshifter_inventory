@@ -1,5 +1,4 @@
 <?php
-
 namespace Modules\Customer\app\Http\Controllers;
 
 use App\Enums\RedirectType;
@@ -10,9 +9,9 @@ use App\Imports\CustomersImport;
 use App\Models\Ledger;
 use App\Models\LedgerDetails;
 use App\Models\User;
-use Carbon\Carbon;
 use App\Traits\RedirectHelperTrait;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +28,6 @@ use Modules\Customer\app\Models\CustomerDue;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Customer\app\Models\Vehicle;
 use Modules\Sales\app\Models\Sale;
-use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
@@ -55,7 +53,6 @@ class CustomerController extends Controller
                 ->orWhere('address', 'like', '%' . $request->keyword . '%');
         });
 
-
         $orderBy = $request->filled('order_by') ? $request->order_by : 'asc';
 
         if ($orderBy) {
@@ -74,9 +71,9 @@ class CustomerController extends Controller
                     });
                     $customers = $customers->$orderBy(function ($customer) {
                         $totalPurchase = $customer->sales->sum('grand_total');
-                        $totalPaid = $customer->payment->sum('amount');
-                        $totalReturn = $customer->saleReturn->sum('return_amount');
-                        $totalDue = $totalPurchase - $totalPaid - $totalReturn;
+                        $totalPaid     = $customer->payment->sum('amount');
+                        $totalReturn   = $customer->saleReturn->sum('return_amount');
+                        $totalDue      = $totalPurchase - $totalPaid - $totalReturn;
                         return $totalDue;
                     });
                     break;
@@ -107,33 +104,30 @@ class CustomerController extends Controller
             }
         }
 
-
-        $data['totalSale'] = 0;
-        $data['pay'] = 0;
-        $data['total_return'] = 0;
-        $data['total_return_pay'] = 0;
-        $data['total_return_due'] = 0;
-        $data['total_due'] = 0;
-        $data['total_advance'] = 0;
+        $data['totalSale']         = 0;
+        $data['pay']               = 0;
+        $data['total_return']      = 0;
+        $data['total_return_pay']  = 0;
+        $data['total_return_due']  = 0;
+        $data['total_due']         = 0;
+        $data['total_advance']     = 0;
         $data['total_due_dismiss'] = 0;
 
         $customerData = request()->order_type ? $customers : $query->get();
         foreach ($customerData as $index => $customer) {
             $data['totalSale'] += $customer->sales->sum('grand_total');
-            $data['pay'] += $customer->total_paid;
+            $data['pay']       += $customer->total_paid;
 
-            $totalReturn = $customer->saleReturn->sum('return_amount');
+            $totalReturn           = $customer->saleReturn->sum('return_amount');
             $data['total_return'] += $totalReturn;
 
-            $data['total_due'] += $customer->total_due - $totalReturn;
+            $data['total_due']        += $customer->total_due - $totalReturn;
             $data['total_return_pay'] += $totalReturn - $customer->saleReturn->sum('return_due');
             $data['total_return_due'] += $customer->saleReturn->sum('return_due');
-
 
             $data['total_advance'] += $customer->advances();
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
         }
-
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
@@ -147,8 +141,8 @@ class CustomerController extends Controller
         }
 
         if (request()->order_type) {
-            // Convert sorted collection to paginate manually
-            $page = request('page', 1); // Default to page 1
+                                                      // Convert sorted collection to paginate manually
+            $page               = request('page', 1); // Default to page 1
             $paginatedCustomers = $customerData->slice(($page - 1) * $perPage, $perPage)->values();
         }
 
@@ -162,7 +156,7 @@ class CustomerController extends Controller
             if (request('export_pdf')) {
                 $html = view('customer::pdf.customer', [
                     'users' => $customerData,
-                    'data' => $data
+                    'data'  => $data,
                 ])->render();
 
                 $pdf = $fileName = 'customer-list-' . date('Y-m-d') . '_' . date('h-i-s') . '.pdf';
@@ -170,8 +164,6 @@ class CustomerController extends Controller
                 return $pdf->download($fileName);
             }
         }
-
-
 
         if (request()->order_type) {
             $users = new LengthAwarePaginator(
@@ -186,15 +178,15 @@ class CustomerController extends Controller
         }
         $users = $users->appends(request()->query());
 
-        $groups = $this->userGroup->getUserGroup('dropdown')->where('type', 'customer')->where('status', 1)->get();
+        $groups   = $this->userGroup->getUserGroup('dropdown')->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();
         $vehicles = $this->vehicle->get();
         return view('customer::customer')->with([
-            'users' => $users,
-            'groups' => $groups,
+            'users'    => $users,
+            'groups'   => $groups,
             'areaList' => $areaList,
             'vehicles' => $vehicles,
-            'data' => $data
+            'data'     => $data,
         ]);
     }
 
@@ -208,11 +200,11 @@ class CustomerController extends Controller
         // check if request is ajax
         if ($request->ajax()) {
             $customers = User::orderBy('id', 'desc')->where('status', 1)->get();
-            $view = view('pos::customer-drop-down', compact('customers'))->render();
+            $view      = view('pos::customer-drop-down', compact('customers'))->render();
             return response()->json([
-                'message' => 'Customer created successfully.',
+                'message'    => 'Customer created successfully.',
                 'alert-type' => 'success',
-                'view' => $view
+                'view'       => $view,
             ]);
         }
 
@@ -227,7 +219,7 @@ class CustomerController extends Controller
         $banned_histories = BannedHistory::where('user_id', $id)->orderBy('id', 'desc')->get();
 
         return view('customer::customer_show')->with([
-            'user' => $user,
+            'user'             => $user,
             'banned_histories' => $banned_histories,
         ]);
     }
@@ -239,24 +231,24 @@ class CustomerController extends Controller
         checkAdminHasPermissionAndThrowException('customer.edit');
 
         $request->validate([
-            'name' => 'required',
+            'name'  => 'required',
             'phone' => 'nullable|unique:users,phone,' . $id,
             'email' => 'nullable|email|unique:users,email,' . $id,
         ]);
 
-        $user = User::findOrFail($id);
-        $user->name = $request->name;
-        $user->phone = $request->phone;
-        $user->email = $request->email;
-        $user->group_id = $request->group_id;
-        $user->area_id = $request->area_id;
-        $user->vehicle_id = $request->vehicle_id;
-        $user->membership = $request->membership;
-        $user->plate_number = $request->plate_number;
-        $user->date = Carbon::createFromFormat('d-m-Y', $request->date);
-        $user->status = $request->status;
-        $user->guest = $request->guest ? 1 : 0;
-        $user->address = $request->address;
+        $user                 = User::findOrFail($id);
+        $user->name           = $request->name;
+        $user->phone          = $request->phone;
+        $user->email          = $request->email;
+        $user->group_id       = $request->group_id;
+        $user->area_id        = $request->area_id;
+        $user->vehicle_id     = $request->vehicle_id;
+        $user->membership     = $request->membership;
+        $user->plate_number   = $request->plate_number;
+        $user->date           = $request->date ? Carbon::createFromFormat('d-m-Y', $request->date) : now();
+        $user->status         = $request->status;
+        $user->guest          = $request->guest ? 1 : 0;
+        $user->address        = $request->address;
         $user->wallet_balance = $request->due;
         $user->save();
 
@@ -277,29 +269,28 @@ class CustomerController extends Controller
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customers.index', [], ['messege' => 'Customer deleted successfully.', 'alert-type' => 'success']);
     }
 
-
     public function saveUser(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name'  => 'required',
             'phone' => 'nullable|unique:users,phone',
             'email' => 'nullable|email|unique:users,email',
         ]);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->phone = $request->phone;
-        $user->email = $request->email;
-        $user->group_id = $request->group_id;
-        $user->area_id = $request->area_id;
-        $user->vehicle_id = $request->vehicle_id;
-        $user->membership = $request->membership;
-        $user->plate_number = $request->plate_number;
+        $user                 = new User();
+        $user->name           = $request->name;
+        $user->phone          = $request->phone;
+        $user->email          = $request->email;
+        $user->group_id       = $request->group_id;
+        $user->area_id        = $request->area_id;
+        $user->vehicle_id     = $request->vehicle_id;
+        $user->membership     = $request->membership;
+        $user->plate_number   = $request->plate_number;
         $user->wallet_balance = $request->due;
-        $user->date = Carbon::createFromFormat('d-m-Y', $request->date);
-        $user->status = $request->status;
-        $user->guest = $request->guest ? 1 : 0;
-        $user->address = $request->address;
+        $user->date           = $request->date ? Carbon::createFromFormat('d-m-Y', $request->date) : null;
+        $user->status         = $request->status;
+        $user->guest          = $request->guest ? 1 : 0;
+        $user->address        = $request->address;
         $user->save();
 
         return $user;
@@ -314,7 +305,7 @@ class CustomerController extends Controller
     public function dueReceiveForm(Request $request)
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive');
-        if (!$request->customer) {
+        if (! $request->customer) {
             return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Customer Not Found', 'alert-type' => 'error']);
         }
 
@@ -336,14 +327,14 @@ class CustomerController extends Controller
 
             // create ledger
 
-            $ledger = new Ledger();
-            $ledger->customer_id = $request->customer_id;
-            $ledger->amount = $request->receiving_amount;
-            $ledger->invoice_type = 'Due Receive';
-            $ledger->is_paid = 0;
-            $ledger->is_received = 1;
-            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Due Receive');
-            $ledger->due_amount -= $request->receiving_amount;
+            $ledger                = new Ledger();
+            $ledger->customer_id   = $request->customer_id;
+            $ledger->amount        = $request->receiving_amount;
+            $ledger->invoice_type  = 'Due Receive';
+            $ledger->is_paid       = 0;
+            $ledger->is_received   = 1;
+            $ledger->invoice_no    = $this->genLedgerInvoiceNumber('Due Receive');
+            $ledger->due_amount   -= $request->receiving_amount;
 
             $ledger->note = $request->note;
             $ledger->date = Carbon::createFromFormat('d-m-Y', $request->payment_date);
@@ -362,48 +353,47 @@ class CustomerController extends Controller
                 $account = $this->account->all()->find($account);
             }
 
-
             foreach ($request->invoice_no as $index => $invo) {
                 $sale = Sale::where('invoice', $invo)->first();
 
                 $sale->payment_status = $sale->due_amount == $request->amount[$index] ? 'paid' : 'due';
 
                 $sale->paid_amount = $sale->paid_amount + $request->amount[$index];
-                $sale->due_amount = $sale->due_amount - $request->amount[$index];
+                $sale->due_amount  = $sale->due_amount - $request->amount[$index];
                 $sale->save();
 
                 // create payment data
                 CustomerPayment::create([
-                    'sale_id' => $sale->id,
-                    'customer_id' => $sale->customer_id,
-                    'account_id' => $account->id,
+                    'sale_id'      => $sale->id,
+                    'customer_id'  => $request->customer_id,
+                    'account_id'   => $account->id,
                     'payment_type' => 'due_receive',
-                    'is_received' => 1,
-                    'amount' => $request->amount[$index],
+                    'is_received'  => 1,
+                    'amount'       => $request->amount[$index],
                     'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
-                    'note' => $request->note,
-                    'created_by' => auth('admin')->user()->id,
+                    'note'         => $request->note,
+                    'created_by'   => auth('admin')->user()->id,
                 ]);
 
                 if ($request->amount[$index]) {
                     // update customer due amount
-                    $due = CustomerDue::where('invoice', $invo)->first();
-                    $due->due_amount = $due->due_amount - $request->amount[$index];
+                    $due              = CustomerDue::where('invoice', $invo)->first();
+                    $due->due_amount  = $due->due_amount - $request->amount[$index];
                     $due->paid_amount = $due->paid_amount + $request->amount[$index];
                     $due->save();
 
                     // create ledger details
                     $ledger->details()->create([
                         'invoice' => $invo,
-                        'amount' => $request->amount[$index],
+                        'amount'  => $request->amount[$index],
                     ]);
                 }
             }
 
             DB::commit();
             return to_route('admin.customers.index')->with([
-                'messege' => 'Customer due receive successfully.',
-                'alert-type' => 'success'
+                'messege'    => 'Customer due receive successfully.',
+                'alert-type' => 'success',
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -415,17 +405,17 @@ class CustomerController extends Controller
     public function dueReceiveList()
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive.list');
-        $payments  = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->where('amount', '>', 0);
+        $payments = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->where('amount', '>', 0);
         // Date filtering
         if (request()->from_date && request()->to_date) {
             $fromDate = \Carbon\Carbon::parse(request()->from_date)->startOfDay();
-            $toDate = \Carbon\Carbon::parse(request()->to_date)->endOfDay();
+            $toDate   = \Carbon\Carbon::parse(request()->to_date)->endOfDay();
             $payments = $payments->whereBetween('payment_date', [$fromDate, $toDate]);
         }
 
         // Keyword search
         if (request()->keyword) {
-            $keyword = '%' . request()->keyword . '%';
+            $keyword  = '%' . request()->keyword . '%';
             $payments = $payments->where(function ($q) use ($keyword) {
                 $q->where('note', 'like', $keyword)
                     ->orWhere('amount', 'like', $keyword)
@@ -451,7 +441,7 @@ class CustomerController extends Controller
             $payments = $payments->where('customer_id', request('customer'));
         }
         $data['total'] = $payments->sum('amount');
-        $payments = $payments->paginate(20);
+        $payments      = $payments->paginate(20);
 
         $payments->appends(request()->query());
 
@@ -461,7 +451,7 @@ class CustomerController extends Controller
     public function dueReceiveEdit($id)
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive.edit');
-        $payment = CustomerPayment::findOrFail($id);
+        $payment  = CustomerPayment::findOrFail($id);
         $accounts = $this->account->all()->get();
         return view('customer::due-receive-edit', compact('payment', 'accounts'));
     }
@@ -472,8 +462,8 @@ class CustomerController extends Controller
         $payment = CustomerPayment::findOrFail($id);
         $payment->update($request->except('_token'));
         return to_route('admin.customer.due-receive.list')->with([
-            'messege' => 'Customer due receive successfully.',
-            'alert-type' => 'success'
+            'messege'    => 'Customer due receive successfully.',
+            'alert-type' => 'success',
         ]);
     }
 
@@ -483,23 +473,21 @@ class CustomerController extends Controller
         $payment = CustomerPayment::findOrFail($id);
 
         // update customer due amount
-        $due = CustomerDue::where('invoice', $payment->sale->invoice)->first();
-        $due->due_amount = $due->due_amount + $payment->amount;
+        $due              = CustomerDue::where('invoice', $payment->sale->invoice)->first();
+        $due->due_amount  = $due->due_amount + $payment->amount;
         $due->paid_amount = $due->paid_amount - $payment->amount;
         $due->save();
 
-
         // update sale
-        $sale = $payment->sale;
+        $sale                 = $payment->sale;
         $sale->payment_status = $sale->due_amount == $payment->amount ? 'paid' : 'due';
-        $sale->paid_amount = $sale->paid_amount - $payment->amount;
-        $sale->due_amount = $sale->due_amount + $payment->amount;
+        $sale->paid_amount    = $sale->paid_amount - $payment->amount;
+        $sale->due_amount     = $sale->due_amount + $payment->amount;
         $sale->save();
-
 
         // customer ledger delete
         $invoiceNumber = $payment->sale->invoice;
-        $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)->first();
+        $ledgerDetail  = LedgerDetails::where('invoice', $invoiceNumber)->first();
 
         if ($ledgerDetail) {
             $ledger = $ledgerDetail->ledger;
@@ -517,7 +505,7 @@ class CustomerController extends Controller
                 $ledger->delete();
             } else {
                 // Update ledger amounts
-                $ledger->amount = $ledger->amount - $payment->amount;
+                $ledger->amount     = $ledger->amount - $payment->amount;
                 $ledger->due_amount = $ledger->due_amount + $payment->amount;
                 $ledger->save();
             }
@@ -525,8 +513,8 @@ class CustomerController extends Controller
 
         $payment->delete();
         return to_route('admin.customer.due-receive.list')->with([
-            'messege' => 'Customer due receive deleted successfully.',
-            'alert-type' => 'success'
+            'messege'    => 'Customer due receive deleted successfully.',
+            'alert-type' => 'success',
         ]);
     }
 
@@ -557,19 +545,19 @@ class CustomerController extends Controller
     {
         checkAdminHasPermissionAndThrowException('customer.advance');
         $validator = Validator::make($request->all(), [
-            'advance' => 'nullable',
+            'advance'       => 'nullable',
             'paying_amount' => 'nullable',
             'refund_amount' => 'nullable',
-            'date' => 'required',
-            'total_amount' => 'required',
-            'payment_type' => 'required',
+            'date'          => 'required',
+            'total_amount'  => 'required',
+            'payment_type'  => 'required',
         ]);
 
         $validator->after(function ($validator) use ($request) {
             if (is_null($request->paying_amount) && is_null($request->refund_amount)) {
                 $validator->errors()->add('paying_amount', 'Either Receiving Amount or Refund Amount must be provided.');
                 $validator->errors()->add('refund_amount', 'Either Receiving Amount or Refund Amount must be provided.');
-            } elseif (!is_null($request->paying_amount) && !is_null($request->refund_amount)) {
+            } elseif (! is_null($request->paying_amount) && ! is_null($request->refund_amount)) {
                 $validator->errors()->add('paying_amount', 'Only one of Receiving Amount or Refund Amount can be provided.');
                 $validator->errors()->add('refund_amount', 'Only one of Receiving Amount or Refund Amount can be provided.');
             }
@@ -591,7 +579,6 @@ class CustomerController extends Controller
         }
     }
 
-
     public function advancePay(Request $request, $id)
     {
         checkAdminHasPermissionAndThrowException('customer.advance');
@@ -603,46 +590,42 @@ class CustomerController extends Controller
             $account = Account::find($account);
         }
 
-
         // create payment data
         // advance_receive: is_paid=0, is_received=1 (receiving money from customer)
         // advance_refund: is_paid=1, is_received=0 (paying money back to customer)
         CustomerPayment::create([
-            'customer_id' => $id,
-            'account_id' => $account->id,
+            'customer_id'  => $id,
+            'account_id'   => $account->id,
             'payment_type' => $request->refund_amount != null ? 'advance_refund' : 'advance_receive',
-            'is_paid' => $request->refund_amount != null ? 1 : 0,
-            'is_received' => $request->refund_amount != null ? 0 : 1,
-            'amount' => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
+            'is_paid'      => $request->refund_amount != null ? 1 : 0,
+            'is_received'  => $request->refund_amount != null ? 0 : 1,
+            'amount'       => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
             'account_type' => accountList()[$account->account_type],
-            'note' => $request->note,
-            'created_by' => auth('admin')->user()->id,
+            'note'         => $request->note,
+            'created_by'   => auth('admin')->user()->id,
             'payment_date' => Carbon::createFromFormat('d-m-Y', $request->date),
-            'invoice' => $this->genInvoiceNumber()
+            'invoice'      => $this->genInvoiceNumber(),
         ]);
-
-
 
         // create ledger
 
-        $ledger = new Ledger();
-        $ledger->customer_id = $id;
-        $ledger->amount = $request->paying_amount ?? $request->refund_amount;
+        $ledger               = new Ledger();
+        $ledger->customer_id  = $id;
+        $ledger->amount       = $request->paying_amount ?? $request->refund_amount;
         $ledger->invoice_type = $request->refund_amount == null ? 'Advance Received' : 'Payment Return';
-        $ledger->is_paid = $request->refund_amount != null ? 1 : 0;
-        $ledger->is_received = $request->refund_amount != null ? 0 : 1;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber($ledger->invoice_type);
-        $ledger->note = $request->note;
-
+        $ledger->is_paid      = $request->refund_amount != null ? 1 : 0;
+        $ledger->is_received  = $request->refund_amount != null ? 0 : 1;
+        $ledger->invoice_no   = $this->genLedgerInvoiceNumber($ledger->invoice_type);
+        $ledger->note         = $request->note;
 
         if ($request->refund_amount != null) {
             $ledger->due_amount += $request->refund_amount;
-            $ledger->amount = -$request->refund_amount;
+            $ledger->amount      = -$request->refund_amount;
         } else {
             $ledger->due_amount = -$request->paying_amount;
-            $ledger->amount = $request->paying_amount;
+            $ledger->amount     = $request->paying_amount;
         }
-        $ledger->date = Carbon::createFromFormat('d-m-Y', $request->date);
+        $ledger->date       = Carbon::createFromFormat('d-m-Y', $request->date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
     }
@@ -657,11 +640,10 @@ class CustomerController extends Controller
         return generateInvoiceNumber(Ledger::class, 'invoice_no', null, ['invoice_type' => $type]);
     }
 
-
     public function ledger($id)
     {
         checkAdminHasPermissionAndThrowException('customer.ledger');
-        $user = User::findOrFail($id);
+        $user    = User::findOrFail($id);
         $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'asc')->paginate(20);
         $ledgers->appends(request()->query());
         $title = __('Customer Ledger');
@@ -671,7 +653,7 @@ class CustomerController extends Controller
             return Excel::download(new LedgerExport($ledgers, $title), $fileName);
         }
         if (request('export_pdf')) {
-            return view('supplier::pdf.ledger', ['ledgers' => $ledgers,  'title' => $title]);
+            return view('supplier::pdf.ledger', ['ledgers' => $ledgers, 'title' => $title]);
         }
         return view('supplier::ledger', compact('ledgers', 'title'));
     }
@@ -680,7 +662,7 @@ class CustomerController extends Controller
     {
         checkAdminHasPermissionAndThrowException('customer.ledger');
         $ledger = Ledger::with('details', 'customer')->find($id);
-        $title = __('Customer Ledger Details');
+        $title  = __('Customer Ledger Details');
         return view('supplier::ledger-details', compact('ledger', 'title'));
     }
 
@@ -703,7 +685,6 @@ class CustomerController extends Controller
         }
     }
 
-
     public function deleteAllCustomer(Request $request)
     {
         checkAdminHasPermissionAndThrowException('customer.bulk.delete');
@@ -711,7 +692,7 @@ class CustomerController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Hash::check($request->password, auth('admin')->user()->password)) {
+        if (! Hash::check($request->password, auth('admin')->user()->password)) {
             return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Password does not match.', 'alert-type' => 'error']);
         }
 
@@ -739,7 +720,6 @@ class CustomerController extends Controller
 
             $user->delete();
         }
-
 
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customers.index', [], ['messege' => 'Customer deleted successfully.', 'alert-type' => 'success']);
     }
