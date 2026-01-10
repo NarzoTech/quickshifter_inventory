@@ -287,7 +287,7 @@ class CustomerController extends Controller
         $user->membership     = $request->membership;
         $user->plate_number   = $request->plate_number;
         $user->wallet_balance = $request->due;
-        $user->date           = $request->date ? Carbon::createFromFormat('d-m-Y', $request->date) : null;
+        $user->date           = $request->date ? Carbon::createFromFormat('d-m-Y', $request->date) : now();
         $user->status         = $request->status;
         $user->guest          = $request->guest ? 1 : 0;
         $user->address        = $request->address;

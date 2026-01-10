@@ -366,7 +366,7 @@
                                                     {{ currency($cumalitive_sub_total) }}
                                                 </td>
                                             </tr>
-                                            <tr class="customer-due-row d-none">
+                                            <tr class="customer-due-row d-none" style="background-color: #ffc107; color: #000;">
                                                 <td colspan="3">
                                                     <strong>{{ __('Customer Due') }}</strong>
                                                 </td>
