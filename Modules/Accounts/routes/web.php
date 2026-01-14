@@ -29,4 +29,5 @@ Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' 
     Route::delete('balance/transfer/destroy/{id}', [BalanceController::class, 'transferDestroy'])->name('balance.transfer.destroy');
     Route::resource('bank', BankController::class)->names('bank');
     Route::get('cashflow', [AccountsController::class, 'cashflow'])->name('cashflow');
+    Route::get('accounts/{id}/ledger', [AccountsController::class, 'ledger'])->name('accounts.ledger');
 });

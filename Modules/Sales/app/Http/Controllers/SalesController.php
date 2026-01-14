@@ -58,8 +58,8 @@ class SalesController extends Controller
         }
 
         // Filter by customer
-        if (request()->customer) {
-            $sales = $sales->where('customer_id', request('customer'));
+        if (request()->customer || request()->customer_id) {
+            $sales = $sales->where('customer_id', request('customer') ?? request('customer_id'));
         }
 
         $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';

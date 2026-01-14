@@ -164,21 +164,21 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="date">{{ __('Date') }}</label>
+                                    <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control datepicker" id="date" name="date"
-                                        autocomplete="off">
+                                        value="{{ formatDate(now()) }}" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="amount">{{ __('Amount') }}</label>
-                                    <input type="text" class="form-control" id="amount" name="amount">
+                                    <label for="amount">{{ __('Amount') }}<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="amount" name="amount" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="from_account_type">{{ __('From Account Type') }}</label>
-                                    <select name="from_account_type" id="from_account_type" class="form-control me-2">
+                                    <label for="from_account_type">{{ __('From Account Type') }}<span class="text-danger">*</span></label>
+                                    <select name="from_account_type" id="from_account_type" class="form-control me-2" required>
                                         @foreach (accountList() as $key => $list)
                                             <option value="{{ $key }}"
                                                 @if ($key == 'cash') selected @endif
@@ -191,8 +191,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="to_account_type">{{ __('To Account Type') }}</label>
-                                    <select name="to_account_type" id="to_account_type" class="form-control me-2">
+                                    <label for="to_account_type">{{ __('To Account Type') }}<span class="text-danger">*</span></label>
+                                    <select name="to_account_type" id="to_account_type" class="form-control me-2" required>
                                         @foreach (accountList() as $key => $list)
                                             <option value="{{ $key }}"
                                                 @if ($key == 'cash') selected @endif
@@ -205,16 +205,16 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="from_account">{{ __('From Account') }}</label>
-                                    <select name="from_account" id="from_account" class="form-control">
+                                    <label for="from_account">{{ __('From Account') }}<span class="text-danger">*</span></label>
+                                    <select name="from_account" id="from_account" class="form-control" required>
                                         <option value="cash">{{ __('Cash') }}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="to_account">{{ __('To Account') }}</label>
-                                    <select name="to_account" id="to_account" class="form-control">
+                                    <label for="to_account">{{ __('To Account') }}<span class="text-danger">*</span></label>
+                                    <select name="to_account" id="to_account" class="form-control" required>
                                         <option value="cash">{{ __('Cash') }}</option>
                                     </select>
                                 </div>
@@ -261,23 +261,23 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="date">{{ __('Date') }}</label>
+                                        <label for="date">{{ __('Date') }}<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control datepicker" id="date"
-                                            name="date" value="{{ formatDate($transfer->date) }}" autocomplete="off">
+                                            name="date" value="{{ formatDate($transfer->date) }}" autocomplete="off" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="amount">{{ __('Amount') }}</label>
+                                        <label for="amount">{{ __('Amount') }}<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="amount" name="amount"
-                                            value="{{ $transfer->amount }}">
+                                            value="{{ $transfer->amount }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="from_account_type">{{ __('From Account Type') }}</label>
+                                        <label for="from_account_type">{{ __('From Account Type') }}<span class="text-danger">*</span></label>
                                         <select name="from_account_type" data-id="{{ $transfer->id }}"
-                                            class="form-control me-2 from_account_type">
+                                            class="form-control me-2 from_account_type" required>
                                             @foreach (accountList() as $key => $list)
                                                 <option value="{{ $key }}"
                                                     @if ($key == $transfer->fromAccount->account_type) selected @endif
@@ -290,9 +290,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="to_account_type">{{ __('To Account Type') }}</label>
+                                        <label for="to_account_type">{{ __('To Account Type') }}<span class="text-danger">*</span></label>
                                         <select name="to_account_type" data-id="{{ $transfer->id }}"
-                                            class="form-control me-2 to_account_type">
+                                            class="form-control me-2 to_account_type" required>
                                             @foreach (accountList() as $key => $list)
                                                 <option value="{{ $key }}"
                                                     @if ($key == $transfer->toAccount->account_type) selected @endif
@@ -306,8 +306,8 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="from_account_{{ $transfer->id }}">{{ __('From Account') }}</label>
-                                        <select name="from_account" id="from_account_{{ $transfer->id }}" class="form-control from_account_select">
+                                        <label for="from_account_{{ $transfer->id }}">{{ __('From Account') }}<span class="text-danger">*</span></label>
+                                        <select name="from_account" id="from_account_{{ $transfer->id }}" class="form-control from_account_select" required>
                                             {!! selectedAccount($transfer->fromAccount->account_type, $transfer->from_account_id) !!}
                                         </select>
                                     </div>
@@ -315,8 +315,8 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="to_account_{{ $transfer->id }}">{{ __('To Account') }}</label>
-                                        <select name="to_account" id="to_account_{{ $transfer->id }}" class="form-control to_account_select">
+                                        <label for="to_account_{{ $transfer->id }}">{{ __('To Account') }}<span class="text-danger">*</span></label>
+                                        <select name="to_account" id="to_account_{{ $transfer->id }}" class="form-control to_account_select" required>
                                             {!! selectedAccount($transfer->toAccount->account_type, $transfer->to_account_id) !!}
                                         </select>
                                     </div>

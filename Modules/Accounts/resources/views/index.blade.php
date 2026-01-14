@@ -196,19 +196,21 @@
     <div class="row mt-4">
         {{-- Cash Amount Card --}}
         <div class="col-12 col-md-6 col-xl-3 mb-4">
-            <div class="card account-summary-card bg-gradient-success text-white">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="icon-wrapper bg-white bg-opacity-25 me-3">
-                            <i class="fas fa-money-bill-wave text-black"></i>
-                        </div>
-                        <div>
-                            <p class="label mb-0 text-white-50">{{ __('Cash in Hand') }}</p>
-                            <h3 class="amount mb-0 text-white">{{ currency($cashAccount?->getBalanceBetween()) }}</h3>
+            <a href="{{ $cashAccount ? route('admin.accounts.ledger', $cashAccount->id) : '#' }}" class="text-decoration-none">
+                <div class="card account-summary-card bg-gradient-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper bg-white bg-opacity-25 me-3">
+                                <i class="fas fa-money-bill-wave text-black"></i>
+                            </div>
+                            <div>
+                                <p class="label mb-0 text-white-50">{{ __('Cash in Hand') }}</p>
+                                <h3 class="amount mb-0 text-white">{{ currency($cashAccount?->getBalanceBetween()) }}</h3>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         {{-- Bank Accounts Total --}}
@@ -330,6 +332,10 @@
                                                         aria-expanded="false">{{ __('Action') }}</button>
                                                     <div class="dropdown-menu"
                                                         aria-labelledby="btnGroupDrop{{ $account->id }}">
+                                                        @adminCan('account.view')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.ledger', $account->id) }}">{{ __('Ledger') }}</a>
+                                                        @endadminCan
                                                         @adminCan('account.edit')
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
@@ -415,6 +421,10 @@
                                                         aria-expanded="false">{{ __('Action') }}</button>
                                                     <div class="dropdown-menu"
                                                         aria-labelledby="btnGroupDropMobile{{ $account->id }}">
+                                                        @adminCan('account.view')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.ledger', $account->id) }}">{{ __('Ledger') }}</a>
+                                                        @endadminCan
                                                         @adminCan('account.edit')
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>
@@ -502,6 +512,10 @@
                                                         aria-expanded="false">{{ __('Action') }}</button>
                                                     <div class="dropdown-menu"
                                                         aria-labelledby="btnGroupDropCard{{ $account->id }}">
+                                                        @adminCan('account.view')
+                                                            <a class="dropdown-item"
+                                                                href="{{ route('admin.accounts.ledger', $account->id) }}">{{ __('Ledger') }}</a>
+                                                        @endadminCan
                                                         @adminCan('account.edit')
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.accounts.edit', $account->id) }}">{{ __('Edit') }}</a>

@@ -10,6 +10,9 @@
             <div class="card">
                 <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
+                        @if(request('supplier_id'))
+                            <input type="hidden" name="supplier_id" value="{{ request('supplier_id') }}">
+                        @endif
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group search-wrapper">
@@ -121,7 +124,7 @@
                         <tr>
                             <th>{{ __('SN') }}</th>
                             <th>{{ __('Date') }}</th>
-                            <th>{{ __('Invoice Number') }}</th>
+                            <th>{{ __('Invoice / Memo') }}</th>
                             <th>{{ __('Supplier Company') }}</th>
                             <th>{{ __('Supplier Name') }}</th>
                             <th>{{ __('Total Amount') }}</th>
@@ -135,7 +138,12 @@
                             <tr>
                                 <td>{{ method_exists($purchases, 'firstItem') ? $purchases->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ formatDate($purchase->purchase_date) }}</td>
-                                <td>{{ $purchase->invoice_number }}</td>
+                                <td>
+                                    {{ $purchase->invoice_number }}
+                                    @if($purchase->memo_no)
+                                        <br><small>Memo: {{ $purchase->memo_no }}</small>
+                                    @endif
+                                </td>
                                 <td>{{ $purchase->supplier?->company }}</td>
                                 <td>{{ $purchase->supplier?->name }}</td>
                                 <td>{{ currency($purchase->total_amount) }}</td>

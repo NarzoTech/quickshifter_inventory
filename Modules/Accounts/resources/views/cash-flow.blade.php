@@ -357,6 +357,19 @@
                                 </h5>
                             </td>
                         </tr>
+                        <tr>
+                            <td colspan="3" class="text-end">
+                                <h5 class="m-0">
+                                    <b>{{ __('Today Balance') }} =</b>
+                                </h5>
+                            </td>
+                            <td colspan="" class="text-left">
+                                <h5 class="m-0">
+                                    <b>{{ currency($data['totalReceive'] - $data['totalPay']) }}</b>
+                                </h5>
+                                ({{ __('Cash In') }} - {{ __('Cash Out') }})
+                            </td>
+                        </tr>
                         @endif
                         <tr>
                             <td colspan="3" class="text-end">

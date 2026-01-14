@@ -1138,13 +1138,11 @@
         }
 
         function openPaymentModal() {
-            calDue();
             $('.pos-footer').css('z-index', 0);
             const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
             const discountAmount = $('#tds').text().replace(/[^0-9.]/g, '') || 0;
             const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
             const item = $('#titems').text();
-
 
             $('[name="sub_total"]').val(subTotal);
             $('#sub_totalModal').text(subTotal);
@@ -1163,31 +1161,37 @@
             loadCustomer(customer_id);
 
             // total items
-
             $('#itemModal').text(item);
 
-            // Update the first payment row amount with new grand total
+            // Calculate paid amount from existing payment rows
             const paymentRows = $('#paymentRow tr');
-            if (paymentRows.length === 1) {
-                // If there's only one payment row, update its amount to the new total
-                paymentRows.first().find('.paying_amount').val(grandTotal);
-                // Set due to 0 since paying full amount
-                $('#normalPayment [name="total_due"]').val(0);
+            let totalPaid = 0;
+
+            paymentRows.each(function() {
+                const amount = parseFloat($(this).find('.paying_amount').val()) || 0;
+                totalPaid += amount;
+            });
+
+            // Calculate remaining due based on current grand total
+            let remainingDue = grandTotal - totalPaid;
+            remainingDue = remainingDue > 0 ? remainingDue : 0;
+
+            // Update paid amount display
+            $('#paid_amountModal').text(totalPaid.toFixed(2));
+
+            // Update due amount
+            $('#normalPayment [name="total_due"]').val(remainingDue.toFixed(2));
+
+            if (remainingDue > 0) {
+                $(".due").removeClass('d-none');
+                $(".due-date").removeClass('d-none');
+            } else {
+                $(".due").addClass('d-none');
                 $(".due-date").addClass('d-none');
-            } else if (paymentRows.length > 1) {
-                // If there are multiple payment rows, calculate total paid and update due
-                let totalPaid = 0;
-                paymentRows.each(function() {
-                    totalPaid += parseFloat($(this).find('.paying_amount').val()) || 0;
-                });
-                const dueAmount = grandTotal - totalPaid;
-                $('#normalPayment [name="total_due"]').val(dueAmount.toFixed(2));
-                if (dueAmount > 0) {
-                    $(".due-date").removeClass('d-none');
-                } else {
-                    $(".due-date").addClass('d-none');
-                }
             }
+
+            // Call calDue for customer previous due calculation
+            calDue();
 
             // hide rows
             if (!discountAmount) {

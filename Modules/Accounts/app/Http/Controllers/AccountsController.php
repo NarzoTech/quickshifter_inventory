@@ -278,4 +278,238 @@ class AccountsController extends Controller
         $currentBalance = $openingBalance + $data['totalReceive'] - $data['totalPay'];
         return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance', 'hasDateFilter'));
     }
+
+    public function ledger($id)
+    {
+        checkAdminHasPermissionAndThrowException('account.view');
+
+        $account = $this->accountsService->find($id);
+
+        // Get account display name
+        $accountName = match($account->account_type) {
+            'cash' => __('Cash'),
+            'bank' => $account->bank?->name . ' - ' . $account->bank_account_number,
+            'mobile_banking' => $account->mobile_bank_name . ' - ' . $account->mobile_number,
+            'card' => $account->card_type . ' - ' . $account->card_number,
+            default => $account->account_type
+        };
+
+        $title = __('Account Ledger') . ' - ' . $accountName;
+
+        // Date filter
+        $hasDateFilter = request('from_date') || request('to_date');
+        $fromDate = request('from_date') ? now()->parse(request('from_date')) : null;
+        $toDate = request('to_date') ? now()->parse(request('to_date')) : null;
+
+        // Collect all transactions
+        $transactions = collect();
+
+        // Helper to apply date filter
+        $applyDateFilter = function ($query, $dateColumn) use ($hasDateFilter, $fromDate, $toDate) {
+            if ($hasDateFilter) {
+                if ($fromDate && $toDate) {
+                    $query->whereBetween($dateColumn, [$fromDate, $toDate]);
+                } elseif ($fromDate) {
+                    $query->where($dateColumn, '>=', $fromDate);
+                } elseif ($toDate) {
+                    $query->where($dateColumn, '<=', $toDate);
+                }
+            }
+            return $query;
+        };
+
+        // Customer Payments (Sales, Due Receive, Advance, etc.)
+        $customerPaymentsQuery = $account->customerPayments();
+        $applyDateFilter($customerPaymentsQuery, 'payment_date');
+        $customerPayments = $customerPaymentsQuery->get()->map(function ($payment) {
+            $url = null;
+            if ($payment->sale_id) {
+                $url = route('admin.sales.invoice', $payment->sale_id);
+            }
+            return [
+                'date' => $payment->payment_date,
+                'description' => ucfirst(str_replace('_', ' ', $payment->payment_type)),
+                'reference' => $payment->sale?->invoice ?? $payment->customer?->name ?? '-',
+                'url' => $url,
+                'debit' => $payment->is_received ? $payment->amount : 0,
+                'credit' => $payment->is_paid ? $payment->amount : 0,
+            ];
+        });
+        $transactions = $transactions->merge($customerPayments);
+
+        // Supplier Payments (Purchase, Due Pay, Advance, etc.)
+        $supplierPaymentsQuery = $account->supplierPayments();
+        $applyDateFilter($supplierPaymentsQuery, 'payment_date');
+        $supplierPayments = $supplierPaymentsQuery->get()->map(function ($payment) {
+            $url = null;
+            if ($payment->purchase_id) {
+                $url = route('admin.purchase.invoice', $payment->purchase_id);
+            }
+            return [
+                'date' => $payment->payment_date,
+                'description' => ucfirst(str_replace('_', ' ', $payment->payment_type)),
+                'reference' => $payment->purchase?->invoice ?? $payment->supplier?->name ?? '-',
+                'url' => $url,
+                'debit' => $payment->is_received ? $payment->amount : 0,
+                'credit' => $payment->is_paid ? $payment->amount : 0,
+            ];
+        });
+        $transactions = $transactions->merge($supplierPayments);
+
+        // Expense Supplier Payments
+        $expensePaymentsQuery = $account->expenseSupplierPayments();
+        $applyDateFilter($expensePaymentsQuery, 'payment_date');
+        $expensePayments = $expensePaymentsQuery->get()->map(function ($payment) {
+            return [
+                'date' => $payment->payment_date,
+                'description' => __('Expense') . ' - ' . ucfirst(str_replace('_', ' ', $payment->payment_type)),
+                'reference' => $payment->expense?->invoice ?? '-',
+                'url' => null,
+                'debit' => $payment->is_received ? $payment->amount : 0,
+                'credit' => $payment->is_paid ? $payment->amount : 0,
+            ];
+        });
+        $transactions = $transactions->merge($expensePayments);
+
+        // Balance Deposits
+        $depositsQuery = $account->deposits();
+        $applyDateFilter($depositsQuery, 'date');
+        $deposits = $depositsQuery->get()->map(function ($balance) {
+            return [
+                'date' => $balance->date,
+                'description' => __('Balance Deposit'),
+                'reference' => $balance->note ?? '-',
+                'url' => null,
+                'debit' => $balance->amount,
+                'credit' => 0,
+            ];
+        });
+        $transactions = $transactions->merge($deposits);
+
+        // Balance Withdraws
+        $withdrawsQuery = $account->withdraws();
+        $applyDateFilter($withdrawsQuery, 'date');
+        $withdraws = $withdrawsQuery->get()->map(function ($balance) {
+            return [
+                'date' => $balance->date,
+                'description' => __('Balance Withdraw'),
+                'reference' => $balance->note ?? '-',
+                'url' => null,
+                'debit' => 0,
+                'credit' => $balance->amount,
+            ];
+        });
+        $transactions = $transactions->merge($withdraws);
+
+        // Balance Transfers In
+        $transfersInQuery = $account->transfersIn();
+        $applyDateFilter($transfersInQuery, 'date');
+        $transfersIn = $transfersInQuery->get()->map(function ($transfer) {
+            return [
+                'date' => $transfer->date,
+                'description' => __('Transfer In'),
+                'reference' => $transfer->note ?? '-',
+                'url' => route('admin.balance.transfer'),
+                'debit' => $transfer->amount,
+                'credit' => 0,
+            ];
+        });
+        $transactions = $transactions->merge($transfersIn);
+
+        // Balance Transfers Out
+        $transfersOutQuery = $account->transfersOut();
+        $applyDateFilter($transfersOutQuery, 'date');
+        $transfersOut = $transfersOutQuery->get()->map(function ($transfer) {
+            return [
+                'date' => $transfer->date,
+                'description' => __('Transfer Out'),
+                'reference' => $transfer->note ?? '-',
+                'url' => route('admin.balance.transfer'),
+                'debit' => 0,
+                'credit' => $transfer->amount,
+            ];
+        });
+        $transactions = $transactions->merge($transfersOut);
+
+        // Salary Payments
+        $salaryQuery = $account->salary();
+        $applyDateFilter($salaryQuery, 'date');
+        $salaries = $salaryQuery->get()->map(function ($salary) {
+            return [
+                'date' => $salary->date,
+                'description' => __('Salary Payment'),
+                'reference' => $salary->employee?->name ?? '-',
+                'url' => null,
+                'debit' => 0,
+                'credit' => $salary->amount,
+            ];
+        });
+        $transactions = $transactions->merge($salaries);
+
+        // Legacy Expenses (without supplier)
+        $expensesQuery = $account->expenses();
+        $applyDateFilter($expensesQuery, 'date');
+        $expenses = $expensesQuery->get()->map(function ($expense) {
+            return [
+                'date' => $expense->date,
+                'description' => __('Expense') . ' - ' . ($expense->expenseType?->name ?? ''),
+                'reference' => $expense->invoice ?? '-',
+                'url' => null,
+                'debit' => 0,
+                'credit' => $expense->amount,
+            ];
+        });
+        $transactions = $transactions->merge($expenses);
+
+        // Sort by date
+        $transactions = $transactions->sortBy('date')->values();
+
+        // Calculate opening balance if date filter applied
+        $openingBalance = $hasDateFilter && $fromDate ? $account->getOpeningBalance($fromDate) : 0;
+
+        // Apply keyword filter
+        if (request('keyword')) {
+            $keyword = strtolower(request('keyword'));
+            $transactions = $transactions->filter(function ($item) use ($keyword) {
+                return str_contains(strtolower($item['description']), $keyword) ||
+                       str_contains(strtolower($item['reference']), $keyword);
+            })->values();
+        }
+
+        // Calculate totals
+        $totalDebit = $transactions->sum('debit');
+        $totalCredit = $transactions->sum('credit');
+        $closingBalance = $openingBalance + $totalDebit - $totalCredit;
+
+        // Excel Export
+        if (request('export') == 'excel') {
+            $fileName = 'account-ledger-' . $account->id . '-' . date('Y-m-d') . '.xlsx';
+            return \Maatwebsite\Excel\Facades\Excel::download(
+                new \App\Exports\AccountLedgerExport($transactions, $title, $openingBalance, $totalDebit, $totalCredit, $closingBalance),
+                $fileName
+            );
+        }
+
+        // PDF Export
+        if (request('export') == 'pdf') {
+            return view('accounts::pdf.ledger', compact('transactions', 'title', 'account', 'openingBalance', 'totalDebit', 'totalCredit', 'closingBalance', 'hasDateFilter'));
+        }
+
+        // Pagination
+        $perPage = request('par-page', 20);
+        if ($perPage === 'all') {
+            $ledgers = $transactions;
+        } else {
+            $page = request('page', 1);
+            $ledgers = new \Illuminate\Pagination\LengthAwarePaginator(
+                $transactions->forPage($page, $perPage),
+                $transactions->count(),
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+        }
+
+        return view('accounts::ledger', compact('ledgers', 'title', 'account', 'openingBalance', 'totalDebit', 'totalCredit', 'closingBalance', 'hasDateFilter'));
+    }
 }

@@ -8,6 +8,9 @@
             <div class="card">
                 <div class="card-body pb-0">
                     <form class="search_form" action="" method="GET">
+                        @if(request('customer'))
+                            <input type="hidden" name="customer" value="{{ request('customer') }}">
+                        @endif
                         <div class="row">
                             <div class="col-xxl-3 col-md-6">
                                 <div class="form-group search-wrapper">

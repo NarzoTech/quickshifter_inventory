@@ -30,7 +30,7 @@ class ExpenseController extends Controller
     public function index()
     {
         checkAdminHasPermissionAndThrowException('expense.view');
-        $expenses = Expense::query()->with('expenseSupplier');
+        $expenses = Expense::query()->with(['expenseSupplier', 'expenseType', 'subExpenseType']);
 
         if (request('keyword')) {
             $keyword  = request('keyword');

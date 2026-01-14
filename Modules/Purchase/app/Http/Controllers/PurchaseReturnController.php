@@ -41,6 +41,11 @@ class PurchaseReturnController extends Controller
         if (request('from_date') && request('to_date')) {
             $returns = $returns->whereBetween('return_date', [now()->parse(request('from_date')), now()->parse(request('to_date'))]);
         }
+        if (request('supplier_id')) {
+            $returns = $returns->whereHas('purchase', function ($q) {
+                $q->where('supplier_id', request('supplier_id'));
+            });
+        }
         if (request()->order_by) {
             $returns = $returns->orderBy('return_date', request()->order_by);
         } else {

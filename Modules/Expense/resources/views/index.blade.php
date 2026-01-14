@@ -144,7 +144,8 @@
                                     <th style="width: 8%">{{ __('Invoice') }}</th>
                                     <th style="width: 8%">{{ __('Date') }}</th>
                                     <th style="width: 10%">{{ __('Supplier') }}</th>
-                                    <th style="width: 10%">{{ __('Type') }}</th>
+                                    <th style="width: 10%">{{ __('Category') }}</th>
+                                    <th style="width: 10%">{{ __('Sub Category') }}</th>
                                     <th style="width: 8%">{{ __('Amount') }}</th>
                                     <th style="width: 8%">{{ __('Paid') }}</th>
                                     <th style="width: 8%">{{ __('Due') }}</th>
@@ -168,6 +169,7 @@
                                         <td>{{ formatDate($expense->date) }}</td>
                                         <td>{{ $expense->expenseSupplier->name ?? '-' }}</td>
                                         <td>{{ $expense->expenseType->name }}</td>
+                                        <td>{{ $expense->subExpenseType->name ?? '-' }}</td>
                                         <td>{{ currency($expense->amount) }}</td>
                                         <td>{{ currency($expense->paid_amount) }}</td>
                                         <td>{{ currency($expense->due_amount) }}</td>
@@ -208,12 +210,12 @@
                                     </tr>
                                 @empty
                                     <x-empty-table :name="__('Expense')" route="" create="no" :message="__('No data found!')"
-                                        colspan="12"></x-empty-table>
+                                        colspan="13"></x-empty-table>
                                 @endforelse
 
                                 @if ($expenses->count() > 0)
                                     <tr>
-                                        <td colspan="5" class="text-center">
+                                        <td colspan="6" class="text-center">
                                             <b>{{ __('Total') }}</b>
                                         </td>
                                         <td>
@@ -225,7 +227,7 @@
                                         <td>
                                             <b>{{ currency($totalDue) }}</b>
                                         </td>
-                                        <td colspan="4"></td>
+                                        <td colspan="5"></td>
                                     </tr>
                                 @endif
                             </tbody>
