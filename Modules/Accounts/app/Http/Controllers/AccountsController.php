@@ -131,8 +131,8 @@ class AccountsController extends Controller
 
         // Check if date filter is applied - show all-time data by default
         $hasDateFilter = request('from_date') || request('to_date');
-        $fromDate = request('from_date') ? now()->parse(request('from_date')) : null;
-        $toDate = request('to_date') ? now()->parse(request('to_date')) : null;
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->startOfDay() : null;
+        $toDate = request('to_date') ? now()->parse(request('to_date'))->endOfDay() : null;
 
         $data = [];
 

@@ -1067,11 +1067,11 @@ class ReportController extends Controller
             $productSaleQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
                 $q->whereBetween('order_date', [$fromDate, $toDate]);
             });
-            $salesReturnQuery->whereBetween('created_at', [$fromDate, $toDate]);
+            $salesReturnQuery->whereBetween('return_date', [$fromDate, $toDate]);
             $salesReturnDetailsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
-                $q->whereBetween('created_at', [$fromDate, $toDate]);
+                $q->whereBetween('return_date', [$fromDate, $toDate]);
             });
-            $purchaseReturnQuery->whereBetween('created_at', [$fromDate, $toDate]);
+            $purchaseReturnQuery->whereBetween('return_date', [$fromDate, $toDate]);
             $expenseQuery->whereBetween('date', [$fromDate, $toDate]);
             $salaryQuery->whereBetween('date', [$fromDate, $toDate]);
 

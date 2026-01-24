@@ -3,8 +3,8 @@
 namespace Modules\Sales\app\Models;
 
 use App\Models\Ledger;
-use App\Models\Payment;
 use App\Models\Stock;
+use Modules\Customer\app\Models\CustomerPayment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -43,7 +43,7 @@ class SalesReturn extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'sale_return_id');
+        return $this->hasMany(CustomerPayment::class, 'sale_return_id');
     }
     public function customer()
     {

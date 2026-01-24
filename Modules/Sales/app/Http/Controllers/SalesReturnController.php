@@ -156,11 +156,13 @@ class SalesReturnController extends Controller
 
 
                 // update stock
-                $stock = $details->product->stock;
-                $stock = $stock + $request->return_quantity[$key];
-                $details->product->update([
-                    'stock' => $stock
-                ]);
+                if ($details->product) {
+                    $stock = $details->product->stock;
+                    $stock = $stock + $request->return_quantity[$key];
+                    $details->product->update([
+                        'stock' => $stock
+                    ]);
+                }
 
                 // create stock
                 Stock::create([
@@ -193,7 +195,7 @@ class SalesReturnController extends Controller
                     'is_received' => 0,
                     'account_id' => $account->id,
                     'amount' => $request->paying_amount,
-                    'payment_date' => now(),
+                    'payment_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                     'created_by' => auth('admin')->user()->id,
                 ];
                 CustomerPayment::create($data);
@@ -210,7 +212,7 @@ class SalesReturnController extends Controller
             $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
             $ledger->note = $request->note;
             $ledger->due_amount += $due;
-            $ledger->date = Carbon::createFromFormat('d-m-Y', $request->payment_date);
+            $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
             $ledger->created_by = auth('admin')->user()->id;
             $ledger->save();
 
@@ -235,8 +237,10 @@ class SalesReturnController extends Controller
         // IMPORTANT: Restore stock BEFORE deleting details
         foreach ($return->details as $detail) {
             $product = $detail->product;
-            $product->stock = $product->stock - $detail->quantity;
-            $product->save();
+            if ($product) {
+                $product->stock = $product->stock - $detail->quantity;
+                $product->save();
+            }
         }
 
         // delete stock records
@@ -245,19 +249,38 @@ class SalesReturnController extends Controller
         // delete return details
         $return->details()->delete();
 
-        // delete ledger and ledger details
+        // delete ledger and ledger details (via relationship and by invoice)
         if ($return->ledger) {
             $return->ledger->details()->delete();
             $return->ledger->delete();
         }
 
-        // delete payments
+        // Also delete any orphaned ledgers by sale_return_id
+        $orphanedLedgers = Ledger::where('sale_return_id', $return->id)->get();
+        foreach ($orphanedLedgers as $ledger) {
+            $ledger->details()->delete();
+            $ledger->delete();
+        }
+
+        // delete payments (CustomerPayment with sale_return_id)
         $return->payments()->delete();
+
+        // Also delete any payments that might have been saved with wrong reference
+        CustomerPayment::where('sale_return_id', $return->id)
+            ->where('payment_type', 'sale return')
+            ->delete();
 
         // delete return
         $return->delete();
 
         return $this->redirectWithMessage(RedirectType::DELETE->value, '', [], ['messege' => 'Sales return deleted successfully', 'alert-type' => 'success']);
+    }
+
+    public function invoice($id)
+    {
+        checkAdminHasPermissionAndThrowException('sales.return.list');
+        $return = SalesReturn::with(['details.product', 'customer', 'sale', 'payments.account'])->find($id);
+        return view('sales::return.invoice', compact('return'));
     }
 
     public function genLedgerInvoiceNumber($type = 'Sale Payment')
