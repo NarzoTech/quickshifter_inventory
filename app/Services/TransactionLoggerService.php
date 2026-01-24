@@ -61,6 +61,14 @@ class TransactionLoggerService
         $userId = auth('admin')->id() ?? 'system';
         $userName = auth('admin')->user()->name ?? 'System';
 
+        // Handle purchase_date - could be string or Carbon instance
+        $purchaseDate = $data['purchase_date'] ?? null;
+        if (!$purchaseDate && $purchase && $purchase->purchase_date) {
+            $purchaseDate = $purchase->purchase_date instanceof \Carbon\Carbon
+                ? $purchase->purchase_date->format('Y-m-d')
+                : $purchase->purchase_date;
+        }
+
         $logData = [
             'timestamp' => $timestamp,
             'action' => strtoupper($action),
@@ -70,12 +78,12 @@ class TransactionLoggerService
             'invoice_number' => $purchase->invoice_number ?? $data['invoice_number'] ?? 'N/A',
             'supplier_id' => $data['supplier_id'] ?? $purchase->supplier_id ?? 'N/A',
             'warehouse_id' => $data['warehouse_id'] ?? $purchase->warehouse_id ?? 'N/A',
-            'purchase_date' => $data['purchase_date'] ?? ($purchase ? $purchase->purchase_date->format('Y-m-d') : 'N/A'),
+            'purchase_date' => $purchaseDate ?? 'N/A',
             'total_amount' => $data['total_amount'] ?? $purchase->total_amount ?? 0,
             'paid_amount' => $purchase->paid_amount ?? ($data['total_amount'] - $data['due_amount']) ?? 0,
             'due_amount' => $data['due_amount'] ?? $purchase->due_amount ?? 0,
             'payment_status' => $purchase->payment_status ?? 'N/A',
-            'payment_type' => is_array($data['payment_type'] ?? null) ? implode(', ', $data['payment_type']) : ($purchase->payment_type ?? 'N/A'),
+            'payment_type' => is_array($data['payment_type'] ?? null) ? implode(', ', $data['payment_type']) : (is_array($purchase->payment_type ?? null) ? implode(', ', $purchase->payment_type) : ($purchase->payment_type ?? 'N/A')),
             'items' => $data['items'] ?? $purchase->items ?? 0,
             'memo_no' => $data['memo_no'] ?? $purchase->memo_no ?? 'N/A',
             'reference_no' => $data['reference_no'] ?? $purchase->reference_no ?? 'N/A',
@@ -124,6 +132,22 @@ class TransactionLoggerService
         $userId = auth('admin')->id() ?? 'system';
         $userName = auth('admin')->user()->name ?? 'System';
 
+        // Handle sale_date - could be string or Carbon instance
+        $saleDate = $data['sale_date'] ?? null;
+        if (!$saleDate && $sale && isset($sale->order_date) && $sale->order_date) {
+            $saleDate = $sale->order_date instanceof \Carbon\Carbon
+                ? $sale->order_date->format('Y-m-d')
+                : $sale->order_date;
+        }
+
+        // Handle due_date - could be string or Carbon instance
+        $dueDate = $data['due_date'] ?? null;
+        if (!$dueDate && $sale && isset($sale->due_date) && $sale->due_date) {
+            $dueDate = $sale->due_date instanceof \Carbon\Carbon
+                ? $sale->due_date->format('Y-m-d')
+                : $sale->due_date;
+        }
+
         $logData = [
             'timestamp' => $timestamp,
             'action' => strtoupper($action),
@@ -133,7 +157,7 @@ class TransactionLoggerService
             'invoice_number' => $sale->invoice ?? 'N/A',
             'customer_id' => $data['order_customer_id'] ?? $sale->customer_id ?? 'N/A',
             'warehouse_id' => $sale->warehouse_id ?? 1,
-            'sale_date' => $data['sale_date'] ?? ($sale && isset($sale->order_date) ? $sale->order_date->format('Y-m-d') : 'N/A'),
+            'sale_date' => $saleDate ?? 'N/A',
             'sub_total' => $data['sub_total'] ?? $sale->total_price ?? 0,
             'discount_amount' => $data['discount_amount'] ?? $sale->order_discount ?? 0,
             'total_tax' => $data['total_tax'] ?? $sale->total_tax ?? 0,
@@ -142,10 +166,10 @@ class TransactionLoggerService
             'due_amount' => $sale->due_amount ?? 0,
             'receive_amount' => $data['receive_amount'] ?? $sale->receive_amount ?? 0,
             'return_amount' => $data['return_amount'] ?? $sale->return_amount ?? 0,
-            'payment_method' => is_array($data['payment_type'] ?? null) ? implode(', ', $data['payment_type']) : ($sale->payment_method ?? 'N/A'),
+            'payment_method' => is_array($data['payment_type'] ?? null) ? implode(', ', $data['payment_type']) : (is_array($sale->payment_method ?? null) ? implode(', ', $sale->payment_method) : ($sale->payment_method ?? 'N/A')),
             'payment_status' => $sale->payment_status ?? 'N/A',
             'quantity' => $sale->quantity ?? 0,
-            'due_date' => $data['due_date'] ?? (($sale && isset($sale->due_date) && $sale->due_date) ? $sale->due_date->format('Y-m-d') : 'N/A'),
+            'due_date' => $dueDate ?? 'N/A',
             'note' => $data['remark'] ?? $sale->sale_note ?? 'N/A',
         ];
 

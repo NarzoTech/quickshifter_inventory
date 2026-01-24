@@ -158,6 +158,7 @@ class PurchaseController extends Controller
     public function destroy($id)
     {
         checkAdminHasPermissionAndThrowException('purchase.delete');
+        DB::beginTransaction();
         try {
             $this->purchaseService->destroy($id);
 

@@ -185,17 +185,10 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label>{{ __('Paid Amount') }}</label>
-                                                        <input type="number" class="form-control" name="paid_amount"
-                                                            value="{{ $purchase->paid_amount }}" readonly step="0.01">
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
                                                         <label>{{ __('Invoice Amount') }}</label>
                                                         <input type="invoice_amount" class="form-control"
                                                             name="invoice_amount"
-                                                            value="{{ $return->payment?->return_amount }}" readonly>
+                                                            value="{{ $return->return_amount ?? 0 }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -203,7 +196,7 @@
                                                         <label>{{ __('Received Amount') }}</label>
                                                         <input type="received_amount" class="form-control"
                                                             name="received_amount"
-                                                            value="{{ $return->payment?->received_amount ?? 0 }}">
+                                                            value="{{ $return->received_amount ?? $return->payment?->amount ?? 0 }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
