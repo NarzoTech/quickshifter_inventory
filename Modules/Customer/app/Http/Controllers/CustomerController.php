@@ -262,10 +262,15 @@ class CustomerController extends Controller
 
         $user->due()->delete();
         $user->payment()->delete();
-        $user->sales()->details()->delete();
-        $user->sales()->stock()->delete();
+
+        // Delete related records for each sale
+        foreach ($user->sales as $sale) {
+            $sale->details()->delete();
+            $sale->stock()->delete();
+        }
         $user->sales()->delete();
         $user->delete();
+
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customers.index', [], ['messege' => 'Customer deleted successfully.', 'alert-type' => 'success']);
     }
 
@@ -309,24 +314,68 @@ class CustomerController extends Controller
             return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Customer Not Found', 'alert-type' => 'error']);
         }
 
-        $accounts = $this->account->all()->get();
         $customer = User::where('id', $request->customer)->first();
 
-        return view('customer::due-receive', compact('customer', 'accounts'));
+        if (!$customer) {
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Customer Not Found', 'alert-type' => 'error']);
+        }
+
+        // Check if customer has any dues (invoice-based OR direct balance)
+        $hasInvoiceDues = !$customer->due->isEmpty();
+        $hasDirectBalance = ($customer->wallet_balance ?? 0) > 0;
+
+        if (!$hasInvoiceDues && !$hasDirectBalance) {
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.customers.index', [], [
+                'messege' => 'This customer has no due amount to receive.',
+                'alert-type' => 'error'
+            ]);
+        }
+
+        $accounts = $this->account->all()->get();
+
+        return view('customer::due-receive', compact('customer', 'accounts', 'hasInvoiceDues', 'hasDirectBalance'));
     }
 
     public function dueReceive(Request $request)
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive');
+
+        // Base validation
         $request->validate([
-            'receiving_amount' => 'required',
+            'receiving_amount' => 'required|numeric|min:0.01',
+            'payment_date' => 'required',
+            'account_id' => 'required',
         ]);
+
+        $hasInvoicePayment = $request->has('invoice_no') && is_array($request->invoice_no) && count($request->invoice_no) > 0;
+        $directBalanceAmount = (float) ($request->direct_balance_amount ?? 0);
+
+        // Validate that at least one type of payment is being made
+        $totalInvoiceAmount = 0;
+        if ($hasInvoicePayment) {
+            foreach ($request->amount as $amt) {
+                $totalInvoiceAmount += (float) ($amt ?? 0);
+            }
+        }
+
+        if ($totalInvoiceAmount <= 0 && $directBalanceAmount <= 0) {
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], [
+                'messege' => 'Please enter an amount for at least one invoice or direct balance.',
+                'alert-type' => 'error'
+            ]);
+        }
 
         DB::beginTransaction();
         try {
+            // Get account
+            $account = $request->account_id;
+            if ($account == 'cash' || $account == 'advance') {
+                $account = $this->account->all()->where('account_type', $account)->first();
+            } else {
+                $account = $this->account->all()->find($account);
+            }
 
-            // create ledger
-
+            // Create main ledger entry
             $ledger                = new Ledger();
             $ledger->customer_id   = $request->customer_id;
             $ledger->amount        = $request->receiving_amount;
@@ -335,57 +384,87 @@ class CustomerController extends Controller
             $ledger->is_received   = 1;
             $ledger->invoice_no    = $this->genLedgerInvoiceNumber('Due Receive');
             $ledger->due_amount   -= $request->receiving_amount;
-
             $ledger->note = $request->note;
             $ledger->date = Carbon::createFromFormat('d-m-Y', $request->payment_date);
-
             $ledger->created_by = auth('admin')->user()->id;
             $ledger->save();
 
             $ledger->invoice_url = route('admin.customers.ledger-details', $ledger->id);
             $ledger->save();
 
-            $account = $request->account_id;
+            // Process invoice-based dues
+            if ($hasInvoicePayment) {
+                foreach ($request->invoice_no as $index => $invo) {
+                    $paymentAmount = (float) ($request->amount[$index] ?? 0);
 
-            if ($account == 'cash' || $account == 'advance') {
-                $account = $this->account->all()->where('account_type', $account)->first();
-            } else {
-                $account = $this->account->all()->find($account);
+                    if ($paymentAmount <= 0) {
+                        continue;
+                    }
+
+                    $sale = Sale::where('invoice', $invo)->first();
+
+                    if ($sale) {
+                        $sale->payment_status = $sale->due_amount == $paymentAmount ? 'paid' : 'due';
+                        $sale->paid_amount = $sale->paid_amount + $paymentAmount;
+                        $sale->due_amount  = $sale->due_amount - $paymentAmount;
+                        $sale->save();
+
+                        // Create payment data
+                        CustomerPayment::create([
+                            'sale_id'      => $sale->id,
+                            'customer_id'  => $request->customer_id,
+                            'account_id'   => $account->id,
+                            'payment_type' => 'due_receive',
+                            'is_received'  => 1,
+                            'amount'       => $paymentAmount,
+                            'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
+                            'note'         => $request->note,
+                            'created_by'   => auth('admin')->user()->id,
+                        ]);
+
+                        // Update customer due record
+                        $due = CustomerDue::where('invoice', $invo)->first();
+                        if ($due) {
+                            $due->due_amount  = $due->due_amount - $paymentAmount;
+                            $due->paid_amount = $due->paid_amount + $paymentAmount;
+                            $due->save();
+                        }
+
+                        // Create ledger details
+                        $ledger->details()->create([
+                            'invoice' => $invo,
+                            'amount'  => $paymentAmount,
+                        ]);
+                    }
+                }
             }
 
-            foreach ($request->invoice_no as $index => $invo) {
-                $sale = Sale::where('invoice', $invo)->first();
+            // Process direct balance due
+            if ($directBalanceAmount > 0) {
+                $customer = User::find($request->customer_id);
 
-                $sale->payment_status = $sale->due_amount == $request->amount[$index] ? 'paid' : 'due';
+                if ($customer) {
+                    // Update customer wallet balance
+                    $customer->wallet_balance = ($customer->wallet_balance ?? 0) - $directBalanceAmount;
+                    $customer->save();
 
-                $sale->paid_amount = $sale->paid_amount + $request->amount[$index];
-                $sale->due_amount  = $sale->due_amount - $request->amount[$index];
-                $sale->save();
+                    // Create payment record for direct balance (no sale_id)
+                    CustomerPayment::create([
+                        'sale_id'      => null,
+                        'customer_id'  => $request->customer_id,
+                        'account_id'   => $account->id,
+                        'payment_type' => 'direct_due_receive',
+                        'is_received'  => 1,
+                        'amount'       => $directBalanceAmount,
+                        'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
+                        'note'         => $request->note ?? 'Direct balance due receive',
+                        'created_by'   => auth('admin')->user()->id,
+                    ]);
 
-                // create payment data
-                CustomerPayment::create([
-                    'sale_id'      => $sale->id,
-                    'customer_id'  => $request->customer_id,
-                    'account_id'   => $account->id,
-                    'payment_type' => 'due_receive',
-                    'is_received'  => 1,
-                    'amount'       => $request->amount[$index],
-                    'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
-                    'note'         => $request->note,
-                    'created_by'   => auth('admin')->user()->id,
-                ]);
-
-                if ($request->amount[$index]) {
-                    // update customer due amount
-                    $due              = CustomerDue::where('invoice', $invo)->first();
-                    $due->due_amount  = $due->due_amount - $request->amount[$index];
-                    $due->paid_amount = $due->paid_amount + $request->amount[$index];
-                    $due->save();
-
-                    // create ledger details
+                    // Create ledger details for direct balance
                     $ledger->details()->create([
-                        'invoice' => $invo,
-                        'amount'  => $request->amount[$index],
+                        'invoice' => 'DIRECT-BALANCE',
+                        'amount'  => $directBalanceAmount,
                     ]);
                 }
             }
@@ -405,7 +484,8 @@ class CustomerController extends Controller
     public function dueReceiveList()
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive.list');
-        $payments = CustomerPayment::whereNotNull('sale_id')->where('payment_type', 'due_receive')->where('amount', '>', 0);
+        // Include both invoice-based and direct balance due receives
+        $payments = CustomerPayment::whereIn('payment_type', ['due_receive', 'direct_due_receive'])->where('amount', '>', 0);
         // Date filtering
         if (request()->from_date && request()->to_date) {
             $fromDate = \Carbon\Carbon::parse(request()->from_date)->startOfDay();
@@ -472,42 +552,80 @@ class CustomerController extends Controller
         checkAdminHasPermissionAndThrowException('customer.due.receive.delete');
         $payment = CustomerPayment::findOrFail($id);
 
-        // update customer due amount
-        $due              = CustomerDue::where('invoice', $payment->sale->invoice)->first();
-        $due->due_amount  = $due->due_amount + $payment->amount;
-        $due->paid_amount = $due->paid_amount - $payment->amount;
-        $due->save();
+        // Check if this is a direct balance payment or invoice-based payment
+        if ($payment->payment_type == 'direct_due_receive' || $payment->sale_id == null) {
+            // Direct balance payment - restore customer wallet balance
+            $customer = User::find($payment->customer_id);
+            if ($customer) {
+                $customer->wallet_balance = ($customer->wallet_balance ?? 0) + $payment->amount;
+                $customer->save();
+            }
 
-        // update sale
-        $sale                 = $payment->sale;
-        $sale->payment_status = $sale->due_amount == $payment->amount ? 'paid' : 'due';
-        $sale->paid_amount    = $sale->paid_amount - $payment->amount;
-        $sale->due_amount     = $sale->due_amount + $payment->amount;
-        $sale->save();
+            // Delete ledger detail for direct balance
+            $ledgerDetail = LedgerDetails::where('invoice', 'DIRECT-BALANCE')
+                ->whereHas('ledger', function($q) use ($payment) {
+                    $q->where('customer_id', $payment->customer_id)
+                      ->whereDate('date', $payment->payment_date);
+                })
+                ->first();
 
-        // customer ledger delete
-        $invoiceNumber = $payment->sale->invoice;
-        $ledgerDetail  = LedgerDetails::where('invoice', $invoiceNumber)->first();
+            if ($ledgerDetail) {
+                $ledger = $ledgerDetail->ledger;
+                $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
+                    ->where('id', '!=', $ledgerDetail->id)
+                    ->count();
 
-        if ($ledgerDetail) {
-            $ledger = $ledgerDetail->ledger;
+                $ledgerDetail->delete();
 
-            // Check if this is the only detail in the ledger
-            $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
-                ->where('id', '!=', $ledgerDetail->id)
-                ->count();
+                if ($otherDetailsCount == 0) {
+                    $ledger->delete();
+                } else {
+                    $ledger->amount = $ledger->amount - $payment->amount;
+                    $ledger->due_amount = $ledger->due_amount + $payment->amount;
+                    $ledger->save();
+                }
+            }
+        } else {
+            // Invoice-based payment
+            // update customer due amount
+            $due = CustomerDue::where('invoice', $payment->sale->invoice)->first();
+            if ($due) {
+                $due->due_amount  = $due->due_amount + $payment->amount;
+                $due->paid_amount = $due->paid_amount - $payment->amount;
+                $due->save();
+            }
 
-            // Delete the ledger detail
-            $ledgerDetail->delete();
+            // update sale
+            $sale = $payment->sale;
+            if ($sale) {
+                $sale->payment_status = 'due';
+                $sale->paid_amount    = $sale->paid_amount - $payment->amount;
+                $sale->due_amount     = $sale->due_amount + $payment->amount;
+                $sale->save();
+            }
 
-            if ($otherDetailsCount == 0) {
-                // No other details, delete the entire ledger
-                $ledger->delete();
-            } else {
-                // Update ledger amounts
-                $ledger->amount     = $ledger->amount - $payment->amount;
-                $ledger->due_amount = $ledger->due_amount + $payment->amount;
-                $ledger->save();
+            // customer ledger delete
+            $invoiceNumber = $payment->sale->invoice ?? null;
+            if ($invoiceNumber) {
+                $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)->first();
+
+                if ($ledgerDetail) {
+                    $ledger = $ledgerDetail->ledger;
+
+                    $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
+                        ->where('id', '!=', $ledgerDetail->id)
+                        ->count();
+
+                    $ledgerDetail->delete();
+
+                    if ($otherDetailsCount == 0) {
+                        $ledger->delete();
+                    } else {
+                        $ledger->amount     = $ledger->amount - $payment->amount;
+                        $ledger->due_amount = $ledger->due_amount + $payment->amount;
+                        $ledger->save();
+                    }
+                }
             }
         }
 

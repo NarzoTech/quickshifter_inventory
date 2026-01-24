@@ -29,11 +29,69 @@
                                 </h6>
                             </div>
                         </div>
+                        @php
+                            $totalDue = 0;
+                            $directBalance = $customer->wallet_balance ?? 0;
+                        @endphp
+
+                        {{-- Direct Balance Due Section --}}
+                        @if($hasDirectBalance ?? false)
                         <div class="row mt-3">
                             <div class="col-md-12">
+                                <h6 class="text-primary mb-2"><i class="fas fa-wallet"></i> {{ __('Direct Balance Due') }}</h6>
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
-                                        <thead>
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>
+                                                    <div class="custom-checkbox custom-control">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="checkbox-direct" name="select_direct">
+                                                        <label for="checkbox-direct"
+                                                            class="custom-control-label">&nbsp;</label>
+                                                    </div>
+                                                </th>
+                                                <th>{{ __('Description') }}</th>
+                                                <th>{{ __('Due Amount') }}</th>
+                                                <th>{{ __('Receiving Amount') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="custom-checkbox custom-control">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            id="checkbox-direct-balance" name="select_direct_balance">
+                                                        <label for="checkbox-direct-balance"
+                                                            class="custom-control-label">&nbsp;</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info">{{ __('Opening/Direct Balance') }}</span>
+                                                </td>
+                                                <td class="direct-due-amount">
+                                                    {{ currency($directBalance) }}
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="direct_balance_amount"
+                                                        id="direct_balance_amount" value="" step="0.01" min="0" max="{{ $directBalance }}">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        {{-- Invoice-Based Due Section --}}
+                        @if($hasInvoiceDues ?? false)
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <h6 class="text-primary mb-2"><i class="fas fa-file-invoice"></i> {{ __('Invoice Due') }}</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="bg-light">
                                             <tr>
                                                 <th>
                                                     <div class="custom-checkbox custom-control">
@@ -52,9 +110,6 @@
                                             </tr>
                                         </thead>
                                         <tbody id="purchase_table">
-                                            @php
-                                                $totalDue = 0;
-                                            @endphp
                                             @foreach ($customer->due as $due)
                                                 <tr>
                                                     <td>
@@ -74,7 +129,7 @@
                                                         {{ formatDate($due->due_date) }}
                                                     </td>
                                                     <td>
-                                                        {{ currency($due->sale->grand_total) }}
+                                                        {{ currency($due->sale->grand_total ?? 0) }}
                                                     </td>
                                                     <td>
                                                         @php
@@ -83,8 +138,8 @@
                                                         {{ currency($due->due_amount) }}
                                                     </td>
                                                     <td>
-                                                        <input type="text" class="form-control" name="amount[]"
-                                                            value="">
+                                                        <input type="number" class="form-control" name="amount[]"
+                                                            value="" step="0.01" min="0">
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -93,6 +148,14 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
+
+                        {{-- No dues message --}}
+                        @if(!($hasInvoiceDues ?? false) && !($hasDirectBalance ?? false))
+                        <div class="alert alert-warning mt-3">
+                            {{ __('This customer has no due amount to receive.') }}
+                        </div>
+                        @endif
                         {{-- summery --}}
                         <div class="row mt-5 justify-content-end">
                             <div class="col-lg-5">
@@ -103,11 +166,15 @@
                                             <div class="input-group">
                                                 <div class="input-group-text" id="basic-addon11"><i
                                                         class="fas fa-money-check-alt"></i></div>
-                                                <input type="number" class="form-control" placeholder="Username"
-                                                    aria-label="Username" aria-describedby="basic-addon11"
+                                                <input type="number" class="form-control" placeholder="Total"
+                                                    aria-label="Total" aria-describedby="basic-addon11"
                                                     id="total_payable" name="total_payable"
-                                                    value="{{ $customer->total_due }}" step="0.01"/>
+                                                    value="{{ $totalDue + $directBalance }}" step="0.01" readonly/>
                                             </div>
+                                            <small class="text-muted">
+                                                {{ __('Invoice Due') }}: {{ currency($totalDue) }} |
+                                                {{ __('Direct Balance') }}: {{ currency($directBalance) }}
+                                            </small>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -130,7 +197,7 @@
                             </div>
                         </div>
                         <div class="card-action d-flex justify-content-end">
-                            <a href="{{ route('admin.purchase.index') }}"
+                            <a href="{{ route('admin.customers.index') }}"
                                 class="btn btn-danger me-2">{{ __('Cancel') }}</a>
                             <button type="submit" class="btn btn-success ">{{ __('Submit') }}</button>
                         </div>
@@ -148,82 +215,84 @@
         $(document).ready(function() {
             'use strict';
 
-            //check all checkboxes
+            const directBalanceMax = {{ $directBalance ?? 0 }};
+
+            // Direct balance checkbox
+            $('#checkbox-direct-balance').on('click', function() {
+                const isChecked = $(this).prop('checked');
+                if (isChecked) {
+                    $('#direct_balance_amount').val(directBalanceMax);
+                } else {
+                    $('#direct_balance_amount').val('');
+                }
+                totalAmount();
+            });
+
+            // Direct balance amount input
+            $('#direct_balance_amount').on('input', function() {
+                let value = parseFloat($(this).val()) || 0;
+
+                // Cap at max
+                if (value > directBalanceMax) {
+                    value = directBalanceMax;
+                    $(this).val(value);
+                }
+
+                // Update checkbox
+                if (value > 0) {
+                    $('#checkbox-direct-balance').prop('checked', true);
+                } else {
+                    $('#checkbox-direct-balance').prop('checked', false);
+                }
+
+                totalAmount();
+            });
+
+            //check all checkboxes for invoice dues
             $('#checkbox-all').on('click', function() {
                 var $this = $(this);
                 var check = $this.prop('checked');
                 $('input[name="select"]').each(function() {
                     $(this).prop('checked', check);
 
-                    // change the count number
                     if (check) {
-                        $('.number').text($('input[name="select"]').length);
-                        $('.delete-section').removeClass('d-none');
-                        $('.delete-section').addClass('d-flex');
-
-
-                        // get the due amount of selected items
-                        let total_due = 0;
-                        $('input[name="select"]:checked').each(function() {
-                            let due = $(this).closest('tr').find('td:eq(4)').text();
-                            // remove icon
-                            due = due.replace(/[^0-9.]/g, '');
-                            total_due += parseFloat(due);
-                        });
-
-                        // set the total due amount to nearest input field
-                        $('input[name="amount[]"]').val(total_due);
-
+                        // get the due amount of each row and set it
+                        let due = $(this).closest('tr').find('td:eq(4)').text();
+                        due = parseFloat(due.replace(/[^0-9.]/g, '')) || 0;
+                        $(this).closest('tr').find('input[name="amount[]"]').val(due);
                     } else {
-                        $('.number').text(0);
-                        $('.delete-section').addClass('d-none');
-                        $('.delete-section').removeClass('d-flex');
-
-                        $('input[name="amount[]"]').val(0);
+                        $(this).closest('tr').find('input[name="amount[]"]').val('');
                     }
-
-                    totalAmount()
                 });
+
+                totalAmount();
             });
 
             $('input[name="select"]').on('click', function() {
                 var total = $('input[name="select"]').length;
                 var number = $('input[name="select"]:checked').length;
+
                 if (total == number) {
                     $('#checkbox-all').prop('checked', true);
                 } else {
                     $('#checkbox-all').prop('checked', false);
                 }
-                $('.number').text(number);
 
-                if (number > 0) {
-                    $('.delete-section').removeClass('d-none');
-                    $('.delete-section').addClass('d-flex');
-                } else {
-                    $('.delete-section').addClass('d-none');
-                    $('.delete-section').removeClass('d-flex');
-                }
-
-
-                // get the due amount of selected items
-                let total_due = 0;
-                $('input[name="select"]:checked').each(function() {
+                // Set amount for this row
+                const isChecked = $(this).prop('checked');
+                if (isChecked) {
                     let due = $(this).closest('tr').find('td:eq(4)').text();
-                    // remove icon
-                    due = due.replace(/[^0-9.]/g, '');
-                    total_due += parseFloat(due);
-                });
-                $('input[name="amount[]"]').val(total_due);
-
-                if (number == 0) {
-                    $('input[name="receiving_amount"]').val(0);
+                    due = parseFloat(due.replace(/[^0-9.]/g, '')) || 0;
+                    $(this).closest('tr').find('input[name="amount[]"]').val(due);
+                } else {
+                    $(this).closest('tr').find('input[name="amount[]"]').val('');
                 }
 
-                totalAmount()
+                totalAmount();
             });
 
             $('[name="amount[]"]').on('input', function() {
-                const value = $(this).val();
+                const value = parseFloat($(this).val()) || 0;
 
                 if (value > 0) {
                     $(this).closest('tr').find('input[name="select"]').prop('checked', true);
@@ -234,77 +303,72 @@
                 // check checkbox-all if all are checked
                 var total = $('input[name="select"]').length;
                 var number = $('input[name="select"]:checked').length;
-                if (total == number) {
+                if (total == number && total > 0) {
                     $('#checkbox-all').prop('checked', true);
                 } else {
                     $('#checkbox-all').prop('checked', false);
                 }
 
-                totalAmount()
-            })
+                totalAmount();
+            });
 
             $('input[name="receiving_amount"]').on('input', function() {
-                let value = parseFloat($(this).val());
+                let value = parseFloat($(this).val()) || 0;
 
-
-                // reset all the amount
-                $('input[name="amount[]"]').val(0);
-
-                // uncheck checkbox-all
+                // Reset all amounts
+                $('input[name="amount[]"]').val('');
+                $('#direct_balance_amount').val('');
                 $('#checkbox-all').prop('checked', false);
-
-                // uncheck all the checkbox
                 $('input[name="select"]').prop('checked', false);
-                $('.number').text(0);
-                $('.delete-section').addClass('d-none');
-                $('.delete-section').removeClass('d-flex');
+                $('#checkbox-direct-balance').prop('checked', false);
 
+                // First, allocate to direct balance if exists
+                if (directBalanceMax > 0 && value > 0) {
+                    const directAmount = Math.min(value, directBalanceMax);
+                    $('#direct_balance_amount').val(directAmount);
+                    $('#checkbox-direct-balance').prop('checked', true);
+                    value -= directAmount;
+                }
 
-                // get all the row
+                // Then allocate to invoices
                 $('input[name="amount[]"]').each(function() {
-                    // due amount the previous sibling
+                    if (value <= 0) return;
+
                     let due = $(this).closest('tr').find('td:eq(4)').text();
-                    // remove icon
-                    due = parseFloat(due.replace(/[^0-9.]/g, ''));
+                    due = parseFloat(due.replace(/[^0-9.]/g, '')) || 0;
 
-                    // calculate the due amount
-                    if (value <= due) {
-                        if (value > 0) {
-                            $(this).val(value);
-                            $(this).closest('tr').find('input[name="select"]').prop('checked',
-                                true);
-                            value = value - due;
-                        }
-
-                    } else {
-                        if (due > 0) {
-                            $(this).val(due);
-                            value = value - due;
-                            $(this).closest('tr').find('input[name="select"]').prop('checked',
-                                true);
-                        }
+                    if (due > 0) {
+                        const allocate = Math.min(value, due);
+                        $(this).val(allocate);
+                        $(this).closest('tr').find('input[name="select"]').prop('checked', true);
+                        value -= allocate;
                     }
                 });
 
-                // check checkbox-all if all are checked
+                // Update checkbox-all state
                 var total = $('input[name="select"]').length;
                 var number = $('input[name="select"]:checked').length;
-                if (total == number) {
+                if (total == number && total > 0) {
                     $('#checkbox-all').prop('checked', true);
-                } else {
-                    $('#checkbox-all').prop('checked', false);
                 }
-
-            })
+            });
         });
 
 
         function totalAmount() {
             let total = 0;
+
+            // Sum invoice amounts
             $('input[name="amount[]"]').each(function() {
-                total += parseFloat($(this).val());
+                const val = parseFloat($(this).val()) || 0;
+                total += val;
             });
-            $('input[name="receiving_amount"]').val(total);
+
+            // Add direct balance amount
+            const directVal = parseFloat($('#direct_balance_amount').val()) || 0;
+            total += directVal;
+
+            $('input[name="receiving_amount"]').val(total.toFixed(2));
         }
     </script>
 @endpush
