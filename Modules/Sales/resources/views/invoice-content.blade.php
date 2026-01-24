@@ -333,6 +333,41 @@
                 </b>
             </span>
         </div>
+
+        @if($sale->payment && $sale->payment->count() > 0)
+        <div class="mt-3 payment-details">
+            <div style="width: 100%">
+                <h6 class="mb-2"><b>Payment Details</b></h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;"><b>Sl</b></th>
+                            <th style="width: 30%;"><b>Payment Method</b></th>
+                            <th style="width: 30%;"><b>Account</b></th>
+                            <th style="width: 30%;"><b>Amount</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($sale->payment as $index => $payment)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ ucfirst($payment->account->account_type ?? '-') }}</td>
+                                <td>{{ $payment->account->bank->name ?? '-' }}</td>
+                                <td>TK {{ number_format($payment->amount, 2) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right"><b>Total Paid:</b></td>
+                            <td><b>TK {{ number_format($sale->payment->sum('amount'), 2) }}</b></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        @endif
+
         <div class="d-flex justify-content-between" style="margin-top: 80px">
             <div>
                 <p class="signature">

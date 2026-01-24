@@ -734,12 +734,6 @@
 
 
 
-                $('.modal-reset-button').on('click', function() {
-                    const productId = $(this).data('product-id');
-                    resetCart();
-                    load_product_model(productId);
-                })
-
                 $('[name="discount_type"]').on('change', function() {
                     const type = $(this).val();
                     const symbol = type == 'percent' ? '%' : "{{ currency_icon() }}"
@@ -895,8 +889,7 @@
                     const rowId = $('[name="row_number"]').val();
                     const purchasePrice = $('#purchase_price').val();
                     const sellingPrice = $('#selling_price').val();
-                    const profit = parseInt(sellingPrice || 0) - parseInt(purchasePrice || 0);
-                    $('input[data-rowid="' + rowId + '"]').val(sellingPrice);
+
                     $('#stockUpdateModal').modal('hide')
                     // reset the form
                     $('#stockUpdateModalForm').trigger('reset');
@@ -924,9 +917,15 @@
                         },
                         url: "{{ route('admin.cart.price.update') }}",
                         success: function(response) {
-                            $('#stockUpdateModal').modal('hide')
-                            updatePrice(rowId, sellingPrice)
-                            calculateExtra()
+                            // Update DOM directly (no duplicate AJAX call)
+                            const qty = parseInt(row.find('.pos_input_qty').val()) || 1;
+                            const subtotal = parseFloat(sellingPrice) * qty;
+
+                            row.find('.price span').text(currencyFormat(sellingPrice));
+                            row.find('.price input').val(sellingPrice);
+                            row.find('.row_total').text(currencyFormat(subtotal));
+
+                            calculateExtra();
                             totalSummery();
                         }
                     });
@@ -1014,26 +1013,7 @@
         }
 
         function load_product_model(product_id) {
-            $('.preloader_area').removeClass('d-none');
-            // check if cart has item from different restaurant using ajax request
-            $.ajax({
-                type: 'get',
-                url: "{{ route('admin.check-cart-restaurant', '') }}" + "/" + product_id,
-                success: function(response) {
-                    if (response.status == true) {
-                        // add product id to reset button of modal
-                        $(".modal-reset-button").attr('data-product-id', product_id);
-                        $("#resetCartModal").modal('show');
-                        $('.preloader_area').addClass('d-none');
-                    } else {
-                        loadProductModal(product_id)
-                    }
-                },
-                error: function(response) {
-                    toastr.error("{{ __('Server error occurred') }}")
-                    $('.preloader_area').addClass('d-none');
-                }
-            });
+            loadProductModal(product_id);
         }
 
         function loadProductModal(product_id) {

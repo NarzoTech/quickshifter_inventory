@@ -673,7 +673,8 @@ class POSController extends Controller
 
         $cart_contents[$request->rowid]['purchase_price'] = $request->purchase_price;
         $cart_contents[$request->rowid]['selling_price'] = $request->selling_price;
-        $cart_contents[$request->rowid]['price'] = $request->val;
+        $cart_contents[$request->rowid]['price'] = $request->price;
+        $cart_contents[$request->rowid]['sub_total'] = (float)$request->price * $cart_contents[$request->rowid]['qty'];
         session()->put($cartName, $cart_contents);
         return response()->json(['status' => true, 'cart' => session()->get($cartName)]);
     }
