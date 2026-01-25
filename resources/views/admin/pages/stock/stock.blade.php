@@ -96,11 +96,11 @@
                                 <div class="form-group">
                                     <div class="input-group input-daterange" id="bs-datepicker-daterange">
                                         <input type="text" id="dateRangePicker" placeholder="From Date"
-                                            class="form-control datepicker" name="from_date" value=""
+                                            class="form-control datepicker" name="from_date" value="{{ request('from_date') }}"
                                             autocomplete="off">
                                         <span class="input-group-text">to</span>
                                         <input type="text" placeholder="To Date" class="form-control datepicker"
-                                            name="to_date" value="" autocomplete="off">
+                                            name="to_date" value="{{ request('to_date') }}" autocomplete="off">
                                     </div>
                                 </div>
                             </div>

@@ -43,8 +43,23 @@ class StockController extends Controller
                 $query = $query->where('stock', '=<', 0);
             }
         }
+        // Date filtering for stockDetails relationship
+        $stockDetailsCallback = null;
+        if (request('from_date') || request('to_date')) {
+            $stockDetailsCallback = function ($q) {
+                if (request('from_date')) {
+                    $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', request('from_date'))->startOfDay();
+                    $q->where('date', '>=', $fromDate);
+                }
+                if (request('to_date')) {
+                    $toDate = \Carbon\Carbon::createFromFormat('d-m-Y', request('to_date'))->endOfDay();
+                    $q->where('date', '<=', $toDate);
+                }
+            };
+        }
+
         // Calculate totals from all filtered data before pagination
-        $allProducts = (clone $query)->with('stockDetails')->get();
+        $allProducts = (clone $query)->with(['stockDetails' => $stockDetailsCallback ?? function ($q) {}])->get();
         $totals = [
             'totalInQty' => 0,
             'totalOutQty' => 0,
@@ -68,9 +83,9 @@ class StockController extends Controller
             $parpage = 20;
         }
         if ($parpage === null) {
-            $products = $query->get();  // No pagination, return all results
+            $products = $query->with(['stockDetails' => $stockDetailsCallback ?? function ($q) {}])->get();  // No pagination, return all results
         } else {
-            $products = $query->paginate($parpage);  // Paginate results
+            $products = $query->with(['stockDetails' => $stockDetailsCallback ?? function ($q) {}])->paginate($parpage);  // Paginate results
             $products->appends(request()->query());
         }
 
