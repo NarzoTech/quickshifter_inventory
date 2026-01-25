@@ -762,18 +762,62 @@ class CustomerController extends Controller
     {
         checkAdminHasPermissionAndThrowException('customer.ledger');
         $user    = User::findOrFail($id);
-        $ledgers = Ledger::where('customer_id', $user->id)->orderBy('date', 'asc')->paginate(20);
+        $walletBalance = $user->wallet_balance ?? 0;
+
+        // Calculate opening balance from entries before from_date
+        $balanceBeforeFromDate = $walletBalance;
+        if (request('from_date')) {
+            $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', request('from_date'))->startOfDay();
+            $balanceBeforeFromDate += Ledger::where('customer_id', $user->id)
+                ->where('date', '<', $fromDate)
+                ->sum('due_amount');
+        }
+
+        $baseQuery = Ledger::where('customer_id', $user->id);
+
+        // Apply date filtering if provided
+        if (request('from_date')) {
+            $fromDate = \Carbon\Carbon::createFromFormat('d-m-Y', request('from_date'))->startOfDay();
+            $baseQuery->where('date', '>=', $fromDate);
+        }
+        if (request('to_date')) {
+            $toDate = \Carbon\Carbon::createFromFormat('d-m-Y', request('to_date'))->endOfDay();
+            $baseQuery->where('date', '<=', $toDate);
+        }
+
+        $baseQuery->orderBy('date', 'asc');
+
+        // Get all filtered ledgers for total calculation
+        $allLedgers = (clone $baseQuery)->get();
+
+        // Calculate grand totals from filtered records
+        $totals = [
+            'credit' => $allLedgers->sum('amount'),
+            'debit' => $allLedgers->sum('total_amount'),
+            'balance' => $balanceBeforeFromDate + $allLedgers->sum('due_amount'),
+        ];
+
+        // Paginate for display
+        $perPage = 20;
+        $ledgers = $baseQuery->paginate($perPage);
         $ledgers->appends(request()->query());
+
+        // Calculate opening balance for current page
+        $currentPage = $ledgers->currentPage();
+        $skipCount = ($currentPage - 1) * $perPage;
+        $previousDueSum = $allLedgers->take($skipCount)->sum('due_amount');
+        $openingBalance = $balanceBeforeFromDate + $previousDueSum;
+
         $title = __('Customer Ledger');
 
         if (request('export')) {
             $fileName = 'customer-ledger-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-            return Excel::download(new LedgerExport($ledgers, $title), $fileName);
+            return Excel::download(new LedgerExport($allLedgers, $title, $balanceBeforeFromDate), $fileName);
         }
         if (request('export_pdf')) {
-            return view('supplier::pdf.ledger', ['ledgers' => $ledgers, 'title' => $title]);
+            return view('supplier::pdf.ledger', ['ledgers' => $allLedgers, 'title' => $title, 'openingBalance' => $balanceBeforeFromDate]);
         }
-        return view('supplier::ledger', compact('ledgers', 'title'));
+        return view('supplier::ledger', compact('ledgers', 'title', 'openingBalance', 'totals'));
     }
 
     public function ledgerDetails($id)

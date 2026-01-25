@@ -33,7 +33,7 @@
         </thead>
         <tbody>
             @php
-                $opening = 0;
+                $opening = $openingBalance ?? 0;
                 $credit = 0;
                 $debit = 0;
             @endphp

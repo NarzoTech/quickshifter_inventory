@@ -125,7 +125,7 @@
                     </thead>
                     <tbody>
                         @php
-                            $opening = 0;
+                            $opening = $openingBalance ?? 0;
                             $credit = 0;
                             $debit = 0;
                         @endphp
@@ -161,9 +161,9 @@
                             <td colspan="{{ $title == 'Supplier Ledger' ? 5 : 4 }}" class="text-center fw-bold">
                                 {{ __('Total') }}
                             </td>
-                            <td colspan="1" class="fw-bold">{{ currency($credit) }}</td>
-                            <td colspan="1" class="fw-bold">{{ currency($debit) }}</td>
-                            <td class="text-end fw-bold">{{ currency($opening) }}</td>
+                            <td colspan="1" class="fw-bold">{{ currency($totals['credit'] ?? $credit) }}</td>
+                            <td colspan="1" class="fw-bold">{{ currency($totals['debit'] ?? $debit) }}</td>
+                            <td class="text-end fw-bold">{{ currency($totals['balance'] ?? $opening) }}</td>
                         </tr>
                     </tbody>
                 </table>

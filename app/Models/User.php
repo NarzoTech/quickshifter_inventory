@@ -106,8 +106,12 @@ class User extends Model
 
     public function saleReturn()
     {
-        $return = $this->hasManyThrough(Sale::class, SalesReturn::class, 'customer_id', 'id', 'id', 'sale_id');
-        return $return;
+        return $this->hasMany(SalesReturn::class, 'customer_id');
+    }
+
+    public function getTotalSaleReturnDueAttribute()
+    {
+        return $this->saleReturn->sum('return_due');
     }
 
     public function getTotalPaidAttribute()

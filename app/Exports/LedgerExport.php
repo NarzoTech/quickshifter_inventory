@@ -13,18 +13,20 @@ class LedgerExport implements FromArray, WithHeadings, WithStyles, WithTitle
     private $ledgers;
     private $title;
     private $lastColumn;
+    private $openingBalance;
 
-    public function __construct($ledgers, $title)
+    public function __construct($ledgers, $title, $openingBalance = 0)
     {
         $this->ledgers = $ledgers;
         $this->title = $title;
         $this->lastColumn = $title == 'Supplier Ledger' ? 'H' : 'G';
+        $this->openingBalance = $openingBalance;
     }
 
     public function array(): array
     {
         $data = [];
-        $opening = 0;
+        $opening = $this->openingBalance;
         $credit = 0;
         $debit = 0;
         $index = 0;
