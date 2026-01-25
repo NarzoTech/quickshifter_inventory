@@ -53,6 +53,19 @@ class CustomerController extends Controller
                 ->orWhere('address', 'like', '%' . $request->keyword . '%');
         });
 
+        // Date filtering
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+            $query->whereBetween('date', [$fromDate, $toDate]);
+        } elseif ($request->filled('from_date')) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+            $query->where('date', '>=', $fromDate);
+        } elseif ($request->filled('to_date')) {
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+            $query->where('date', '<=', $toDate);
+        }
+
         $orderBy = $request->filled('order_by') ? $request->order_by : 'asc';
 
         if ($orderBy) {
