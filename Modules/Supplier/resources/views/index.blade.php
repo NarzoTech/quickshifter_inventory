@@ -143,7 +143,7 @@
                                 <td>{{ $supplier->phone }}</td>
                                 <td>{{ $supplier->area->name }}</td>
                                 <td>{{ currency($supplier->purchases->sum('total_amount')) }}</td>
-                                <td>{{ currency($supplier->payments->sum('amount')) }}</td>
+                                <td>{{ currency($supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount')) }}</td>
                                 <td>{{ currency($supplier->total_due - $totalReturn) }}</td>
                                 <td>{{ currency($supplier->advance) }}</td>
                                 <td>{{ currency($supplier->total_due_dismiss) }}</td>

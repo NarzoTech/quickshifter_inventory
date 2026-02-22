@@ -137,14 +137,17 @@ class SaleService
         // create payments
         foreach ($request->payment_type as $key => $item) {
             $account = Account::where('account_type', $item);
-            if ($item == 'cash') {
+            if ($item == 'cash' || $item == 'advance') {
                 $account = $account->first();
+                if (!$account) {
+                    $account = Account::create(['account_type' => $item]);
+                }
             } else {
                 $account = $account->where('id', $request->account_id[$key])->first();
             }
             $customerId = $request->order_customer_id;
             $data = [
-                'payment_type' => 'sale',
+                'payment_type' => $item == 'advance' ? 'advance_deduct' : 'sale',
                 'sale_id' => $sale->id,
                 'is_received' => 1,
                 'customer_id' => $request->order_customer_id,
@@ -294,14 +297,17 @@ class SaleService
             // create payments
             foreach ($request->payment_type as $key => $item) {
                 $account = Account::where('account_type', $item);
-                if ($item == 'cash') {
+                if ($item == 'cash' || $item == 'advance') {
                     $account = $account->first();
+                    if (!$account) {
+                        $account = Account::create(['account_type' => $item]);
+                    }
                 } else {
                     $account = $account->where('id', $request->account_id[$key])->first();
                 }
                 $customerId = $request->order_customer_id;
                 $data = [
-                    'payment_type' => 'sale',
+                    'payment_type' => $item == 'advance' ? 'advance_deduct' : 'sale',
                     'sale_id' => $sale->id,
                     'is_received' => 1,
                     'customer_id' => $request->order_customer_id,

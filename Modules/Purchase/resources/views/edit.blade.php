@@ -350,7 +350,7 @@
                     accountInput.html(html);
                 }
 
-                if ($(this).val() == 'cash') {
+                if ($(this).val() == 'cash' || $(this).val() == 'advance') {
                     accountInput.html('');
                     const cash =
                         `<input type="text" name="account_id[]" class="form-control" value="${$(this).val()}" readonly>`;

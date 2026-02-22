@@ -64,11 +64,13 @@ class Supplier extends Model
                 $carry['total_advance'] += $payment->amount;
             } elseif ($payment->payment_type === 'advance_refund') {
                 $carry['total_refund'] += $payment->amount;
+            } elseif ($payment->payment_type === 'advance_deduct') {
+                $carry['total_used'] += $payment->amount;
             }
             return $carry;
-        }, ['total_advance' => 0, 'total_refund' => 0]);
+        }, ['total_advance' => 0, 'total_refund' => 0, 'total_used' => 0]);
 
-        return $totals['total_advance'] - $totals['total_refund'];
+        return $totals['total_advance'] - $totals['total_refund'] - $totals['total_used'];
     }
 
 
@@ -79,17 +81,13 @@ class Supplier extends Model
 
     public function getTotalPaidAttribute()
     {
-        // Count all payments including advances (purchase, due_pay, and advance_pay)
-        // Subtract any advance refunds
+        // Count purchase-related payments only (not advance_pay — that's tracked separately in Advance column)
+        // advance_deduct = when advance is consumed during a purchase
         $totalPaid = $this->payments
-            ->whereIn('payment_type', ['purchase', 'due_pay', 'advance_pay'])
+            ->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])
             ->sum('amount');
-        
-        $advanceRefunds = $this->payments
-            ->where('payment_type', 'advance_refund')
-            ->sum('amount');
-        
-        return $totalPaid - $advanceRefunds;
+
+        return $totalPaid;
     }
 
     public function getTotalDueAttribute()

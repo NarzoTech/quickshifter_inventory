@@ -35,7 +35,7 @@
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $supplier->area->name }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
                         {{ currency($supplier->purchases->sum('total_amount')) }}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->payments->sum('amount')) }}
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount')) }}
                     </td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->total_due - $totalReturn) }}
                     </td>

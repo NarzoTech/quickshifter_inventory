@@ -1,4 +1,4 @@
-@if ($value != 'cash')
+@if ($value != 'cash' && $value != 'advance')
     <select name="{{ isset($name) ? $name : 'account_id[]' }}" class="form-control" required>
         @foreach ($account as $key => $account)
             @php

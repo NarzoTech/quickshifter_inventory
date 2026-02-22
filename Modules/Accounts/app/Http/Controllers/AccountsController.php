@@ -171,7 +171,7 @@ class AccountsController extends Controller
         $data['productSale'] = $productSaleQuery->sum('amount') - $data['serviceSale'];
 
         // Customer Due
-        $customerDueQuery = CustomerPayment::where('payment_type', 'due_receive');
+        $customerDueQuery = CustomerPayment::whereIn('payment_type', ['due_receive', 'direct_due_receive']);
         $applyDateFilter($customerDueQuery, 'payment_date');
         $data['customer_due'] = $customerDueQuery->sum('amount');
 

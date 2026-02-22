@@ -16,8 +16,8 @@
                     $html = '';
                 @endphp
                 @if ($account)
-                    @if ($payment->account->account_type == 'cash')
-                        <input type="text" name="account_id[]" class="form-control" value="Cash" readonly>
+                    @if ($payment->account->account_type == 'cash' || $payment->account->account_type == 'advance')
+                        <input type="text" name="account_id[]" class="form-control" value="{{ ucfirst($payment->account->account_type) }}" readonly>
                     @else
                         <select name="account_id[]" class="form-control" required>
                         @foreach ($account as $key => $list)

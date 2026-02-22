@@ -143,13 +143,16 @@ class PurchaseService
         // create payments
         foreach ($request->payment_type as $key => $item) {
             $account = Account::where('account_type', $item);
-            if ($item == 'cash') {
+            if ($item == 'cash' || $item == 'advance') {
                 $account = $account->first();
+                if (!$account) {
+                    $account = Account::create(['account_type' => $item]);
+                }
             } else {
                 $account = $account->where('id', $request->account_id[$key])->first();
             }
             $data = [
-                'payment_type' => 'purchase',
+                'payment_type' => $item == 'advance' ? 'advance_deduct' : 'purchase',
                 'purchase_id'  => $purchase->id,
                 'is_paid'      => 1,
                 'supplier_id'  => $request->supplier_id,
@@ -158,7 +161,7 @@ class PurchaseService
                 'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'note'         => $request->note,
                 'created_by'   => auth('admin')->user()->id,
-                'account_type' => accountList()[$item],
+                'account_type' => accountList()[$item] ?? $item,
                 'invoice'      => $request->invoice_number,
             ];
             if ($request->paid_amount[$key]) {
@@ -255,13 +258,16 @@ class PurchaseService
         // create payments
         foreach ($request->payment_type as $key => $item) {
             $account = Account::where('account_type', $item);
-            if ($item == 'cash') {
+            if ($item == 'cash' || $item == 'advance') {
                 $account = $account->first();
+                if (!$account) {
+                    $account = Account::create(['account_type' => $item]);
+                }
             } else {
                 $account = $account->where('id', $request->account_id[$key])->first();
             }
             $data = [
-                'payment_type' => 'purchase',
+                'payment_type' => $item == 'advance' ? 'advance_deduct' : 'purchase',
                 'purchase_id'  => $purchase->id,
                 'is_paid'      => 1,
                 'supplier_id'  => $request->supplier_id,
@@ -271,7 +277,7 @@ class PurchaseService
                 'note'         => $request->note,
                 'created_by'   => auth('admin')->user()->id,
                 'invoice'      => $request->invoice_number,
-                'account_type' => accountList()[$item],
+                'account_type' => accountList()[$item] ?? $item,
             ];
             if ($request->paid_amount[$key]) {
                 SupplierPayment::create($data);

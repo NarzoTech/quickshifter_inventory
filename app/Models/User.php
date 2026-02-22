@@ -71,15 +71,14 @@ class User extends Model
         $prevDue = $this->wallet_balance ?? 0;
         $totalSales = $this->total_sales;
 
-        // Payments that reduce customer due (sale payments + due receive + advance receive)
-        // Subtract any advance refunds
+        // Payments that reduce customer due (sale payments + due receive only)
+        // advance_receive is tracked separately in Advance column
+        // advance_deduct = when advance is consumed during a sale
         $totalPaid = $this->payment
-            ->whereIn('payment_type', ['sale', 'due_receive', 'advance_receive'])
+            ->whereIn('payment_type', ['sale', 'due_receive', 'advance_deduct'])
             ->sum('amount');
-        
-        $advanceRefunds = $this->payment
-            ->where('payment_type', 'advance_refund')
-            ->sum('amount');
+
+        $advanceRefunds = 0;
 
         // Sale returns reduce the amount customer owes
         $totalSaleReturn = $this->sales->sum(function ($sale) {
@@ -116,7 +115,10 @@ class User extends Model
 
     public function getTotalPaidAttribute()
     {
-        $payment = $this->payment->where('is_received', 1);
+        // Only count sale-related payments, not advance_receive (tracked in Advance column)
+        $payment = $this->payment
+            ->where('is_received', 1)
+            ->whereIn('payment_type', ['sale', 'due_receive', 'advance_deduct']);
         return $payment->sum('amount');
     }
 
@@ -166,7 +168,8 @@ class User extends Model
     {
         $advance = $this->payment->where('payment_type', 'advance_receive')->sum('amount');
         $advanceRefund = $this->payment->where('payment_type', 'advance_refund')->sum('amount');
-        return $advance - $advanceRefund;
+        $advanceUsed = $this->payment->where('payment_type', 'advance_deduct')->sum('amount');
+        return $advance - $advanceRefund - $advanceUsed;
     }
 
     public function orderReviews()

@@ -57,7 +57,7 @@ class SupplierController extends Controller
 
         foreach ($supplierData as $supplier) {
             $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
-            $data['pay'] += $supplier->payments->sum('amount');
+            $data['pay'] += $supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount');
 
             $totalReturn = $supplier->purchaseReturn->sum('return_amount');
             $data['total_return'] += $totalReturn;
