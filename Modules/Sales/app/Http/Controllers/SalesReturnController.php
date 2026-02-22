@@ -285,11 +285,11 @@ class SalesReturnController extends Controller
 
     public function genLedgerInvoiceNumber($type = 'Sale Payment')
     {
-        return generateInvoiceNumber(Ledger::class, 'invoice_no', null, ['invoice_type' => $type]);
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', 'SRL-', ['invoice_type' => $type]);
     }
 
     public function returnInvoice()
     {
-        return generateInvoiceNumber(SalesReturn::class);
+        return generateInvoiceNumber(SalesReturn::class, 'invoice', 'SR-');
     }
 }

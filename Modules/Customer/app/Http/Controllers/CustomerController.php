@@ -766,12 +766,18 @@ class CustomerController extends Controller
 
     public function genInvoiceNumber()
     {
-        return generateInvoiceNumber(CustomerPayment::class);
+        return generateInvoiceNumber(CustomerPayment::class, 'invoice', 'CP-');
     }
 
     public function genLedgerInvoiceNumber($type = 'Sale Payment')
     {
-        return generateInvoiceNumber(Ledger::class, 'invoice_no', null, ['invoice_type' => $type]);
+        $prefixMap = [
+            'Due Receive'      => 'DRL-',
+            'Advance Received' => 'CAL-',
+            'Payment Return'   => 'CAL-',
+        ];
+        $prefix = $prefixMap[$type] ?? 'CL-';
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type]);
     }
 
     public function ledger($id)

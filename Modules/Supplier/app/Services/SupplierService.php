@@ -317,7 +317,7 @@ class SupplierService
 
     public function genInvoiceNumber()
     {
-        return generateInvoiceNumber(SupplierPayment::class);
+        return generateInvoiceNumber(SupplierPayment::class, 'invoice', 'SP-');
     }
 
 
@@ -333,7 +333,7 @@ class SupplierService
         $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
         $ledger->is_paid = $request->refund_amount != null ? 0 : 1;
         $ledger->is_received = $request->refund_amount != null ? 1 : 0;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber($ledger->invoice_type);
         $ledger->note = $request->note;
 
         if ($request->refund_amount != null) {
@@ -377,9 +377,15 @@ class SupplierService
     }
 
 
-    public function genLedgerInvoiceNumber()
+    public function genLedgerInvoiceNumber($type = 'Due Payment')
     {
-        return generateInvoiceNumber(Ledger::class, 'invoice_no', null, ['invoice_type' => 'Due Payment']);
+        $prefixMap = [
+            'Due Payment'      => 'SDL-',
+            'Advance Payment'  => 'SAL-',
+            'Payment Return'   => 'SAL-',
+        ];
+        $prefix = $prefixMap[$type] ?? 'SL-';
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type]);
     }
 
 

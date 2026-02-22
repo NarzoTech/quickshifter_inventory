@@ -876,7 +876,8 @@ if (! function_exists('generateInvoiceNumber')) {
 
         $invoice_number = $prefix . $startNumber;
 
-        $query = $modelClass::whereNotNull($invoiceColumn);
+        $query = $modelClass::whereNotNull($invoiceColumn)
+            ->where($invoiceColumn, 'like', $prefix . '%');
 
         // Apply additional where conditions if provided
         foreach ($whereConditions as $column => $value) {
@@ -890,9 +891,9 @@ if (! function_exists('generateInvoiceNumber')) {
 
             // Split the invoice number by '-' and get the numeric part
             $split_invoice = explode('-', $latestInvoice);
-            if (isset($split_invoice[1])) {
-                $newNumber = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $newNumber;
+            $lastPart = end($split_invoice);
+            if (is_numeric($lastPart)) {
+                $invoice_number = $prefix . ((int) $lastPart + 1);
             }
         }
 
