@@ -27,6 +27,11 @@
                 @php
                     $totalReturn = $supplier->purchaseReturn->sum('return_amount');
                     $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
+                    $rawDue = $supplier->total_due - $totalReturn;
+                    $rawAdvance = $supplier->advance;
+                    $offset = min(max(0, $rawDue), max(0, $rawAdvance));
+                    $effectiveDue = $rawDue - $offset;
+                    $effectiveAdvance = $rawAdvance - $offset;
                 @endphp
                 <tr>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $i++ }}</td>
@@ -35,11 +40,11 @@
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $supplier->area->name }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">
                         {{ currency($supplier->purchases->sum('total_amount')) }}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount')) }}
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount') + $offset) }}
                     </td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->total_due - $totalReturn) }}
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($effectiveDue) }}
                     </td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->advance) }}</td>
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($effectiveAdvance) }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($supplier->total_due_dismiss) }}</td>
                 </tr>
             @endforeach

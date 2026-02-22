@@ -135,6 +135,11 @@
                             @php
                                 $totalReturn = $supplier->purchaseReturn->sum('return_amount');
                                 $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
+                                $rawDue = $supplier->total_due - $totalReturn;
+                                $rawAdvance = $supplier->advance;
+                                $offset = min(max(0, $rawDue), max(0, $rawAdvance));
+                                $effectiveDue = $rawDue - $offset;
+                                $effectiveAdvance = $rawAdvance - $offset;
                             @endphp
                             <tr>
                                 <td>{{ method_exists($suppliers, 'firstItem') ? $suppliers->firstItem() + $index : $index + 1 }}</td>
@@ -143,9 +148,9 @@
                                 <td>{{ $supplier->phone }}</td>
                                 <td>{{ $supplier->area->name }}</td>
                                 <td>{{ currency($supplier->purchases->sum('total_amount')) }}</td>
-                                <td>{{ currency($supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount')) }}</td>
-                                <td>{{ currency($supplier->total_due - $totalReturn) }}</td>
-                                <td>{{ currency($supplier->advance) }}</td>
+                                <td>{{ currency($supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount') + $offset) }}</td>
+                                <td>{{ currency($effectiveDue) }}</td>
+                                <td>{{ currency($effectiveAdvance) }}</td>
                                 <td>{{ currency($supplier->total_due_dismiss) }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
@@ -169,7 +174,7 @@
                                                         data-bs-target="#editSupplier{{ $supplier->id }}">{{ __('Edit') }}</a>
                                                 @endadminCan
                                                 @adminCan('supplier.advance')
-                                                    @if (($supplier->total_due - $totalReturn) <= 0)
+                                                    @if ($effectiveDue <= 0)
                                                         <a class="dropdown-item"
                                                             href="{{ route('admin.suppliers.advance', $supplier->id) }}">{{ __('Advance') }}</a>
                                                     @endif
@@ -186,7 +191,7 @@
                                                     </a>
                                                 @endadminCan
                                                 @adminCan('supplier.due.pay')
-                                                    @if ($supplier->total_due - $totalReturn)
+                                                    @if ($effectiveDue > 0)
                                                         <a class="dropdown-item"
                                                             href="{{ route('admin.suppliers.due-pay', $supplier->id) }}">{{ __('Pay') }}</a>
                                                     @endif

@@ -147,8 +147,9 @@
                                 <td>{{ $purchase->supplier?->company }}</td>
                                 <td>{{ $purchase->supplier?->name }}</td>
                                 <td>{{ currency($purchase->total_amount) }}</td>
-                                <td>{{ currency($purchase->paid_amount) }}</td>
-                                <td>{{ currency($purchase->due_amount) }}</td>
+                                @php $offset = $advanceOffsets[$purchase->id] ?? 0; @endphp
+                                <td>{{ currency($purchase->paid_amount + $offset) }}</td>
+                                <td>{{ currency($purchase->due_amount - $offset) }}</td>
                                 <td>
                                     @if (checkAdminHasPermission('purchase.view') ||
                                             checkAdminHasPermission('purchase.edit') ||

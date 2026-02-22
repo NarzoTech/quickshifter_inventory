@@ -288,6 +288,7 @@
                                             <select name="customer_id" id="customer_id" class="form-control select2">
                                                 @include('pos::customer-drop-down')
                                             </select>
+                                            <small id="customer-advance-info" class="text-info fw-bold" style="display:none;"></small>
                                         </div>
                                     </div>
                                     <div class="col-md-3 col-lg-2 pe-0">
@@ -833,6 +834,17 @@
                     });
                 });
 
+                const customerAdvances = {
+                    @foreach($customers as $customer)
+                        @php
+                            $rawDue = $customer->total_due;
+                            $rawAdv = $customer->advances();
+                            $off = min(max(0, $rawDue), max(0, $rawAdv));
+                        @endphp
+                        {{ $customer->id }}: {{ $rawAdv - $off }},
+                    @endforeach
+                };
+
                 // load customer address
                 $("#customer_id").on("change", function() {
                     let customer_id = $(this).val();
@@ -843,6 +855,14 @@
                         $('[name="discount_type"]').val(2).niceSelect('update');
                         $('#discount_total_amount').val(discount);
                         updateDiscountType(2);
+                    }
+
+                    // Show customer advance balance
+                    const advanceInfo = $('#customer-advance-info');
+                    if (customer_id && customer_id !== 'walk-in-customer' && customerAdvances[customer_id] !== undefined && customerAdvances[customer_id] > 0) {
+                        advanceInfo.text('{{ __("Advance Balance") }}: ' + parseFloat(customerAdvances[customer_id]).toLocaleString()).show();
+                    } else {
+                        advanceInfo.hide();
                     }
 
                     // Load and display customer due

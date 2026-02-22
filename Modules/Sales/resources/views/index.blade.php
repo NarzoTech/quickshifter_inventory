@@ -151,12 +151,13 @@
                                 <td>{{ $sale->sale_note }}</td>
                                 <td>{{ $sale->total_price }}</td>
                                 <td>{{ $sale->grand_total }}</td>
-                                <td>{{ $sale->paid_amount }}</td>
-                                <td>{{ $sale->due_amount }}</td>
+                                @php $offset = $advanceOffsets[$sale->id] ?? 0; @endphp
+                                <td>{{ $sale->paid_amount + $offset }}</td>
+                                <td>{{ $sale->due_amount - $offset }}</td>
                                 <td>
-                                    @if ((float)$sale->paid_amount >= (float)$sale->grand_total)
+                                    @if ((float)($sale->paid_amount + $offset) >= (float)$sale->grand_total)
                                         <span class="badge bg-success">{{ __('Paid') }}</span>
-                                    @elseif ((float)$sale->paid_amount == 0)
+                                    @elseif ((float)($sale->paid_amount + $offset) == 0)
                                         <span class="badge bg-danger">{{ __('Due') }}</span>
                                     @else
                                         <span class="badge bg-warning">{{ __('Partial Due') }}</span>

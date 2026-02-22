@@ -129,16 +129,19 @@ class CustomerController extends Controller
         $customerData = request()->order_type ? $customers : $query->get();
         foreach ($customerData as $index => $customer) {
             $data['totalSale'] += $customer->sales->sum('grand_total');
-            $data['pay']       += $customer->total_paid;
 
             $totalReturn           = $customer->saleReturn->sum('return_amount');
             $data['total_return'] += $totalReturn;
 
-            $data['total_due']        += $customer->total_due - $totalReturn;
             $data['total_return_pay'] += $totalReturn - $customer->saleReturn->sum('return_due');
             $data['total_return_due'] += $customer->saleReturn->sum('return_due');
 
-            $data['total_advance'] += $customer->advances();
+            $rawDue = $customer->total_due - $totalReturn;
+            $rawAdvance = $customer->advances();
+            $offset = min(max(0, $rawDue), max(0, $rawAdvance));
+            $data['pay']           += $customer->total_paid + $offset;
+            $data['total_due']     += $rawDue - $offset;
+            $data['total_advance'] += $rawAdvance - $offset;
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
         }
 

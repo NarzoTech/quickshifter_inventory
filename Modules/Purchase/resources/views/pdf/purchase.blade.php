@@ -27,12 +27,20 @@
                 $data['total_amount'] = 0;
                 $data['paid_amount'] = 0;
                 $data['due_amount'] = 0;
+                $supplierAdvTracker = [];
             @endphp
             @foreach ($purchases as $index => $purchase)
                 @php
+                    $sid = $purchase->supplier_id;
+                    if (!isset($supplierAdvTracker[$sid])) {
+                        $supplierAdvTracker[$sid] = $purchase->supplier->advance ?? 0;
+                    }
+                    $offset = min(max(0, $purchase->due_amount), max(0, $supplierAdvTracker[$sid]));
+                    $supplierAdvTracker[$sid] -= $offset;
+
                     $data['total_amount'] += $purchase->total_amount;
-                    $data['paid_amount'] += $purchase->paid_amount;
-                    $data['due_amount'] += $purchase->due_amount;
+                    $data['paid_amount'] += $purchase->paid_amount + $offset;
+                    $data['due_amount'] += $purchase->due_amount - $offset;
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
@@ -40,8 +48,8 @@
                     <td>{{ $purchase->invoice_number }}</td>
                     <td>{{ $purchase->supplier?->name }}</td>
                     <td>{{ currency($purchase->total_amount) }}</td>
-                    <td>{{ currency($purchase->paid_amount) }}</td>
-                    <td>{{ currency($purchase->due_amount) }}</td>
+                    <td>{{ currency($purchase->paid_amount + $offset) }}</td>
+                    <td>{{ currency($purchase->due_amount - $offset) }}</td>
                 </tr>
             @endforeach
 

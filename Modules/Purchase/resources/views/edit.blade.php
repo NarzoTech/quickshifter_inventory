@@ -95,6 +95,7 @@
                                                             {{ $supplier->company }}</option>
                                                     @endforeach
                                                 </select>
+                                                <small id="supplier-advance-info" class="text-info fw-bold" style="display:none;"></small>
                                                 @error('supplier_id')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -320,6 +321,33 @@
 
         $(document).ready(function() {
             const accountsList = @json($accounts);
+            const supplierAdvances = {
+                @foreach($suppliers as $supplier)
+                    @php
+                        $rawDue = $supplier->total_due;
+                        $rawAdv = $supplier->advance;
+                        $off = min(max(0, $rawDue), max(0, $rawAdv));
+                    @endphp
+                    {{ $supplier->id }}: {{ $rawAdv - $off }},
+                @endforeach
+            };
+
+            // Show advance on load for selected supplier
+            const initialSupplier = $('select[name="supplier_id"]').val();
+            if (initialSupplier && supplierAdvances[initialSupplier] > 0) {
+                $('#supplier-advance-info').text('{{ __("Advance Balance") }}: ' + parseFloat(supplierAdvances[initialSupplier]).toLocaleString()).show();
+            }
+
+            $('select[name="supplier_id"]').on('change', function() {
+                const supplierId = $(this).val();
+                const advanceInfo = $('#supplier-advance-info');
+                if (supplierId && supplierAdvances[supplierId] !== undefined && supplierAdvances[supplierId] > 0) {
+                    advanceInfo.text('{{ __("Advance Balance") }}: ' + parseFloat(supplierAdvances[supplierId]).toLocaleString()).show();
+                } else {
+                    advanceInfo.hide();
+                }
+            });
+
             $(document).on('change', 'select[name="payment_type[]"]', function() {
                 const accounts = accountsList.filter(account => account.account_type == $(this).val());
                 const accountInput = $(this).closest('.payment-row').find('.account');

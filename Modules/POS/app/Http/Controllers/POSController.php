@@ -91,7 +91,7 @@ class POSController extends Controller
 
         $categories = Category::where('status', 1)->get();
         $brands = $this->brandService->getActiveBrands();
-        $customers = User::orderBy('name', 'asc')->where('status', 1)->get();
+        $customers = User::orderBy('name', 'asc')->where('status', 1)->with(['payment', 'sales'])->get();
 
         $cart_contents = session('POSCART') ?? [];
         $accounts = Account::with('bank')->get();

@@ -26,16 +26,23 @@
         </thead>
         <tbody>
             @foreach ($users as $index => $user)
+                @php
+                    $rawDue = $user->total_due;
+                    $rawAdvance = $user->advances();
+                    $offset = min(max(0, $rawDue), max(0, $rawAdvance));
+                    $effectiveDue = $rawDue - $offset;
+                    $effectiveAdvance = $rawAdvance - $offset;
+                @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->phone }}</td>
                     <td>{{ $user->area->name }}</td>
                     <td>{{ currency($user->sales->sum('grand_total')) }}</td>
-                    <td>{{ currency($user->total_paid) }}</td>
-                    <td>{{ currency($user->total_due) }}</td>
-                    <td>{{ currency($user->advances()) }}</td>
-                    <td>{{ currency($user->total_due - $user->total_sale_return_due) }}</td>
+                    <td>{{ currency($user->total_paid + $offset) }}</td>
+                    <td>{{ currency($effectiveDue) }}</td>
+                    <td>{{ currency($effectiveAdvance) }}</td>
+                    <td>{{ currency($effectiveDue - $user->total_sale_return_due) }}</td>
                 </tr>
             @endforeach
 

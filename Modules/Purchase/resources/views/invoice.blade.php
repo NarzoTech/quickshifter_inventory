@@ -125,6 +125,10 @@
                     </tfoot>
                 </table>
 
+                @php
+                    $supplierAdvance = $purchase->supplier->advance;
+                    $advanceOffset = min(max(0, $purchase->due_amount), max(0, $supplierAdvance));
+                @endphp
                 <table class="summary-table invoice-summary-table">
                     <tbody>
                         <tr>
@@ -150,12 +154,20 @@
                             <td>
                                 TK {{ $purchase->paid_amount }}</td>
                         </tr>
+                        @if($advanceOffset > 0)
+                        <tr>
+                            <td>
+                                Paid from Advance:</td>
+                            <td>
+                                TK {{ $advanceOffset }}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <td>
                                 Due:
                             </td>
                             <td>
-                                TK {{ $purchase->due_amount }}</td>
+                                TK {{ $purchase->due_amount - $advanceOffset }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -183,6 +195,21 @@
                                         <td>TK.{{ $payment->amount }}</td>
                                     </tr>
                                 @endforeach
+                                @if($advanceOffset > 0)
+                                    @php
+                                        $advanceMethods = $purchase->supplier->payments
+                                            ->where('payment_type', 'advance_pay')
+                                            ->pluck('account_type')
+                                            ->unique()
+                                            ->implode(', ');
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $purchase->payments->count() + 1 }}</td>
+                                        <td>Advance</td>
+                                        <td>{{ $advanceMethods ?: '-' }}</td>
+                                        <td>TK.{{ $advanceOffset }}</td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>

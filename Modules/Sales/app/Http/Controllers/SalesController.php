@@ -78,11 +78,25 @@ class SalesController extends Controller
         $data['paid_amount'] = 0;
         $data['due_amount'] = 0;
 
+        $customerAdvMap = [];
+        $advanceOffsets = [];
+
         foreach ($sales->get() as $sale) {
+            $cid = $sale->customer_id;
+            if ($cid && !isset($customerAdvMap[$cid])) {
+                $customerAdvMap[$cid] = $sale->customer ? $sale->customer->advances() : 0;
+            }
+            $offset = 0;
+            if ($cid && isset($customerAdvMap[$cid])) {
+                $offset = min(max(0, $sale->due_amount), max(0, $customerAdvMap[$cid]));
+                $customerAdvMap[$cid] -= $offset;
+            }
+            $advanceOffsets[$sale->id] = $offset;
+
             $data['sale_amount'] += $sale->total_price;
             $data['total_amount'] += $sale->grand_total;
-            $data['paid_amount'] += $sale->paid_amount;
-            $data['due_amount'] += $sale->due_amount;
+            $data['paid_amount'] += $sale->paid_amount + $offset;
+            $data['due_amount'] += $sale->due_amount - $offset;
         }
 
         if (request('par-page')) {
@@ -115,7 +129,7 @@ class SalesController extends Controller
         $title = 'Sales List';
         $products = Product::where('status', 1)->orderBy('id', 'desc')->get();
         $customers = User::where('status', 1)->orderBy('name', 'asc')->get();
-        return view('sales::index', compact('sales', 'title', 'data', 'products', 'customers'));
+        return view('sales::index', compact('sales', 'title', 'data', 'products', 'customers', 'advanceOffsets'));
     }
 
     /**
@@ -159,7 +173,7 @@ class SalesController extends Controller
 
         $categories = Category::where('status', 1)->get();
         $brands = $this->brandService->getActiveBrands();
-        $customers = User::orderBy('name', 'asc')->where('status', 1)->get();
+        $customers = User::orderBy('name', 'asc')->where('status', 1)->with(['payment', 'sales'])->get();
         $accounts = Account::with('bank')->get();
         $groups = $this->userGroup->getUserGroup()->where('type', 'customer')->where('status', 1)->get();
         $areaList = $this->areaService->getArea()->get();

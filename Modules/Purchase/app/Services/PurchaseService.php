@@ -39,7 +39,7 @@ class PurchaseService
 
     public function all()
     {
-        $purchase = $this->purchase->with('supplier', 'warehouse')->orderBy('purchase_date', 'desc');
+        $purchase = $this->purchase->with('supplier.payments', 'warehouse')->orderBy('purchase_date', 'desc');
 
         if (request()->has('keyword')) {
             $purchase = $purchase->where(function ($query) {
@@ -169,6 +169,23 @@ class PurchaseService
             }
         }
 
+        // Create advance deduct ledger entries to offset advance credit
+        foreach ($request->payment_type as $key => $item) {
+            if ($item == 'advance' && $request->paid_amount[$key]) {
+                $advanceLedger = new Ledger();
+                $advanceLedger->supplier_id = $request->supplier_id;
+                $advanceLedger->amount = 0;
+                $advanceLedger->total_amount = 0;
+                $advanceLedger->due_amount = $request->paid_amount[$key];
+                $advanceLedger->invoice_type = 'Advance Deduct';
+                $advanceLedger->is_paid = 1;
+                $advanceLedger->invoice_no = $request->invoice_number;
+                $advanceLedger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+                $advanceLedger->created_by = auth('admin')->user()->id;
+                $advanceLedger->save();
+            }
+        }
+
         // Log purchase transaction
         $this->transactionLogger->logPurchase('create', $request->all(), $purchase);
 
@@ -206,6 +223,12 @@ class PurchaseService
         $ledger = $this->getLedger($request, $id, 'purchase', 1);
 
         $this->purchaseLedger($request, $purchase->id, $paidAmount, $request->total_amount, 'purchase', 1, $request->due_amount, $ledger);
+
+        // Delete old advance deduct ledger entries for this purchase
+        Ledger::where('invoice_type', 'Advance Deduct')
+            ->where('invoice_no', $purchase->invoice_number)
+            ->where('supplier_id', $request->supplier_id)
+            ->delete();
 
         // restore product stock
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
@@ -284,12 +307,22 @@ class PurchaseService
             }
         }
 
-        // update ledger
-        // $ledger = $this->getLedger($request, $purchase->id, 1, 'purchase payment');
-
-        // if ($paidAmount) {
-        //     $this->purchaseLedger($request, $purchase->id, -$paidAmount, 'purchase payment', 1, $request->due_amount, $ledger);
-        // }
+        // Create advance deduct ledger entries to offset advance credit
+        foreach ($request->payment_type as $key => $item) {
+            if ($item == 'advance' && $request->paid_amount[$key]) {
+                $advanceLedger = new Ledger();
+                $advanceLedger->supplier_id = $request->supplier_id;
+                $advanceLedger->amount = 0;
+                $advanceLedger->total_amount = 0;
+                $advanceLedger->due_amount = $request->paid_amount[$key];
+                $advanceLedger->invoice_type = 'Advance Deduct';
+                $advanceLedger->is_paid = 1;
+                $advanceLedger->invoice_no = $request->invoice_number;
+                $advanceLedger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+                $advanceLedger->created_by = auth('admin')->user()->id;
+                $advanceLedger->save();
+            }
+        }
 
         // Log purchase transaction update
         $this->transactionLogger->logPurchase('update', $request->all(), $purchase);
@@ -320,7 +353,8 @@ class PurchaseService
         // delete ledger and ledger details
         $ledgers = Ledger::where(function ($query) use ($purchase) {
             $query->where('invoice_type', 'purchase')
-                  ->orWhere('invoice_type', 'purchase payment');
+                  ->orWhere('invoice_type', 'purchase payment')
+                  ->orWhere('invoice_type', 'Advance Deduct');
         })->where('invoice_no', $purchase->invoice_number)->get();
 
         foreach ($ledgers as $ledger) {
@@ -340,7 +374,7 @@ class PurchaseService
 
     public function getPurchase($id)
     {
-        return $this->purchase->with('supplier', 'warehouse', 'purchaseDetails.product', 'payments')->find($id);
+        return $this->purchase->with('supplier.payments', 'warehouse', 'purchaseDetails.product', 'payments')->find($id);
     }
 
     public function getPurchaseDetails($id)
@@ -355,7 +389,7 @@ class PurchaseService
 
     public function getSuppliers()
     {
-        return Supplier::where('status', 1)->orderBy('name', 'asc')->get();
+        return Supplier::where('status', 1)->with(['payments', 'purchases', 'purchaseReturn'])->orderBy('name', 'asc')->get();
     }
 
     public function getWarehouses()

@@ -57,8 +57,6 @@ class SupplierController extends Controller
 
         foreach ($supplierData as $supplier) {
             $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
-            $data['pay'] += $supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount');
-
             $totalReturn = $supplier->purchaseReturn->sum('return_amount');
             $data['total_return'] += $totalReturn;
 
@@ -66,8 +64,12 @@ class SupplierController extends Controller
                 'received_amount',
             );
 
-            $data['total_due'] += $supplier->total_due - $totalReturn;
-            $data['total_advance'] += $supplier->advance;
+            $rawDue = $supplier->total_due - $totalReturn;
+            $rawAdvance = $supplier->advance;
+            $offset = min(max(0, $rawDue), max(0, $rawAdvance));
+            $data['pay'] += $supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount') + $offset;
+            $data['total_due'] += $rawDue - $offset;
+            $data['total_advance'] += $rawAdvance - $offset;
             $data['total_due_dismiss'] += $supplier->total_due_dismiss;
         }
 

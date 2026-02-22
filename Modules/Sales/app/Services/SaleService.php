@@ -49,7 +49,7 @@ class SaleService
 
     public function getSales()
     {
-        return $this->sale->with('products', 'customer', 'services', 'details', 'payment', 'saleReturns');
+        return $this->sale->with('products', 'customer.payment', 'services', 'details', 'payment', 'saleReturns');
     }
     public function createSale(Request $request, $user, $cart): Sale
     {
@@ -183,6 +183,23 @@ class SaleService
         if ($user) {
             // $this->updateLedger($request, $sale->id, $user, 'sale');
             $this->salesLedger($request, $sale, array_sum($request->paying_amount), $request->total_amount, 'sale', 1, $due);
+
+            // Create advance deduct ledger entries to offset advance credit
+            foreach ($request->payment_type as $key => $item) {
+                if ($item == 'advance' && $request->paying_amount[$key]) {
+                    $advanceLedger = new Ledger();
+                    $advanceLedger->customer_id = $request->order_customer_id;
+                    $advanceLedger->amount = 0;
+                    $advanceLedger->total_amount = 0;
+                    $advanceLedger->due_amount = $request->paying_amount[$key];
+                    $advanceLedger->invoice_type = 'Advance Deduct';
+                    $advanceLedger->is_received = 1;
+                    $advanceLedger->invoice_no = $sale->invoice;
+                    $advanceLedger->date = $this->parseDate($request->sale_date);
+                    $advanceLedger->created_by = auth('admin')->user()->id;
+                    $advanceLedger->save();
+                }
+            }
         }
 
         // Log sale transaction
@@ -294,6 +311,12 @@ class SaleService
 
             $this->salesLedger($request, $sale, array_sum($request->paying_amount), $request->total_amount, 'sale', 1, $due, $ledger);
 
+            // Delete old advance deduct ledger entries for this sale
+            Ledger::where('invoice_type', 'Advance Deduct')
+                ->where('invoice_no', $sale->invoice)
+                ->where('customer_id', $request->order_customer_id)
+                ->delete();
+
             // create payments
             foreach ($request->payment_type as $key => $item) {
                 $account = Account::where('account_type', $item);
@@ -337,6 +360,25 @@ class SaleService
                 ]);
             }
 
+            // Create advance deduct ledger entries to offset advance credit
+            if ($user) {
+                foreach ($request->payment_type as $key => $item) {
+                    if ($item == 'advance' && $request->paying_amount[$key]) {
+                        $advanceLedger = new Ledger();
+                        $advanceLedger->customer_id = $request->order_customer_id;
+                        $advanceLedger->amount = 0;
+                        $advanceLedger->total_amount = 0;
+                        $advanceLedger->due_amount = $request->paying_amount[$key];
+                        $advanceLedger->invoice_type = 'Advance Deduct';
+                        $advanceLedger->is_received = 1;
+                        $advanceLedger->invoice_no = $sale->invoice;
+                        $advanceLedger->date = $this->parseDate($request->sale_date);
+                        $advanceLedger->created_by = auth('admin')->user()->id;
+                        $advanceLedger->save();
+                    }
+                }
+            }
+
             // Log sale transaction update
             $this->transactionLogger->logSale('update', array_merge($request->all(), ['cart' => $cart]), $sale);
 
@@ -367,9 +409,10 @@ class SaleService
         }
 
         // delete ledger and ledger details
-        $ledgers = Ledger::where('invoice_type', 'sale')
-            ->where('invoice_no', $sale->invoice)
-            ->get();
+        $ledgers = Ledger::where(function ($query) {
+            $query->where('invoice_type', 'sale')
+                  ->orWhere('invoice_type', 'Advance Deduct');
+        })->where('invoice_no', $sale->invoice)->get();
 
         foreach ($ledgers as $ledger) {
             // Delete ledger details first

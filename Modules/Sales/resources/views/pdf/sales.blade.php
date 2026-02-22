@@ -32,13 +32,24 @@
                 $data['total_amount'] = 0;
                 $data['paid_amount'] = 0;
                 $data['due_amount'] = 0;
+                $customerAdvTracker = [];
             @endphp
             @foreach ($sales as $index => $sale)
                 @php
+                    $cid = $sale->customer_id;
+                    $offset = 0;
+                    if ($cid) {
+                        if (!isset($customerAdvTracker[$cid])) {
+                            $customerAdvTracker[$cid] = $sale->customer ? $sale->customer->advances() : 0;
+                        }
+                        $offset = min(max(0, $sale->due_amount), max(0, $customerAdvTracker[$cid]));
+                        $customerAdvTracker[$cid] -= $offset;
+                    }
+
                     $data['sale_amount'] += $sale->total_price;
                     $data['total_amount'] += $sale->grand_total;
-                    $data['paid_amount'] += $sale->paid_amount;
-                    $data['due_amount'] += $sale->due_amount;
+                    $data['paid_amount'] += $sale->paid_amount + $offset;
+                    $data['due_amount'] += $sale->due_amount - $offset;
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
@@ -48,12 +59,12 @@
                     <td>{{ $sale->sale_note }}</td>
                     <td>{{ $sale->total_price }}</td>
                     <td>{{ $sale->grand_total }}</td>
-                    <td>{{ $sale->paid_amount }}</td>
-                    <td>{{ $sale->due_amount }}</td>
+                    <td>{{ $sale->paid_amount + $offset }}</td>
+                    <td>{{ $sale->due_amount - $offset }}</td>
                     <td>
-                        @if ((float)$sale->paid_amount >= (float)$sale->grand_total)
+                        @if ((float)($sale->paid_amount + $offset) >= (float)$sale->grand_total)
                             <span class="badge bg-success">{{ __('Paid') }}</span>
-                        @elseif ((float)$sale->paid_amount == 0)
+                        @elseif ((float)($sale->paid_amount + $offset) == 0)
                             <span class="badge bg-danger">{{ __('Due') }}</span>
                         @else
                             <span class="badge bg-warning">{{ __('Partial Due') }}</span>

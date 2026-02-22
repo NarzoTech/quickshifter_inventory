@@ -274,6 +274,10 @@
                                     {{ $subTotal - $sale->order_discount }}</b>
                             </td>
                         </tr>
+                        @php
+                            $customerAdvance = ($sale->customer_id && $sale->customer) ? $sale->customer->advances() : 0;
+                            $saleAdvanceOffset = min(max(0, $sale->due_amount), max(0, $customerAdvance));
+                        @endphp
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
                             <td class="text-right ps-0"
@@ -287,6 +291,21 @@
                             </td>
                         </tr>
 
+                        @if($saleAdvanceOffset > 0)
+                        <tr>
+                            <td colspan="5" style="border: none !important"></td>
+                            <td class="text-right ps-0"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important ">
+                                Paid from Advance:
+                            </td>
+                            <td class="text-right"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
+                                TK
+                                {{ $saleAdvanceOffset }}
+                            </td>
+                        </tr>
+                        @endif
+
                         <tr>
                             <td colspan="5" style="border: none !important">
                             </td>
@@ -296,7 +315,7 @@
                             </td>
 
                             <td class="text-right">
-                                TK {{ $sale->due_amount }}
+                                TK {{ $sale->due_amount - $saleAdvanceOffset }}
                             </td>
                         </tr>
 
@@ -334,7 +353,7 @@
             </span>
         </div>
 
-        @if($sale->payment && $sale->payment->count() > 0)
+        @if(($sale->payment && $sale->payment->count() > 0) || $saleAdvanceOffset > 0)
         <div class="mt-3 payment-details">
             <div style="width: 100%">
                 <h6 class="mb-2"><b>Payment Details</b></h6>
@@ -356,6 +375,21 @@
                                 <td>TK {{ number_format($payment->amount, 2) }}</td>
                             </tr>
                         @endforeach
+                        @if($saleAdvanceOffset > 0)
+                            @php
+                                $advanceMethods = $sale->customer->payment
+                                    ->where('payment_type', 'advance_receive')
+                                    ->pluck('account_type')
+                                    ->unique()
+                                    ->implode(', ');
+                            @endphp
+                            <tr>
+                                <td>{{ $sale->payment->count() + 1 }}</td>
+                                <td>Advance</td>
+                                <td>{{ $advanceMethods ?: '-' }}</td>
+                                <td>TK {{ number_format($saleAdvanceOffset, 2) }}</td>
+                            </tr>
+                        @endif
                     </tbody>
                     <tfoot>
                         <tr>

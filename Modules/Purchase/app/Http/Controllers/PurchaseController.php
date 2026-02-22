@@ -37,11 +37,21 @@ class PurchaseController extends Controller
         $data['paid_amount'] = 0;
         $data['due_amount'] = 0;
 
+        $supplierAdvMap = [];
+        $advanceOffsets = [];
+
         foreach ($purchases->get() as $purchase) {
+            $sid = $purchase->supplier_id;
+            if (!isset($supplierAdvMap[$sid])) {
+                $supplierAdvMap[$sid] = $purchase->supplier->advance ?? 0;
+            }
+            $offset = min(max(0, $purchase->due_amount), max(0, $supplierAdvMap[$sid]));
+            $supplierAdvMap[$sid] -= $offset;
+            $advanceOffsets[$purchase->id] = $offset;
 
             $data['total_amount'] += $purchase->total_amount;
-            $data['paid_amount'] += $purchase->paid_amount;
-            $data['due_amount'] += $purchase->due_amount;
+            $data['paid_amount'] += $purchase->paid_amount + $offset;
+            $data['due_amount'] += $purchase->due_amount - $offset;
         }
 
         if (checkAdminHasPermission('purchase.excel.download')) {
@@ -72,7 +82,7 @@ class PurchaseController extends Controller
         }
 
         $products = $this->purchaseService->getProducts(request());
-        return view('purchase::index', compact('purchases', 'products', 'data'));
+        return view('purchase::index', compact('purchases', 'products', 'data', 'advanceOffsets'));
     }
 
     /**

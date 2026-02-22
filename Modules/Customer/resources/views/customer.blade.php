@@ -138,16 +138,23 @@
                     </thead>
                     <tbody>
                         @foreach ($users as $index => $user)
+                            @php
+                                $rawDue = $user->total_due;
+                                $rawAdvance = $user->advances();
+                                $offset = min(max(0, $rawDue), max(0, $rawAdvance));
+                                $effectiveDue = $rawDue - $offset;
+                                $effectiveAdvance = $rawAdvance - $offset;
+                            @endphp
                             <tr>
                                 <td>{{ method_exists($users, 'firstItem') ? $users->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->area->name }}</td>
                                 <td>{{ currency($user->sales->sum('grand_total')) }}</td>
-                                <td>{{ currency($user->total_paid) }}</td>
-                                <td>{{ currency($user->total_due) }}</td>
-                                <td>{{ currency($user->advances()) }}</td>
-                                <td>{{ currency($user->total_due - $user->total_sale_return_due - $user->advances()) }}
+                                <td>{{ currency($user->total_paid + $offset) }}</td>
+                                <td>{{ currency($effectiveDue) }}</td>
+                                <td>{{ currency($effectiveAdvance) }}</td>
+                                <td>{{ currency($effectiveDue - $user->total_sale_return_due) }}
                                 </td>
 
                                 <td>
@@ -169,7 +176,7 @@
                                             @endadminCan
 
                                             @adminCan('customer.due.receive')
-                                                @if ($user->total_due)
+                                                @if ($effectiveDue > 0)
                                                     <a class="dropdown-item"
                                                         href="{{ route('admin.customer.due-receive') }}?customer={{ $user->id }}">Due
                                                         Receive</a>
@@ -205,7 +212,7 @@
                                                     href="{{ route('admin.customers.ledger', $user->id) }}">{{ __('Ledger') }}</a>
                                             @endadminCan
                                             @adminCan('customer.advance')
-                                                @if ($user->total_due <= 0)
+                                                @if ($effectiveDue <= 0)
                                                     <a class="dropdown-item"
                                                         href="{{ route('admin.customers.advance', $user->id) }}">{{ __('Advance') }}</a>
                                                 @endif
