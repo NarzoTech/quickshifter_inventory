@@ -439,7 +439,7 @@ class SaleService
 
     public function genInvoiceNumber()
     {
-        return generateInvoiceNumber(Sale::class, 'invoice', 'SALE-');
+        return generateInvoiceNumber(Sale::class, 'invoice', 'S');
     }
     public function editSale($id)
     {

@@ -317,7 +317,7 @@ class SupplierService
 
     public function genInvoiceNumber()
     {
-        return generateInvoiceNumber(SupplierPayment::class, 'invoice', 'SP-');
+        return generateInvoiceNumber(SupplierPayment::class, 'invoice', 'SP');
     }
 
 
@@ -380,11 +380,11 @@ class SupplierService
     public function genLedgerInvoiceNumber($type = 'Due Payment')
     {
         $prefixMap = [
-            'Due Payment'      => 'SDL-',
-            'Advance Payment'  => 'SAL-',
-            'Payment Return'   => 'SAL-',
+            'Due Payment'      => 'SDL',
+            'Advance Payment'  => 'SAL',
+            'Payment Return'   => 'SARL',
         ];
-        $prefix = $prefixMap[$type] ?? 'SL-';
+        $prefix = $prefixMap[$type] ?? 'SL';
         return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type]);
     }
 

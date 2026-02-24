@@ -548,8 +548,8 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     Payment Type
                                                     <div class="d-flex gap-1">
-                                                        <a href="javascript:;" class="btn bg-label-primary d-none" id="useAdvanceBtn" onclick="useAdvancePayment()" style="font-size: 12px; padding: 4px 10px;">
-                                                            {{ __('Use Advance') }} (<span id="advanceAvailable">0</span>)
+                                                        <a href="javascript:;" class="btn bg-label-primary d-none" id="useAdvanceBtn" onclick="useAdvancePayment()" style="font-size: 12px; padding: 4px 10px; white-space: nowrap;">
+                                                            {{ __('Use Advance') }}(<span id="advanceAvailable">0</span>)
                                                         </a>
                                                         <a href="javascript:;" class="btn bg-label-warning d-none" id="offsetDueBtn" onclick="offsetDueWithAdvance()" style="font-size: 12px; padding: 4px 10px;">
                                                             {{ __('Offset Due') }}
@@ -1874,24 +1874,27 @@
             }
 
             let grandTotal = parseFloat($('#total_amountModal').text()) || 0;
-            let currentlyPaid = 0;
+            let advanceAmount = Math.min(currentCustomerAdvance, grandTotal);
+
+            // Reduce existing payment amounts to make room for advance
+            let amountToFree = advanceAmount;
             $('[name="paying_amount[]"]').each(function() {
-                currentlyPaid += parseFloat($(this).val()) || 0;
+                if (amountToFree <= 0) return;
+                let currentVal = parseFloat($(this).val()) || 0;
+                if (currentVal > 0) {
+                    let reduction = Math.min(currentVal, amountToFree);
+                    $(this).val((currentVal - reduction).toFixed(2));
+                    amountToFree -= reduction;
+                }
             });
-            let remaining = grandTotal - currentlyPaid;
-            if (remaining <= 0) {
-                toastr.warning("{{ __('No remaining amount to pay') }}");
-                return;
-            }
 
-            let advanceAmount = Math.min(currentCustomerAdvance, remaining);
-
+            // Add advance payment row
             const row = `@include('pos::payment-row', ['add' => true])`;
             $('#paymentRow').append(row);
 
             const lastRow = $('#paymentRow tr:last');
             lastRow.find('[name="payment_type[]"]').val('advance').trigger('change');
-            lastRow.find('[name="paying_amount[]"]').val(advanceAmount);
+            lastRow.find('[name="paying_amount[]"]').val(advanceAmount.toFixed(2));
 
             $('[name="paying_amount[]"]').trigger('input');
         }

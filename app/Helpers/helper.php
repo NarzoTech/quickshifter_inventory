@@ -865,19 +865,15 @@ if (! function_exists('generateInvoiceNumber')) {
 
         // Get prefix from settings if not provided
         if ($prefix === null) {
-            $prefix = $setting->invoice_prefix ?? 'INV-';
+            $prefix = $setting->invoice_prefix ?? 'INV';
         }
 
-        // Get starting number from invoice_suffix setting, default to 1
-        $startNumber = (int) ($setting->invoice_suffix ?? 1);
-        if ($startNumber < 1) {
-            $startNumber = 1;
-        }
-
-        $invoice_number = $prefix . $startNumber;
+        // Format: {PREFIX}{YYMMDD}{SEQ:3} e.g. S260224001
+        $dateStr = date('ymd');
+        $dailyPrefix = $prefix . $dateStr;
 
         $query = $modelClass::whereNotNull($invoiceColumn)
-            ->where($invoiceColumn, 'like', $prefix . '%');
+            ->where($invoiceColumn, 'like', $dailyPrefix . '%');
 
         // Apply additional where conditions if provided
         foreach ($whereConditions as $column => $value) {
@@ -886,17 +882,16 @@ if (! function_exists('generateInvoiceNumber')) {
 
         $latestRecord = $query->latest()->first();
 
+        $seq = 1;
         if ($latestRecord) {
             $latestInvoice = $latestRecord->{$invoiceColumn};
-
-            // Split the invoice number by '-' and get the numeric part
-            $split_invoice = explode('-', $latestInvoice);
-            $lastPart = end($split_invoice);
-            if (is_numeric($lastPart)) {
-                $invoice_number = $prefix . ((int) $lastPart + 1);
+            // Extract the sequence number after the date part
+            $seqStr = substr($latestInvoice, strlen($dailyPrefix));
+            if (is_numeric($seqStr)) {
+                $seq = (int) $seqStr + 1;
             }
         }
 
-        return $invoice_number;
+        return $dailyPrefix . str_pad($seq, 3, '0', STR_PAD_LEFT);
     }
 }

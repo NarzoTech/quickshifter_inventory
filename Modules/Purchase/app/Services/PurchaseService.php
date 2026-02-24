@@ -369,7 +369,7 @@ class PurchaseService
 
     public function genInvoiceNumber()
     {
-        return generateInvoiceNumber(Purchase::class, 'invoice_number', 'PUR-');
+        return generateInvoiceNumber(Purchase::class, 'invoice_number', 'P');
     }
 
     public function getPurchase($id)
@@ -757,6 +757,6 @@ class PurchaseService
 
     public function returnInvoice()
     {
-        return generateInvoiceNumber(PurchaseReturn::class, 'invoice', 'PR-');
+        return generateInvoiceNumber(PurchaseReturn::class, 'invoice', 'PR');
     }
 }
