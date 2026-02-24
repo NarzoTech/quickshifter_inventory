@@ -230,26 +230,6 @@
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
-                                                <label for="">Invoice Prefix</label>
-                                                <input type="text" name="invoice_prefix"
-                                                    value="{{ $setting->invoice_prefix }}" class="form-control"
-                                                    placeholder="EX: AS">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
-                                                <label for="">Invoice Suffix</label>
-                                                <input type="number" name="invoice_suffix"
-                                                    value="{{ $setting->invoice_suffix }}" class="form-control"
-                                                    placeholder="EX: 10000001">
-                                                <span class="text-info mb-0">
-                                                    If invoice prefix or suffix is null system will auto generate invoice
-                                                    number
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-lg-4">
-                                            <div class="form-group">
                                                 <label for="">Admin Route Prefix</label>
                                                 <input type="text" name="admin_route_prefix"
                                                     value="{{ $setting->admin_route_prefix ?? 'admin' }}" class="form-control"

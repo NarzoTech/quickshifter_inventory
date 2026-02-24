@@ -30,12 +30,14 @@
                     <span class="key">Sold By:</span>
                     <span class="value">{{ $sale->createdBy->name }}</span>
                 </div>
+                @if($sale->sale_note)
                 <div class="property">
                     <span class="value">
                         <span class="key">Remark:</span>
-                        {{ $sale->notes }}
+                        {{ $sale->sale_note }}
                     </span>
                 </div>
+                @endif
             </div>
         </div>
         <div class="col-5">
@@ -351,9 +353,9 @@
             </span>
         </div>
 
-        @if($sale->notes)
+        @if($sale->sale_note)
         <div class="mt-2">
-            <b>Note:</b> {{ $sale->notes }}
+            <b>Note:</b> {{ $sale->sale_note }}
         </div>
         @endif
 
