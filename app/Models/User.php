@@ -113,6 +113,16 @@ class User extends Model
         return $this->saleReturn->sum('return_due');
     }
 
+    public function getSaleDueAttribute()
+    {
+        return $this->total_due - ($this->wallet_balance ?? 0);
+    }
+
+    public function getPreviousDueAttribute()
+    {
+        return $this->wallet_balance ?? 0;
+    }
+
     public function getTotalPaidAttribute()
     {
         // Only count sale-related payments, not advance_receive (tracked in Advance column)

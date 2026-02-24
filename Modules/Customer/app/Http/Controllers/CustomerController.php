@@ -123,6 +123,8 @@ class CustomerController extends Controller
         $data['total_return_pay']  = 0;
         $data['total_return_due']  = 0;
         $data['total_due']         = 0;
+        $data['sale_due']          = 0;
+        $data['previous_due']      = 0;
         $data['total_advance']     = 0;
         $data['total_due_dismiss'] = 0;
 
@@ -141,6 +143,8 @@ class CustomerController extends Controller
             $offset = min(max(0, $rawDue), max(0, $rawAdvance));
             $data['pay']           += $customer->total_paid + $offset;
             $data['total_due']     += $rawDue - $offset;
+            $data['sale_due']      += $customer->sale_due;
+            $data['previous_due']  += $customer->previous_due;
             $data['total_advance'] += $rawAdvance - $offset;
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
         }
@@ -680,24 +684,19 @@ class CustomerController extends Controller
     public function advanceStore(Request $request, $id)
     {
         checkAdminHasPermissionAndThrowException('customer.advance');
-        $validator = Validator::make($request->all(), [
-            'advance'       => 'nullable',
-            'paying_amount' => 'nullable',
-            'refund_amount' => 'nullable',
+        $rules = [
             'date'          => 'required',
             'total_amount'  => 'required',
             'payment_type'  => 'required',
-        ]);
+        ];
 
-        $validator->after(function ($validator) use ($request) {
-            if (is_null($request->paying_amount) && is_null($request->refund_amount)) {
-                $validator->errors()->add('paying_amount', 'Either Receiving Amount or Refund Amount must be provided.');
-                $validator->errors()->add('refund_amount', 'Either Receiving Amount or Refund Amount must be provided.');
-            } elseif (! is_null($request->paying_amount) && ! is_null($request->refund_amount)) {
-                $validator->errors()->add('paying_amount', 'Only one of Receiving Amount or Refund Amount can be provided.');
-                $validator->errors()->add('refund_amount', 'Only one of Receiving Amount or Refund Amount can be provided.');
-            }
-        });
+        if ($request->has('paying_amount')) {
+            $rules['paying_amount'] = 'required|numeric|min:0.01';
+        } elseif ($request->has('refund_amount')) {
+            $rules['refund_amount'] = 'required|numeric|min:0.01';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -764,6 +763,9 @@ class CustomerController extends Controller
         $ledger->date       = Carbon::createFromFormat('d-m-Y', $request->date);
         $ledger->created_by = auth('admin')->user()->id;
         $ledger->save();
+
+        $ledger->invoice_url = route('admin.customers.ledger-details', $ledger->id);
+        $ledger->save();
     }
 
     public function genInvoiceNumber()
@@ -786,7 +788,12 @@ class CustomerController extends Controller
     {
         checkAdminHasPermissionAndThrowException('customer.ledger');
         $user    = User::findOrFail($id);
-        $walletBalance = $user->wallet_balance ?? 0;
+        // Reconstruct original wallet_balance before any direct due receives,
+        // since direct_due_receive both reduces wallet_balance AND creates a ledger entry
+        $directDueReceived = CustomerPayment::where('customer_id', $user->id)
+            ->where('payment_type', 'direct_due_receive')
+            ->sum('amount');
+        $walletBalance = ($user->wallet_balance ?? 0) + $directDueReceived;
 
         // Calculate opening balance from entries before from_date
         $balanceBeforeFromDate = $walletBalance;

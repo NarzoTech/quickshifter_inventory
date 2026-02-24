@@ -15,12 +15,16 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="d-flex justify-content-between">
+                            @php
+                                $person = $ledger->supplier_id ? $ledger->supplier : $ledger->customer;
+                                $isSupplier = (bool) $ledger->supplier_id;
+                            @endphp
                             <div class="flex-1 d-flex flex-column">
-                                <span><strong>Name:</strong>&nbsp;{{ $ledger->supplier->name ?? $ledger->customer->name }}</span>
-                                <span><strong>Mobile:</strong>&nbsp;{{ $ledger->supplier->phone ?? $ledger->customer->phone }}</span>
-                                <span><strong>Email:</strong>&nbsp;{{ $ledger->supplier->email ?? $ledger->customer->email }}</span>
-                                <span><strong>Address:</strong>&nbsp;{{ $ledger->supplier->address ?? $ledger->customer->address }}</span>
-                                <span><strong>{{ $ledger->supplier->name ? 'Paid By' : 'Received By' }}
+                                <span><strong>Name:</strong>&nbsp;{{ $person->name }}</span>
+                                <span><strong>Mobile:</strong>&nbsp;{{ $person->phone }}</span>
+                                <span><strong>Email:</strong>&nbsp;{{ $person->email }}</span>
+                                <span><strong>Address:</strong>&nbsp;{{ $person->address }}</span>
+                                <span><strong>{{ $isSupplier ? 'Paid By' : 'Received By' }}
                                         :</strong>&nbsp;{{ $ledger->createdBy->name }}</span>
                             </div>
                             <div class="flex-1 d-flex flex-column">
@@ -33,26 +37,50 @@
 
                 <div class="row mt-4">
                     <div class="col-md-12">
-                        <table class="table table-striped table-bordered mt-4" cellspacing="0" width="100%"
-                            style="margin-top: 0 !important">
-                            <thead class="theme-primary text-white">
-                                <tr>
-                                    <th>SL</th>
-                                    <th>{{ $ledger->supplier->name ? 'Purchase' : 'Sale' }} Invoice No.</th>
-                                    <th class="text-right">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($ledger->details as $details)
+                        @if ($ledger->details->count() > 0)
+                            <table class="table table-striped table-bordered mt-4" cellspacing="0" width="100%"
+                                style="margin-top: 0 !important">
+                                <thead class="theme-primary text-white">
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $details->invoice }}
-                                        </td>
-                                        <td class="text-right">{{ currency($details->amount) }}</td>
+                                        <th>SL</th>
+                                        <th>{{ $isSupplier ? 'Purchase' : 'Sale' }} Invoice No.</th>
+                                        <th class="text-right">Amount</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($ledger->details as $details)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $details->invoice }}</td>
+                                            <td class="text-right">{{ currency($details->amount) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <table class="table table-striped table-bordered mt-4" cellspacing="0" width="100%"
+                                style="margin-top: 0 !important">
+                                <thead class="theme-primary text-white">
+                                    <tr>
+                                        <th>{{ __('Description') }}</th>
+                                        <th class="text-right">{{ __('Amount') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ $ledger->invoice_type }}</td>
+                                        <td class="text-right">{{ currency(abs($ledger->amount)) }}</td>
+                                    </tr>
+                                </tbody>
+                                @if ($ledger->note)
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2"><strong>{{ __('Note:') }}</strong> {{ $ledger->note }}</td>
+                                        </tr>
+                                    </tfoot>
+                                @endif
+                            </table>
+                        @endif
                     </div>
                     {{-- <div class="col-md-12">
                         <p><strong>Note: </strong></p>

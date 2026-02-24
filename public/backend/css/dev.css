@@ -1096,6 +1096,10 @@ body {
     border-radius: 6px;
 }
 
+.table-responsive {
+    min-height: 600px;
+}
+
 .table thead tr {
     background: #f1f2ff;
 }

@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Customer Advance Receive') }}</title>
+    <title>{{ __('Customer Advance') }}</title>
 @endsection
 @section('content')
     <div class="row">
@@ -9,7 +9,7 @@
                 <div class="card-header">
                     <div class="col-md-12">
                         <h4 class="section_title">
-                            {{ __('Customer Advance Receive') }}
+                            {{ __('Customer Advance') }}
                         </h4>
                     </div>
                 </div>
@@ -20,123 +20,169 @@
                                 <strong class="me-2">{{ __('Name:') }}</strong>{{ $customer->name }}<br>
                                 <strong class="me-2">{{ __('Mobile:') }}</strong>{{ $customer->phone }}<br>
                                 <strong class="me-2">{{ __('Email:') }}</strong>{{ $customer->email }}<br>
+                                <strong class="me-2">{{ __('Current Advance:') }}</strong>{{ currency($customer->advances()) }}<br>
                             </div>
                         </div>
                     </div>
 
-                    <form class="suppliers_adv_form " action="{{ route('admin.customers.advance.pay', $customer->id) }}"
-                        method="POST">
-                        @csrf
-                        <div class="row mt-4">
-                            <div class="col-lg-6">
-                                <label for="note" class="">{{ __('Note') }}</label>
-                                <textarea name="note" class="form-control" placeholder="Note" id="note" rows="5"></textarea>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label>{{ __('Previous Advance') }}</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text">
-                                                    <i class="fas fa-money-check-alt"></i>
+                    <div class="row mt-4">
+                        {{-- Advance Receive Form --}}
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="section_title">{{ __('Receive Advance') }}</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form class="suppliers_adv_form"
+                                        action="{{ route('admin.customers.advance.pay', $customer->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>{{ __('Receiving Amount') }}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="far fa-money-bill-alt"></i>
+                                                        </div>
+                                                        <input class="form-control" placeholder="Receiving Amount"
+                                                            type="number" name="paying_amount" required
+                                                            min="0.01" step="0.01" autocomplete="off">
+                                                    </div>
                                                 </div>
-                                                <input class="form-control input_number valid" placeholder="0"
-                                                    type="text" id="advance" value="{{ $customer->advance }}"
-                                                    aria-required="true" aria-invalid="false" autocomplete="off" disabled
-                                                    name="advance">
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <div class="form-group">
+                                                    <label>{{ __('Date') }}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="far fa-calendar-check"></i>
+                                                        </div>
+                                                        <input class="form-control datepicker" name="date" type="text"
+                                                            value="{{ formatDate(now()) }}" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <div class="form-group">
+                                                    <label>{{ __('Receiving With') }}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="far fa-credit-card"></i>
+                                                        </div>
+                                                        <select name="payment_type" class="form-control receive-payment-type">
+                                                            <option value="">{{ __('Select Payment Type') }}</option>
+                                                            @foreach (accountList() as $key => $list)
+                                                                @if ($key != 'advance')
+                                                                    <option value="{{ $key }}"
+                                                                        @if ($key == 'cash') selected @endif
+                                                                        data-name="{{ $list }}">{{ $list }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="receive-account">
+                                                        <input type="hidden" name="account_id" class="form-control"
+                                                            value="cash" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>{{ __('Note') }}</label>
+                                                    <textarea name="note" class="form-control" placeholder="Note" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="total_amount" value="0">
+                                            <div class="col-12">
+                                                <button class="btn btn-primary" type="submit">{{ __('Receive Advance') }}</button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label>{{ __('Receiving Advance') }}</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text">
-                                                    <i class="far fa-money-bill-alt"></i>
-                                                </div>
-                                                <input class="form-control input_number valid"
-                                                    placeholder="Receiving Advance" type="number" id="paying_amount"
-                                                    aria-required="true" aria-invalid="false" autocomplete="off"
-                                                    name="paying_amount" step="0.01">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label>{{ __('Refund Advance') }}</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text">
-                                                    <i class="far fa-money-bill-alt"></i>
-                                                </div>
-                                                <input class="form-control input_number valid" placeholder="Refund Advance"
-                                                    type="number" id="refund_amount" aria-required="true"
-                                                    aria-invalid="false" autocomplete="off" name="refund_amount"
-                                                    min="0" step="0.01">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label>{{ __('Total Advance') }}</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text">
-                                                    <i class="far fa-money-bill-alt"></i>
-                                                </div>
-                                                <input class="form-control input_number valid" readonly
-                                                    placeholder="Total Advance" type="number" id="total_amount"
-                                                    aria-required="true" aria-invalid="false" required autocomplete="off"
-                                                    name="total_amount" step="0.01" value="{{ $customer->advance }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label>{{ __('Date') }}</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text">
-                                                    <i class="far fa-calendar-check"></i>
-                                                </div>
-                                                <input class="form-control input_number datepicker" name="date"
-                                                    type="text" value="{{ formatDate(now()) }}" id="date"
-                                                    aria-required="true" aria-invalid="false" autocomplete="off">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="form-group">
-                                            <label>{{ __('Receiving With') }}</label>
-                                            <div class="input-group">
-                                                <div class="input-group-text">
-                                                    <i class="far fa-credit-card"></i>
-                                                </div>
-                                                <select name="payment_type" id="" class="form-control">
-                                                    <option value="">{{ __('Select Payment Type') }}
-                                                    </option>
-                                                    @foreach (accountList() as $key => $list)
-                                                        <option value="{{ $key }}"
-                                                            @if ($key == 'cash') selected @endif
-                                                            data-name="{{ $list }}">{{ $list }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-
-
-                                            </div>
-                                            <div class="account">
-                                                <input type="hidden" name="account_id" class="form-control"
-                                                    value="cash" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <button class="btn btn-primary" type="submit">{{ __('Pay') }}</button>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
 
-                    </form>
+                        {{-- Advance Refund Form --}}
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="section_title">{{ __('Refund Advance') }}</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form class="suppliers_adv_form"
+                                        action="{{ route('admin.customers.advance.pay', $customer->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>{{ __('Refund Amount') }}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="far fa-money-bill-alt"></i>
+                                                        </div>
+                                                        <input class="form-control" placeholder="Refund Amount"
+                                                            type="number" name="refund_amount" required
+                                                            min="0.01" max="{{ $customer->advances() }}"
+                                                            step="0.01" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <div class="form-group">
+                                                    <label>{{ __('Date') }}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="far fa-calendar-check"></i>
+                                                        </div>
+                                                        <input class="form-control datepicker" name="date" type="text"
+                                                            value="{{ formatDate(now()) }}" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <div class="form-group">
+                                                    <label>{{ __('Refund With') }}</label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-text">
+                                                            <i class="far fa-credit-card"></i>
+                                                        </div>
+                                                        <select name="payment_type" class="form-control refund-payment-type">
+                                                            <option value="">{{ __('Select Payment Type') }}</option>
+                                                            @foreach (accountList() as $key => $list)
+                                                                @if ($key != 'advance')
+                                                                    <option value="{{ $key }}"
+                                                                        @if ($key == 'cash') selected @endif
+                                                                        data-name="{{ $list }}">{{ $list }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="refund-account">
+                                                        <input type="hidden" name="account_id" class="form-control"
+                                                            value="cash" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label>{{ __('Note') }}</label>
+                                                    <textarea name="note" class="form-control" placeholder="Note" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="total_amount" value="0">
+                                            <div class="col-12">
+                                                <button class="btn btn-danger" type="submit">{{ __('Refund Advance') }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,55 +194,36 @@
     <script>
         const accountsList = @json($accounts);
 
-        $(document).on('change', 'select[name="payment_type"]', function() {
-            const accounts = accountsList.filter(account => account.account_type == $(this).val());
+        function setupPaymentTypeHandler(selectSelector, accountContainerSelector) {
+            $(document).on('change', selectSelector, function() {
+                const accounts = accountsList.filter(account => account.account_type == $(this).val());
 
-            if (accounts) {
-                let html = '<select name="account_id" id="" class="form-control">';
-                accounts.forEach(account => {
-                    switch ($(this).val()) {
-                        case 'bank':
-                            html +=
-                                `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
-                            break;
-                        case "mobile_banking":
-                            html +=
-                                `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
-                            break;
-                        case 'card':
-                            html +=
-                                `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
-                            break;
-                        default:
-                            break;
-                    }
-                });
-                html += '</select>';
-                $('.account').html(html);
-            }
-
-            if ($(this).val() == 'cash' || $(this).val() == 'advance') {
-                $('.account').html('');
-                $cash =
-                    `<input type="hidden" name="account_id" class="form-control" value="${$(this).val()}" readonly>`;
-            }
-        });
-
-        $('#advance, #paying_amount, #refund_amount').on('input', function() {
-            calculateTotalAdvance();
-        })
-
-
-        // calculate total advance
-        function calculateTotalAdvance() {
-            let total_advance = 0;
-            let advance = $('#advance').val() || 0;
-            let payingAmount = $('#paying_amount').val() || 0;
-            let refund = $('#refund_amount').val() || 0;
-
-            total_advance = parseFloat(advance) + parseFloat(payingAmount) - parseFloat(refund);
-            $('#total_amount').val(total_advance.toFixed(2));
-
+                if (accounts.length > 0 && $(this).val() != 'cash' && $(this).val() != 'advance') {
+                    let html = '<select name="account_id" class="form-control">';
+                    accounts.forEach(account => {
+                        switch ($(this).val()) {
+                            case 'bank':
+                                html += `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name})</option>`;
+                                break;
+                            case "mobile_banking":
+                                html += `<option value="${account.id}">${account.mobile_number}(${account.mobile_bank_name})</option>`;
+                                break;
+                            case 'card':
+                                html += `<option value="${account.id}">${account.card_number} (${account.bank?.name})</option>`;
+                                break;
+                        }
+                    });
+                    html += '</select>';
+                    $(accountContainerSelector).html(html);
+                } else {
+                    $(accountContainerSelector).html(
+                        `<input type="hidden" name="account_id" class="form-control" value="${$(this).val()}" readonly>`
+                    );
+                }
+            });
         }
+
+        setupPaymentTypeHandler('.receive-payment-type', '.receive-account');
+        setupPaymentTypeHandler('.refund-payment-type', '.refund-account');
     </script>
 @endpush
