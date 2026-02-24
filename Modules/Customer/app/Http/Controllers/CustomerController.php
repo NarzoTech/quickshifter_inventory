@@ -320,7 +320,9 @@ class CustomerController extends Controller
     public function singleCustomer($id)
     {
         $user = User::findOrFail($id);
-        return $user;
+        $data = $user->toArray();
+        $data['advance_balance'] = $user->advances();
+        return response()->json($data);
     }
 
     public function dueReceiveForm(Request $request)
@@ -906,5 +908,129 @@ class CustomerController extends Controller
         }
 
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.customers.index', [], ['messege' => 'Customer deleted successfully.', 'alert-type' => 'success']);
+    }
+
+    public function offsetDueWithAdvance(Request $request)
+    {
+        $request->validate(['customer_id' => 'required|exists:users,id']);
+
+        DB::beginTransaction();
+        try {
+            $customer = User::findOrFail($request->customer_id);
+            $advanceBalance = $customer->advances();
+            $totalDue = $customer->total_due;
+
+            if ($advanceBalance <= 0 || $totalDue <= 0) {
+                return response()->json(['success' => false, 'message' => 'No advance or due to offset'], 422);
+            }
+
+            $offsetAmount = min($advanceBalance, $totalDue);
+
+            $account = Account::where('account_type', 'advance')->first();
+            if (!$account) {
+                $account = Account::create(['account_type' => 'advance']);
+            }
+
+            // Create Due Receive ledger
+            $ledger = new Ledger();
+            $ledger->customer_id = $customer->id;
+            $ledger->amount = $offsetAmount;
+            $ledger->invoice_type = 'Due Receive';
+            $ledger->is_paid = 0;
+            $ledger->is_received = 1;
+            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Due Receive');
+            $ledger->due_amount = -$offsetAmount;
+            $ledger->note = 'Auto offset due with advance balance';
+            $ledger->date = now();
+            $ledger->created_by = auth('admin')->user()->id;
+            $ledger->save();
+            $ledger->invoice_url = route('admin.customers.ledger-details', $ledger->id);
+            $ledger->save();
+
+            // Apply to due sales (oldest first)
+            $remaining = $offsetAmount;
+            $dueSales = Sale::where('customer_id', $customer->id)
+                ->where('due_amount', '>', 0)
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            foreach ($dueSales as $sale) {
+                if ($remaining <= 0) break;
+
+                $payAmount = min($remaining, $sale->due_amount);
+                $sale->paid_amount += $payAmount;
+                $sale->due_amount -= $payAmount;
+                $sale->payment_status = $sale->due_amount == 0 ? 'paid' : 'due';
+                $sale->save();
+
+                CustomerPayment::create([
+                    'sale_id' => $sale->id,
+                    'customer_id' => $customer->id,
+                    'account_id' => $account->id,
+                    'payment_type' => 'due_receive',
+                    'is_received' => 1,
+                    'amount' => $payAmount,
+                    'payment_date' => now(),
+                    'note' => 'Auto offset with advance',
+                    'created_by' => auth('admin')->user()->id,
+                ]);
+
+                $due = CustomerDue::where('invoice', $sale->invoice)->first();
+                if ($due) {
+                    $due->due_amount -= $payAmount;
+                    $due->paid_amount += $payAmount;
+                    $due->save();
+                }
+
+                $ledger->details()->create([
+                    'invoice' => $sale->invoice,
+                    'amount' => $payAmount,
+                ]);
+
+                $remaining -= $payAmount;
+            }
+
+            $actualOffset = $offsetAmount - $remaining;
+
+            // Create Advance Deduct payment
+            CustomerPayment::create([
+                'customer_id' => $customer->id,
+                'account_id' => $account->id,
+                'payment_type' => 'advance_deduct',
+                'is_received' => 1,
+                'amount' => $actualOffset,
+                'payment_date' => now(),
+                'note' => 'Auto offset due with advance',
+                'created_by' => auth('admin')->user()->id,
+            ]);
+
+            // Create Advance Deduct ledger
+            $advLedger = new Ledger();
+            $advLedger->customer_id = $customer->id;
+            $advLedger->amount = 0;
+            $advLedger->total_amount = 0;
+            $advLedger->due_amount = $actualOffset;
+            $advLedger->invoice_type = 'Advance Deduct';
+            $advLedger->is_received = 1;
+            $advLedger->invoice_no = $ledger->invoice_no;
+            $advLedger->date = now();
+            $advLedger->created_by = auth('admin')->user()->id;
+            $advLedger->save();
+
+            DB::commit();
+
+            $customer->refresh();
+            return response()->json([
+                'success' => true,
+                'message' => "Offset {$actualOffset} from advance against due successfully",
+                'advance_balance' => $customer->advances(),
+                'total_due' => $customer->total_due,
+                'offset_amount' => $actualOffset,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }

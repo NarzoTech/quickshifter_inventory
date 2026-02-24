@@ -480,7 +480,17 @@
                                     <thead>
                                         <tr>
                                             <td style="vertical-align: middle; width: 30%; text-transform: capitalize">
-                                                Payment Type
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    Payment Type
+                                                    <div class="d-flex gap-1">
+                                                        <a href="javascript:;" class="btn bg-label-primary d-none" id="useAdvanceBtn" onclick="useAdvancePayment()" style="font-size: 12px; padding: 4px 10px;">
+                                                            {{ __('Use Advance') }} (<span id="advanceAvailable">0</span>)
+                                                        </a>
+                                                        <a href="javascript:;" class="btn bg-label-warning d-none" id="offsetDueBtn" onclick="offsetDueWithAdvance()" style="font-size: 12px; padding: 4px 10px;">
+                                                            {{ __('Offset Due') }}
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td style="vertical-align: middle; width: 30%; text-transform: capitalize">
                                                 Payment Option
@@ -1583,27 +1593,34 @@
         }
 
         // load customer
+        let currentCustomerAdvance = 0;
+        let currentCustomerDue = 0;
+
         function loadCustomer(id) {
-            if (id != 'walk-in-customer') {
+            if (id && id != 'walk-in-customer') {
                 $.ajax({
                     type: 'GET',
                     url: "{{ route('admin.customer.single', '') }}/" + id,
                     success: function(response) {
                         $('#previous_due').text(response.total_due);
+                        currentCustomerDue = parseFloat(response.total_due) || 0;
+                        currentCustomerAdvance = parseFloat(response.advance_balance) || 0;
                         $('.due').removeClass('d-none')
                         calDue();
+                        updateAdvanceButtons();
                     }
                 })
             } else {
+                currentCustomerAdvance = 0;
+                currentCustomerDue = 0;
                 $('.due').addClass('d-none')
+                updateAdvanceButtons();
             }
         }
 
         function calDue() {
             let previous_due = $('#previous_due').text();
             previous_due = parseFloat(previous_due);
-            // let due_amountModal = $('#due_amountModal').text();
-            // due_amountModal = parseFloat(due_amountModal);
 
             let currentDue = $('#normalPayment [name="total_due"]').val();
 
@@ -1612,6 +1629,98 @@
             const totalDue = currentDue + previous_due - parseFloat(orderDue);
             console.log(totalDue);
             $('#due_amountModal').text(`{{ currency_icon() }}${totalDue}`)
+        }
+
+        function updateAdvanceButtons() {
+            if (currentCustomerAdvance > 0) {
+                $('#advanceAvailable').text(parseFloat(currentCustomerAdvance).toLocaleString());
+                $('#useAdvanceBtn').removeClass('d-none');
+            } else {
+                $('#useAdvanceBtn').addClass('d-none');
+            }
+            if (currentCustomerAdvance > 0 && currentCustomerDue > 0) {
+                $('#offsetDueBtn').removeClass('d-none');
+            } else {
+                $('#offsetDueBtn').addClass('d-none');
+            }
+        }
+
+        function useAdvancePayment() {
+            let advanceExists = false;
+            $('[name="payment_type[]"]').each(function() {
+                if ($(this).val() === 'advance') advanceExists = true;
+            });
+            if (advanceExists) {
+                toastr.warning("{{ __('Advance payment row already exists') }}");
+                return;
+            }
+
+            let grandTotal = parseFloat($('#total_amountModal').text()) || 0;
+            let currentlyPaid = 0;
+            $('[name="paying_amount[]"]').each(function() {
+                currentlyPaid += parseFloat($(this).val()) || 0;
+            });
+            let remaining = grandTotal - currentlyPaid;
+            if (remaining <= 0) {
+                toastr.warning("{{ __('No remaining amount to pay') }}");
+                return;
+            }
+
+            let advanceAmount = Math.min(currentCustomerAdvance, remaining);
+
+            const row = `@include('pos::payment-row', ['add' => true])`;
+            $('#paymentRow').append(row);
+
+            const lastRow = $('#paymentRow tr:last');
+            lastRow.find('[name="payment_type[]"]').val('advance').trigger('change');
+            lastRow.find('[name="paying_amount[]"]').val(advanceAmount);
+
+            $('[name="paying_amount[]"]').trigger('input');
+        }
+
+        function offsetDueWithAdvance() {
+            const customerId = $('#customer_id').val();
+            if (!customerId || customerId === 'walk-in-customer') {
+                toastr.warning("{{ __('Please select a customer') }}");
+                return;
+            }
+
+            if (!confirm("{{ __('This will use advance balance to pay off existing outstanding dues. Continue?') }}")) {
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('admin.customer.offset-due-advance') }}",
+                data: { customer_id: customerId, _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        currentCustomerAdvance = parseFloat(response.advance_balance) || 0;
+                        currentCustomerDue = parseFloat(response.total_due) || 0;
+
+                        const advanceInfo = $('#customer-advance-info');
+                        if (currentCustomerAdvance > 0) {
+                            advanceInfo.text('{{ __("Advance Balance") }}: ' + currentCustomerAdvance.toLocaleString()).show();
+                        } else {
+                            advanceInfo.hide();
+                        }
+
+                        if (typeof customerAdvances !== 'undefined') {
+                            customerAdvances[customerId] = currentCustomerAdvance;
+                        }
+
+                        $('#previous_due').text(currentCustomerDue);
+                        calDue();
+                        updateAdvanceButtons();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(response) {
+                    toastr.error(response.responseJSON?.message || "{{ __('Server error occurred') }}");
+                }
+            });
         }
     </script>
 @endpush

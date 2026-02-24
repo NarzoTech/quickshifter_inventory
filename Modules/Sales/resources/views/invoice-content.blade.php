@@ -163,7 +163,7 @@
                     <tr>
                         <td style="border-left: none !important; border-right: none !important; border-top: none !important"
                             class="text-center">
-                            {{ $index + 1 }}
+                            {{ $sale->products->count() + $index + 1 }}
                         </td>
                         <td
                             style="border-left: none !important; border-right: none !important; border-top: none !important;">
@@ -319,22 +319,22 @@
                             </td>
                         </tr>
 
-
-                        {{-- @if ($sale->customer->due->count())
-                            <tr>
-                                <td colspan="5" style="border: none !important">
-                                </td>
-                                <td class="text-right ps-0"
-                                    style="border:none !important; border-bottom: 1px solid #fff !important">
-                                    Due Remaining:
-                                </td>
-
-                                <td class="text-right"
-                                    style="border:none !important; border-bottom: 1px solid #fff !important;">
-                                    TK {{ $sale->customer->due->sum('due_amount') }}
-                                </td>
-                            </tr>
-                        @endif --}}
+                        @if(($sale->payment && $sale->payment->count() > 0) || $saleAdvanceOffset > 0)
+                        <tr>
+                            <td colspan="5" style="border: none !important"></td>
+                            <td colspan="2" style="border: none !important; padding-top: 8px;">
+                                <b>Payment Methods:</b>
+                                <ul style="margin: 4px 0 0 16px; padding: 0; list-style: none;">
+                                    @foreach ($sale->payment as $payment)
+                                        <li>{{ ucfirst($payment->account->account_type ?? '-') }} - TK {{ number_format($payment->amount, 2) }}</li>
+                                    @endforeach
+                                    @if($saleAdvanceOffset > 0)
+                                        <li>Advance - TK {{ number_format($saleAdvanceOffset, 2) }}</li>
+                                    @endif
+                                </ul>
+                            </td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -347,62 +347,17 @@
                     </span>
                     {{ numberToWord($sale->grand_total) }} TK
                     Only
-
-
                 </b>
             </span>
         </div>
 
-        @if(($sale->payment && $sale->payment->count() > 0) || $saleAdvanceOffset > 0)
-        <div class="mt-3 payment-details">
-            <div style="width: 100%">
-                <h6 class="mb-2"><b>Payment Details</b></h6>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th style="width: 10%;"><b>Sl</b></th>
-                            <th style="width: 30%;"><b>Payment Method</b></th>
-                            <th style="width: 30%;"><b>Account</b></th>
-                            <th style="width: 30%;"><b>Amount</b></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($sale->payment as $index => $payment)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ ucfirst($payment->account->account_type ?? '-') }}</td>
-                                <td>{{ $payment->account->bank->name ?? '-' }}</td>
-                                <td>TK {{ number_format($payment->amount, 2) }}</td>
-                            </tr>
-                        @endforeach
-                        @if($saleAdvanceOffset > 0)
-                            @php
-                                $advanceMethods = $sale->customer->payment
-                                    ->where('payment_type', 'advance_receive')
-                                    ->pluck('account_type')
-                                    ->unique()
-                                    ->implode(', ');
-                            @endphp
-                            <tr>
-                                <td>{{ $sale->payment->count() + 1 }}</td>
-                                <td>Advance</td>
-                                <td>{{ $advanceMethods ?: '-' }}</td>
-                                <td>TK {{ number_format($saleAdvanceOffset, 2) }}</td>
-                            </tr>
-                        @endif
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="text-right"><b>Total Paid:</b></td>
-                            <td><b>TK {{ number_format($sale->payment->sum('amount'), 2) }}</b></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+        @if($sale->notes)
+        <div class="mt-2">
+            <b>Note:</b> {{ $sale->notes }}
         </div>
         @endif
 
-        <div class="d-flex justify-content-between" style="margin-top: 80px">
+        <div class="d-flex justify-content-between" style="margin-top: 250px; clear: both;">
             <div>
                 <p class="signature">
                     Received By

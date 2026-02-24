@@ -19,6 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Http\Services\AreaService;
 use Modules\Customer\app\Http\Services\UserGroupService;
+use Modules\Supplier\app\Models\Supplier;
 use Modules\Supplier\app\Models\SupplierPayment;
 use Modules\Supplier\app\Services\SupplierService;
 
@@ -435,6 +436,38 @@ class SupplierController extends Controller
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.suppliers.index', [], ['messege' => 'Supplier imported failed.', 'alert-type' => 'error']);
+        }
+    }
+
+    public function singleSupplier($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        return response()->json([
+            'total_due' => $supplier->total_due,
+            'advance_balance' => $supplier->advance,
+        ]);
+    }
+
+    public function offsetDueWithAdvance(Request $request)
+    {
+        $request->validate(['supplier_id' => 'required|exists:supplier,id']);
+
+        DB::beginTransaction();
+        try {
+            $actualOffset = $this->supplierService->offsetDueWithAdvance($request->supplier_id);
+            DB::commit();
+
+            $supplier = Supplier::find($request->supplier_id);
+            return response()->json([
+                'success' => true,
+                'message' => "Offset {$actualOffset} from advance against due successfully",
+                'advance_balance' => $supplier->advance,
+                'total_due' => $supplier->total_due,
+                'offset_amount' => $actualOffset,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 }

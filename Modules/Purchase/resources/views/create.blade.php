@@ -202,7 +202,17 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label>{{ __('Payment Type') }}</label>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <label class="mb-0">{{ __('Payment Type') }}</label>
+                                                <div class="d-flex gap-1">
+                                                    <a href="javascript:;" class="btn bg-label-primary d-none" id="useAdvanceBtn" onclick="useAdvancePayment()" style="font-size: 12px; padding: 4px 10px;">
+                                                        {{ __('Use Advance') }} (<span id="advanceAvailable">0</span>)
+                                                    </a>
+                                                    <a href="javascript:;" class="btn bg-label-warning d-none" id="offsetDueBtn" onclick="offsetDueWithAdvance()" style="font-size: 12px; padding: 4px 10px;">
+                                                        {{ __('Offset Due') }}
+                                                    </a>
+                                                </div>
+                                            </div>
                                             <div class="paymentsystem">
                                                 @include('purchase::add-payment-method')
                                             </div>
@@ -239,6 +249,9 @@
     <script>
         'use strict';
 
+        let currentSupplierAdvance = 0;
+        let currentSupplierDue = 0;
+
         $(document).ready(function() {
             const accountsList = @json($accounts);
             const supplierAdvances = {
@@ -255,10 +268,26 @@
             $('select[name="supplier_id"]').on('change', function() {
                 const supplierId = $(this).val();
                 const advanceInfo = $('#supplier-advance-info');
-                if (supplierId && supplierAdvances[supplierId] !== undefined && supplierAdvances[supplierId] > 0) {
-                    advanceInfo.text('{{ __("Advance Balance") }}: ' + parseFloat(supplierAdvances[supplierId]).toLocaleString()).show();
+                if (supplierId) {
+                    $.ajax({
+                        type: 'GET',
+                        url: "{{ route('admin.supplier.single', '') }}/" + supplierId,
+                        success: function(response) {
+                            currentSupplierAdvance = parseFloat(response.advance_balance) || 0;
+                            currentSupplierDue = parseFloat(response.total_due) || 0;
+                            if (currentSupplierAdvance > 0) {
+                                advanceInfo.text('{{ __("Advance Balance") }}: ' + currentSupplierAdvance.toLocaleString()).show();
+                            } else {
+                                advanceInfo.hide();
+                            }
+                            updateAdvanceButtons();
+                        }
+                    });
                 } else {
+                    currentSupplierAdvance = 0;
+                    currentSupplierDue = 0;
                     advanceInfo.hide();
+                    updateAdvanceButtons();
                 }
             });
             $(document).on('change', 'select[name="payment_type[]"]', function() {
@@ -529,15 +558,103 @@
 
         function calculateDue() {
 
-            let totalAmount = $('[name="total_amount"]').val();
+            let totalAmount = parseFloat($('[name="total_amount"]').val()) || 0;
             let paidAmount = $('[name="paid_amount[]"]');
 
             let dueAmount = totalAmount;
             paidAmount.each(function() {
-                dueAmount -= parseFloat($(this).val() || 0);
+                dueAmount -= parseFloat($(this).val()) || 0;
             })
 
             $('[name="due_amount"]').val(dueAmount);
+        }
+
+        function updateAdvanceButtons() {
+            if (currentSupplierAdvance > 0) {
+                $('#advanceAvailable').text(parseFloat(currentSupplierAdvance).toLocaleString());
+                $('#useAdvanceBtn').removeClass('d-none');
+            } else {
+                $('#useAdvanceBtn').addClass('d-none');
+            }
+            if (currentSupplierAdvance > 0 && currentSupplierDue > 0) {
+                $('#offsetDueBtn').removeClass('d-none');
+            } else {
+                $('#offsetDueBtn').addClass('d-none');
+            }
+        }
+
+        function useAdvancePayment() {
+            let advanceExists = false;
+            $('[name="payment_type[]"]').each(function() {
+                if ($(this).val() === 'advance') advanceExists = true;
+            });
+            if (advanceExists) {
+                toastr.warning("{{ __('Advance payment row already exists') }}");
+                return;
+            }
+
+            let totalAmount = parseFloat($('[name="total_amount"]').val()) || 0;
+            let currentlyPaid = 0;
+            $('[name="paid_amount[]"]').each(function() {
+                currentlyPaid += parseFloat($(this).val()) || 0;
+            });
+            let remaining = totalAmount - currentlyPaid;
+            if (remaining <= 0) {
+                toastr.warning("{{ __('No remaining amount to pay') }}");
+                return;
+            }
+
+            let advanceAmount = Math.min(currentSupplierAdvance, remaining);
+
+            const add = `@include('purchase::add-payment-method', ['add' => true])`;
+            $('.paymentsystem').append(add);
+            $('select.nice-select').niceSelect();
+
+            const lastRow = $('.payment-row:last');
+            lastRow.find('[name="payment_type[]"]').val('advance').niceSelect('update');
+            lastRow.find('.account').html('<input type="text" name="account_id[]" class="form-control" value="advance" readonly>');
+            lastRow.find('[name="paid_amount[]"]').val(advanceAmount);
+
+            calculateDue();
+        }
+
+        function offsetDueWithAdvance() {
+            const supplierId = $('select[name="supplier_id"]').val();
+            if (!supplierId) {
+                toastr.warning("{{ __('Please select a supplier') }}");
+                return;
+            }
+
+            if (!confirm("{{ __('This will use advance balance to pay off existing outstanding dues. Continue?') }}")) {
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('admin.supplier.offset-due-advance') }}",
+                data: { supplier_id: supplierId, _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        currentSupplierAdvance = parseFloat(response.advance_balance) || 0;
+                        currentSupplierDue = parseFloat(response.total_due) || 0;
+
+                        const advanceInfo = $('#supplier-advance-info');
+                        if (currentSupplierAdvance > 0) {
+                            advanceInfo.text('{{ __("Advance Balance") }}: ' + currentSupplierAdvance.toLocaleString()).show();
+                        } else {
+                            advanceInfo.hide();
+                        }
+
+                        updateAdvanceButtons();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(response) {
+                    toastr.error(response.responseJSON?.message || "{{ __('Server error occurred') }}");
+                }
+            });
         }
 
         // calculate profit % per row on purchase price and selling price changes

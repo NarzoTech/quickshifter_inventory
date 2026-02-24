@@ -169,53 +169,29 @@
                             <td>
                                 TK {{ $purchase->due_amount - $advanceOffset }}</td>
                         </tr>
+                        <tr>
+                            <td colspan="2" style="padding-top: 8px;">
+                                <b>Payment Methods:</b>
+                                <ul style="margin: 4px 0 0 16px; padding: 0; list-style: none;">
+                                    @foreach ($purchase->payments as $payment)
+                                        <li>{{ ucfirst($payment->account->account_type) }} - TK {{ $payment->amount }}</li>
+                                    @endforeach
+                                    @if($advanceOffset > 0)
+                                        <li>Advance - TK {{ $advanceOffset }}</li>
+                                    @endif
+                                </ul>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
 
-                <div class="mt-3 payment-details">
-                    <div style=" width: 100%">
-                        <h6 class="mb-2"><b>Payment Details</b></h6>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th><b>Sl</b></th>
-                                    <th><b>Payment Method</b></th>
-                                    <th><b>Payment By</b></th>
-                                    <th><b>Amount</b></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($purchase->payments as $index => $payment)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ ucfirst($payment->account->account_type) }}</td>
-                                        <td>
-                                            -
-                                        </td>
-                                        <td>TK.{{ $payment->amount }}</td>
-                                    </tr>
-                                @endforeach
-                                @if($advanceOffset > 0)
-                                    @php
-                                        $advanceMethods = $purchase->supplier->payments
-                                            ->where('payment_type', 'advance_pay')
-                                            ->pluck('account_type')
-                                            ->unique()
-                                            ->implode(', ');
-                                    @endphp
-                                    <tr>
-                                        <td>{{ $purchase->payments->count() + 1 }}</td>
-                                        <td>Advance</td>
-                                        <td>{{ $advanceMethods ?: '-' }}</td>
-                                        <td>TK.{{ $advanceOffset }}</td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
+                @if($purchase->note)
+                <div class="mt-3">
+                    <b>Note:</b> {{ $purchase->note }}
                 </div>
+                @endif
 
-                <div class="d-flex justify-content-between" style="margin-top: 150px">
+                <div class="d-flex justify-content-between" style="margin-top: 250px; clear: both;">
                     <div>
                         <p class="signature">Received By</p>
                     </div>

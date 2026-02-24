@@ -389,6 +389,105 @@ class SupplierService
     }
 
 
+    public function offsetDueWithAdvance($supplierId)
+    {
+        $supplier = $this->supplier->findOrFail($supplierId);
+        $advanceBalance = $supplier->advance;
+        $totalDue = $supplier->total_due;
+
+        if ($advanceBalance <= 0 || $totalDue <= 0) {
+            throw new \Exception('No advance or due to offset');
+        }
+
+        $offsetAmount = min($advanceBalance, $totalDue);
+
+        $account = Account::where('account_type', 'advance')->first();
+        if (!$account) {
+            $account = Account::create(['account_type' => 'advance']);
+        }
+
+        // Create Due Payment ledger
+        $ledger = new Ledger();
+        $ledger->supplier_id = $supplierId;
+        $ledger->amount = $offsetAmount;
+        $ledger->invoice_type = 'Due Payment';
+        $ledger->is_paid = 1;
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber('Due Payment');
+        $ledger->note = 'Auto offset due with advance balance';
+        $ledger->due_amount = -$offsetAmount;
+        $ledger->total_amount = 0;
+        $ledger->date = now();
+        $ledger->created_by = auth('admin')->user()->id;
+        $ledger->save();
+        $ledger->invoice_url = route('admin.suppliers.ledger-details', $ledger->id);
+        $ledger->save();
+
+        // Apply to due purchases (oldest first)
+        $remaining = $offsetAmount;
+        $duePurchases = Purchase::where('supplier_id', $supplierId)
+            ->where('due_amount', '>', 0)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        foreach ($duePurchases as $purchase) {
+            if ($remaining <= 0) break;
+
+            $payAmount = min($remaining, $purchase->due_amount);
+            $purchase->paid_amount += $payAmount;
+            $purchase->due_amount -= $payAmount;
+            $purchase->payment_status = $purchase->due_amount == 0 ? 'paid' : 'due';
+            $purchase->save();
+
+            SupplierPayment::create([
+                'purchase_id' => $purchase->id,
+                'supplier_id' => $supplierId,
+                'account_id' => $account->id,
+                'payment_type' => 'due_pay',
+                'is_paid' => 1,
+                'amount' => $payAmount,
+                'payment_date' => now(),
+                'note' => 'Auto offset with advance',
+                'created_by' => auth('admin')->user()->id,
+            ]);
+
+            $ledger->details()->create([
+                'invoice' => $purchase->invoice_number,
+                'amount' => $payAmount,
+            ]);
+
+            $remaining -= $payAmount;
+        }
+
+        $actualOffset = $offsetAmount - $remaining;
+
+        // Create Advance Deduct payment
+        SupplierPayment::create([
+            'supplier_id' => $supplierId,
+            'account_id' => $account->id,
+            'payment_type' => 'advance_deduct',
+            'is_paid' => 1,
+            'amount' => $actualOffset,
+            'payment_date' => now(),
+            'note' => 'Auto offset due with advance',
+            'created_by' => auth('admin')->user()->id,
+        ]);
+
+        // Create Advance Deduct ledger
+        $advLedger = new Ledger();
+        $advLedger->supplier_id = $supplierId;
+        $advLedger->amount = 0;
+        $advLedger->total_amount = 0;
+        $advLedger->due_amount = $actualOffset;
+        $advLedger->invoice_type = 'Advance Deduct';
+        $advLedger->is_paid = 1;
+        $advLedger->invoice_no = $ledger->invoice_no;
+        $advLedger->date = now();
+        $advLedger->created_by = auth('admin')->user()->id;
+        $advLedger->save();
+
+        return $actualOffset;
+    }
+
     public function bulkImport(Request $request)
     {
         $file = $request->file('file');
