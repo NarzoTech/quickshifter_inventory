@@ -778,7 +778,7 @@ class CustomerController extends Controller
         $prefixMap = [
             'Due Receive'      => 'DRL-',
             'Advance Received' => 'CAL-',
-            'Payment Return'   => 'CAL-',
+            'Payment Return'   => 'CARL-',
         ];
         $prefix = $prefixMap[$type] ?? 'CL-';
         return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type]);
