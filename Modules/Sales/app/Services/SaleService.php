@@ -171,7 +171,7 @@ class SaleService
             CustomerDue::create([
                 'invoice' => $sale->invoice,
                 'due_amount' => $request->total_due,
-                'due_date' => $request->due_date,
+                'due_date' => $request->due_date ? $this->parseDate($request->due_date) : $sale->order_date,
                 'status' => 1,
                 'customer_id' => $user->id
             ]);
@@ -181,17 +181,26 @@ class SaleService
         // if user is exists
 
         if ($user) {
-            // $this->updateLedger($request, $sale->id, $user, 'sale');
-            $this->salesLedger($request, $sale, array_sum($request->paying_amount), $request->total_amount, 'sale', 1, $due);
+            // Calculate cash-only paid (exclude advance) for ledger display
+            $cashPaid = 0;
+            foreach ($request->payment_type as $key => $type) {
+                if ($type !== 'advance') {
+                    $cashPaid += $request->paying_amount[$key];
+                }
+            }
+            $cashDue = $request->total_amount - $cashPaid;
+            $cashDue = $cashDue < 0 ? 0 : $cashDue;
+
+            $this->salesLedger($request, $sale, $cashPaid, $request->total_amount, 'sale', 1, $cashDue);
 
             // Create advance deduct ledger entries to offset advance credit
             foreach ($request->payment_type as $key => $item) {
                 if ($item == 'advance' && $request->paying_amount[$key]) {
                     $advanceLedger = new Ledger();
                     $advanceLedger->customer_id = $request->order_customer_id;
-                    $advanceLedger->amount = 0;
+                    $advanceLedger->amount = $request->paying_amount[$key];
                     $advanceLedger->total_amount = 0;
-                    $advanceLedger->due_amount = $request->paying_amount[$key];
+                    $advanceLedger->due_amount = 0;
                     $advanceLedger->invoice_type = 'Advance Deduct';
                     $advanceLedger->is_received = 1;
                     $advanceLedger->invoice_no = $sale->invoice;
@@ -309,7 +318,17 @@ class SaleService
 
             $ledger = $this->getLedger($request, $id, 1, 'sale');
 
-            $this->salesLedger($request, $sale, array_sum($request->paying_amount), $request->total_amount, 'sale', 1, $due, $ledger);
+            // Calculate cash-only paid (exclude advance) for ledger display
+            $cashPaid = 0;
+            foreach ($request->payment_type as $key => $type) {
+                if ($type !== 'advance') {
+                    $cashPaid += $request->paying_amount[$key];
+                }
+            }
+            $cashDue = $request->total_amount - $cashPaid;
+            $cashDue = $cashDue < 0 ? 0 : $cashDue;
+
+            $this->salesLedger($request, $sale, $cashPaid, $request->total_amount, 'sale', 1, $cashDue, $ledger);
 
             // Delete old advance deduct ledger entries for this sale
             Ledger::where('invoice_type', 'Advance Deduct')
@@ -354,7 +373,7 @@ class SaleService
                 CustomerDue::create([
                     'invoice' => $sale->invoice,
                     'due_amount' => $request->total_due,
-                    'due_date' => $request->due_date,
+                    'due_date' => $request->due_date ? $this->parseDate($request->due_date) : $sale->order_date,
                     'status' => 1,
                     'customer_id' => $user->id
                 ]);
@@ -366,9 +385,9 @@ class SaleService
                     if ($item == 'advance' && $request->paying_amount[$key]) {
                         $advanceLedger = new Ledger();
                         $advanceLedger->customer_id = $request->order_customer_id;
-                        $advanceLedger->amount = 0;
+                        $advanceLedger->amount = $request->paying_amount[$key];
                         $advanceLedger->total_amount = 0;
-                        $advanceLedger->due_amount = $request->paying_amount[$key];
+                        $advanceLedger->due_amount = 0;
                         $advanceLedger->invoice_type = 'Advance Deduct';
                         $advanceLedger->is_received = 1;
                         $advanceLedger->invoice_no = $sale->invoice;

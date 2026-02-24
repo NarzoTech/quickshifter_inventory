@@ -121,7 +121,7 @@
                     <button class="btn btn-danger delete-button">Delete</button>
                 @endadminCan
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive list_table">
                 <table style="width: 100%;" class="table product_list_table">
                     <thead>
                         <tr>

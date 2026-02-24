@@ -285,7 +285,7 @@
                     <span class="badge bg-primary rounded-pill">{{ $bankAccounts->count() }} {{ __('Accounts') }}</span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-responsive list_table">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
@@ -382,7 +382,7 @@
                     <span class="badge bg-info rounded-pill">{{ $mobileAccounts->count() }} {{ __('Accounts') }}</span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-responsive list_table">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
@@ -468,7 +468,7 @@
                     <span class="badge bg-danger rounded-pill">{{ $cardAccounts->count() }} {{ __('Cards') }}</span>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-responsive list_table">
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>

@@ -1096,8 +1096,8 @@ body {
     border-radius: 6px;
 }
 
-.table-responsive {
-    min-height: 600px;
+.table-responsive.list_table {
+    overflow: visible;
 }
 
 .table thead tr {

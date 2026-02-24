@@ -126,7 +126,7 @@
                                                             value="{{ $due->invoice }}" readonly>
                                                     </td>
                                                     <td>
-                                                        {{ formatDate($due->due_date) }}
+                                                        {{ formatDate($due->due_date ?? $due->sale?->order_date) }}
                                                     </td>
                                                     <td>
                                                         {{ currency($due->sale->grand_total ?? 0) }}

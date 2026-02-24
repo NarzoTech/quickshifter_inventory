@@ -85,7 +85,7 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive list_table">
                 <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
