@@ -483,7 +483,7 @@
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     Payment Type
                                                     <div class="d-flex gap-1">
-                                                        <a href="javascript:;" class="btn bg-label-primary d-none" id="useAdvanceBtn" onclick="useAdvancePayment()" style="font-size: 12px; padding: 4px 10px;">
+                                                        <a href="javascript:;" class="btn btn-primary d-none" id="useAdvanceBtn" onclick="useAdvancePayment()" style="font-size: 12px; padding: 4px 10px; color: white;">
                                                             {{ __('Use Advance') }} (<span id="advanceAvailable">0</span>)
                                                         </a>
                                                         <a href="javascript:;" class="btn bg-label-warning d-none" id="offsetDueBtn" onclick="offsetDueWithAdvance()" style="font-size: 12px; padding: 4px 10px;">

@@ -95,10 +95,13 @@ class Supplier extends Model
         $totalPurchase = $this->total_purchase;
         $totalPaid = $this->total_paid;
 
-        // Subtract purchase returns (money received back from supplier)
-        $totalReturn = $this->purchaseReturn->sum('return_amount');
+        // Only the UNPAID portion of purchase returns reduces what we owe
+        // A fully received return is a wash (goods back + money back = no due change)
+        $totalReturnDue = $this->purchaseReturn->sum(function ($r) {
+            return $r->return_amount - $r->received_amount;
+        });
 
-        return $totalPurchase - $totalPaid - $totalReturn;
+        return $totalPurchase - $totalPaid - $totalReturnDue;
     }
 
     public function duePurchase()

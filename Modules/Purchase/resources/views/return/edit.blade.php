@@ -186,7 +186,7 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('Invoice Amount') }}</label>
-                                                        <input type="invoice_amount" class="form-control"
+                                                        <input type="number" class="form-control"
                                                             name="invoice_amount"
                                                             value="{{ $return->return_amount ?? 0 }}" readonly>
                                                     </div>
@@ -194,9 +194,9 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('Received Amount') }}</label>
-                                                        <input type="received_amount" class="form-control"
+                                                        <input type="number" class="form-control"
                                                             name="received_amount"
-                                                            value="{{ $return->received_amount ?? $return->payment?->amount ?? 0 }}">
+                                                            value="{{ $return->received_amount ?? $return->payment?->amount ?? 0 }}" step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">

@@ -133,9 +133,7 @@
                     <tbody>
                         @foreach ($suppliers as $index => $supplier)
                             @php
-                                $totalReturn = $supplier->purchaseReturn->sum('return_amount');
-                                $totalReturnPaid = $supplier->purchaseReturn->sum('received_amount');
-                                $rawDue = $supplier->total_due - $totalReturn;
+                                $rawDue = $supplier->total_due;
                                 $rawAdvance = $supplier->advance;
                                 $offset = min(max(0, $rawDue), max(0, $rawAdvance));
                                 $effectiveDue = $rawDue - $offset;

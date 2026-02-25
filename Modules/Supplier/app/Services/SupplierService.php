@@ -90,11 +90,7 @@ class SupplierService
                         })
                         ->get()
                         ->$orderBy(function ($supplier) {
-                            $totalPurchase = $supplier->purchases->sum('total_amount');
-                            $totalPaid = $supplier->payments->sum('amount');
-                            $totalReturn = $supplier->purchaseReturn->sum('return_amount');
-                            $totalDue = $totalPurchase - $totalPaid - $totalReturn;
-                            return $totalDue;
+                            return $supplier->total_due;
                         });
                     break;
 

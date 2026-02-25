@@ -98,8 +98,16 @@ class PurchaseService
         $purchase->created_by     = Auth::id();
         $purchase->save();
 
-        $this->purchaseLedger($request, $purchase->id, $paidAmount, $request->total_amount, 'purchase', 1, $request->due_amount);
-        // $this->updateLedger($request, $purchase->id, $paidAmount, 'purchase');
+        // Calculate cash-only paid (exclude advance) for ledger display
+        $cashPaid = 0;
+        foreach ($request->payment_type as $key => $type) {
+            if ($type !== 'advance') {
+                $cashPaid += $request->paid_amount[$key];
+            }
+        }
+        $cashDue = $request->total_amount - $cashPaid;
+
+        $this->purchaseLedger($request, $purchase->id, $cashPaid, $request->total_amount, 'purchase', 1, $cashDue);
 
         foreach ($request->product_id as $index => $id) {
             $purchaseDetails                 = new PurchaseDetails();
@@ -174,9 +182,9 @@ class PurchaseService
             if ($item == 'advance' && $request->paid_amount[$key]) {
                 $advanceLedger = new Ledger();
                 $advanceLedger->supplier_id = $request->supplier_id;
-                $advanceLedger->amount = 0;
+                $advanceLedger->amount = $request->paid_amount[$key];
                 $advanceLedger->total_amount = 0;
-                $advanceLedger->due_amount = $request->paid_amount[$key];
+                $advanceLedger->due_amount = 0;
                 $advanceLedger->invoice_type = 'Advance Deduct';
                 $advanceLedger->is_paid = 1;
                 $advanceLedger->invoice_no = $request->invoice_number;
@@ -222,7 +230,16 @@ class PurchaseService
 
         $ledger = $this->getLedger($request, $id, 'purchase', 1);
 
-        $this->purchaseLedger($request, $purchase->id, $paidAmount, $request->total_amount, 'purchase', 1, $request->due_amount, $ledger);
+        // Calculate cash-only paid (exclude advance) for ledger display
+        $cashPaid = 0;
+        foreach ($request->payment_type as $key => $type) {
+            if ($type !== 'advance') {
+                $cashPaid += $request->paid_amount[$key];
+            }
+        }
+        $cashDue = $request->total_amount - $cashPaid;
+
+        $this->purchaseLedger($request, $purchase->id, $cashPaid, $request->total_amount, 'purchase', 1, $cashDue, $ledger);
 
         // Delete old advance deduct ledger entries for this purchase
         Ledger::where('invoice_type', 'Advance Deduct')
@@ -312,9 +329,9 @@ class PurchaseService
             if ($item == 'advance' && $request->paid_amount[$key]) {
                 $advanceLedger = new Ledger();
                 $advanceLedger->supplier_id = $request->supplier_id;
-                $advanceLedger->amount = 0;
+                $advanceLedger->amount = $request->paid_amount[$key];
                 $advanceLedger->total_amount = 0;
-                $advanceLedger->due_amount = $request->paid_amount[$key];
+                $advanceLedger->due_amount = 0;
                 $advanceLedger->invoice_type = 'Advance Deduct';
                 $advanceLedger->is_paid = 1;
                 $advanceLedger->invoice_no = $request->invoice_number;
@@ -463,16 +480,32 @@ class PurchaseService
             ]);
         }
 
-        $account = Account::where('account_type', $request->payment_type);
-        if ($request->payment_type == 'cash') {
-            $account = $account->first();
-        } else {
-            $account = $account->where('id', $request->account_id)->first();
-        }
+        // Always create ledger entry for purchase return
+        // amount = received back from supplier (negative = money coming back)
+        // total_amount = returned goods value (negative = reduces purchases)
+        // due_amount = net balance impact = -(return_amount - received_amount)
+        $returnDue = $request->invoice_amount - $request->received_amount;
+        $ledger = $this->purchaseReturnLedger(
+            $request,
+            $purchase->id,
+            -$request->received_amount,
+            'purchase return',
+            0,
+            -$returnDue,
+            null,
+            -$request->invoice_amount,
+            $purchase->invoice
+        );
 
+        // Only create payment if received_amount > 0
         if ($request->received_amount) {
-            // create ledger
-            $ledger = $this->purchaseReturnLedger($request, $purchase->id, $request->received_amount, 'purchase return', 0);
+            $account = Account::where('account_type', $request->payment_type);
+            if ($request->payment_type == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id)->first();
+            }
+
             SupplierPayment::create([
                 'payment_type'       => 'purchase_receive',
                 'purchase_return_id' => $purchase->id,
@@ -573,26 +606,30 @@ class PurchaseService
             ]);
         }
 
-        // create new payment if received amount is provided
+        // Always create ledger entry for purchase return
+        // amount = received back from supplier (negative = money coming back)
+        // total_amount = returned goods value (negative = reduces purchases)
+        // due_amount = net balance impact = -(return_amount - received_amount)
+        $returnDue = $request->invoice_amount - $request->received_amount;
+        $ledger = $this->purchaseReturnLedger(
+            $request,
+            $return->id,
+            -$request->received_amount,
+            'purchase return',
+            0,
+            -$returnDue,
+            null,
+            -$request->invoice_amount,
+            $return->invoice
+        );
+
+        // Only create payment if received_amount > 0
         if ($request->received_amount) {
             $account = Account::where('account_type', $request->payment_type);
             if ($request->payment_type == 'cash') {
                 $account = $account->first();
             } else {
                 $account = $account->where('id', $request->account_id)->first();
-            }
-
-            // update or create ledger
-            $ledger = Ledger::where('supplier_id', $request->supplier_id)
-                ->where('invoice_no', $return->invoice)
-                ->where('invoice_type', 'purchase return')
-                ->first();
-
-            if (!$ledger) {
-                $ledger = $this->purchaseReturnLedger($request, $return->id, $request->received_amount, 'purchase return', 0);
-            } else {
-                $ledger->amount = $request->received_amount;
-                $ledger->save();
             }
 
             SupplierPayment::create([
@@ -637,7 +674,7 @@ class PurchaseService
         $ledger->save();
     }
 
-    public function purchaseReturnLedger($request, $id, $paid, $type = 'purchase_return', $isPaid = 0, $dueAmount = 0, $ledger = null)
+    public function purchaseReturnLedger($request, $id, $paid, $type = 'purchase_return', $isPaid = 0, $dueAmount = 0, $ledger = null, $totalAmount = 0, $invoiceNo = null)
     {
         if ($ledger == null) {
             $ledger = new Ledger();
@@ -645,11 +682,12 @@ class PurchaseService
 
         $ledger->supplier_id  = $request->supplier_id;
         $ledger->amount       = $paid;
+        $ledger->total_amount = $totalAmount;
         $ledger->invoice_type = $type;
         $ledger->is_paid      = $isPaid;
         $ledger->is_received  = 1;
         $ledger->invoice_url  = route('admin.purchase.return.invoice', $id);
-        $ledger->invoice_no   = $request->invoice_number;
+        $ledger->invoice_no   = $invoiceNo;
         $ledger->note         = $request->note;
         $ledger->due_amount   = $dueAmount;
         $ledger->date         = Carbon::createFromFormat('d-m-Y', $request->return_date);

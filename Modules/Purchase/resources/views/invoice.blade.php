@@ -116,9 +116,8 @@
                         <td></td>
                         <td></td>
                         <td class="qty">
-                            {{ array_sum(array_values($unit)) }}
                             @foreach ($unit as $key => $value)
-                                {{ $key }} {{ $value }}
+                                {{ $value }} {{ $key }}
                             @endforeach
                         <td></td>
                         <td></td>
