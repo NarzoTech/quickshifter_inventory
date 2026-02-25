@@ -197,12 +197,12 @@ class SupplierService
         $ledger->save();
 
         // create payment
-        foreach ($request->invoice_no as $index => $invo) {
+        foreach ($request->purchase_id as $index => $purchaseId) {
 
             if (isset($request->amount[$index]) && $request->amount[$index] == 0) {
                 continue;
             }
-            $purchase = Purchase::where('invoice_number', $invo)->first();
+            $purchase = Purchase::findOrFail($purchaseId);
 
             $purchase->paid_amount = $purchase->paid_amount + $request->amount[$index];
             $purchase->due_amount = $purchase->due_amount - $request->amount[$index];
@@ -225,7 +225,7 @@ class SupplierService
 
             // create ledger details
             $ledger->details()->create([
-                'invoice' => $invo,
+                'invoice' => $purchase->invoice_number,
                 'amount' => $request->amount[$index],
             ]);
         }

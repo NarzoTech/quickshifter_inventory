@@ -115,7 +115,7 @@ class SalesReturnController extends Controller
             'order_date' => 'required',
             'return_date' => 'required',
             'return_amount' => 'required',
-            'paying_amount' => 'required',
+            'paying_amount' => 'nullable',
             'payment_type' => 'required',
             'return_subtotal' => 'required|array',
             'return_quantity' => 'required|array',
@@ -126,8 +126,8 @@ class SalesReturnController extends Controller
         DB::beginTransaction();
         // create a new sale return
         try {
-
-            $due = $request->return_amount - $request->paying_amount;
+            $payingAmount = $request->paying_amount ?? 0;
+            $due = $request->return_amount - $payingAmount;
             $return = SalesReturn::create([
                 'sale_id' => $request->sale_id,
                 'customer_id' => $request->customer_id,
@@ -179,7 +179,7 @@ class SalesReturnController extends Controller
             }
 
 
-            if ($request->paying_amount) {
+            if ($payingAmount) {
                 // create a payment
                 $account = Account::where('account_type', $request->payment_type);
                 if ($request->payment_type == 'cash') {
@@ -194,7 +194,7 @@ class SalesReturnController extends Controller
                     'is_paid' => 1,
                     'is_received' => 0,
                     'account_id' => $account->id,
-                    'amount' => $request->paying_amount,
+                    'amount' => $payingAmount,
                     'payment_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                     'created_by' => auth('admin')->user()->id,
                 ];
@@ -209,7 +209,7 @@ class SalesReturnController extends Controller
             $ledger = new Ledger();
             $ledger->customer_id = $request->customer_id;
             $ledger->sale_return_id = $return->id;
-            $ledger->amount = -$request->paying_amount;
+            $ledger->amount = -$payingAmount;
             $ledger->total_amount = -$request->return_amount;
             $ledger->invoice_type = 'Sale Return';
             $ledger->is_paid = 1;
@@ -255,7 +255,7 @@ class SalesReturnController extends Controller
             'order_date' => 'required',
             'return_date' => 'required',
             'return_amount' => 'required',
-            'paying_amount' => 'required',
+            'paying_amount' => 'nullable',
             'payment_type' => 'required',
             'return_subtotal' => 'required|array',
             'return_quantity' => 'required|array',
@@ -265,6 +265,7 @@ class SalesReturnController extends Controller
 
         DB::beginTransaction();
         try {
+            $payingAmount = $request->paying_amount ?? 0;
             $return = SalesReturn::find($id);
 
             // 1. Reverse old stock (subtract old return quantities from product stock)
@@ -298,7 +299,7 @@ class SalesReturnController extends Controller
                 ->delete();
 
             // 3. Update the SalesReturn record
-            $due = $request->return_amount - $request->paying_amount;
+            $due = $request->return_amount - $payingAmount;
             $return->update([
                 'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                 'return_amount' => $request->return_amount,
@@ -336,7 +337,7 @@ class SalesReturnController extends Controller
             }
 
             // 5. Create new payment if paying amount > 0
-            if ($request->paying_amount) {
+            if ($payingAmount) {
                 $account = Account::where('account_type', $request->payment_type);
                 if ($request->payment_type == 'cash') {
                     $account = $account->first();
@@ -350,7 +351,7 @@ class SalesReturnController extends Controller
                     'is_paid' => 1,
                     'is_received' => 0,
                     'account_id' => $account->id,
-                    'amount' => $request->paying_amount,
+                    'amount' => $payingAmount,
                     'payment_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                     'created_by' => auth('admin')->user()->id,
                 ]);
@@ -363,7 +364,7 @@ class SalesReturnController extends Controller
             $ledger = new Ledger();
             $ledger->customer_id = $request->customer_id;
             $ledger->sale_return_id = $return->id;
-            $ledger->amount = -$request->paying_amount;
+            $ledger->amount = -$payingAmount;
             $ledger->total_amount = -$request->return_amount;
             $ledger->invoice_type = 'Sale Return';
             $ledger->is_paid = 1;

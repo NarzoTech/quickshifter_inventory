@@ -70,6 +70,8 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
+                                                                    <input type="hidden" name="purchase_id[]"
+                                                                        value="{{ $purchase->id }}">
                                                                     <input type="text" class="form-control"
                                                                         name="invoice_no[]"
                                                                         value="{{ $purchase->invoice_number }}" readonly>

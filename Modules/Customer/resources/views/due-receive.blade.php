@@ -122,6 +122,8 @@
                                                         </div>
                                                     </td>
                                                     <td>
+                                                        <input type="hidden" name="sale_id[]"
+                                                            value="{{ $due->sale->id ?? '' }}">
                                                         <input type="text" class="form-control" name="invoice_no[]"
                                                             value="{{ $due->invoice }}" readonly>
                                                     </td>

@@ -446,7 +446,7 @@ class PurchaseService
             'return_date'     => Carbon::createFromFormat('d-m-Y', $request->return_date),
             'note'            => $request->note,
             'payment_method'  => $request->payment_type,
-            'received_amount' => $request->received_amount,
+            'received_amount' => $request->received_amount ?? 0,
             'return_amount'   => $request->invoice_amount,
             'shipping_cost'   => $request->shipping_cost,
             'invoice'         => $this->returnInvoice(),
@@ -484,11 +484,11 @@ class PurchaseService
         // amount = received back from supplier (negative = money coming back)
         // total_amount = returned goods value (negative = reduces purchases)
         // due_amount = net balance impact = -(return_amount - received_amount)
-        $returnDue = $request->invoice_amount - $request->received_amount;
+        $returnDue = $request->invoice_amount - ($request->received_amount ?? 0);
         $ledger = $this->purchaseReturnLedger(
             $request,
             $purchase->id,
-            -$request->received_amount,
+            -($request->received_amount ?? 0),
             'purchase return',
             0,
             -$returnDue,
@@ -498,7 +498,7 @@ class PurchaseService
         );
 
         // Only create payment if received_amount > 0
-        if ($request->received_amount) {
+        if (($request->received_amount ?? 0)) {
             $account = Account::where('account_type', $request->payment_type);
             if ($request->payment_type == 'cash') {
                 $account = $account->first();
@@ -513,7 +513,7 @@ class PurchaseService
                 'account_id'         => $account->id,
                 'is_received'        => 1,
                 'account_type'       => accountList()[$request->payment_type],
-                'amount'             => $request->received_amount,
+                'amount'             => ($request->received_amount ?? 0),
                 'payment_date'       => now(),
                 'created_by'         => auth()->user()->id,
                 'ledger_id'          => $ledger->id,
@@ -534,7 +534,7 @@ class PurchaseService
             'return_date'     => Carbon::createFromFormat('d-m-Y', $request->return_date),
             'note'            => $request->note,
             'payment_method'  => $request->payment_type,
-            'received_amount' => $request->received_amount,
+            'received_amount' => $request->received_amount ?? 0,
             'return_amount'   => $request->invoice_amount,
             'shipping_cost'   => $request->shipping_cost,
         ]);
@@ -610,11 +610,11 @@ class PurchaseService
         // amount = received back from supplier (negative = money coming back)
         // total_amount = returned goods value (negative = reduces purchases)
         // due_amount = net balance impact = -(return_amount - received_amount)
-        $returnDue = $request->invoice_amount - $request->received_amount;
+        $returnDue = $request->invoice_amount - ($request->received_amount ?? 0);
         $ledger = $this->purchaseReturnLedger(
             $request,
             $return->id,
-            -$request->received_amount,
+            -($request->received_amount ?? 0),
             'purchase return',
             0,
             -$returnDue,
@@ -624,7 +624,7 @@ class PurchaseService
         );
 
         // Only create payment if received_amount > 0
-        if ($request->received_amount) {
+        if (($request->received_amount ?? 0)) {
             $account = Account::where('account_type', $request->payment_type);
             if ($request->payment_type == 'cash') {
                 $account = $account->first();
@@ -639,7 +639,7 @@ class PurchaseService
                 'account_id'         => $account->id,
                 'is_received'        => 1,
                 'account_type'       => accountList()[$request->payment_type],
-                'amount'             => $request->received_amount,
+                'amount'             => ($request->received_amount ?? 0),
                 'payment_date'       => now(),
                 'created_by'         => auth('admin')->user()->id,
                 'ledger_id'          => $ledger->id,

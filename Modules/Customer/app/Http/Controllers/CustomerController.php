@@ -416,48 +416,46 @@ class CustomerController extends Controller
 
             // Process invoice-based dues
             if ($hasInvoicePayment) {
-                foreach ($request->invoice_no as $index => $invo) {
+                foreach ($request->sale_id as $index => $saleId) {
                     $paymentAmount = (float) ($request->amount[$index] ?? 0);
 
                     if ($paymentAmount <= 0) {
                         continue;
                     }
 
-                    $sale = Sale::where('invoice', $invo)->first();
+                    $sale = Sale::findOrFail($saleId);
 
-                    if ($sale) {
-                        $sale->payment_status = $sale->due_amount == $paymentAmount ? 'paid' : 'due';
-                        $sale->paid_amount = $sale->paid_amount + $paymentAmount;
-                        $sale->due_amount  = $sale->due_amount - $paymentAmount;
-                        $sale->save();
+                    $sale->payment_status = $sale->due_amount == $paymentAmount ? 'paid' : 'due';
+                    $sale->paid_amount = $sale->paid_amount + $paymentAmount;
+                    $sale->due_amount  = $sale->due_amount - $paymentAmount;
+                    $sale->save();
 
-                        // Create payment data
-                        CustomerPayment::create([
-                            'sale_id'      => $sale->id,
-                            'customer_id'  => $request->customer_id,
-                            'account_id'   => $account->id,
-                            'payment_type' => 'due_receive',
-                            'is_received'  => 1,
-                            'amount'       => $paymentAmount,
-                            'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
-                            'note'         => $request->note,
-                            'created_by'   => auth('admin')->user()->id,
-                        ]);
+                    // Create payment data
+                    CustomerPayment::create([
+                        'sale_id'      => $sale->id,
+                        'customer_id'  => $request->customer_id,
+                        'account_id'   => $account->id,
+                        'payment_type' => 'due_receive',
+                        'is_received'  => 1,
+                        'amount'       => $paymentAmount,
+                        'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
+                        'note'         => $request->note,
+                        'created_by'   => auth('admin')->user()->id,
+                    ]);
 
-                        // Update customer due record
-                        $due = CustomerDue::where('invoice', $invo)->first();
-                        if ($due) {
-                            $due->due_amount  = $due->due_amount - $paymentAmount;
-                            $due->paid_amount = $due->paid_amount + $paymentAmount;
-                            $due->save();
-                        }
-
-                        // Create ledger details
-                        $ledger->details()->create([
-                            'invoice' => $invo,
-                            'amount'  => $paymentAmount,
-                        ]);
+                    // Update customer due record
+                    $due = CustomerDue::where('invoice', $sale->invoice)->first();
+                    if ($due) {
+                        $due->due_amount  = $due->due_amount - $paymentAmount;
+                        $due->paid_amount = $due->paid_amount + $paymentAmount;
+                        $due->save();
                     }
+
+                    // Create ledger details
+                    $ledger->details()->create([
+                        'invoice' => $sale->invoice,
+                        'amount'  => $paymentAmount,
+                    ]);
                 }
             }
 

@@ -277,8 +277,8 @@
                             </td>
                         </tr>
                         @php
-                            $customerAdvance = ($sale->customer_id && $sale->customer) ? $sale->customer->advances() : 0;
-                            $saleAdvanceOffset = min(max(0, $sale->due_amount), max(0, $customerAdvance));
+                            $advanceUsed = $sale->payment->where('payment_type', 'advance_deduct')->sum('amount');
+                            $cashPaid = $sale->paid_amount - $advanceUsed;
                         @endphp
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
@@ -289,11 +289,11 @@
                             <td class="text-right"
                                 style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
                                 TK
-                                {{ $sale->paid_amount }}
+                                {{ $cashPaid }}
                             </td>
                         </tr>
 
-                        @if($saleAdvanceOffset > 0)
+                        @if($advanceUsed > 0)
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
                             <td class="text-right ps-0"
@@ -303,7 +303,7 @@
                             <td class="text-right"
                                 style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important">
                                 TK
-                                {{ $saleAdvanceOffset }}
+                                {{ $advanceUsed }}
                             </td>
                         </tr>
                         @endif
@@ -317,21 +317,21 @@
                             </td>
 
                             <td class="text-right">
-                                TK {{ $sale->due_amount - $saleAdvanceOffset }}
+                                TK {{ $sale->due_amount }}
                             </td>
                         </tr>
 
-                        @if(($sale->payment && $sale->payment->count() > 0) || $saleAdvanceOffset > 0)
+                        @if(($sale->payment && $sale->payment->count() > 0) || $advanceUsed > 0)
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
                             <td colspan="2" style="border: none !important; padding-top: 8px;">
                                 <b>Payment Methods:</b>
                                 <ul style="margin: 4px 0 0 16px; padding: 0; list-style: none;">
-                                    @foreach ($sale->payment as $payment)
+                                    @foreach ($sale->payment->where('payment_type', '!=', 'advance_deduct') as $payment)
                                         <li>{{ ucfirst($payment->account->account_type ?? '-') }} - TK {{ number_format($payment->amount, 2) }}</li>
                                     @endforeach
-                                    @if($saleAdvanceOffset > 0)
-                                        <li>Advance - TK {{ number_format($saleAdvanceOffset, 2) }}</li>
+                                    @if($advanceUsed > 0)
+                                        <li>Advance - TK {{ number_format($advanceUsed, 2) }}</li>
                                     @endif
                                 </ul>
                             </td>

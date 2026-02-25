@@ -125,8 +125,8 @@
                 </table>
 
                 @php
-                    $supplierAdvance = $purchase->supplier->advance;
-                    $advanceOffset = min(max(0, $purchase->due_amount), max(0, $supplierAdvance));
+                    $advanceUsed = $purchase->payments->where('payment_type', 'advance_deduct')->sum('amount');
+                    $cashPaid = $purchase->paid_amount - $advanceUsed;
                 @endphp
                 <table class="summary-table invoice-summary-table">
                     <tbody>
@@ -151,14 +151,14 @@
                             <td>
                                 Paid:</td>
                             <td>
-                                TK {{ $purchase->paid_amount }}</td>
+                                TK {{ $cashPaid }}</td>
                         </tr>
-                        @if($advanceOffset > 0)
+                        @if($advanceUsed > 0)
                         <tr>
                             <td>
                                 Paid from Advance:</td>
                             <td>
-                                TK {{ $advanceOffset }}</td>
+                                TK {{ $advanceUsed }}</td>
                         </tr>
                         @endif
                         <tr>
@@ -166,17 +166,17 @@
                                 Due:
                             </td>
                             <td>
-                                TK {{ $purchase->due_amount - $advanceOffset }}</td>
+                                TK {{ $purchase->due_amount }}</td>
                         </tr>
                         <tr>
                             <td colspan="2" style="padding-top: 8px;">
                                 <b>Payment Methods:</b>
                                 <ul style="margin: 4px 0 0 16px; padding: 0; list-style: none;">
-                                    @foreach ($purchase->payments as $payment)
+                                    @foreach ($purchase->payments->where('payment_type', '!=', 'advance_deduct') as $payment)
                                         <li>{{ ucfirst($payment->account->account_type) }} - TK {{ $payment->amount }}</li>
                                     @endforeach
-                                    @if($advanceOffset > 0)
-                                        <li>Advance - TK {{ $advanceOffset }}</li>
+                                    @if($advanceUsed > 0)
+                                        <li>Advance - TK {{ $advanceUsed }}</li>
                                     @endif
                                 </ul>
                             </td>
