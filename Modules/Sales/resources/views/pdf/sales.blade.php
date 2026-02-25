@@ -46,10 +46,13 @@
                         $customerAdvTracker[$cid] -= $offset;
                     }
 
+                    $returnAmount = $sale->saleReturns->sum('return_amount');
+                    $effectiveDue = $sale->due_amount - $offset - $returnAmount;
+
                     $data['sale_amount'] += $sale->total_price;
                     $data['total_amount'] += $sale->grand_total;
                     $data['paid_amount'] += $sale->paid_amount + $offset;
-                    $data['due_amount'] += $sale->due_amount - $offset;
+                    $data['due_amount'] += $effectiveDue;
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
@@ -60,9 +63,9 @@
                     <td>{{ $sale->total_price }}</td>
                     <td>{{ $sale->grand_total }}</td>
                     <td>{{ $sale->paid_amount + $offset }}</td>
-                    <td>{{ $sale->due_amount - $offset }}</td>
+                    <td>{{ $effectiveDue }}</td>
                     <td>
-                        @if ((float)($sale->paid_amount + $offset) >= (float)$sale->grand_total)
+                        @if ($effectiveDue <= 0)
                             <span class="badge bg-success">{{ __('Paid') }}</span>
                         @elseif ((float)($sale->paid_amount + $offset) == 0)
                             <span class="badge bg-danger">{{ __('Due') }}</span>

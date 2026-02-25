@@ -41,7 +41,7 @@
                     <td>{{ $user->area->name }}</td>
                     <td>{{ currency($user->sales->sum('grand_total')) }}</td>
                     <td>{{ currency($user->total_paid + $offset) }}</td>
-                    <td>{{ currency($user->sale_due) }}</td>
+                    <td>{{ currency($effectiveDue - $user->previous_due) }}</td>
                     <td>{{ currency($user->previous_due) }}</td>
                     <td>{{ currency($effectiveAdvance) }}</td>
                     <td>{{ currency($effectiveDue) }}</td>
@@ -68,7 +68,7 @@
                     {{ currency($data['total_advance']) }}
                 </td>
                 <td class="fw-bold" colspan="2">
-                    {{ currency($data['total_due'] - $data['total_return_due']) }}
+                    {{ currency($data['total_due']) }}
                 </td>
             </tr>
         </tbody>

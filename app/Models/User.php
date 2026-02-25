@@ -115,7 +115,11 @@ class User extends Model
 
     public function getSaleDueAttribute()
     {
-        return $this->total_due - ($this->wallet_balance ?? 0);
+        $rawDue = $this->total_due;
+        $rawAdvance = $this->advances();
+        $offset = min(max(0, $rawDue), max(0, $rawAdvance));
+        $effectiveDue = $rawDue - $offset;
+        return $effectiveDue - ($this->wallet_balance ?? 0);
     }
 
     public function getPreviousDueAttribute()

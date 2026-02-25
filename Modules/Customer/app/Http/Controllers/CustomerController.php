@@ -143,7 +143,7 @@ class CustomerController extends Controller
             $offset = min(max(0, $rawDue), max(0, $rawAdvance));
             $data['pay']           += $customer->total_paid + $offset;
             $data['total_due']     += $rawDue - $offset;
-            $data['sale_due']      += $customer->sale_due;
+            $data['sale_due']      += ($rawDue - $offset) - $customer->previous_due;
             $data['previous_due']  += $customer->previous_due;
             $data['total_advance'] += $rawAdvance - $offset;
             // $data['total_due_dismiss'] += $customer->total_due_dismiss;
