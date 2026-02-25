@@ -39,7 +39,7 @@ class PurchaseService
 
     public function all()
     {
-        $purchase = $this->purchase->with('supplier.payments', 'warehouse')->orderBy('purchase_date', 'desc');
+        $purchase = $this->purchase->with('supplier.payments', 'warehouse', 'purchaseReturn')->orderBy('purchase_date', 'desc');
 
         if (request()->has('keyword')) {
             $purchase = $purchase->where(function ($query) {

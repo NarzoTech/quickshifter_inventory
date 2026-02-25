@@ -38,9 +38,12 @@
                     $offset = min(max(0, $purchase->due_amount), max(0, $supplierAdvTracker[$sid]));
                     $supplierAdvTracker[$sid] -= $offset;
 
+                    $returnAmount = $purchase->purchaseReturn->sum('return_amount');
+                    $effectiveDue = $purchase->due_amount - $offset - $returnAmount;
+
                     $data['total_amount'] += $purchase->total_amount;
                     $data['paid_amount'] += $purchase->paid_amount + $offset;
-                    $data['due_amount'] += $purchase->due_amount - $offset;
+                    $data['due_amount'] += $effectiveDue;
                 @endphp
                 <tr>
                     <td>{{ ++$index }}</td>
@@ -49,7 +52,7 @@
                     <td>{{ $purchase->supplier?->name }}</td>
                     <td>{{ currency($purchase->total_amount) }}</td>
                     <td>{{ currency($purchase->paid_amount + $offset) }}</td>
-                    <td>{{ currency($purchase->due_amount - $offset) }}</td>
+                    <td>{{ currency($effectiveDue) }}</td>
                 </tr>
             @endforeach
 
