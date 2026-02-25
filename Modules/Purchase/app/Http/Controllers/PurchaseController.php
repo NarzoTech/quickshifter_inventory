@@ -49,10 +49,12 @@ class PurchaseController extends Controller
             $supplierAdvMap[$sid] -= $offset;
             $advanceOffsets[$purchase->id] = $offset;
 
-            $returnAmount = $purchase->purchaseReturn->sum('return_amount');
+            $returnDue = $purchase->purchaseReturn->sum(function ($r) {
+                return $r->return_amount - $r->received_amount;
+            });
             $data['total_amount'] += $purchase->total_amount;
             $data['paid_amount'] += $purchase->paid_amount + $offset;
-            $data['due_amount'] += $purchase->due_amount - $offset - $returnAmount;
+            $data['due_amount'] += $purchase->due_amount - $offset - $returnDue;
         }
 
         if (checkAdminHasPermission('purchase.excel.download')) {

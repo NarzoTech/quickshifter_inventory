@@ -38,8 +38,10 @@
                     $offset = min(max(0, $purchase->due_amount), max(0, $supplierAdvTracker[$sid]));
                     $supplierAdvTracker[$sid] -= $offset;
 
-                    $returnAmount = $purchase->purchaseReturn->sum('return_amount');
-                    $effectiveDue = $purchase->due_amount - $offset - $returnAmount;
+                    $returnDue = $purchase->purchaseReturn->sum(function ($r) {
+                        return $r->return_amount - $r->received_amount;
+                    });
+                    $effectiveDue = $purchase->due_amount - $offset - $returnDue;
 
                     $data['total_amount'] += $purchase->total_amount;
                     $data['paid_amount'] += $purchase->paid_amount + $offset;

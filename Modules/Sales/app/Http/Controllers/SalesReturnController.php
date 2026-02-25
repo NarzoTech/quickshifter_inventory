@@ -202,16 +202,20 @@ class SalesReturnController extends Controller
             }
 
 
-            // create ledger
+            // create ledger entry for sale return
+            // amount = refund given to customer (negative = money going back)
+            // total_amount = returned goods value (negative = reduces sales)
+            // due_amount = net balance impact (total_amount - amount = -return_due)
             $ledger = new Ledger();
             $ledger->customer_id = $request->customer_id;
             $ledger->sale_return_id = $return->id;
-            $ledger->amount = -$request->return_amount;
+            $ledger->amount = -$request->paying_amount;
+            $ledger->total_amount = -$request->return_amount;
             $ledger->invoice_type = 'Sale Return';
             $ledger->is_paid = 1;
             $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
             $ledger->note = $request->note;
-            $ledger->due_amount = -$request->return_amount;
+            $ledger->due_amount = -$due;
             $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
             $ledger->created_by = auth('admin')->user()->id;
             $ledger->save();
@@ -219,6 +223,159 @@ class SalesReturnController extends Controller
 
             DB::commit();
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.sales.index', [], ['messege' => 'Sales return created successfully', 'alert-type' => 'success']);
+        } catch (Exception $ex) {
+            DB::rollBack();
+            Log::error($ex->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => $ex->getMessage(), 'alert-type' => 'error']);
+        }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        checkAdminHasPermissionAndThrowException('sales.return');
+        $return = SalesReturn::with(['details.product', 'sale.products.product', 'customer', 'payments.account'])->find($id);
+        $sale = $return->sale;
+        $accounts = $this->service->all()->get();
+        $payment = $return->payments->first();
+        return view('sales::return.edit', compact('return', 'sale', 'accounts', 'payment'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id): RedirectResponse
+    {
+        checkAdminHasPermissionAndThrowException('sales.return');
+
+        $request->validate([
+            'sale_id' => 'required',
+            'order_date' => 'required',
+            'return_date' => 'required',
+            'return_amount' => 'required',
+            'paying_amount' => 'required',
+            'payment_type' => 'required',
+            'return_subtotal' => 'required|array',
+            'return_quantity' => 'required|array',
+            'price' => 'required|array',
+            'price.*' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $return = SalesReturn::find($id);
+
+            // 1. Reverse old stock (subtract old return quantities from product stock)
+            foreach ($return->details as $detail) {
+                $product = $detail->product;
+                if ($product) {
+                    $product->stock = $product->stock - $detail->quantity;
+                    $product->save();
+                }
+            }
+
+            // 2. Delete old related records
+            $return->stock()->delete();
+            $return->details()->delete();
+
+            // Delete old ledger records
+            if ($return->ledger) {
+                $return->ledger->details()->delete();
+                $return->ledger->delete();
+            }
+            $orphanedLedgers = Ledger::where('sale_return_id', $return->id)->get();
+            foreach ($orphanedLedgers as $ledger) {
+                $ledger->details()->delete();
+                $ledger->delete();
+            }
+
+            // Delete old payments
+            $return->payments()->delete();
+            CustomerPayment::where('sale_return_id', $return->id)
+                ->where('payment_type', 'sale return')
+                ->delete();
+
+            // 3. Update the SalesReturn record
+            $due = $request->return_amount - $request->paying_amount;
+            $return->update([
+                'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
+                'return_amount' => $request->return_amount,
+                'return_due' => $due,
+                'note' => $request->note,
+            ]);
+
+            // 4. Create new return details and update stock
+            foreach ($request->product_id as $key => $prod_id) {
+                if ($request->return_quantity[$key] == 0) continue;
+                $details = SalesReturnDetails::create([
+                    'sale_return_id' => $return->id,
+                    'product_id' => $prod_id,
+                    'quantity' => $request->return_quantity[$key],
+                    'price' => $request->price[$key],
+                    'sub_total' => $request->return_subtotal[$key],
+                ]);
+
+                // Update stock (add back to inventory)
+                if ($details->product) {
+                    $stock = $details->product->stock + $request->return_quantity[$key];
+                    $details->product->update(['stock' => $stock]);
+                }
+
+                // Create stock record
+                Stock::create([
+                    'sale_return_id' => $return->id,
+                    'product_id' => $prod_id,
+                    'date' => Carbon::createFromFormat('d-m-Y', $request->order_date),
+                    'type' => 'Sale Return',
+                    'in_quantity' => $request->return_quantity[$key],
+                    'rate' => $request->price[$key],
+                    'created_by' => auth('admin')->user()->id,
+                ]);
+            }
+
+            // 5. Create new payment if paying amount > 0
+            if ($request->paying_amount) {
+                $account = Account::where('account_type', $request->payment_type);
+                if ($request->payment_type == 'cash') {
+                    $account = $account->first();
+                } else {
+                    $account = $account->where('id', $request->account_id)->first();
+                }
+                CustomerPayment::create([
+                    'customer_id' => $request->customer_id,
+                    'payment_type' => 'sale return',
+                    'sale_return_id' => $return->id,
+                    'is_paid' => 1,
+                    'is_received' => 0,
+                    'account_id' => $account->id,
+                    'amount' => $request->paying_amount,
+                    'payment_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
+                    'created_by' => auth('admin')->user()->id,
+                ]);
+            }
+
+            // 6. Create new ledger entry for sale return
+            // amount = refund given to customer (negative = money going back)
+            // total_amount = returned goods value (negative = reduces sales)
+            // due_amount = net balance impact (total_amount - amount = -return_due)
+            $ledger = new Ledger();
+            $ledger->customer_id = $request->customer_id;
+            $ledger->sale_return_id = $return->id;
+            $ledger->amount = -$request->paying_amount;
+            $ledger->total_amount = -$request->return_amount;
+            $ledger->invoice_type = 'Sale Return';
+            $ledger->is_paid = 1;
+            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
+            $ledger->note = $request->note;
+            $ledger->due_amount = -$due;
+            $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
+            $ledger->created_by = auth('admin')->user()->id;
+            $ledger->save();
+
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.sales.return.list', [], ['messege' => 'Sales return updated successfully', 'alert-type' => 'success']);
         } catch (Exception $ex) {
             DB::rollBack();
             Log::error($ex->getMessage());

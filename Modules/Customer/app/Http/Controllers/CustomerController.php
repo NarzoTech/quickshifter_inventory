@@ -85,8 +85,8 @@ class CustomerController extends Controller
                     $customers = $customers->$orderBy(function ($customer) {
                         $totalPurchase = $customer->sales->sum('grand_total');
                         $totalPaid     = $customer->payment->sum('amount');
-                        $totalReturn   = $customer->saleReturn->sum('return_amount');
-                        $totalDue      = $totalPurchase - $totalPaid - $totalReturn;
+                        $totalReturnDue = $customer->saleReturn->sum('return_due');
+                        $totalDue      = $totalPurchase - $totalPaid - $totalReturnDue;
                         return $totalDue;
                     });
                     break;

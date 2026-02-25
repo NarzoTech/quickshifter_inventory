@@ -80,9 +80,10 @@ class User extends Model
 
         $advanceRefunds = 0;
 
-        // Sale returns reduce the amount customer owes
+        // Only the UNPAID portion of sale returns reduces customer due
+        // A fully refunded return is a wash (goods back + money back = no due change)
         $totalSaleReturn = $this->sales->sum(function ($sale) {
-            return $sale->saleReturns->sum('return_amount');
+            return $sale->saleReturns->sum('return_due');
         });
 
         return $totalSales - $totalPaid + $advanceRefunds - $totalSaleReturn + $prevDue;

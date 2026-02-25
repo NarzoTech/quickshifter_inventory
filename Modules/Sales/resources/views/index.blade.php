@@ -153,8 +153,8 @@
                                 <td>{{ $sale->grand_total }}</td>
                                 @php
                                     $offset = $advanceOffsets[$sale->id] ?? 0;
-                                    $returnAmount = $sale->saleReturns->sum('return_amount');
-                                    $effectiveDue = $sale->due_amount - $offset - $returnAmount;
+                                    $returnDue = $sale->saleReturns->sum('return_due');
+                                    $effectiveDue = $sale->due_amount - $offset - $returnDue;
                                 @endphp
                                 <td>{{ $sale->paid_amount + $offset }}</td>
                                 <td>{{ $effectiveDue }}</td>

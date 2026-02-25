@@ -23,5 +23,7 @@ Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix()], function () 
     Route::get('sales/return/invoice/{id}', [SalesReturnController::class, 'invoice'])->name('sales.return.invoice');
     Route::get('sales/return/create/{sale_id}', [SalesReturnController::class, 'create'])->name('sales.return.create');
     Route::post('sales/return/store', [SalesReturnController::class, 'store'])->name('sales.return.store');
+    Route::get('sales/return/{id}/edit', [SalesReturnController::class, 'edit'])->name('sales.return.edit');
+    Route::put('sales/return/{id}/update', [SalesReturnController::class, 'update'])->name('sales.return.update');
     Route::delete('sales/return/destroy/{id}', [SalesReturnController::class, 'destroy'])->name('sales.return.destroy');
 });

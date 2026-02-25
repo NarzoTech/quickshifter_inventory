@@ -149,8 +149,10 @@
                                 <td>{{ currency($purchase->total_amount) }}</td>
                                 @php
                                     $offset = $advanceOffsets[$purchase->id] ?? 0;
-                                    $returnAmount = $purchase->purchaseReturn->sum('return_amount');
-                                    $effectiveDue = $purchase->due_amount - $offset - $returnAmount;
+                                    $returnDue = $purchase->purchaseReturn->sum(function ($r) {
+                                        return $r->return_amount - $r->received_amount;
+                                    });
+                                    $effectiveDue = $purchase->due_amount - $offset - $returnDue;
                                 @endphp
                                 <td>{{ currency($purchase->paid_amount + $offset) }}</td>
                                 <td>{{ currency($effectiveDue) }}</td>

@@ -46,8 +46,8 @@
                         $customerAdvTracker[$cid] -= $offset;
                     }
 
-                    $returnAmount = $sale->saleReturns->sum('return_amount');
-                    $effectiveDue = $sale->due_amount - $offset - $returnAmount;
+                    $returnDue = $sale->saleReturns->sum('return_due');
+                    $effectiveDue = $sale->due_amount - $offset - $returnDue;
 
                     $data['sale_amount'] += $sale->total_price;
                     $data['total_amount'] += $sale->grand_total;

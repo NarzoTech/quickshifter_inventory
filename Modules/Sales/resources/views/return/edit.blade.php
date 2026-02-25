@@ -1,18 +1,20 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Sales Return') }}</title>
+    <title>{{ __('Edit Sales Return') }}</title>
 @endsection
 
 @section('content')
     <div class="row">
         <div class="col-md-12">
 
-            <form method="POST" action="{{ route('admin.sales.return.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('admin.sales.return.update', $return->id) }}" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="sale_id" value="{{ $sale->id }}">
+                @method('PUT')
+                <input type="hidden" name="sale_id" value="{{ $return->sale_id }}">
+                <input type="hidden" name="customer_id" value="{{ $return->customer_id }}">
                 <div class="card">
                     <div class="card-header">
-                        <div class="section_title">{{ __('Sales Return') }}</div>
+                        <div class="section_title">{{ __('Edit Sales Return') }}</div>
                     </div>
 
                     <div class="card-body">
@@ -22,7 +24,6 @@
                                     <label>{{ __('Customer Name') }}</label>
                                     <input type="text" class="form-control" name=""
                                         value="{{ $sale->customer?->name ?? 'Guest' }}" disabled>
-                                    <input type="hidden" name="customer_id" value="{{ $sale->customer_id }}">
                                     @error('customer_id')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -54,7 +55,7 @@
                                 <div class="form-group">
                                     <label>{{ __('Return Date') }}</label>
                                     <input type="text" class="form-control datepicker" name="return_date"
-                                        value="{{ old('return_date', formatDate(now())) }}" autocomplete="off">
+                                        value="{{ old('return_date', formatDate($return->return_date)) }}" autocomplete="off">
                                     @error('return_date')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -64,7 +65,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <label>{{ __('Note') }}</label>
-                                    <textarea type="text" class="form-control height-80px" name="note">{{ old('note') }}</textarea>
+                                    <textarea type="text" class="form-control height-80px" name="note">{{ old('note', $return->note) }}</textarea>
                                     @error('note')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -86,6 +87,11 @@
                                         </thead>
                                         <tbody id="sale_return_table">
                                             @foreach ($sale->products as $product)
+                                                @php
+                                                    $existingDetail = $return->details->where('product_id', $product->product_id)->first();
+                                                    $returnQty = $existingDetail ? $existingDetail->quantity : 0;
+                                                    $returnSubtotal = $existingDetail ? $existingDetail->sub_total : 0;
+                                                @endphp
                                                 <tr>
                                                     <td>{{ $product->product->name }}
                                                         <input type="hidden" name="product_id[]"
@@ -97,10 +103,12 @@
                                                     </td>
                                                     <td>{{ $product->quantity }}</td>
                                                     <td>
-                                                        <input type="number" class="form-control" name="return_quantity[]">
+                                                        <input type="number" class="form-control" name="return_quantity[]"
+                                                            value="{{ $returnQty }}">
                                                     </td>
                                                     <td>
-                                                        <input type="number" class="form-control" name="return_subtotal[]" step="0.01">
+                                                        <input type="number" class="form-control" name="return_subtotal[]"
+                                                            value="{{ $returnSubtotal }}" step="0.01">
                                                     </td>
 
                                                 </tr>
@@ -124,14 +132,14 @@
                                         <div class="form-group">
                                             <label>{{ __('Return Amount') }}</label>
                                             <input type="number" class="form-control" name="return_amount"
-                                                value="0" readonly>
+                                                value="{{ $return->return_amount }}" readonly>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>{{ __('Paying Amount') }}</label>
                                             <input type="paying_amount" class="form-control" name="paying_amount"
-                                                value="0">
+                                                value="{{ $return->return_amount - $return->return_due }}">
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -143,7 +151,8 @@
                                                     </option>
                                                     @foreach (accountList() as $key => $list)
                                                         <option value="{{ $key }}"
-                                                            @if ($key == 'cash') selected @endif
+                                                            @if ($payment && $key == $payment->account?->account_type) selected
+                                                            @elseif (!$payment && $key == 'cash') selected @endif
                                                             data-name="{{ $list }}">{{ $list }}
                                                         </option>
                                                     @endforeach
@@ -151,11 +160,34 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-12 payment_methods">
+                                        @if ($payment && !in_array($payment->account?->account_type, ['cash', 'advance']))
+                                            <div class="form-group">
+                                                <select name="account_id" class="form-control">
+                                                    @foreach ($accounts->where('account_type', $payment->account?->account_type) as $acc)
+                                                        <option value="{{ $acc->id }}" @if ($acc->id == $payment->account_id) selected @endif>
+                                                            @switch($acc->account_type)
+                                                                @case('bank')
+                                                                    {{ $acc->bank_account_number }} ({{ $acc->bank?->name }})
+                                                                    @break
+                                                                @case('mobile_banking')
+                                                                    {{ $acc->mobile_number }} ({{ $acc->mobile_bank_name }})
+                                                                    @break
+                                                                @case('card')
+                                                                    {{ $acc->card_number }} ({{ $acc->bank?->name }})
+                                                                    @break
+                                                            @endswitch
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+                                    </div>
                                     <div class="col-12">
                                         <div class="card-action d-flex justify-content-end">
-                                            <a href="{{ route('admin.purchase.index') }}"
+                                            <a href="{{ route('admin.sales.return.list') }}"
                                                 class="btn me-2 btn-danger">{{ __('Cancel') }}</a>
-                                            <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+                                            <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -186,10 +218,6 @@
             function calculateSummery() {
                 let total_return_subtotal = 0;
                 let total_return_quantity = 0;
-                let total_invoice_amount = 0;
-                let total_received_amount = 0;
-                let total_paid_amount = 0;
-                let total_due_amount = 0;
                 $('input[name="return_subtotal[]"]').each(function() {
                     total_return_subtotal += parseFloat($(this).val() ? $(this).val() : 0);
                 });
@@ -197,7 +225,6 @@
                     total_return_quantity += parseFloat($(this).val());
                 });
                 $('input[name="return_amount"]').val(total_return_subtotal);
-                $('input[name="received_amount"]').val(total_return_subtotal);
             }
 
             // payment type
