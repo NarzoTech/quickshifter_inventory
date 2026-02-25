@@ -156,7 +156,7 @@
                                 <td>{{ currency($user->sale_due) }}</td>
                                 <td>{{ currency($user->previous_due) }}</td>
                                 <td>{{ currency($effectiveAdvance) }}</td>
-                                <td>{{ currency($effectiveDue - $user->total_sale_return_due) }}
+                                <td>{{ currency($effectiveDue) }}
                                 </td>
 
                                 <td>

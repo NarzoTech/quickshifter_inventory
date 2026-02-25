@@ -138,7 +138,7 @@ class CustomerController extends Controller
             $data['total_return_pay'] += $totalReturn - $customer->saleReturn->sum('return_due');
             $data['total_return_due'] += $customer->saleReturn->sum('return_due');
 
-            $rawDue = $customer->total_due - $totalReturn;
+            $rawDue = $customer->total_due;
             $rawAdvance = $customer->advances();
             $offset = min(max(0, $rawDue), max(0, $rawAdvance));
             $data['pay']           += $customer->total_paid + $offset;

@@ -206,12 +206,12 @@ class SalesReturnController extends Controller
             $ledger = new Ledger();
             $ledger->customer_id = $request->customer_id;
             $ledger->sale_return_id = $return->id;
-            $ledger->amount = $request->paying_amount;
+            $ledger->amount = -$request->return_amount;
             $ledger->invoice_type = 'Sale Return';
             $ledger->is_paid = 1;
             $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
             $ledger->note = $request->note;
-            $ledger->due_amount += $due;
+            $ledger->due_amount = -$request->return_amount;
             $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
             $ledger->created_by = auth('admin')->user()->id;
             $ledger->save();

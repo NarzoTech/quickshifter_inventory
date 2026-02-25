@@ -21,7 +21,7 @@
                                 <div class="form-group">
                                     <label>{{ __('Customer Name') }}</label>
                                     <input type="text" class="form-control" name=""
-                                        value="{{ $sale->user?->name ?? 'Guest' }}" disabled>
+                                        value="{{ $sale->customer?->name ?? 'Guest' }}" disabled>
                                     <input type="hidden" name="customer_id" value="{{ $sale->customer_id }}">
                                     @error('customer_id')
                                         <span class="text-danger">{{ $message }}</span>
