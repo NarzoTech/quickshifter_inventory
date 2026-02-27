@@ -196,14 +196,14 @@ class ExpenseSupplierService
                 'payment_date' => now()->parse($request->payment_date),
                 'note' => $request->note,
                 'memo' => $request->memo,
-                'invoice' => $this->genInvoiceNumber(),
+                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP'),
                 'ledger_id' => $ledger->id,
                 'created_by' => auth('admin')->user()->id,
             ]);
 
             // Create ledger details
             $ledger->details()->create([
-                'invoice' => 'EXP-' . $expense->id,
+                'invoice' => $expense->invoice,
                 'amount' => $request->amount[$index],
             ]);
         }
@@ -270,7 +270,7 @@ class ExpenseSupplierService
                 $ledger->details()->delete();
                 $ledger->delete();
             } else {
-                $ledger->details()->where('invoice', 'EXP-' . $payment->expense_id)->delete();
+                $ledger->details()->where('invoice', $payment->expense ? $payment->expense->invoice : null)->delete();
                 $ledger->amount = $ledger->amount - $payment->amount;
                 $ledger->due_amount = $ledger->due_amount + $payment->amount;
                 $ledger->save();
@@ -282,23 +282,7 @@ class ExpenseSupplierService
 
     public function genInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'ESP-';
-        $invoice_number = $prefix . $number;
-
-        $payment = ExpenseSupplierPayment::latest()->first();
-
-        if ($payment) {
-            $paymentInvoice = $payment->invoice;
-
-            if ($paymentInvoice) {
-                $split_invoice = explode('-', $paymentInvoice);
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP');
     }
 
     public function advancePay(Request $request, $id)
@@ -356,21 +340,6 @@ class ExpenseSupplierService
 
     public function genLedgerInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'ESPL-';
-        $invoice_number = $prefix . $number;
-
-        $ledger = Ledger::where('invoice_type', 'Expense Due Payment')->latest()->first();
-        if ($ledger) {
-            $ledgerInvoice = $ledger->invoice_no;
-
-            if ($ledgerInvoice) {
-                $split_invoice = explode('-', $ledgerInvoice);
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', 'ESPL', ['invoice_type' => 'Expense Due Payment']);
     }
 }

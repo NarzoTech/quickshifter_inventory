@@ -61,7 +61,7 @@ class SaleService
         $sale->warehouse_id = 1;
         $sale->quantity = 1;
         $sale->total_price = $request->sub_total;
-        $sale->order_date = Carbon::createFromFormat('d-m-Y', $request->sale_date);
+        $sale->order_date = $this->parseDate($request->sale_date);
         $sale->status = 1;
         $sale->payment_status = 1;
 
@@ -115,7 +115,7 @@ class SaleService
                 Stock::create([
                     'sale_id' => $sale->id,
                     'product_id' => $product->id,
-                    'date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
+                    'date' => $this->parseDate($request->sale_date),
                     'type' => 'Sale',
                     'invoice' => route('admin.sales.invoice', $sale->id),
                     'invoice_number' => $sale->invoice,
@@ -153,7 +153,7 @@ class SaleService
                 'customer_id' => $request->order_customer_id,
                 'account_id' => $account->id,
                 'amount' => $request->paying_amount[$key],
-                'payment_date' => Carbon::createFromFormat('d-m-Y', $request->sale_date),
+                'payment_date' => $this->parseDate($request->sale_date),
                 'created_by' => auth('admin')->user()->id,
             ];
             if ($customerId == 'walk-in-customer') {

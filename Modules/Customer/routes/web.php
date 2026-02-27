@@ -39,6 +39,7 @@ Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' 
 
     Route::post('customer-due-receive/update/{id}', [CustomerController::class, 'dueReceiveUpdate'])->name('customer.due-receive.update');
     Route::delete('customer-due-receive/delete/{id}', [CustomerController::class, 'dueReceiveDelete'])->name('customer.due-receive.delete');
+    Route::post('customer-due-receive/bulk-delete', [CustomerController::class, 'dueReceiveBulkDelete'])->name('customer.due-receive.bulk-delete');
     Route::post('customers/offset-due-with-advance', [CustomerController::class, 'offsetDueWithAdvance'])->name('customer.offset-due-advance');
     Route::resource('customerGroup', CustomerGroupController::class);
     Route::resource('vehicle', VehicleController::class);

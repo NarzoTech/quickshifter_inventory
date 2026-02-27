@@ -796,8 +796,21 @@
                 totalSummery();
                 // Only load products tab initially (active tab)
                 loadTabData('products');
-                $("#flatpickr-date,[name='sale_date']").flatpickr({
+                $("#flatpickr-date").flatpickr({
                     dateFormat: "d-m-Y",
+                });
+
+                // Initialize flatpickr for sale_date inside modal
+                $("[name='sale_date']").flatpickr({
+                    dateFormat: "d-m-Y",
+                    allowInput: true,
+                });
+
+                // Fix: Allow flatpickr calendar clicks inside Bootstrap modal
+                document.addEventListener('focusin', function(e) {
+                    if (e.target.closest && e.target.closest('.flatpickr-calendar')) {
+                        e.stopImmediatePropagation();
+                    }
                 });
 
                 // Lazy load tabs on click

@@ -519,16 +519,18 @@ class CustomerController extends Controller
             $payments = $payments->where(function ($q) use ($keyword) {
                 $q->where('note', 'like', $keyword)
                     ->orWhere('amount', 'like', $keyword)
-
+                    ->orWhere('invoice', 'like', $keyword)
+                    ->orWhere('account_type', 'like', $keyword)
+                    ->orWhereHas('sale', function ($query) use ($keyword) {
+                        $query->where('invoice', 'like', $keyword);
+                    })
                     ->orWhereHas('customer', function ($query) use ($keyword) {
                         $query->where('name', 'like', $keyword)
                             ->orWhere('phone', 'like', $keyword)
                             ->orWhere('address', 'like', $keyword)
                             ->orWhere('email', 'like', $keyword);
                     });
-            })
-                ->orWhere('invoice', 'like', $keyword)
-                ->orWhere('account_type', 'like', $keyword);
+            });
         }
 
         if (request()->order_by) {
@@ -541,9 +543,14 @@ class CustomerController extends Controller
             $payments = $payments->where('customer_id', request('customer'));
         }
         $data['total'] = $payments->sum('amount');
-        $payments      = $payments->paginate(20);
 
-        $payments->appends(request()->query());
+        if (request('par-page') === 'all') {
+            $payments = $payments->get();
+        } else {
+            $perPage  = request('par-page') ? (int) request('par-page') : 20;
+            $payments = $payments->paginate($perPage);
+            $payments->appends(request()->query());
+        }
 
         return view('customer::due-list', compact('payments', 'data'));
     }
@@ -627,7 +634,12 @@ class CustomerController extends Controller
             // customer ledger delete
             $invoiceNumber = $payment->sale->invoice ?? null;
             if ($invoiceNumber) {
-                $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)->first();
+                $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)
+                    ->whereHas('ledger', function($q) use ($payment) {
+                        $q->where('invoice_type', 'Due Receive')
+                          ->where('customer_id', $payment->customer_id);
+                    })
+                    ->first();
 
                 if ($ledgerDetail) {
                     $ledger = $ledgerDetail->ledger;
@@ -654,6 +666,113 @@ class CustomerController extends Controller
             'messege'    => 'Customer due receive deleted successfully.',
             'alert-type' => 'success',
         ]);
+    }
+
+    public function dueReceiveBulkDelete(Request $request)
+    {
+        checkAdminHasPermissionAndThrowException('customer.due.receive.delete');
+        $ids = $request->ids;
+
+        if (empty($ids)) {
+            return response()->json(['success' => false, 'message' => 'No items selected']);
+        }
+
+        DB::beginTransaction();
+        try {
+            foreach ($ids as $id) {
+                $payment = CustomerPayment::find($id);
+                if (!$payment) continue;
+
+                if ($payment->payment_type == 'direct_due_receive' || $payment->sale_id == null) {
+                    $customer = User::find($payment->customer_id);
+                    if ($customer) {
+                        $customer->wallet_balance = ($customer->wallet_balance ?? 0) + $payment->amount;
+                        $customer->save();
+                    }
+
+                    $ledgerDetail = LedgerDetails::where('invoice', 'DIRECT-BALANCE')
+                        ->whereHas('ledger', function($q) use ($payment) {
+                            $q->where('invoice_type', 'Due Receive')
+                              ->where('customer_id', $payment->customer_id)
+                              ->whereDate('date', $payment->payment_date);
+                        })
+                        ->first();
+
+                    if ($ledgerDetail) {
+                        $ledger = $ledgerDetail->ledger;
+                        $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
+                            ->where('id', '!=', $ledgerDetail->id)
+                            ->count();
+
+                        $ledgerDetail->delete();
+
+                        if ($otherDetailsCount == 0) {
+                            $ledger->delete();
+                        } else {
+                            $ledger->amount = $ledger->amount - $payment->amount;
+                            $ledger->due_amount = $ledger->due_amount + $payment->amount;
+                            $ledger->save();
+                        }
+                    }
+                } else {
+                    $sale = $payment->sale;
+                    $invoiceNumber = $sale->invoice ?? null;
+
+                    if ($invoiceNumber) {
+                        $due = CustomerDue::where('invoice', $invoiceNumber)->first();
+                        if ($due) {
+                            $due->due_amount  = $due->due_amount + $payment->amount;
+                            $due->paid_amount = $due->paid_amount - $payment->amount;
+                            $due->save();
+                        }
+                    }
+
+                    if ($sale && $sale->id) {
+                        $sale->payment_status = 'due';
+                        $sale->paid_amount    = $sale->paid_amount - $payment->amount;
+                        $sale->due_amount     = $sale->due_amount + $payment->amount;
+                        $sale->save();
+                    }
+
+                    // Delete ledger detail - scope to Due Receive ledgers for this customer
+                    if ($invoiceNumber) {
+                        $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)
+                            ->whereHas('ledger', function($q) use ($payment) {
+                                $q->where('invoice_type', 'Due Receive')
+                                  ->where('customer_id', $payment->customer_id);
+                            })
+                            ->first();
+
+                        if ($ledgerDetail) {
+                            $ledger = $ledgerDetail->ledger;
+
+                            $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
+                                ->where('id', '!=', $ledgerDetail->id)
+                                ->count();
+
+                            $ledgerDetail->delete();
+
+                            if ($otherDetailsCount == 0) {
+                                $ledger->delete();
+                            } else {
+                                $ledger->amount     = $ledger->amount - $payment->amount;
+                                $ledger->due_amount = $ledger->due_amount + $payment->amount;
+                                $ledger->save();
+                            }
+                        }
+                    }
+                }
+
+                $payment->delete();
+            }
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => count($ids) . ' due receive(s) deleted successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Bulk delete due receive error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error deleting due receives: ' . $e->getMessage()], 500);
+        }
     }
 
     public function changeStatus($id)

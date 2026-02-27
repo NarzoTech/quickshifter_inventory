@@ -87,7 +87,7 @@ class ExpenseService
             $ledger->amount = $paidAmount;
             $ledger->invoice_type = 'Expense';
             $ledger->is_paid = 1;
-            $ledger->invoice_no = 'EXP-' . $expense->id;
+            $ledger->invoice_no = $expense->invoice;
             $ledger->note = $request->note;
             $ledger->due_amount = $dueAmount;
             $ledger->total_amount = $amount;
@@ -101,7 +101,7 @@ class ExpenseService
 
             // Create ledger details
             $ledger->details()->create([
-                'invoice' => 'EXP-' . $expense->id,
+                'invoice' => $expense->invoice,
                 'amount' => $paidAmount,
             ]);
         }
@@ -130,7 +130,7 @@ class ExpenseService
                 'amount' => $paymentAmount,
                 'payment_date' => now()->parse($request->date),
                 'note' => $request->note,
-                'invoice' => $this->genInvoiceNumber(),
+                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP'),
                 'ledger_id' => $ledgerId,
                 'created_by' => auth('admin')->user()->id,
             ]);
@@ -210,7 +210,7 @@ class ExpenseService
             $ledger->amount = $paidAmount;
             $ledger->invoice_type = 'Expense';
             $ledger->is_paid = 1;
-            $ledger->invoice_no = 'EXP-' . $expense->id;
+            $ledger->invoice_no = $expense->invoice;
             $ledger->note = $request->note;
             $ledger->due_amount = $dueAmount;
             $ledger->total_amount = $amount;
@@ -224,7 +224,7 @@ class ExpenseService
 
             // Create ledger details
             $ledger->details()->create([
-                'invoice' => 'EXP-' . $expense->id,
+                'invoice' => $expense->invoice,
                 'amount' => $paidAmount,
             ]);
         }
@@ -253,7 +253,7 @@ class ExpenseService
                 'amount' => $paymentAmount,
                 'payment_date' => now()->parse($request->date),
                 'note' => $request->note,
-                'invoice' => $this->genInvoiceNumber(),
+                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP'),
                 'ledger_id' => $ledgerId,
                 'created_by' => auth('admin')->user()->id,
             ]);
@@ -281,41 +281,11 @@ class ExpenseService
 
     public function genInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'ESP-';
-        $invoice_number = $prefix . $number;
-
-        $payment = ExpenseSupplierPayment::latest()->first();
-
-        if ($payment) {
-            $paymentInvoice = $payment->invoice;
-
-            if ($paymentInvoice) {
-                $split_invoice = explode('-', $paymentInvoice);
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP');
     }
 
     public function genExpenseInvoiceNumber()
     {
-        $number = 001;
-        $prefix = 'EXP-';
-        $invoice_number = $prefix . $number;
-
-        $expense = Expense::latest()->first();
-
-        if ($expense && $expense->invoice) {
-            $split_invoice = explode('-', $expense->invoice);
-            if (count($split_invoice) > 1) {
-                $invoice_number = (int) $split_invoice[1] + 1;
-                $invoice_number = $prefix . $invoice_number;
-            }
-        }
-
-        return $invoice_number;
+        return generateInvoiceNumber(Expense::class, 'invoice', 'EXP');
     }
 }

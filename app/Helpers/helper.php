@@ -868,12 +868,12 @@ if (! function_exists('generateInvoiceNumber')) {
             $prefix = $setting->invoice_prefix ?? 'INV';
         }
 
-        // Format: {PREFIX}{YYMMDD}{SEQ:3} e.g. S260224001
-        $dateStr = date('ymd');
-        $dailyPrefix = $prefix . $dateStr;
+        // Format: {PREFIX}{YYMM}{SEQ:3} e.g. S2602001
+        $dateStr = date('ym');
+        $monthlyPrefix = $prefix . $dateStr;
 
         $query = $modelClass::whereNotNull($invoiceColumn)
-            ->where($invoiceColumn, 'like', $dailyPrefix . '%');
+            ->where($invoiceColumn, 'like', $monthlyPrefix . '%');
 
         // Apply additional where conditions if provided
         foreach ($whereConditions as $column => $value) {
@@ -885,13 +885,13 @@ if (! function_exists('generateInvoiceNumber')) {
         $seq = 1;
         if ($latestRecord) {
             $latestInvoice = $latestRecord->{$invoiceColumn};
-            // Extract the sequence number after the date part
-            $seqStr = substr($latestInvoice, strlen($dailyPrefix));
+            // Extract the sequence number after the month part
+            $seqStr = substr($latestInvoice, strlen($monthlyPrefix));
             if (is_numeric($seqStr)) {
                 $seq = (int) $seqStr + 1;
             }
         }
 
-        return $dailyPrefix . str_pad($seq, 3, '0', STR_PAD_LEFT);
+        return $monthlyPrefix . str_pad($seq, 3, '0', STR_PAD_LEFT);
     }
 }
