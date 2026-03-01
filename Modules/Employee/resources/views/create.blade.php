@@ -58,6 +58,27 @@
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
+                                                <label for="">{{ __('Guardian Name') }}</label>
+                                                <input type="text" class="form-control" name="guardian_name"
+                                                    placeholder="Guardian Name">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Guardian Mobile') }}</label>
+                                                <input type="text" class="form-control" name="guardian_mobile"
+                                                    placeholder="Guardian Mobile">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="">{{ __('Guardian Relation') }}</label>
+                                                <input type="text" class="form-control" name="guardian_relation"
+                                                    placeholder="e.g. Father, Mother, Spouse">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-4">
+                                            <div class="form-group">
                                                 <label for="">{{ __('Image') }}</label>
                                                 <input type="file" class="form-control" name="image"
                                                     placeholder="Image" id="image">
