@@ -309,6 +309,43 @@ class DashboardController extends Controller
         return view('admin.dashboard', compact('data', 'purchaseData', 'saleData', 'chart'));
     }
 
+    public function monthlyStatFilter()
+    {
+        $type = request('type');
+        $from = Carbon::parse(request('from'));
+        $to = Carbon::parse(request('to'));
+
+        $days = $from->diffInDays($to) + 1;
+        $prevTo = $from->copy()->subDay();
+        $prevFrom = $prevTo->copy()->subDays($days - 1);
+
+        if ($type === 'sales') {
+            $current = Sale::whereBetween('order_date', [$from, $to])->sum('grand_total');
+            $previous = Sale::whereBetween('order_date', [$prevFrom, $prevTo])->sum('grand_total');
+        } elseif ($type === 'purchase') {
+            $current = Purchase::whereBetween('purchase_date', [$from, $to])->sum('total_amount');
+            $previous = Purchase::whereBetween('purchase_date', [$prevFrom, $prevTo])->sum('total_amount');
+        } elseif ($type === 'expense') {
+            $current = Expense::whereBetween('date', [$from, $to])->sum('amount');
+            $previous = Expense::whereBetween('date', [$prevFrom, $prevTo])->sum('amount');
+        } else {
+            return response()->json(['error' => 'Invalid type'], 400);
+        }
+
+        if ($previous > 0) {
+            $percentage = (($current - $previous) / $previous) * 100;
+        } else {
+            $percentage = $current > 0 ? 100 : 0;
+        }
+
+        return response()->json([
+            'amount' => currency($current),
+            'percentage' => number_format(abs($percentage), 2),
+            'direction' => $percentage >= 0 ? 'up' : 'down',
+            'label' => request('label', $from->format('M d') . ' - ' . $to->format('M d')),
+        ]);
+    }
+
     public function setLanguage()
     {
         $lang = Language::whereCode(request('code'))->first();

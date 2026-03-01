@@ -42,6 +42,7 @@ Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix()], function () 
     Route::middleware(['auth:admin'])->group(function () {
         Route::get('/', [DashboardController::class, 'dashboard']);
         Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+        Route::get('dashboard/monthly-stat', [DashboardController::class, 'monthlyStatFilter'])->name('dashboard.monthly-stat');
 
         Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
         Route::get('/stock/ledger/{id}', [StockController::class, 'ledger'])->name('stock.ledger');

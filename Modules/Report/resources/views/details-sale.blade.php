@@ -120,9 +120,11 @@
                                 </td>
                                 <td>
                                     @foreach ($sale->payment as $payment)
-                                        {{ $payment->account->account_type }} :
-                                        {{ currency($payment->amount) }}
-                                        <br>
+                                        @if($payment->amount > 0)
+                                            {{ $payment->account->account_type }} :
+                                            {{ currency($payment->amount) }}
+                                            <br>
+                                        @endif
                                     @endforeach
                                 </td>
                                 <td>

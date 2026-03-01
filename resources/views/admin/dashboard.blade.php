@@ -171,13 +171,16 @@
             border: none;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
+            overflow: visible;
             transition: all 0.3s ease;
         }
 
+        .monthly-stat-header {
+            border-radius: 15px 15px 0 0;
+        }
+
         .monthly-stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
         .monthly-stat-header {
@@ -202,6 +205,120 @@
 
         .monthly-stat-header i {
             font-size: 1.5rem;
+        }
+
+        .date-range-wrapper {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .date-range-toggle {
+            background: #fff;
+            border: none;
+            color: #566a7f;
+            border-radius: 6px;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .date-range-toggle:hover {
+            background: #f5f5f9;
+        }
+
+        .date-range-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1050;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            width: 320px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .date-range-dropdown.show {
+            display: block;
+        }
+
+        .date-range-dropdown .dr-header {
+            padding: 0.6rem 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-range-dropdown .dr-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #333;
+            transition: background 0.15s;
+        }
+
+        .date-range-dropdown .dr-option:hover {
+            background: #fff8f0;
+        }
+
+        .date-range-dropdown .dr-option .dr-label {
+            font-weight: 500;
+        }
+
+        .date-range-dropdown .dr-option .dr-dates {
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .date-range-dropdown .dr-divider {
+            border-top: 1px solid #eee;
+            margin: 0;
+        }
+
+        .date-range-dropdown .dr-custom {
+            padding: 0.8rem 1rem;
+        }
+
+        .date-range-dropdown .dr-custom label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-range-dropdown .dr-custom input[type="date"] {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .date-range-dropdown .dr-apply-btn {
+            width: 100%;
+            background: #696cff;
+            color: #fff;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .date-range-dropdown .dr-apply-btn:hover {
+            background: #5f61e6;
         }
 
         .monthly-stat-body {
@@ -407,74 +524,90 @@
 
             <!-- Monthly Stats with Percentage -->
             <div class="row g-4 mb-4 mt-5">
+                @foreach([
+                    ['type' => 'sales', 'bg' => 'bg-sales', 'icon' => 'bx-cart', 'title' => 'Monthly Sales', 'amount' => $chart['currentSales'], 'pct' => $chart['salePercentage'], 'pctUp' => $chart['salePercentage'] >= 0],
+                    ['type' => 'purchase', 'bg' => 'bg-purchase', 'icon' => 'bx-package', 'title' => 'Monthly Purchase', 'amount' => $chart['currentPurchases'], 'pct' => $chart['purchasePercentage'], 'pctUp' => $chart['purchasePercentage'] <= 0],
+                    ['type' => 'expense', 'bg' => 'bg-expense', 'icon' => 'bx-money', 'title' => 'Monthly Expense', 'amount' => $chart['currentMonthExpense'], 'pct' => $chart['expensePercentage'], 'pctUp' => $chart['expensePercentage'] <= 0],
+                ] as $card)
                 <div class="col-xl-4 col-lg-6">
                     <div class="card monthly-stat-card h-100">
-                        <div class="monthly-stat-header bg-sales">
-                            <i class="bx bx-cart"></i>
-                            <span class="fw-semibold">{{ __('Monthly Sales') }}</span>
+                        <div class="monthly-stat-header {{ $card['bg'] }}">
+                            <i class="bx {{ $card['icon'] }}"></i>
+                            <span class="fw-semibold">{{ __($card['title']) }}</span>
+                            <div class="date-range-wrapper">
+                                <button type="button" class="date-range-toggle" data-type="{{ $card['type'] }}">
+                                    <i class="bx bx-calendar"></i>
+                                    <span class="dr-toggle-label">{{ __('This Month') }}</span>
+                                    <i class="bx bx-chevron-down" style="font-size: 0.9rem;"></i>
+                                </button>
+                                <div class="date-range-dropdown" data-type="{{ $card['type'] }}">
+                                    <div class="dr-header">{{ __('DATE RANGE') }}</div>
+                                    <div class="dr-option" data-preset="today">
+                                        <span class="dr-label">{{ __('Today') }}</span>
+                                        <span class="dr-dates">{{ now()->format('M d, Y') }}</span>
+                                    </div>
+                                    <div class="dr-option" data-preset="yesterday">
+                                        <span class="dr-label">{{ __('Yesterday') }}</span>
+                                        <span class="dr-dates">{{ now()->subDay()->format('M d, Y') }}</span>
+                                    </div>
+                                    <div class="dr-option" data-preset="last7">
+                                        <span class="dr-label">{{ __('Last 7 Days') }}</span>
+                                        <span class="dr-dates">{{ now()->subDays(6)->format('M d') }} - {{ now()->format('M d') }}</span>
+                                    </div>
+                                    <div class="dr-option" data-preset="last30">
+                                        <span class="dr-label">{{ __('Last 30 Days') }}</span>
+                                        <span class="dr-dates">{{ now()->subDays(29)->format('M d') }} - {{ now()->format('M d') }}</span>
+                                    </div>
+                                    <div class="dr-option" data-preset="last60">
+                                        <span class="dr-label">{{ __('Last 60 Days') }}</span>
+                                        <span class="dr-dates">{{ now()->subDays(59)->format('M d') }} - {{ now()->format('M d') }}</span>
+                                    </div>
+                                    <div class="dr-option" data-preset="last90">
+                                        <span class="dr-label">{{ __('Last 90 Days') }}</span>
+                                        <span class="dr-dates">{{ now()->subDays(89)->format('M d') }} - {{ now()->format('M d') }}</span>
+                                    </div>
+                                    <div class="dr-option" data-preset="thisMonth">
+                                        <span class="dr-label">{{ __('This Month') }}</span>
+                                        <span class="dr-dates">{{ now()->startOfMonth()->format('M d') }} - {{ now()->format('M d') }}</span>
+                                    </div>
+                                    <div class="dr-option" data-preset="lastMonth">
+                                        <span class="dr-label">{{ __('Last Month') }}</span>
+                                        <span class="dr-dates">{{ now()->subMonthNoOverflow()->startOfMonth()->format('M d') }} - {{ now()->subMonthNoOverflow()->endOfMonth()->format('M d') }}</span>
+                                    </div>
+                                    <div class="dr-divider"></div>
+                                    <div class="dr-custom">
+                                        <label>{{ __('CUSTOM RANGE') }}</label>
+                                        <div class="d-flex gap-2 mt-1">
+                                            <div>
+                                                <small class="text-muted">{{ __('FROM') }}</small>
+                                                <input type="date" class="form-control form-control-sm dr-from">
+                                            </div>
+                                            <div>
+                                                <small class="text-muted">{{ __('TO') }}</small>
+                                                <input type="date" class="form-control form-control-sm dr-to">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="dr-apply-btn">{{ __('Apply') }}</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="monthly-stat-body">
-                            <div class="monthly-stat-value">{{ currency($chart['currentSales']) }}</div>
+                            <div class="monthly-stat-value" id="{{ $card['type'] }}-amount">{{ currency($card['amount']) }}</div>
                             <div class="monthly-stat-comparison">
-                                <span class="comparison-badge {{ $chart['salePercentage'] >= 0 ? 'up' : 'down' }}">
-                                    <i
-                                        class="bx {{ $chart['salePercentage'] >= 0 ? 'bx-trending-up' : 'bx-trending-down' }}"></i>
-                                    {{ abs($chart['salePercentage']) }}%
+                                <span class="comparison-badge {{ $card['pctUp'] ? 'up' : 'down' }}" id="{{ $card['type'] }}-badge">
+                                    <i class="bx {{ $card['pct'] >= 0 ? 'bx-trending-up' : 'bx-trending-down' }}"></i>
+                                    {{ abs($card['pct']) }}%
                                 </span>
-                                <span class="text-muted">{{ __('vs last month') }}</span>
+                                <span class="text-muted">{{ __('vs previous period') }}</span>
                             </div>
                         </div>
                         <div class="monthly-stat-footer">
-                            <i class="bx bx-calendar me-1"></i> {{ formatDate(now(), 'F Y') }}
+                            <i class="bx bx-calendar me-1"></i> <span id="{{ $card['type'] }}-month">{{ formatDate(now(), 'F Y') }}</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-xl-4 col-lg-6">
-                    <div class="card monthly-stat-card h-100">
-                        <div class="monthly-stat-header bg-purchase">
-                            <i class="bx bx-package"></i>
-                            <span class="fw-semibold">{{ __('Monthly Purchase') }}</span>
-                        </div>
-                        <div class="monthly-stat-body">
-                            <div class="monthly-stat-value">{{ currency($chart['currentPurchases']) }}</div>
-                            <div class="monthly-stat-comparison">
-                                <span class="comparison-badge {{ $chart['purchasePercentage'] <= 0 ? 'up' : 'down' }}">
-                                    <i
-                                        class="bx {{ $chart['purchasePercentage'] >= 0 ? 'bx-trending-up' : 'bx-trending-down' }}"></i>
-                                    {{ abs($chart['purchasePercentage']) }}%
-                                </span>
-                                <span class="text-muted">{{ __('vs last month') }}</span>
-                            </div>
-                        </div>
-                        <div class="monthly-stat-footer">
-                            <i class="bx bx-calendar me-1"></i> {{ formatDate(now(), 'F Y') }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6">
-                    <div class="card monthly-stat-card h-100">
-                        <div class="monthly-stat-header bg-expense">
-                            <i class="bx bx-money"></i>
-                            <span class="fw-semibold">{{ __('Monthly Expense') }}</span>
-                        </div>
-                        <div class="monthly-stat-body">
-                            <div class="monthly-stat-value">{{ currency($chart['currentMonthExpense']) }}</div>
-                            <div class="monthly-stat-comparison">
-                                <span class="comparison-badge {{ $chart['expensePercentage'] <= 0 ? 'up' : 'down' }}">
-                                    <i
-                                        class="bx {{ $chart['expensePercentage'] >= 0 ? 'bx-trending-up' : 'bx-trending-down' }}"></i>
-                                    {{ abs($chart['expensePercentage']) }}%
-                                </span>
-                                <span class="text-muted">{{ __('vs last month') }}</span>
-                            </div>
-                        </div>
-                        <div class="monthly-stat-footer">
-                            <i class="bx bx-calendar me-1"></i> {{ formatDate(now(), 'F Y') }}
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
 
             <!-- Charts Row -->
@@ -1000,5 +1133,112 @@
 
         var profitChart = new ApexCharts(document.querySelector("#profitChart"), chartOptions);
         profitChart.render();
+
+        // Date Range Dropdown
+        var today = new Date();
+        function fmt(d) {
+            return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        }
+
+        var presets = {
+            today:     function() { return { from: fmt(today), to: fmt(today) }; },
+            yesterday: function() { var d = new Date(today); d.setDate(d.getDate()-1); return { from: fmt(d), to: fmt(d) }; },
+            last7:     function() { var d = new Date(today); d.setDate(d.getDate()-6); return { from: fmt(d), to: fmt(today) }; },
+            last30:    function() { var d = new Date(today); d.setDate(d.getDate()-29); return { from: fmt(d), to: fmt(today) }; },
+            last60:    function() { var d = new Date(today); d.setDate(d.getDate()-59); return { from: fmt(d), to: fmt(today) }; },
+            last90:    function() { var d = new Date(today); d.setDate(d.getDate()-89); return { from: fmt(d), to: fmt(today) }; },
+            thisMonth: function() { var d = new Date(today.getFullYear(), today.getMonth(), 1); return { from: fmt(d), to: fmt(today) }; },
+            lastMonth: function() { var s = new Date(today.getFullYear(), today.getMonth()-1, 1); var e = new Date(today.getFullYear(), today.getMonth(), 0); return { from: fmt(s), to: fmt(e) }; },
+        };
+
+        var presetLabels = {
+            today: '{{ __("Today") }}',
+            yesterday: '{{ __("Yesterday") }}',
+            last7: '{{ __("Last 7 Days") }}',
+            last30: '{{ __("Last 30 Days") }}',
+            last60: '{{ __("Last 60 Days") }}',
+            last90: '{{ __("Last 90 Days") }}',
+            thisMonth: '{{ __("This Month") }}',
+            lastMonth: '{{ __("Last Month") }}',
+        };
+
+        function fetchStat(type, from, to, label) {
+            var url = "{{ route('admin.dashboard.monthly-stat') }}?type=" + type + "&from=" + from + "&to=" + to + "&label=" + encodeURIComponent(label);
+            fetch(url)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    document.getElementById(type + '-amount').textContent = data.amount;
+                    document.getElementById(type + '-month').textContent = data.label;
+                    var badge = document.getElementById(type + '-badge');
+                    badge.className = 'comparison-badge ' + (data.direction === 'up' ? 'up' : 'down');
+                    badge.innerHTML = '<i class="bx ' + (data.direction === 'up' ? 'bx-trending-up' : 'bx-trending-down') + '"></i> ' + data.percentage + '%';
+                });
+        }
+
+        // Toggle dropdowns
+        document.querySelectorAll('.date-range-toggle').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var type = this.dataset.type;
+                // Close all other dropdowns
+                document.querySelectorAll('.date-range-dropdown').forEach(function(dd) {
+                    if (dd.dataset.type !== type) dd.classList.remove('show');
+                });
+                var dd = document.querySelector('.date-range-dropdown[data-type="' + type + '"]');
+                dd.classList.toggle('show');
+            });
+        });
+
+        // Preset clicks
+        document.querySelectorAll('.dr-option').forEach(function(opt) {
+            opt.addEventListener('click', function() {
+                var dd = this.closest('.date-range-dropdown');
+                var type = dd.dataset.type;
+                var preset = this.dataset.preset;
+                var range = presets[preset]();
+                var label = presetLabels[preset];
+
+                dd.querySelector('.dr-from').value = range.from;
+                dd.querySelector('.dr-to').value = range.to;
+
+                // Update toggle label
+                dd.closest('.date-range-wrapper').querySelector('.dr-toggle-label').textContent = label;
+                dd.classList.remove('show');
+
+                fetchStat(type, range.from, range.to, label);
+            });
+        });
+
+        // Apply custom range
+        document.querySelectorAll('.dr-apply-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var dd = this.closest('.date-range-dropdown');
+                var type = dd.dataset.type;
+                var from = dd.querySelector('.dr-from').value;
+                var to = dd.querySelector('.dr-to').value;
+
+                if (!from || !to) return;
+
+                var label = from + ' to ' + to;
+                dd.closest('.date-range-wrapper').querySelector('.dr-toggle-label').textContent = '{{ __("Custom") }}';
+                dd.classList.remove('show');
+
+                fetchStat(type, from, to, label);
+            });
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.date-range-dropdown').forEach(function(dd) {
+                dd.classList.remove('show');
+            });
+        });
+
+        // Prevent dropdown from closing when clicking inside it
+        document.querySelectorAll('.date-range-dropdown').forEach(function(dd) {
+            dd.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
     </script>
 @endpush
