@@ -114,10 +114,22 @@ class StockController extends Controller
     {
         checkAdminHasPermissionAndThrowException('stock.ledger');
         $product = $this->product->getProduct($id);
-        $stocks = Stock::where('product_id', $id)->orderBy('date', 'asc')->paginate(20);
+        $stocks = Stock::where('product_id', $id)->orderBy('date', 'asc')->orderBy('id', 'asc')->paginate(20);
+
+        // Calculate carry-forward balance from all records before current page
+        $skip = ($stocks->currentPage() - 1) * $stocks->perPage();
+        $carryForward = 0;
+        if ($skip > 0) {
+            $previousStocks = Stock::where('product_id', $id)
+                ->orderBy('date', 'asc')
+                ->orderBy('id', 'asc')
+                ->limit($skip)
+                ->get();
+            $carryForward = $previousStocks->sum('in_quantity') - $previousStocks->sum('out_quantity');
+        }
 
         $stocks->appends(request()->query());
-        return view('admin.pages.stock.ledger', compact('product', 'stocks'));
+        return view('admin.pages.stock.ledger', compact('product', 'stocks', 'carryForward'));
     }
 
     public function reset($id)

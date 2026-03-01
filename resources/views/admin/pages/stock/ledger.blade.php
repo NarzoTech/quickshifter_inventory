@@ -110,7 +110,7 @@
                     </thead>
                     <tbody>
                         @php
-                            $runningAvailable = 0;
+                            $runningAvailable = $carryForward;
                         @endphp
 
                         @foreach ($stocks as $stock)
@@ -130,7 +130,7 @@
                             @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ formatDate($stock->created_at) }}</td>
+                                <td>{{ formatDate($stock->date) }}</td>
                                 <td>{{ $product->barcode }}</td>
                                 <td>
                                     @if($stock->purchase_id)
