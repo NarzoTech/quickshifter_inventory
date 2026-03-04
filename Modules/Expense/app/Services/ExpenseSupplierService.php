@@ -162,7 +162,7 @@ class ExpenseSupplierService
         $ledger->amount = $request->paying_amount;
         $ledger->invoice_type = 'Expense Due Payment';
         $ledger->is_paid = 1;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber($request->payment_date);
         $ledger->note = $request->note;
         $ledger->due_amount = -$request->paying_amount;
         $ledger->total_amount = 0;
@@ -196,7 +196,7 @@ class ExpenseSupplierService
                 'payment_date' => now()->parse($request->payment_date),
                 'note' => $request->note,
                 'memo' => $request->memo,
-                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP'),
+                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP', [], $request->payment_date),
                 'ledger_id' => $ledger->id,
                 'created_by' => auth('admin')->user()->id,
             ]);
@@ -280,9 +280,9 @@ class ExpenseSupplierService
         return $payment->delete();
     }
 
-    public function genInvoiceNumber()
+    public function genInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP');
+        return generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP', [], $date);
     }
 
     public function advancePay(Request $request, $id)
@@ -295,7 +295,7 @@ class ExpenseSupplierService
         $ledger->invoice_type = $request->refund_amount == null ? 'Expense Advance Payment' : 'Expense Payment Return';
         $ledger->is_paid = $request->refund_amount != null ? 0 : 1;
         $ledger->is_received = $request->refund_amount != null ? 1 : 0;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber($request->date);
         $ledger->note = $request->note;
 
         if ($request->refund_amount != null) {
@@ -333,13 +333,13 @@ class ExpenseSupplierService
             'memo' => $request->memo,
             'created_by' => auth('admin')->user()->id,
             'payment_date' => now()->parse($request->date),
-            'invoice' => $this->genInvoiceNumber(),
+            'invoice' => $this->genInvoiceNumber($request->date),
             'ledger_id' => $ledger->id
         ]);
     }
 
-    public function genLedgerInvoiceNumber()
+    public function genLedgerInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(Ledger::class, 'invoice_no', 'ESPL', ['invoice_type' => 'Expense Due Payment']);
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', 'ESPL', ['invoice_type' => 'Expense Due Payment'], $date);
     }
 }

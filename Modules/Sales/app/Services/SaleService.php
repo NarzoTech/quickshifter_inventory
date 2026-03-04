@@ -69,7 +69,7 @@ class SaleService
         $sale->order_discount = $request->discount_amount;
         $sale->total_tax = $request->total_tax ?? 0;
         $sale->grand_total = $request->total_amount;
-        $sale->invoice = $this->genInvoiceNumber();
+        $sale->invoice = $this->genInvoiceNumber($request->sale_date);
 
         $sale->paid_amount = array_sum($request->paying_amount);
         $sale->receive_amount = $request->receive_amount;
@@ -456,9 +456,9 @@ class SaleService
         $sale->delete();
     }
 
-    public function genInvoiceNumber()
+    public function genInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(Sale::class, 'invoice', 'S');
+        return generateInvoiceNumber(Sale::class, 'invoice', 'S', [], $date);
     }
     public function editSale($id)
     {

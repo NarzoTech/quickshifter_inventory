@@ -185,7 +185,7 @@ class SupplierService
         $ledger->amount = $request->paying_amount;
         $ledger->invoice_type = 'Due Payment';
         $ledger->is_paid = 1;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber();
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber('Due Payment', $request->payment_date);
         $ledger->note = $request->note;
         $ledger->due_amount = -$request->paying_amount;
         $ledger->total_amount = 0;
@@ -311,9 +311,9 @@ class SupplierService
         return $payment->delete();
     }
 
-    public function genInvoiceNumber()
+    public function genInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(SupplierPayment::class, 'invoice', 'SP');
+        return generateInvoiceNumber(SupplierPayment::class, 'invoice', 'SP', [], $date);
     }
 
 
@@ -329,7 +329,7 @@ class SupplierService
         $ledger->invoice_type = $request->refund_amount == null ? 'Advance Payment' : 'Payment Return';
         $ledger->is_paid = $request->refund_amount != null ? 0 : 1;
         $ledger->is_received = $request->refund_amount != null ? 1 : 0;
-        $ledger->invoice_no = $this->genLedgerInvoiceNumber($ledger->invoice_type);
+        $ledger->invoice_no = $this->genLedgerInvoiceNumber($ledger->invoice_type, $request->date);
         $ledger->note = $request->note;
 
         if ($request->refund_amount != null) {
@@ -367,13 +367,13 @@ class SupplierService
             'note' => $request->note,
             'created_by' => auth('admin')->user()->id,
             'payment_date' => now()->parse($request->date),
-            'invoice' => $this->genInvoiceNumber(),
+            'invoice' => $this->genInvoiceNumber($request->date),
             'ledger_id' => $ledger->id
         ]);
     }
 
 
-    public function genLedgerInvoiceNumber($type = 'Due Payment')
+    public function genLedgerInvoiceNumber($type = 'Due Payment', $date = null)
     {
         $prefixMap = [
             'Due Payment'      => 'SDL',
@@ -381,7 +381,7 @@ class SupplierService
             'Payment Return'   => 'SARL',
         ];
         $prefix = $prefixMap[$type] ?? 'SL';
-        return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type]);
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type], $date);
     }
 
 

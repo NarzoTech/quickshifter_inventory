@@ -135,7 +135,7 @@ class SalesReturnController extends Controller
                 'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                 'return_amount' => $request->return_amount,
                 'return_due' => $due,
-                'invoice' => $this->returnInvoice(),
+                'invoice' => $this->returnInvoice($request->return_date),
                 'note'  => $request->note,
                 'status' => 1,
             ]);
@@ -213,7 +213,7 @@ class SalesReturnController extends Controller
             $ledger->total_amount = -$request->return_amount;
             $ledger->invoice_type = 'Sale Return';
             $ledger->is_paid = 1;
-            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
+            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return', $request->return_date);
             $ledger->note = $request->note;
             $ledger->due_amount = -$due;
             $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
@@ -368,7 +368,7 @@ class SalesReturnController extends Controller
             $ledger->total_amount = -$request->return_amount;
             $ledger->invoice_type = 'Sale Return';
             $ledger->is_paid = 1;
-            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return');
+            $ledger->invoice_no = $this->genLedgerInvoiceNumber('Sale Return', $request->return_date);
             $ledger->note = $request->note;
             $ledger->due_amount = -$due;
             $ledger->date = Carbon::createFromFormat('d-m-Y', $request->return_date);
@@ -441,13 +441,13 @@ class SalesReturnController extends Controller
         return view('sales::return.invoice', compact('return'));
     }
 
-    public function genLedgerInvoiceNumber($type = 'Sale Payment')
+    public function genLedgerInvoiceNumber($type = 'Sale Payment', $date = null)
     {
-        return generateInvoiceNumber(Ledger::class, 'invoice_no', 'SRL', ['invoice_type' => $type]);
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', 'SRL', ['invoice_type' => $type], $date);
     }
 
-    public function returnInvoice()
+    public function returnInvoice($date = null)
     {
-        return generateInvoiceNumber(SalesReturn::class, 'invoice', 'SR');
+        return generateInvoiceNumber(SalesReturn::class, 'invoice', 'SR', [], $date);
     }
 }

@@ -61,7 +61,7 @@ class ExpenseService
 
         // Store the expense
         $expense = $this->expense->create([
-            'invoice'             => $this->genExpenseInvoiceNumber(),
+            'invoice'             => $this->genExpenseInvoiceNumber($request->date),
             'date'                => now()->parse($request->date),
             'amount'              => $amount,
             'paid_amount'         => $paidAmount,
@@ -130,7 +130,7 @@ class ExpenseService
                 'amount' => $paymentAmount,
                 'payment_date' => now()->parse($request->date),
                 'note' => $request->note,
-                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP'),
+                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP', [], $request->date),
                 'ledger_id' => $ledgerId,
                 'created_by' => auth('admin')->user()->id,
             ]);
@@ -253,7 +253,7 @@ class ExpenseService
                 'amount' => $paymentAmount,
                 'payment_date' => now()->parse($request->date),
                 'note' => $request->note,
-                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP'),
+                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP', [], $request->date),
                 'ledger_id' => $ledgerId,
                 'created_by' => auth('admin')->user()->id,
             ]);
@@ -279,13 +279,13 @@ class ExpenseService
         return $expense->delete();
     }
 
-    public function genInvoiceNumber()
+    public function genInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP');
+        return generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP', [], $date);
     }
 
-    public function genExpenseInvoiceNumber()
+    public function genExpenseInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(Expense::class, 'invoice', 'EXP');
+        return generateInvoiceNumber(Expense::class, 'invoice', 'EXP', [], $date);
     }
 }

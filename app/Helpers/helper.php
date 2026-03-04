@@ -852,13 +852,16 @@ if (! function_exists('generateInvoiceNumber')) {
     /**
      * Generate a unique invoice number for any model
      *
+     * Format: {PREFIX}{YYMMDD}{SEQ:3} e.g. S260305001
+     *
      * @param string $modelClass The fully qualified model class name
      * @param string $invoiceColumn The column name that stores the invoice number (default: 'invoice')
      * @param string|null $prefix The prefix for the invoice number (default: uses setting's invoice_prefix or 'INV-')
      * @param array $whereConditions Additional where conditions as key-value pairs
+     * @param string|null $date The transaction date (d-m-Y format) to use for the invoice. Defaults to today.
      * @return string The generated invoice number
      */
-    function generateInvoiceNumber(string $modelClass, string $invoiceColumn = 'invoice', ?string $prefix = null, array $whereConditions = []): string
+    function generateInvoiceNumber(string $modelClass, string $invoiceColumn = 'invoice', ?string $prefix = null, array $whereConditions = [], ?string $date = null): string
     {
         // Get settings
         $setting = cache('setting');
@@ -868,12 +871,16 @@ if (! function_exists('generateInvoiceNumber')) {
             $prefix = $setting->invoice_prefix ?? 'INV';
         }
 
-        // Format: {PREFIX}{YYMM}{SEQ:3} e.g. S2602001
-        $dateStr = date('ym');
-        $monthlyPrefix = $prefix . $dateStr;
+        // Format: {PREFIX}{YYMMDD}{SEQ:3} e.g. S260305001
+        if ($date) {
+            $dateStr = \Carbon\Carbon::parse($date)->format('ymd');
+        } else {
+            $dateStr = date('ymd');
+        }
+        $dailyPrefix = $prefix . $dateStr;
 
         $query = $modelClass::whereNotNull($invoiceColumn)
-            ->where($invoiceColumn, 'like', $monthlyPrefix . '%');
+            ->where($invoiceColumn, 'like', $dailyPrefix . '%');
 
         // Apply additional where conditions if provided
         foreach ($whereConditions as $column => $value) {
@@ -885,13 +892,13 @@ if (! function_exists('generateInvoiceNumber')) {
         $seq = 1;
         if ($latestRecord) {
             $latestInvoice = $latestRecord->{$invoiceColumn};
-            // Extract the sequence number after the month part
-            $seqStr = substr($latestInvoice, strlen($monthlyPrefix));
+            // Extract the sequence number after the date part
+            $seqStr = substr($latestInvoice, strlen($dailyPrefix));
             if (is_numeric($seqStr)) {
                 $seq = (int) $seqStr + 1;
             }
         }
 
-        return $monthlyPrefix . str_pad($seq, 3, '0', STR_PAD_LEFT);
+        return $dailyPrefix . str_pad($seq, 3, '0', STR_PAD_LEFT);
     }
 }

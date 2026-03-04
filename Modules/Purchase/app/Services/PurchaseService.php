@@ -385,9 +385,9 @@ class PurchaseService
         return $purchase->delete();
     }
 
-    public function genInvoiceNumber()
+    public function genInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(Purchase::class, 'invoice_number', 'P');
+        return generateInvoiceNumber(Purchase::class, 'invoice_number', 'P', [], $date);
     }
 
     public function getPurchase($id)
@@ -450,7 +450,7 @@ class PurchaseService
             'received_amount' => $request->received_amount ?? 0,
             'return_amount'   => $request->invoice_amount,
             'shipping_cost'   => $request->shipping_cost,
-            'invoice'         => $this->returnInvoice(),
+            'invoice'         => $this->returnInvoice($request->return_date),
         ]);
 
         // store purchase return details
@@ -794,8 +794,8 @@ class PurchaseService
         $return->delete();
     }
 
-    public function returnInvoice()
+    public function returnInvoice($date = null)
     {
-        return generateInvoiceNumber(PurchaseReturn::class, 'invoice', 'PR');
+        return generateInvoiceNumber(PurchaseReturn::class, 'invoice', 'PR', [], $date);
     }
 }

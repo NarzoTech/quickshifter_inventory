@@ -404,7 +404,7 @@ class CustomerController extends Controller
             $ledger->invoice_type  = 'Due Receive';
             $ledger->is_paid       = 0;
             $ledger->is_received   = 1;
-            $ledger->invoice_no    = $this->genLedgerInvoiceNumber('Due Receive');
+            $ledger->invoice_no    = $this->genLedgerInvoiceNumber('Due Receive', $request->payment_date);
             $ledger->due_amount   -= $request->receiving_amount;
             $ledger->note = $request->note;
             $ledger->date = Carbon::createFromFormat('d-m-Y', $request->payment_date);
@@ -856,7 +856,7 @@ class CustomerController extends Controller
             'note'         => $request->note,
             'created_by'   => auth('admin')->user()->id,
             'payment_date' => Carbon::createFromFormat('d-m-Y', $request->date),
-            'invoice'      => $this->genInvoiceNumber(),
+            'invoice'      => $this->genInvoiceNumber($request->date),
         ]);
 
         // create ledger
@@ -867,7 +867,7 @@ class CustomerController extends Controller
         $ledger->invoice_type = $request->refund_amount == null ? 'Advance Received' : 'Payment Return';
         $ledger->is_paid      = $request->refund_amount != null ? 1 : 0;
         $ledger->is_received  = $request->refund_amount != null ? 0 : 1;
-        $ledger->invoice_no   = $this->genLedgerInvoiceNumber($ledger->invoice_type);
+        $ledger->invoice_no   = $this->genLedgerInvoiceNumber($ledger->invoice_type, $request->date);
         $ledger->note         = $request->note;
 
         if ($request->refund_amount != null) {
@@ -885,12 +885,12 @@ class CustomerController extends Controller
         $ledger->save();
     }
 
-    public function genInvoiceNumber()
+    public function genInvoiceNumber($date = null)
     {
-        return generateInvoiceNumber(CustomerPayment::class, 'invoice', 'CP');
+        return generateInvoiceNumber(CustomerPayment::class, 'invoice', 'CP', [], $date);
     }
 
-    public function genLedgerInvoiceNumber($type = 'Sale Payment')
+    public function genLedgerInvoiceNumber($type = 'Sale Payment', $date = null)
     {
         $prefixMap = [
             'Due Receive'      => 'DRL',
@@ -898,7 +898,7 @@ class CustomerController extends Controller
             'Payment Return'   => 'CARL',
         ];
         $prefix = $prefixMap[$type] ?? 'CL';
-        return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type]);
+        return generateInvoiceNumber(Ledger::class, 'invoice_no', $prefix, ['invoice_type' => $type], $date);
     }
 
     public function ledger($id)
