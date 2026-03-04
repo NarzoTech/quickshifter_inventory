@@ -205,9 +205,15 @@
                         style="border-left: none !important; border-right: none !important; border-top: none !important"
                         class="text-center">
                         @php
-                            $unitName = $sale->products->first()?->product?->unit?->name ?? '';
+                            $saleUnits = [];
+                            foreach ($sale->products as $item) {
+                                $uName = $item->product?->unit?->name ?? '';
+                                $saleUnits[$uName] = ($saleUnits[$uName] ?? 0) + $item->quantity;
+                            }
                         @endphp
-                        {{ $sale->quantity }} {{ $unitName }}
+                        @foreach ($saleUnits as $uName => $uQty)
+                            {{ $uQty }} {{ $uName }}@if(!$loop->last),@endif
+                        @endforeach
                     </td>
                 </tr>
             </tbody>
@@ -341,17 +347,19 @@
                 </table>
             </div>
         </div>
+        @if($sale->paid_amount > 0)
         <div class="mt-3 payment-details">
             <span class="block bold" style="font-size: 12px">
                 <b>
                     <span style="font-weight: bold; letter-spacing: 0.1px; font-size: 13px;">
                         In Words:
                     </span>
-                    {{ numberToWord($sale->grand_total) }} TK
+                    {{ numberToWord($sale->paid_amount) }} TK
                     Only
                 </b>
             </span>
         </div>
+        @endif
 
         @if($sale->sale_note)
         <div class="mt-2">

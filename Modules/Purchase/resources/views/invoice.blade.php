@@ -117,7 +117,7 @@
                         <td></td>
                         <td class="qty">
                             @foreach ($unit as $key => $value)
-                                {{ $value }} {{ $key }}
+                                {{ $value }} {{ $key }}@if(!$loop->last),@endif
                             @endforeach
                         <td></td>
                         <td></td>
@@ -183,6 +183,20 @@
                         </tr>
                     </tbody>
                 </table>
+
+                @if($purchase->paid_amount > 0)
+                <div class="mt-3 payment-details">
+                    <span class="block bold" style="font-size: 12px">
+                        <b>
+                            <span style="font-weight: bold; letter-spacing: 0.1px; font-size: 13px;">
+                                In Words:
+                            </span>
+                            {{ numberToWord($purchase->paid_amount) }} TK
+                            Only
+                        </b>
+                    </span>
+                </div>
+                @endif
 
                 @if($purchase->note)
                 <div class="mt-3">
