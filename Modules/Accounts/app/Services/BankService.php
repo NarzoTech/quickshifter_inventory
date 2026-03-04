@@ -12,7 +12,8 @@ class BankService
     }
     public function all()
     {
-        return $this->bank;
+        $sort = request('order_by') == 'asc' ? 'asc' : 'desc';
+        return $this->bank->orderBy('name', $sort);
     }
 
     public function find(int $id): Bank

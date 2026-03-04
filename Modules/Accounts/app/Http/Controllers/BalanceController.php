@@ -158,7 +158,8 @@ class BalanceController extends Controller
 
         $accounts = $this->account->all()->get();
 
-        $transfers = BalanceTransfer::query();
+        $sort = request('order_by') == 'asc' ? 'asc' : 'desc';
+        $transfers = BalanceTransfer::query()->orderBy('date', $sort);
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
