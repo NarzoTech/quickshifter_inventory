@@ -1059,13 +1059,28 @@
 
                 // add payment row
                 $('.add-payment').on('click', function() {
+                    // Calculate remaining BEFORE adding row
+                    let totalAmount = parseFloat($('#total_amountModal').text()) || 0;
+                    let totalPaid = 0;
+                    $('[name="paying_amount[]"]').each(function() {
+                        totalPaid += parseFloat($(this).val()) || 0;
+                    });
+                    let remaining = totalAmount - totalPaid;
+                    remaining = remaining > 0 ? remaining : 0;
+
                     const row = `@include('pos::payment-row', ['add' => true])`;
                     $('#paymentRow').append(row)
                     $('[name="payment_type[]"]').niceSelect();
 
+                    // Set remaining on the newly added row
+                    $('[name="paying_amount[]"]').last().val(remaining);
+
+                    // Recalculate totals
+                    updatePaymentTotals();
                 })
                 $(document).on('click', '.remove-payment', function() {
                     $(this).parents('tr').remove()
+                    updatePaymentTotals();
                 })
 
                 $(document).on('click', '.price', function() {
@@ -1444,8 +1459,12 @@
 
 
 
-            $('.paying_amount').val(grandTotal);
-            $('#paid_amountModal').text(grandTotal);
+            // Only set full amount on first open (single row with no value)
+            let paymentRows = $('[name="paying_amount[]"]');
+            if (paymentRows.length === 1 && !parseFloat(paymentRows.first().val())) {
+                paymentRows.first().val(grandTotal);
+            }
+            updatePaymentTotals();
 
 
             // hide rows
@@ -1642,24 +1661,26 @@
         })
 
 
-        $(document).on('input', '[name="paying_amount[]"]', function() {
-            const amount = [];
-            const allAmount = $('[name="paying_amount[]"]').each(function() {
-                amount.push($(this).val());
-            })
-            const amountVal = amount.reduce((a, b) => Number(a) + Number(b), 0);
-            $('#paid_amountModal').text(amountVal);
+        function updatePaymentTotals() {
+            let totalPaid = 0;
+            $('[name="paying_amount[]"]').each(function() {
+                totalPaid += parseFloat($(this).val()) || 0;
+            });
+            $('#paid_amountModal').text(totalPaid);
 
-            let totalAmount = $('#total_amountModal').text();
-            totalAmount = parseFloat(totalAmount);
-            if (totalAmount > amountVal) {
-                $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
+            let totalAmount = parseFloat($('#total_amountModal').text()) || 0;
+            let due = totalAmount - totalPaid;
+            $('#normalPayment [name="total_due"]').val(due);
+            if (due > 0) {
                 $(".due-date").removeClass('d-none');
             } else {
                 $(".due-date").addClass('d-none');
-                $('#normalPayment [name="total_due"]').val(totalAmount - amountVal);
             }
             calDue();
+        }
+
+        $(document).on('input', '[name="paying_amount[]"]', function() {
+            updatePaymentTotals();
         })
 
         $('.addCustomer').on('click', function(e) {
@@ -1676,8 +1697,6 @@
         function modalHide(id) {
             $(id).modal('hide')
             $('.pos-footer').css('z-index', 9000)
-            $('#checkoutForm').trigger('reset');
-            calDue()
         }
 
         $(document).on('keydown', function(event) {
