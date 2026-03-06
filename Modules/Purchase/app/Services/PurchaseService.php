@@ -81,10 +81,11 @@ class PurchaseService
             $attachment->move(public_path('uploads/purchase/'), $attachment_name);
         }
         $purchase                 = new Purchase();
+        $invoiceNumber            = $this->genInvoiceNumber($request->purchase_date);
         $paidAmount               = $request->total_amount - $request->due_amount;
         $purchase->supplier_id    = $request->supplier_id;
         $purchase->warehouse_id   = $request->warehouse_id;
-        $purchase->invoice_number = $request->invoice_number;
+        $purchase->invoice_number = $invoiceNumber;
         $purchase->memo_no        = $request->memo_no;
         $purchase->reference_no   = $request->reference_no;
         $purchase->purchase_date  = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
@@ -98,6 +99,9 @@ class PurchaseService
         $purchase->note           = $request->note;
         $purchase->created_by     = Auth::id();
         $purchase->save();
+
+        // Merge server-generated invoice number into request for downstream methods
+        $request->merge(['invoice_number' => $invoiceNumber]);
 
         // Calculate cash-only paid (exclude advance) for ledger display
         $cashPaid = 0;
@@ -211,13 +215,29 @@ class PurchaseService
             $attachment_name = file_upload($attachment, oldFile: $purchase->attachment);
         }
 
+        $oldInvoiceNumber = $purchase->invoice_number;
+        $purchaseDate = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+
+        // Regenerate invoice number if purchase date changed
+        $oldDateStr = $purchase->purchase_date ? Carbon::parse($purchase->purchase_date)->format('ymd') : '';
+        $newDateStr = $purchaseDate->format('ymd');
+        $newInvoiceNumber = ($oldDateStr !== $newDateStr)
+            ? $this->genInvoiceNumber($request->purchase_date)
+            : $oldInvoiceNumber;
+
+        // Update invoice references in existing due payment ledger details
+        if ($oldInvoiceNumber !== $newInvoiceNumber) {
+            \App\Models\LedgerDetails::where('invoice', $oldInvoiceNumber)
+                ->update(['invoice' => $newInvoiceNumber]);
+        }
+
         $paidAmount               = $request->total_amount - $request->due_amount;
         $purchase->supplier_id    = $request->supplier_id;
         $purchase->warehouse_id   = $request->warehouse_id;
-        $purchase->invoice_number = $request->invoice_number;
+        $purchase->invoice_number = $newInvoiceNumber;
         $purchase->memo_no        = $request->memo_no;
         $purchase->reference_no   = $request->reference_no;
-        $purchase->purchase_date  = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+        $purchase->purchase_date  = $purchaseDate;
         $purchase->items          = $request->items;
         $purchase->attachment     = $attachment_name;
         $purchase->total_amount   = $request->total_amount;
@@ -229,7 +249,14 @@ class PurchaseService
         $purchase->updated_by     = Auth::id();
         $purchase->save();
 
-        $ledger = $this->getLedger($request, $id, 'purchase', 1);
+        // Merge the new invoice number into request for downstream methods
+        $request->merge(['invoice_number' => $newInvoiceNumber]);
+
+        $ledger = Ledger::where('supplier_id', $request->supplier_id)
+            ->where('invoice_type', 'purchase')
+            ->where('invoice_no', $oldInvoiceNumber)
+            ->where('is_paid', 1)
+            ->first();
 
         // Calculate cash-only paid (exclude advance) for ledger display
         $cashPaid = 0;
@@ -242,9 +269,9 @@ class PurchaseService
 
         $this->purchaseLedger($request, $purchase->id, $cashPaid, $request->total_amount, 'purchase', 1, $cashDue, $ledger);
 
-        // Delete old advance deduct ledger entries for this purchase
+        // Delete old advance deduct ledger entries using the OLD invoice number
         Ledger::where('invoice_type', 'Advance Deduct')
-            ->where('invoice_no', $purchase->invoice_number)
+            ->where('invoice_no', $oldInvoiceNumber)
             ->where('supplier_id', $request->supplier_id)
             ->delete();
 
@@ -317,7 +344,7 @@ class PurchaseService
                 'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'note'         => $request->note,
                 'created_by'   => auth('admin')->user()->id,
-                'invoice'      => $request->invoice_number,
+                'invoice'      => $newInvoiceNumber,
                 'account_type' => accountList()[$item] ?? $item,
             ];
             if ($request->paid_amount[$key]) {
@@ -335,7 +362,7 @@ class PurchaseService
                 $advanceLedger->due_amount = 0;
                 $advanceLedger->invoice_type = 'Advance Deduct';
                 $advanceLedger->is_paid = 1;
-                $advanceLedger->invoice_no = $request->invoice_number;
+                $advanceLedger->invoice_no = $newInvoiceNumber;
                 $advanceLedger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
                 $advanceLedger->created_by = auth('admin')->user()->id;
                 $advanceLedger->save();
@@ -527,6 +554,20 @@ class PurchaseService
     public function updateReturn($request, $id)
     {
         $return = $this->purchaseReturn->find($id);
+        $oldInvoice = $return->invoice;
+
+        // Regenerate invoice if return date changed
+        $oldDateStr = $return->return_date ? Carbon::parse($return->return_date)->format('ymd') : '';
+        $newDateStr = Carbon::createFromFormat('d-m-Y', $request->return_date)->format('ymd');
+        $newInvoice = ($oldDateStr !== $newDateStr)
+            ? $this->returnInvoice($request->return_date)
+            : $oldInvoice;
+
+        // Update invoice references in existing ledger details
+        if ($oldInvoice !== $newInvoice) {
+            \App\Models\LedgerDetails::where('invoice', $oldInvoice)
+                ->update(['invoice' => $newInvoice]);
+        }
 
         $return->update([
             'supplier_id'     => $request->supplier_id,
@@ -538,6 +579,7 @@ class PurchaseService
             'received_amount' => $request->received_amount ?? 0,
             'return_amount'   => $request->invoice_amount,
             'shipping_cost'   => $request->shipping_cost,
+            'invoice'         => $newInvoice,
         ]);
 
         // restore product stock from old return
@@ -570,7 +612,7 @@ class PurchaseService
         }
 
         // Also delete any ledger directly associated with this return
-        $oldLedgers = Ledger::where('invoice_no', $return->invoice)
+        $oldLedgers = Ledger::where('invoice_no', $oldInvoice)
             ->where('invoice_type', 'purchase return')
             ->get();
         foreach ($oldLedgers as $oldLedger) {

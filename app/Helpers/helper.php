@@ -873,7 +873,7 @@ if (! function_exists('generateInvoiceNumber')) {
 
         // Format: {PREFIX}{YYMMDD}{SEQ:3} e.g. S260305001
         if ($date) {
-            $dateStr = \Carbon\Carbon::parse($date)->format('ymd');
+            $dateStr = \Carbon\Carbon::createFromFormat('d-m-Y', $date)->format('ymd');
         } else {
             $dateStr = date('ymd');
         }

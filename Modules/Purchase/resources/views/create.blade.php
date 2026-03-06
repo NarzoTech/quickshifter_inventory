@@ -97,11 +97,7 @@
                             <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label>{{ __('Invoice Number') }}</label>
-                                    <input type="text" class="form-control" name="invoice_number"
-                                        value="{{ old('invoice_number', $invoiceNumber) }}">
-                                    @error('invoice_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+                                    <input type="text" class="form-control" id="invoice_number_display" value="{{ $invoiceNumber }}" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-4">
@@ -688,15 +684,6 @@
                 $('[name="supplier_id"]').closest('.form-group').find('.text-danger').remove();
             }
 
-            // Invoice number validation
-            if (!$('[name="invoice_number"]').val()) {
-                errors.push('{{ __("Invoice number is required") }}');
-                $('[name="invoice_number"]').closest('.form-group').find('.text-danger').remove();
-                $('[name="invoice_number"]').closest('.form-group').append('<span class="text-danger">{{ __("Invoice number is required") }}</span>');
-            } else {
-                $('[name="invoice_number"]').closest('.form-group').find('.text-danger').remove();
-            }
-
             // Purchase date validation
             if (!$('[name="purchase_date"]').val()) {
                 errors.push('{{ __("Purchase date is required") }}');
@@ -778,15 +765,12 @@
             }
         });
 
-        $(document).on('input', '[name="invoice_number"]', function() {
-            if ($(this).val()) {
-                $(this).closest('.form-group').find('.text-danger').remove();
-            }
-        });
-
         $(document).on('change', '[name="purchase_date"]', function() {
             if ($(this).val()) {
                 $(this).closest('.form-group').find('.text-danger').remove();
+                $.get("{{ route('admin.purchase.invoice-number') }}", { date: $(this).val() }, function(response) {
+                    $('#invoice_number_display').val(response.invoice_number);
+                });
             }
         });
 

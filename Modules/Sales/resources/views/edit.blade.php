@@ -1471,7 +1471,7 @@
                 let totalAmount = parseFloat($('#total_amountModal').text());
                 let paidAmount = parseFloat($('#paid_amountModal').text());
                 if (totalAmount != paidAmount) {
-                    toastr.error("{{ __('Can\\'t Make Due Sale for Guest Customer') }}")
+                    toastr.error("{{ __('Can\'t Make Due Sale for Guest Customer') }}")
                     return;
                 }
             }

@@ -268,6 +268,14 @@ class SalesReturnController extends Controller
             $payingAmount = $request->paying_amount ?? 0;
             $return = SalesReturn::find($id);
 
+            // Regenerate invoice if return date changed
+            $oldInvoice = $return->invoice;
+            $oldDateStr = $return->return_date ? Carbon::parse($return->return_date)->format('ymd') : '';
+            $newDateStr = Carbon::createFromFormat('d-m-Y', $request->return_date)->format('ymd');
+            if ($oldDateStr !== $newDateStr) {
+                $return->invoice = $this->returnInvoice($request->return_date);
+            }
+
             // 1. Reverse old stock (subtract old return quantities from product stock)
             foreach ($return->details as $detail) {
                 $product = $detail->product;
@@ -305,6 +313,7 @@ class SalesReturnController extends Controller
                 'return_amount' => $request->return_amount,
                 'return_due' => $due,
                 'note' => $request->note,
+                'invoice' => $return->invoice,
             ]);
 
             // 4. Create new return details and update stock

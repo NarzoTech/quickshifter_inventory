@@ -88,6 +88,13 @@ class PurchaseController extends Controller
         return view('purchase::index', compact('purchases', 'products', 'data', 'advanceOffsets'));
     }
 
+    public function getInvoiceNumber(Request $request)
+    {
+        $date = $request->date;
+        $invoiceNumber = $this->purchaseService->genInvoiceNumber($date);
+        return response()->json(['invoice_number' => $invoiceNumber]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -140,10 +147,9 @@ class PurchaseController extends Controller
         $suppliers = $this->purchaseService->getSuppliers();
         $warehouses = $this->purchaseService->getWarehouses();
         $products = $this->purchaseService->getProducts($request);
-        $invoiceNumber = $this->purchaseService->genInvoiceNumber();
         $accounts = $this->purchaseService->getAccounts();
         $purchase = $this->purchaseService->getPurchase($id);
-        return view('purchase::edit', compact('suppliers', 'warehouses', 'products', 'invoiceNumber', 'purchase', 'accounts'));
+        return view('purchase::edit', compact('suppliers', 'warehouses', 'products', 'purchase', 'accounts'));
     }
 
     /**

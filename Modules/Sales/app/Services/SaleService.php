@@ -223,13 +223,25 @@ class SaleService
         try {
             $sale = $this->sale->find($id);
 
+            // Regenerate invoice if sale date changed
+            $oldInvoice = $sale->invoice;
+            $newDate = $this->parseDate($request->sale_date);
+            $oldDateStr = $sale->order_date ? Carbon::parse($sale->order_date)->format('ymd') : '';
+            $newDateStr = $newDate ? $newDate->format('ymd') : '';
+            if ($oldDateStr !== $newDateStr) {
+                $sale->invoice = $this->genInvoiceNumber($request->sale_date);
+
+                // Update invoice references in existing due payment ledger details
+                \App\Models\LedgerDetails::where('invoice', $oldInvoice)
+                    ->update(['invoice' => $sale->invoice]);
+            }
 
             // update sales
             $sale->user_id = $user != null ?  $user->id : null;
             $sale->customer_id = $request->order_customer_id;
             $sale->warehouse_id = 1;
             $sale->total_price = $request->sub_total;
-            $sale->order_date = $this->parseDate($request->sale_date);
+            $sale->order_date = $newDate;
             $sale->status = 1;
             $sale->payment_status = 1;
 
@@ -316,7 +328,12 @@ class SaleService
             $sale->quantity = $totalQty;
             $sale->save();
 
-            $ledger = $this->getLedger($request, $id, 1, 'sale');
+            // Find existing ledger using OLD invoice number
+            $ledger = Ledger::where('customer_id', $request->order_customer_id)
+                ->where('invoice_type', 'sale')
+                ->where('invoice_no', $oldInvoice)
+                ->where('is_received', 1)
+                ->first();
 
             // Calculate cash-only paid (exclude advance) for ledger display
             $cashPaid = 0;
@@ -330,9 +347,9 @@ class SaleService
 
             $this->salesLedger($request, $sale, $cashPaid, $request->total_amount, 'sale', 1, $cashDue, $ledger);
 
-            // Delete old advance deduct ledger entries for this sale
+            // Delete old advance deduct ledger entries using OLD invoice number
             Ledger::where('invoice_type', 'Advance Deduct')
-                ->where('invoice_no', $sale->invoice)
+                ->where('invoice_no', $oldInvoice)
                 ->where('customer_id', $request->order_customer_id)
                 ->delete();
 

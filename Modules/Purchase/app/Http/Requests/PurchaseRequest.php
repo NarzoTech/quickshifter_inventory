@@ -13,7 +13,6 @@ class PurchaseRequest extends FormRequest
     {
         return [
             'supplier_id' => 'required',
-            'invoice_number' => 'required',
             'purchase_date' => 'required|date',
             'items' => 'required',
             'total_amount' => 'required',
@@ -46,7 +45,6 @@ class PurchaseRequest extends FormRequest
     {
         return [
             'supplier_id.required' => 'Supplier is required',
-            'invoice_number.required' => 'Invoice number is required',
             'purchase_date.required' => 'Purchase date is required',
             'items.required' => 'Items is required',
             'total_amount.required' => 'Total amount is required',
