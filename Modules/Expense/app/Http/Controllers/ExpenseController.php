@@ -163,6 +163,13 @@ class ExpenseController extends Controller
         }
     }
 
+    public function invoice($id)
+    {
+        $expense = Expense::with(['expenseType', 'subExpenseType', 'expenseSupplier', 'payments.account', 'createdBy'])->findOrFail($id);
+        $setting = cache('setting');
+        return view('expense::invoice', compact('expense', 'setting'));
+    }
+
     /**
      * Remove the specified resource from storage.
      */

@@ -194,6 +194,7 @@
                                                         aria-expanded="false">{{ __('Action') }}</button>
                                                     <div class="dropdown-menu"
                                                         aria-labelledby="btnGroupDrop{{ $expense->id }}">
+                                                        <a class="dropdown-item" href="{{ route('admin.expense.invoice', $expense->id) }}" target="_blank">{{ __('Invoice') }}</a>
                                                         @adminCan('expense.edit')
                                                             <a class="dropdown-item" href="javascript:;"
                                                                 data-bs-toggle="modal"
