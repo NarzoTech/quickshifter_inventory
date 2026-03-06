@@ -360,11 +360,15 @@ class AccountsController extends Controller
         $expensePaymentsQuery = $account->expenseSupplierPayments();
         $applyDateFilter($expensePaymentsQuery, 'payment_date');
         $expensePayments = $expensePaymentsQuery->get()->map(function ($payment) {
+            $url = null;
+            if ($payment->expense_id) {
+                $url = route('admin.expense.invoice', $payment->expense_id);
+            }
             return [
                 'date' => $payment->payment_date,
                 'description' => __('Expense') . ' - ' . ucfirst(str_replace('_', ' ', $payment->payment_type)),
                 'reference' => $payment->expense?->invoice ?? '-',
-                'url' => null,
+                'url' => $url,
                 'debit' => $payment->is_received ? $payment->amount : 0,
                 'credit' => $payment->is_paid ? $payment->amount : 0,
             ];
@@ -435,11 +439,15 @@ class AccountsController extends Controller
         $salaryQuery = $account->salary();
         $applyDateFilter($salaryQuery, 'date');
         $salaries = $salaryQuery->get()->map(function ($salary) {
+            $url = null;
+            if ($salary->employee_id) {
+                $url = route('admin.employee.salary.view', $salary->employee_id);
+            }
             return [
                 'date' => $salary->date,
                 'description' => __('Salary Payment'),
                 'reference' => $salary->employee?->name ?? '-',
-                'url' => null,
+                'url' => $url,
                 'debit' => 0,
                 'credit' => $salary->amount,
             ];
@@ -450,11 +458,15 @@ class AccountsController extends Controller
         $expensesQuery = $account->expenses();
         $applyDateFilter($expensesQuery, 'date');
         $expenses = $expensesQuery->get()->map(function ($expense) {
+            $url = null;
+            if ($expense->id) {
+                $url = route('admin.expense.invoice', $expense->id);
+            }
             return [
                 'date' => $expense->date,
                 'description' => __('Expense') . ' - ' . ($expense->expenseType?->name ?? ''),
                 'reference' => $expense->invoice ?? '-',
-                'url' => null,
+                'url' => $url,
                 'debit' => 0,
                 'credit' => $expense->amount,
             ];

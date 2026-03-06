@@ -37,7 +37,10 @@ class SupplierService
                 }
             }
         }, 'payments' => function ($query) {
-            $query->where('is_paid', 1);
+            $query->where(function ($q) {
+                $q->where('is_paid', 1)
+                    ->orWhereIn('payment_type', ['advance_refund']);
+            });
 
             [$from_date, $to_date] = $this->getDateRangeFromRequest();
 
