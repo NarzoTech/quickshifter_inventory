@@ -133,15 +133,16 @@
                                                     <td>
                                                         {{ currency($due->sale->grand_total ?? 0) }}
                                                     </td>
+                                                    @php
+                                                        $remainingDue = $due->due_amount + $due->paid_amount;
+                                                        $totalDue += $remainingDue;
+                                                    @endphp
                                                     <td>
-                                                        @php
-                                                            $totalDue += $due->due_amount;
-                                                        @endphp
-                                                        {{ currency($due->due_amount) }}
+                                                        {{ currency($remainingDue) }}
                                                     </td>
                                                     <td>
                                                         <input type="number" class="form-control" name="amount[]"
-                                                            value="" step="0.01" min="0">
+                                                            value="" step="0.01" min="0" max="{{ $remainingDue }}">
                                                     </td>
                                                 </tr>
                                             @endforeach
