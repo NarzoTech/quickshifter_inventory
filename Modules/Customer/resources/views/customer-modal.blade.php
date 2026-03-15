@@ -15,8 +15,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="name">{{ __('Customer Name') }}<b class="text-danger">*</b></label>
-                                <input type="text" class="form-control" id="name" name="name">
+                                <label for="customer_name">{{ __('Customer Name') }}<b class="text-danger">*</b></label>
+                                <input type="text" class="form-control" id="customer_name" name="name">
                             </div>
                         </div>
 

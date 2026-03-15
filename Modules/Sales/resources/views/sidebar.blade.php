@@ -2,7 +2,7 @@
         checkAdminHasPermission('sales.view') ||
         checkAdminHasPermission('sales.return.list'))
 
-    <li class="menu-item {{ isRoute(['admin.sales.index', 'admin.pos', 'admin.sales.return.list'], 'active open') }}">
+    <li class="menu-item {{ isRoute(['admin.sales.index', 'admin.pos', 'admin.sales.return.list', 'admin.sales.service.list'], 'active open') }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class='menu-icon tf-icons bx bx-basket'></i>
             <div class="text-truncate" data-i18n="{{ __('Sales') }}">{{ __('Sales') }}</div>
@@ -19,6 +19,13 @@
                 <li class="menu-item {{ isRoute('admin.sales.index', 'active') }}">
                     <a href="{{ route('admin.sales.index') }}" class="menu-link">
                         <div class="text-truncate" data-i18n="{{ __('Manage Sales') }}">{{ __('Manage Sales') }}</div>
+                    </a>
+                </li>
+            @endadminCan
+            @adminCan('sales.view')
+                <li class="menu-item {{ isRoute('admin.sales.service.list', 'active') }}">
+                    <a href="{{ route('admin.sales.service.list') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="{{ __('Service Sales') }}">{{ __('Service Sales') }}</div>
                     </a>
                 </li>
             @endadminCan

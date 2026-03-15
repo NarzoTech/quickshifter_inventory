@@ -1685,6 +1685,11 @@
             $('#addCustomer').modal('show');
             $('.pos-footer').css('z-index', 0)
         })
+        $('#addCustomer').on('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.stopPropagation();
+            }
+        })
         $('#addCustomer .close').on('click', function() {
             modalHide('#addCustomer')
         })

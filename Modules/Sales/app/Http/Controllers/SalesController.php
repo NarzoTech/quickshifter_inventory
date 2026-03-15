@@ -135,6 +135,75 @@ class SalesController extends Controller
         return view('sales::index', compact('sales', 'title', 'data', 'products', 'customers', 'advanceOffsets'));
     }
 
+    public function serviceSales()
+    {
+        checkAdminHasPermissionAndThrowException('sales.view');
+        $sales = $this->saleService->getSales();
+
+        // Only sales that contain services
+        $sales = $sales->whereHas('services');
+
+        if (request()->keyword !== null) {
+            $sales = $sales->where(function ($query) {
+                $query->whereHas('customer', function ($q) {
+                    $q->where('name', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('email', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('phone', 'like', '%' . request()->keyword . '%')
+                        ->orWhere('address', 'like', '%' . request()->keyword . '%');
+                })->orWhere('invoice', 'like', '%' . request()->keyword . '%');
+            });
+        }
+
+        // Filter by service
+        if (request()->service_id) {
+            $sales = $sales->whereHas('services', function ($q) {
+                $q->where('service_id', request('service_id'));
+            });
+        }
+
+        // Filter by customer
+        if (request()->customer) {
+            $sales = $sales->where('customer_id', request('customer'));
+        }
+
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
+        $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
+
+        if (request('from_date') || request('to_date')) {
+            $sales = $sales->whereBetween('order_date', [$fromDate, $toDate]);
+        }
+
+        $sort = request()->order_by ? request()->order_by : 'desc';
+        $sales = $sales->orderBy('order_date', $sort)->orderBy('invoice', $sort);
+
+        $data['service_amount'] = 0;
+        $data['service_qty'] = 0;
+
+        foreach ($sales->get() as $sale) {
+            foreach ($sale->services as $serviceSale) {
+                $data['service_amount'] += $serviceSale->sub_total;
+                $data['service_qty'] += $serviceSale->quantity;
+            }
+        }
+
+        if (request('par-page')) {
+            $parpage = request('par-page') == 'all' ? null : request('par-page');
+        } else {
+            $parpage = 20;
+        }
+        if ($parpage === null) {
+            $sales = $sales->get();
+        } else {
+            $sales = $sales->paginate($parpage);
+            $sales->appends(request()->query());
+        }
+
+        $title = 'Service Sales List';
+        $servicesList = \Modules\Service\app\Models\Service::where('status', 1)->orderBy('name', 'asc')->get();
+        $customers = User::where('status', 1)->orderBy('name', 'asc')->get();
+        return view('sales::service-sales', compact('sales', 'title', 'data', 'servicesList', 'customers'));
+    }
+
     /**
      * Show the specified resource.
      */
