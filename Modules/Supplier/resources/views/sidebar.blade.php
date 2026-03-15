@@ -1,6 +1,7 @@
 @if (checkAdminHasPermission('supplier.view') ||
         checkAdminHasPermission('supplier.group') ||
-        checkAdminHasPermission('supplier.due.pay.list'))
+        checkAdminHasPermission('supplier.due.pay.list') ||
+        checkAdminHasPermission('supplier.advance'))
     <li
         class="menu-item {{ isRoute(['admin.suppliers.*', 'admin.supplierGroup*', 'admin.supplier*']) ? 'active open' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -21,6 +22,13 @@
                 <li class="menu-item {{ isRoute('admin.suppliers.due-pay-history', 'active') }}">
                     <a href="{{ route('admin.suppliers.due-pay-history') }}" class="menu-link">
                         <div class="text-truncate" data-i18n="Without navbar">{{ __('Supplier Due Paid List') }}</div>
+                    </a>
+                </li>
+            @endadminCan
+            @adminCan('supplier.advance')
+                <li class="menu-item {{ isRoute('admin.suppliers.advance.list', 'active') }}">
+                    <a href="{{ route('admin.suppliers.advance.list') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="Supplier Advance List">{{ __('Supplier Advance List') }}</div>
                     </a>
                 </li>
             @endadminCan

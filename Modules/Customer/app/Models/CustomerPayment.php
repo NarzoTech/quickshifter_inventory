@@ -3,6 +3,7 @@
 namespace Modules\Customer\app\Models;
 
 use App\Models\Admin;
+use App\Models\Ledger;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,7 +33,8 @@ class CustomerPayment extends Model
         'note',
         'created_by',
         'updated_by',
-        'sale_return_id'
+        'sale_return_id',
+        'ledger_id'
     ];
 
     public function sale()
@@ -48,6 +50,11 @@ class CustomerPayment extends Model
     public function account()
     {
         return $this->belongsTo(Account::class, 'account_id')->withDefault();
+    }
+
+    public function ledger()
+    {
+        return $this->belongsTo(Ledger::class, 'ledger_id', 'id')->withDefault();
     }
 
     public function createdBy()

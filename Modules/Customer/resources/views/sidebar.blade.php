@@ -1,10 +1,11 @@
 @if (checkAdminHasPermission('customer.view') ||
         checkAdminHasPermission('customer.due.receive.list') ||
+        checkAdminHasPermission('customer.advance') ||
         checkAdminHasPermission('customer.group.view') ||
         checkAdminHasPermission('customer.vehicle.view') ||
         checkAdminHasPermission('customer.area.view'))
     <li
-        class="menu-item {{ isRoute(['admin.customers.*', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list'], 'active open') }}">
+        class="menu-item {{ isRoute(['admin.customers.*', 'admin.vehicle.index', 'admin.area.index', 'admin.customerGroup.index', 'admin.customers.due-receive.list', 'admin.customers.advance.list'], 'active open') }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class='menu-icon tf-icons bx bx-user'></i>
             <div class="text-truncate" data-i18n="{{ __('Manage Customer') }}">{{ __('Manage Customer') }}</div>
@@ -22,6 +23,14 @@
                 <li class="menu-item {{ isRoute('admin.customers.due-receive.list', 'active') }}">
                     <a href="{{ route('admin.customers.due-receive.list') }}" class="menu-link">
                         <div class="text-truncate" data-i18n="{{ __('Due Receive List') }}">{{ __('Due Receive List') }}
+                        </div>
+                    </a>
+                </li>
+            @endadminCan
+            @adminCan('customer.advance')
+                <li class="menu-item {{ isRoute('admin.customers.advance.list', 'active') }}">
+                    <a href="{{ route('admin.customers.advance.list') }}" class="menu-link">
+                        <div class="text-truncate" data-i18n="{{ __('Advance List') }}">{{ __('Advance List') }}
                         </div>
                     </a>
                 </li>

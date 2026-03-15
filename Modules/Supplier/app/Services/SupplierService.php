@@ -234,6 +234,52 @@ class SupplierService
         }
     }
 
+    public function advanceList()
+    {
+        $list = SupplierPayment::query();
+
+        $list = $list->with('supplier', 'createdBy')
+            ->whereIn('payment_type', ['advance_pay', 'advance_refund'])
+            ->where('amount', '>', 0);
+
+        // Date filtering
+        if (request()->from_date && request()->to_date) {
+            $fromDate = \Carbon\Carbon::parse(request()->from_date)->startOfDay();
+            $toDate = \Carbon\Carbon::parse(request()->to_date)->endOfDay();
+            $list = $list->whereBetween('payment_date', [$fromDate, $toDate]);
+        }
+
+        // Keyword search
+        if (request()->keyword) {
+            $keyword = '%' . request()->keyword . '%';
+            $list = $list->where(function ($q) use ($keyword) {
+                $q->where('note', 'like', $keyword)
+                    ->orWhere('amount', 'like', $keyword)
+                    ->orWhere('invoice', 'like', $keyword)
+                    ->orWhere('account_type', 'like', $keyword)
+                    ->orWhereHas('supplier', function ($query) use ($keyword) {
+                        $query->where('name', 'like', $keyword)
+                            ->orWhere('phone', 'like', $keyword)
+                            ->orWhere('address', 'like', $keyword)
+                            ->orWhere('email', 'like', $keyword);
+                    });
+            });
+        }
+
+        // Filter by payment type
+        if (request()->filled('payment_type')) {
+            $list = $list->where('payment_type', request()->payment_type);
+        }
+
+        if (request()->order_by) {
+            $list = $list->orderBy('payment_date', request()->order_by);
+        } else {
+            $list = $list->orderBy('payment_date', 'desc');
+        }
+
+        return $list;
+    }
+
     public function duePayHistory()
     {
         $list = SupplierPayment::query();

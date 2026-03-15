@@ -243,6 +243,26 @@ class SupplierController extends Controller
         }
     }
 
+    public function advanceList()
+    {
+        checkAdminHasPermissionAndThrowException('supplier.advance');
+        $payments = $this->supplierService->advanceList();
+
+        $data['total_pay'] = (clone $payments)->where('payment_type', 'advance_pay')->sum('amount');
+        $data['total_refund'] = (clone $payments)->where('payment_type', 'advance_refund')->sum('amount');
+        $data['total'] = $data['total_pay'] - $data['total_refund'];
+
+        if (request('par-page') === 'all') {
+            $payments = $payments->get();
+        } else {
+            $perPage = request('par-page') ? (int) request('par-page') : 20;
+            $payments = $payments->paginate($perPage);
+            $payments->appends(request()->query());
+        }
+
+        return view('supplier::advance-list', compact('payments', 'data'));
+    }
+
     public function duePayHistory()
     {
         checkAdminHasPermissionAndThrowException('supplier.due.pay.list');
@@ -384,17 +404,6 @@ class SupplierController extends Controller
             'balance' => $balanceBeforeFromDate + $allLedgers->sum('due_amount'),
         ];
 
-        // Paginate for display
-        $perPage = 20;
-        $ledgers = $baseQuery->paginate($perPage);
-        $ledgers->appends(request()->query());
-
-        // Calculate opening balance for current page
-        $currentPage = $ledgers->currentPage();
-        $skipCount = ($currentPage - 1) * $perPage;
-        $previousDueSum = $allLedgers->take($skipCount)->sum('due_amount');
-        $openingBalance = $balanceBeforeFromDate + $previousDueSum;
-
         $title = __('Supplier Ledger');
 
         if (request('export')) {
@@ -405,6 +414,28 @@ class SupplierController extends Controller
         if (request('export_pdf')) {
             return view('supplier::pdf.ledger', ['ledgers' => $allLedgers, 'title' => $title, 'openingBalance' => $balanceBeforeFromDate]);
         }
+
+        // Paginate for display
+        $perPage = 20;
+        if (request('par-page') === 'all') {
+            $ledgers = $baseQuery->get();
+            $openingBalance = $balanceBeforeFromDate;
+            return view('supplier::ledger', compact('ledgers', 'title', 'openingBalance', 'totals'));
+        }
+
+        if (request('par-page')) {
+            $perPage = (int) request('par-page');
+        }
+
+        $ledgers = $baseQuery->paginate($perPage);
+        $ledgers->appends(request()->query());
+
+        // Calculate opening balance for current page
+        $currentPage = $ledgers->currentPage();
+        $skipCount = ($currentPage - 1) * $perPage;
+        $previousDueSum = $allLedgers->take($skipCount)->sum('due_amount');
+        $openingBalance = $balanceBeforeFromDate + $previousDueSum;
+
         return view('supplier::ledger', compact('ledgers', 'title', 'openingBalance', 'totals'));
     }
 

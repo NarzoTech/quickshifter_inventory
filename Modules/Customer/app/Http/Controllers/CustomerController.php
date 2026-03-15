@@ -555,6 +555,66 @@ class CustomerController extends Controller
         return view('customer::due-list', compact('payments', 'data'));
     }
 
+    public function advanceList()
+    {
+        checkAdminHasPermissionAndThrowException('customer.advance');
+
+        $payments = CustomerPayment::whereIn('payment_type', ['advance_receive', 'advance_refund'])->where('amount', '>', 0);
+
+        // Date filtering
+        if (request()->from_date && request()->to_date) {
+            $fromDate = \Carbon\Carbon::parse(request()->from_date)->startOfDay();
+            $toDate = \Carbon\Carbon::parse(request()->to_date)->endOfDay();
+            $payments = $payments->whereBetween('payment_date', [$fromDate, $toDate]);
+        }
+
+        // Keyword search
+        if (request()->keyword) {
+            $keyword = '%' . request()->keyword . '%';
+            $payments = $payments->where(function ($q) use ($keyword) {
+                $q->where('note', 'like', $keyword)
+                    ->orWhere('amount', 'like', $keyword)
+                    ->orWhere('invoice', 'like', $keyword)
+                    ->orWhere('account_type', 'like', $keyword)
+                    ->orWhereHas('customer', function ($query) use ($keyword) {
+                        $query->where('name', 'like', $keyword)
+                            ->orWhere('phone', 'like', $keyword)
+                            ->orWhere('address', 'like', $keyword)
+                            ->orWhere('email', 'like', $keyword);
+                    });
+            });
+        }
+
+        // Filter by payment type
+        if (request()->filled('payment_type')) {
+            $payments = $payments->where('payment_type', request()->payment_type);
+        }
+
+        if (request()->filled('customer')) {
+            $payments = $payments->where('customer_id', request()->customer);
+        }
+
+        if (request()->order_by) {
+            $payments = $payments->orderBy('payment_date', request()->order_by);
+        } else {
+            $payments = $payments->orderBy('payment_date', 'desc');
+        }
+
+        $data['total_receive'] = (clone $payments)->where('payment_type', 'advance_receive')->sum('amount');
+        $data['total_refund'] = (clone $payments)->where('payment_type', 'advance_refund')->sum('amount');
+        $data['total'] = $data['total_receive'] - $data['total_refund'];
+
+        if (request('par-page') === 'all') {
+            $payments = $payments->get();
+        } else {
+            $perPage = request('par-page') ? (int) request('par-page') : 20;
+            $payments = $payments->paginate($perPage);
+            $payments->appends(request()->query());
+        }
+
+        return view('customer::advance-list', compact('payments', 'data'));
+    }
+
     public function dueReceiveEdit($id)
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive.edit');
@@ -842,23 +902,6 @@ class CustomerController extends Controller
             $account = Account::find($account);
         }
 
-        // create payment data
-        // advance_receive: is_paid=0, is_received=1 (receiving money from customer)
-        // advance_refund: is_paid=1, is_received=0 (paying money back to customer)
-        CustomerPayment::create([
-            'customer_id'  => $id,
-            'account_id'   => $account->id,
-            'payment_type' => $request->refund_amount != null ? 'advance_refund' : 'advance_receive',
-            'is_paid'      => $request->refund_amount != null ? 1 : 0,
-            'is_received'  => $request->refund_amount != null ? 0 : 1,
-            'amount'       => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
-            'account_type' => accountList()[$account->account_type],
-            'note'         => $request->note,
-            'created_by'   => auth('admin')->user()->id,
-            'payment_date' => Carbon::createFromFormat('d-m-Y', $request->date),
-            'invoice'      => $this->genInvoiceNumber($request->date),
-        ]);
-
         // create ledger
 
         $ledger               = new Ledger();
@@ -883,6 +926,24 @@ class CustomerController extends Controller
 
         $ledger->invoice_url = route('admin.customers.ledger-details', $ledger->id);
         $ledger->save();
+
+        // create payment data
+        // advance_receive: is_paid=0, is_received=1 (receiving money from customer)
+        // advance_refund: is_paid=1, is_received=0 (paying money back to customer)
+        CustomerPayment::create([
+            'customer_id'  => $id,
+            'account_id'   => $account->id,
+            'payment_type' => $request->refund_amount != null ? 'advance_refund' : 'advance_receive',
+            'is_paid'      => $request->refund_amount != null ? 1 : 0,
+            'is_received'  => $request->refund_amount != null ? 0 : 1,
+            'amount'       => $request->refund_amount != null ? $request->refund_amount : $request->paying_amount,
+            'account_type' => accountList()[$account->account_type],
+            'note'         => $request->note,
+            'created_by'   => auth('admin')->user()->id,
+            'payment_date' => Carbon::createFromFormat('d-m-Y', $request->date),
+            'invoice'      => $this->genInvoiceNumber($request->date),
+            'ledger_id'    => $ledger->id,
+        ]);
     }
 
     public function genInvoiceNumber($date = null)
@@ -945,17 +1006,6 @@ class CustomerController extends Controller
             'balance' => $balanceBeforeFromDate + $allLedgers->sum('due_amount'),
         ];
 
-        // Paginate for display
-        $perPage = 20;
-        $ledgers = $baseQuery->paginate($perPage);
-        $ledgers->appends(request()->query());
-
-        // Calculate opening balance for current page
-        $currentPage = $ledgers->currentPage();
-        $skipCount = ($currentPage - 1) * $perPage;
-        $previousDueSum = $allLedgers->take($skipCount)->sum('due_amount');
-        $openingBalance = $balanceBeforeFromDate + $previousDueSum;
-
         $title = __('Customer Ledger');
 
         if (request('export')) {
@@ -965,6 +1015,28 @@ class CustomerController extends Controller
         if (request('export_pdf')) {
             return view('supplier::pdf.ledger', ['ledgers' => $allLedgers, 'title' => $title, 'openingBalance' => $balanceBeforeFromDate]);
         }
+
+        // Paginate for display
+        $perPage = 20;
+        if (request('par-page') === 'all') {
+            $ledgers = $baseQuery->get();
+            $openingBalance = $balanceBeforeFromDate;
+            return view('supplier::ledger', compact('ledgers', 'title', 'openingBalance', 'totals'));
+        }
+
+        if (request('par-page')) {
+            $perPage = (int) request('par-page');
+        }
+
+        $ledgers = $baseQuery->paginate($perPage);
+        $ledgers->appends(request()->query());
+
+        // Calculate opening balance for current page
+        $currentPage = $ledgers->currentPage();
+        $skipCount = ($currentPage - 1) * $perPage;
+        $previousDueSum = $allLedgers->take($skipCount)->sum('due_amount');
+        $openingBalance = $balanceBeforeFromDate + $previousDueSum;
+
         return view('supplier::ledger', compact('ledgers', 'title', 'openingBalance', 'totals'));
     }
 
