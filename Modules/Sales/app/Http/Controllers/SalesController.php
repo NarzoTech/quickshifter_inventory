@@ -74,6 +74,7 @@ class SalesController extends Controller
         $sales = $sales->orderBy('order_date', $sort)->orderBy('invoice', $sort);
 
         $data['sale_amount'] = 0;
+        $data['discount_amount'] = 0;
         $data['total_amount'] = 0;
         $data['paid_amount'] = 0;
         $data['due_amount'] = 0;
@@ -95,6 +96,7 @@ class SalesController extends Controller
 
             $returnDue = $sale->saleReturns->sum('return_due');
             $data['sale_amount'] += $sale->total_price;
+            $data['discount_amount'] += $sale->discount_amount;
             $data['total_amount'] += $sale->grand_total;
             $data['paid_amount'] += $sale->paid_amount + $offset;
             $data['due_amount'] += $sale->due_amount - $offset - $returnDue;

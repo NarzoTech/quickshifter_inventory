@@ -134,6 +134,7 @@
                             <th>{{ __('Customer') }}</th>
                             <th>{{ __('Remark') }}</th>
                             <th>{{ __('Sale Amount') }}</th>
+                            <th>{{ __('Discount') }}</th>
                             <th>{{ __('Total Amount') }}</th>
                             <th>{{ __('Paid Amount') }}</th>
                             <th>{{ __('Due') }}</th>
@@ -150,6 +151,7 @@
                                 <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                 <td>{{ $sale->sale_note }}</td>
                                 <td>{{ $sale->total_price }}</td>
+                                <td>{{ $sale->discount_amount }}</td>
                                 <td>{{ $sale->grand_total }}</td>
                                 @php
                                     $offset = $advanceOffsets[$sale->id] ?? 0;
@@ -214,6 +216,9 @@
                             </td>
                             <td colspan="1">
                                 <b>{{ currency($data['sale_amount']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['discount_amount']) }}</b>
                             </td>
                             <td colspan="1">
                                 <b>{{ currency($data['total_amount']) }}</b>
