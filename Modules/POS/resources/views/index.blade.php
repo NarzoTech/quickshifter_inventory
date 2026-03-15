@@ -333,7 +333,7 @@
                                                             </option>
                                                             <option value="2">{{ __('Percentage') }} (%)</option>
                                                         </select>
-                                                        <input type="number" onchange="discountExist()"
+                                                        <input type="number" oninput="discountExist()"
                                                             id="discount_total_amount" value="0" step="0.1"
                                                             name="discount_total_amount" autocomplete="off" autofocus>
                                                     </div>
@@ -1554,17 +1554,18 @@
         }
 
         function discountExist() {
-            let discount_total_amount = $('#discount_total_amount').val()
+            let discount_total_amount = parseFloat($('#discount_total_amount').val()) || 0
             let discount_type = $('#discount_type').val()
             let total_amount_get_text = Number($('#total').text().replace(/[^0-9.]/g, ''))
             let vat_amount = Number($('#ttax2').text())
             let totalAmount = 0
-            let percentage = null
+            let discountDisplay = 0
 
             if (discount_type == 1) {
                 if (discount_total_amount > total_amount_get_text) {
                     discount_total_amount = total_amount_get_text
                 }
+                discountDisplay = discount_total_amount
                 totalAmount = numberFormat(
                     Number(total_amount_get_text - discount_total_amount).toFixed(6)
                 )
@@ -1572,18 +1573,14 @@
                 if (discount_total_amount > 100) {
                     discount_total_amount = 100
                 }
-                percentage = (discount_total_amount * total_amount_get_text) / 100
-                totalAmount = total_amount_get_text - percentage
+                discountDisplay = (discount_total_amount * total_amount_get_text) / 100
+                totalAmount = total_amount_get_text - discountDisplay
             }
 
 
-            $('#tds').text(percentage ? percentage : discount_total_amount)
-            $('input[name=discount_amount]').val(
-                percentage ? percentage : discount_total_amount
-            )
-            $('#discount_amountModal').text(
-                percentage ? percentage : discount_total_amount
-            )
+            $('#tds').text(discountDisplay)
+            $('input[name=discount_amount]').val(discountDisplay)
+            $('#discount_amountModal').text(discountDisplay)
             vat_amount = 0
             let grand_total = numberFormat(
                 // Number(exchange_total)
@@ -1807,7 +1804,13 @@
                 discountAmount = total * parseFloat(discount) / 100
             } else {
                 discountAmount = parseFloat(discount)
+                if (discountAmount > total) {
+                    discountAmount = total
+                }
             }
+
+            $('#tds').text(discountAmount)
+            $('input[name=discount_amount]').val(discountAmount)
 
             // total after discount = total - discount
 
