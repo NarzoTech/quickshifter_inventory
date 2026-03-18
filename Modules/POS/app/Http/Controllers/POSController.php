@@ -446,6 +446,12 @@ class POSController extends Controller
             ])->validate();
 
             $user = User::find($request->order_customer_id);
+            if (!$user) {
+                return response()->json([
+                    'message' => trans('Customer not found'),
+                    'alert-type' => 'error',
+                ], 422);
+            }
         }
 
         // Prevent due sales for walk-in/guest customers

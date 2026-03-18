@@ -166,11 +166,11 @@ class SaleService
         }
 
 
-        // create due
-        if ($request->total_due && $user) {
+        // create due — use server-calculated due_amount, not frontend value
+        if ($sale->due_amount > 0 && $user) {
             CustomerDue::create([
                 'invoice' => $sale->invoice,
-                'due_amount' => $request->total_due,
+                'due_amount' => $sale->due_amount,
                 'due_date' => $request->due_date ? $this->parseDate($request->due_date) : $sale->order_date,
                 'status' => 1,
                 'customer_id' => $user->id
@@ -328,30 +328,33 @@ class SaleService
             $sale->quantity = $totalQty;
             $sale->save();
 
-            // Find existing ledger using OLD invoice number
-            $ledger = Ledger::where('customer_id', $request->order_customer_id)
-                ->where('invoice_type', 'sale')
-                ->where('invoice_no', $oldInvoice)
-                ->where('is_received', 1)
-                ->first();
+            // Ledger and advance deduct entries only for real customers
+            if ($user) {
+                // Find existing ledger using OLD invoice number
+                $ledger = Ledger::where('customer_id', $request->order_customer_id)
+                    ->where('invoice_type', 'sale')
+                    ->where('invoice_no', $oldInvoice)
+                    ->where('is_received', 1)
+                    ->first();
 
-            // Calculate cash-only paid (exclude advance) for ledger display
-            $cashPaid = 0;
-            foreach ($request->payment_type as $key => $type) {
-                if ($type !== 'advance') {
-                    $cashPaid += $request->paying_amount[$key];
+                // Calculate cash-only paid (exclude advance) for ledger display
+                $cashPaid = 0;
+                foreach ($request->payment_type as $key => $type) {
+                    if ($type !== 'advance') {
+                        $cashPaid += $request->paying_amount[$key];
+                    }
                 }
+                $cashDue = $request->total_amount - $cashPaid;
+                $cashDue = $cashDue < 0 ? 0 : $cashDue;
+
+                $this->salesLedger($request, $sale, $cashPaid, $request->total_amount, 'sale', 1, $cashDue, $ledger);
+
+                // Delete old advance deduct ledger entries using OLD invoice number
+                Ledger::where('invoice_type', 'Advance Deduct')
+                    ->where('invoice_no', $oldInvoice)
+                    ->where('customer_id', $request->order_customer_id)
+                    ->delete();
             }
-            $cashDue = $request->total_amount - $cashPaid;
-            $cashDue = $cashDue < 0 ? 0 : $cashDue;
-
-            $this->salesLedger($request, $sale, $cashPaid, $request->total_amount, 'sale', 1, $cashDue, $ledger);
-
-            // Delete old advance deduct ledger entries using OLD invoice number
-            Ledger::where('invoice_type', 'Advance Deduct')
-                ->where('invoice_no', $oldInvoice)
-                ->where('customer_id', $request->order_customer_id)
-                ->delete();
 
             // create payments
             foreach ($request->payment_type as $key => $item) {
@@ -385,11 +388,11 @@ class SaleService
             }
 
 
-            // create due
-            if ($request->total_due && $user) {
+            // create due — use server-calculated due_amount, not frontend value
+            if ($sale->due_amount > 0 && $user) {
                 CustomerDue::create([
                     'invoice' => $sale->invoice,
-                    'due_amount' => $request->total_due,
+                    'due_amount' => $sale->due_amount,
                     'due_date' => $request->due_date ? $this->parseDate($request->due_date) : $sale->order_date,
                     'status' => 1,
                     'customer_id' => $user->id
