@@ -134,7 +134,7 @@
                                                         {{ currency($due->sale->grand_total ?? 0) }}
                                                     </td>
                                                     @php
-                                                        $remainingDue = $due->due_amount + $due->paid_amount;
+                                                        $remainingDue = $due->due_amount;
                                                         $totalDue += $remainingDue;
                                                     @endphp
                                                     <td>

@@ -448,6 +448,17 @@ class POSController extends Controller
             $user = User::find($request->order_customer_id);
         }
 
+        // Prevent due sales for walk-in/guest customers
+        if ($request->order_customer_id == 'walk-in-customer') {
+            $totalPaid = array_sum($request->paying_amount ?? []);
+            $totalAmount = floatval($request->total_amount ?? 0);
+            if ($totalPaid < $totalAmount) {
+                return response()->json([
+                    'message' => trans("Can't Make Due Sale for Guest Customer"),
+                    'alert-type' => 'error',
+                ], 422);
+            }
+        }
 
         DB::beginTransaction();
         try {
