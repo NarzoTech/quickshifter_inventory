@@ -425,9 +425,17 @@ class CustomerController extends Controller
 
                     $sale = Sale::findOrFail($saleId);
 
-                    $sale->payment_status = $sale->due_amount == $paymentAmount ? 'paid' : 'due';
+                    // Cap payment at remaining due — prevent overpayment
+                    $maxPayable = max(0, $sale->grand_total - $sale->paid_amount);
+                    $paymentAmount = min($paymentAmount, $maxPayable);
+
+                    if ($paymentAmount <= 0) {
+                        continue; // already fully paid
+                    }
+
                     $sale->paid_amount = $sale->paid_amount + $paymentAmount;
-                    $sale->due_amount  = $sale->due_amount - $paymentAmount;
+                    $sale->due_amount  = max(0, $sale->grand_total - $sale->paid_amount);
+                    $sale->payment_status = $sale->due_amount == 0 ? 'paid' : 'due';
                     $sale->save();
 
                     // Create payment data
@@ -446,7 +454,7 @@ class CustomerController extends Controller
                     // Update customer due record
                     $due = CustomerDue::where('invoice', $sale->invoice)->first();
                     if ($due) {
-                        $due->due_amount  = $due->due_amount - $paymentAmount;
+                        $due->due_amount  = max(0, $due->due_amount - $paymentAmount);
                         $due->paid_amount = $due->paid_amount + $paymentAmount;
                         $due->save();
                     }

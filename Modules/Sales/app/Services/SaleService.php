@@ -47,12 +47,50 @@ class SaleService
         }
     }
 
+    /**
+     * Recalculate sale totals server-side from cart items.
+     * Never trust frontend-calculated values for sub_total, grand_total, paid, or due.
+     */
+    private function recalculateTotals(array $cart, Request $request): array
+    {
+        // 1. Recalculate sub_total from cart items
+        $subTotal = 0;
+        foreach ($cart as $item) {
+            $subTotal += round((float) $item['price'] * (float) $item['qty'], 2);
+        }
+
+        // 2. Discount and tax are user-specified policy values
+        $discount = (float) ($request->discount_amount ?? 0);
+        $totalTax = (float) ($request->total_tax ?? 0);
+
+        // 3. Recalculate grand total
+        $grandTotal = round($subTotal - $discount + $totalTax, 2);
+        $grandTotal = max(0, $grandTotal);
+
+        // 4. Sum payments, cap at grand total
+        $rawPaid = array_sum($request->paying_amount ?? []);
+        $paidAmount = min($rawPaid, $grandTotal);
+
+        // 5. Due = grand_total - paid, floored at 0
+        $dueAmount = max(0, round($grandTotal - $paidAmount, 2));
+
+        return [
+            'sub_total'   => $subTotal,
+            'grand_total' => $grandTotal,
+            'discount'    => $discount,
+            'total_tax'   => $totalTax,
+            'paid_amount' => $paidAmount,
+            'due_amount'  => $dueAmount,
+        ];
+    }
+
     public function getSales()
     {
         return $this->sale->with('products', 'customer.payment', 'services', 'details', 'payment', 'saleReturns');
     }
     public function createSale(Request $request, $user, $cart): Sale
     {
+        $totals = $this->recalculateTotals($cart, $request);
 
         $sale = new Sale();
         $sale->user_id = $user != null ?  $user->id : null;
@@ -60,22 +98,21 @@ class SaleService
         $sale->customer_id = $request->order_customer_id;
         $sale->warehouse_id = 1;
         $sale->quantity = 1;
-        $sale->total_price = $request->sub_total;
+        $sale->total_price = $totals['sub_total'];
         $sale->order_date = $this->parseDate($request->sale_date);
         $sale->status = 1;
         $sale->payment_status = 1;
 
         $sale->payment_method = json_encode($request->payment_type);
-        $sale->order_discount = $request->discount_amount;
-        $sale->total_tax = $request->total_tax ?? 0;
-        $sale->grand_total = $request->total_amount;
+        $sale->order_discount = $totals['discount'];
+        $sale->total_tax = $totals['total_tax'];
+        $sale->grand_total = $totals['grand_total'];
         $sale->invoice = $this->genInvoiceNumber($request->sale_date);
 
-        $sale->paid_amount = array_sum($request->paying_amount);
+        $sale->paid_amount = $totals['paid_amount'];
         $sale->receive_amount = $request->receive_amount;
         $sale->return_amount = $request->return_amount;
-        $due = $request->total_amount - array_sum($request->paying_amount);
-        $sale->due_amount = $due < 0 ? 0 : $due;
+        $sale->due_amount = $totals['due_amount'];
         $sale->due_date = $request->due_date ? $this->parseDate($request->due_date) : null;
         $sale->sale_note = $request->remark;
         $sale->created_by = auth('admin')->id();
@@ -99,7 +136,7 @@ class SaleService
             $orderDetails->purchase_price = $item['purchase_price'];
             $orderDetails->selling_price = $item['selling_price'];
             $orderDetails->quantity = $item['qty'];
-            $orderDetails->sub_total = $item['sub_total'];
+            $orderDetails->sub_total = round((float) $item['price'] * (float) $item['qty'], 2);
             $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
             $orderDetails->save();
 
@@ -188,10 +225,10 @@ class SaleService
                     $cashPaid += $request->paying_amount[$key];
                 }
             }
-            $cashDue = $request->total_amount - $cashPaid;
-            $cashDue = $cashDue < 0 ? 0 : $cashDue;
+            $cashPaid = min($cashPaid, $totals['grand_total']);
+            $cashDue = max(0, $totals['grand_total'] - $cashPaid);
 
-            $this->salesLedger($request, $sale, $cashPaid, $request->total_amount, 'sale', 1, $cashDue);
+            $this->salesLedger($request, $sale, $cashPaid, $totals['grand_total'], 'sale', 1, $cashDue);
 
             // Create advance deduct ledger entries to offset advance credit
             foreach ($request->payment_type as $key => $item) {
@@ -236,24 +273,24 @@ class SaleService
                     ->update(['invoice' => $sale->invoice]);
             }
 
-            // update sales
+            // update sales — recalculate totals server-side
+            $totals = $this->recalculateTotals($cart, $request);
+
             $sale->user_id = $user != null ?  $user->id : null;
             $sale->customer_id = $request->order_customer_id;
             $sale->warehouse_id = 1;
-            $sale->total_price = $request->sub_total;
+            $sale->total_price = $totals['sub_total'];
             $sale->order_date = $newDate;
             $sale->status = 1;
             $sale->payment_status = 1;
 
             $sale->payment_method = json_encode($request->payment_type);
-            $sale->order_discount = $request->discount_amount;
-            $sale->total_tax = $request->total_tax ?? 0;
-            $sale->grand_total = $request->total_amount;
-            $sale->paid_amount = array_sum($request->paying_amount);
+            $sale->order_discount = $totals['discount'];
+            $sale->total_tax = $totals['total_tax'];
+            $sale->grand_total = $totals['grand_total'];
+            $sale->paid_amount = $totals['paid_amount'];
 
-
-            $due = $request->total_amount - array_sum($request->paying_amount);
-            $sale->due_amount = $due < 0 ? 0 : $due;
+            $sale->due_amount = $totals['due_amount'];
             $sale->due_date = $request->due_date ? $this->parseDate($request->due_date) : null;
             $sale->sale_note = $request->remark;
             $sale->receive_amount = $request->receive_amount;
@@ -294,7 +331,7 @@ class SaleService
                 $orderDetails->purchase_price = $item['purchase_price'];
                 $orderDetails->selling_price = $item['selling_price'];
                 $orderDetails->quantity = $item['qty'];
-                $orderDetails->sub_total = $item['sub_total'];
+                $orderDetails->sub_total = round((float) $item['price'] * (float) $item['qty'], 2);
                 $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
                 $orderDetails->save();
 
@@ -344,10 +381,10 @@ class SaleService
                         $cashPaid += $request->paying_amount[$key];
                     }
                 }
-                $cashDue = $request->total_amount - $cashPaid;
-                $cashDue = $cashDue < 0 ? 0 : $cashDue;
+                $cashPaid = min($cashPaid, $totals['grand_total']);
+                $cashDue = max(0, $totals['grand_total'] - $cashPaid);
 
-                $this->salesLedger($request, $sale, $cashPaid, $request->total_amount, 'sale', 1, $cashDue, $ledger);
+                $this->salesLedger($request, $sale, $cashPaid, $totals['grand_total'], 'sale', 1, $cashDue, $ledger);
 
                 // Delete old advance deduct ledger entries using OLD invoice number
                 Ledger::where('invoice_type', 'Advance Deduct')
