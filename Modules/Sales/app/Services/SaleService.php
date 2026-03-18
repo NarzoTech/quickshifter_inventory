@@ -70,6 +70,7 @@ class SaleService
         // 4. Sum payments, cap at grand total
         $rawPaid = array_sum($request->paying_amount ?? []);
         $paidAmount = min($rawPaid, $grandTotal);
+        $excess = max(0, round($rawPaid - $grandTotal, 2));
 
         // 5. Due = grand_total - paid, floored at 0
         $dueAmount = max(0, round($grandTotal - $paidAmount, 2));
@@ -81,7 +82,124 @@ class SaleService
             'total_tax'   => $totalTax,
             'paid_amount' => $paidAmount,
             'due_amount'  => $dueAmount,
+            'excess'      => $excess,
         ];
+    }
+
+    /**
+     * Handle excess payment: apply to customer's outstanding dues first, then create advance.
+     * For guest customers, excess is ignored (treated as change).
+     */
+    private function handleExcessPayment(float $excess, $user, Sale $sale, Request $request, string $accountId): void
+    {
+        if ($excess <= 0 || !$user) {
+            return;
+        }
+
+        $remaining = $excess;
+        $saleDate = $this->parseDate($request->sale_date);
+
+        // 1. Apply excess to customer's outstanding dues (oldest first)
+        $outstandingDues = CustomerDue::where('customer_id', $user->id)
+            ->where('due_amount', '>', 0)
+            ->where('invoice', '!=', $sale->invoice) // exclude current sale
+            ->orderBy('due_date')
+            ->get();
+
+        foreach ($outstandingDues as $due) {
+            if ($remaining <= 0) break;
+
+            $apply = min($remaining, $due->due_amount);
+
+            // Update customer_due
+            $due->due_amount -= $apply;
+            $due->paid_amount += $apply;
+            $due->save();
+
+            // Update the related sale
+            $dueSale = Sale::where('invoice', $due->invoice)->first();
+            if ($dueSale) {
+                $dueSale->paid_amount += $apply;
+                $dueSale->due_amount = max(0, $dueSale->grand_total - $dueSale->paid_amount);
+                $dueSale->save();
+            }
+
+            // Create due receive payment record
+            CustomerPayment::create([
+                'sale_id'      => $dueSale ? $dueSale->id : null,
+                'customer_id'  => $user->id,
+                'account_id'   => $accountId,
+                'payment_type' => 'due_receive',
+                'is_received'  => 1,
+                'amount'       => $apply,
+                'payment_date' => $saleDate,
+                'note'         => 'Auto due receive from overpayment on ' . $sale->invoice,
+                'created_by'   => auth('admin')->user()->id,
+            ]);
+
+            // Create due receive ledger entry
+            $ledger = new Ledger();
+            $ledger->customer_id = $user->id;
+            $ledger->amount = $apply;
+            $ledger->total_amount = 0;
+            $ledger->due_amount = -$apply;
+            $ledger->invoice_type = 'Due Receive';
+            $ledger->is_received = 1;
+            $ledger->invoice_no = generateInvoiceNumber(Ledger::class, 'invoice_no', 'DRL', ['invoice_type' => 'Due Receive'], $request->sale_date);
+            $ledger->date = $saleDate;
+            $ledger->created_by = auth('admin')->user()->id;
+            $ledger->save();
+            $ledger->invoice_url = route('admin.customers.ledger-details', $ledger->id);
+            $ledger->save();
+
+            // Update the due sale's ledger entry
+            $dueLedger = Ledger::where('customer_id', $user->id)
+                ->where('invoice_type', 'sale')
+                ->where('invoice_no', $due->invoice)
+                ->first();
+            if ($dueLedger) {
+                $dueLedger->amount += $apply;
+                $dueLedger->due_amount = max(0, $dueLedger->due_amount - $apply);
+                $dueLedger->save();
+            }
+
+            $remaining -= $apply;
+        }
+
+        // 2. If still excess remaining, create advance
+        if ($remaining > 0) {
+            $account = Account::find($accountId);
+
+            // Create advance ledger
+            $ledger = new Ledger();
+            $ledger->customer_id = $user->id;
+            $ledger->amount = $remaining;
+            $ledger->total_amount = 0;
+            $ledger->due_amount = -$remaining;
+            $ledger->invoice_type = 'Advance Received';
+            $ledger->is_received = 1;
+            $ledger->invoice_no = generateInvoiceNumber(Ledger::class, 'invoice_no', 'CAL', ['invoice_type' => 'Advance Received'], $request->sale_date);
+            $ledger->note = 'Auto advance from overpayment on ' . $sale->invoice;
+            $ledger->date = $saleDate;
+            $ledger->created_by = auth('admin')->user()->id;
+            $ledger->save();
+            $ledger->invoice_url = route('admin.customers.ledger-details', $ledger->id);
+            $ledger->save();
+
+            // Create advance payment record
+            CustomerPayment::create([
+                'customer_id'  => $user->id,
+                'account_id'   => $accountId,
+                'payment_type' => 'advance_receive',
+                'is_received'  => 1,
+                'amount'       => $remaining,
+                'account_type' => $account ? accountList()[$account->account_type] ?? '' : '',
+                'note'         => 'Auto advance from overpayment on ' . $sale->invoice,
+                'created_by'   => auth('admin')->user()->id,
+                'payment_date' => $saleDate,
+                'invoice'      => generateInvoiceNumber(CustomerPayment::class, 'invoice', 'CP', [], $request->sale_date),
+            ]);
+        }
     }
 
     public function getSales()
@@ -172,6 +290,7 @@ class SaleService
 
 
         // create payments
+        $primaryAccountId = null;
         foreach ($request->payment_type as $key => $item) {
             $account = Account::where('account_type', $item);
             if ($item == 'cash' || $item == 'advance') {
@@ -181,6 +300,9 @@ class SaleService
                 }
             } else {
                 $account = $account->where('id', $request->account_id[$key])->first();
+            }
+            if (!$primaryAccountId && $item !== 'advance') {
+                $primaryAccountId = $account->id;
             }
             $customerId = $request->order_customer_id;
             $data = [
@@ -202,6 +324,10 @@ class SaleService
             }
         }
 
+        // Handle excess payment: apply to dues or create advance (skip for guests)
+        if ($totals['excess'] > 0 && $user && $primaryAccountId) {
+            $this->handleExcessPayment($totals['excess'], $user, $sale, $request, $primaryAccountId);
+        }
 
         // create due — use server-calculated due_amount, not frontend value
         if ($sale->due_amount > 0 && $user) {
@@ -394,6 +520,7 @@ class SaleService
             }
 
             // create payments
+            $primaryAccountId = null;
             foreach ($request->payment_type as $key => $item) {
                 $account = Account::where('account_type', $item);
                 if ($item == 'cash' || $item == 'advance') {
@@ -403,6 +530,9 @@ class SaleService
                     }
                 } else {
                     $account = $account->where('id', $request->account_id[$key])->first();
+                }
+                if (!$primaryAccountId && $item !== 'advance') {
+                    $primaryAccountId = $account->id;
                 }
                 $customerId = $request->order_customer_id;
                 $data = [
@@ -424,6 +554,10 @@ class SaleService
                 }
             }
 
+            // Handle excess payment: apply to dues or create advance (skip for guests)
+            if ($totals['excess'] > 0 && $user && $primaryAccountId) {
+                $this->handleExcessPayment($totals['excess'], $user, $sale, $request, $primaryAccountId);
+            }
 
             // create due — use server-calculated due_amount, not frontend value
             if ($sale->due_amount > 0 && $user) {
