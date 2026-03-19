@@ -24,6 +24,11 @@ class EmployeeSalary extends Model
         'payable_salary'
     ];
 
+    protected $casts = [
+        'date' => 'date',
+        'amount' => 'float',
+    ];
+
     public function employee()
     {
         return $this->belongsTo(Employee::class)->withDefault();

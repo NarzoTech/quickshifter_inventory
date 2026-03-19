@@ -56,7 +56,7 @@ class EmployeeService
         $data['employee_id'] = $employee->id;
         $data['date'] = $request->date ? now()->parse($request->date) : now();
         $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
-        $year = $request->date ? now()->parse($request->date)->format('Y') : now()->format('Y');
+        $year = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
         $data['month'] = $month;
         $data['year'] = $year;
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
