@@ -22,7 +22,7 @@ class EmployeeRequest extends FormRequest
             'guardian_relation' => 'nullable',
             'address' => 'nullable',
             'join_date' => 'nullable|date',
-            'salary' => 'nullable|numeric',
+            'salary' => 'required|numeric|min:0',
             'yearly_leaves' => 'nullable|numeric',
             'image' => 'nullable|image',
             'status' => 'nullable'

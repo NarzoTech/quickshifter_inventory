@@ -99,7 +99,8 @@ class Employee extends Model
         // Compare against base salary (not attendance-based payable)
         // Carry-forward only happens when employee is paid MORE than their monthly salary
         // e.g., salary=10000, paid=11000 in March → 1000 carries to April
-        $totalPayableAllPrevious = $this->salary * $totalMonths;
+        $baseSalary = $this->salary ?? 0;
+        $totalPayableAllPrevious = $baseSalary * $totalMonths;
 
         // Only carry forward overpayments (positive excess)
         $excess = $totalPaidAllPrevious - $totalPayableAllPrevious;
@@ -112,7 +113,7 @@ class Employee extends Model
     {
         $month = $month ?? now()->format('F');
         $year = $year ?? now()->format('Y');
-        return $this->salary - $this->getPaidAmountAttribute($month, $year);
+        return ($this->salary ?? 0) - $this->getPaidAmountAttribute($month, $year);
     }
 
     public function getPaidAmountAttribute($month = null, $year = null)

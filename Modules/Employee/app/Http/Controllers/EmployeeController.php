@@ -146,6 +146,18 @@ class EmployeeController extends Controller
     public function destroy($id)
     {
         checkAdminHasPermissionAndThrowException('employee.delete');
+
+        $employee = $this->employee->find($id);
+        if (!$employee) {
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Employee not found', 'alert-type' => 'error']);
+        }
+
+        // Prevent deletion if employee has salary payment records (would corrupt cashflow)
+        if ($employee->currentSalary()->count() > 0) {
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Cannot delete employee with salary records. Please deactivate instead.', 'alert-type' => 'error']);
+        }
+
+        // Attendance records will be cascade-deleted via foreign key
         $this->employee->destroy($id);
         return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Employee deleted successfully', 'alert-type' => 'success']);
     }

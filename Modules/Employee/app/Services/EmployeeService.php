@@ -244,7 +244,7 @@ class EmployeeService
 
         $totalDayOff = $totalWeekends + $totalHolidays;
 
-        $payableSalary = $employee->salary;
+        $payableSalary = $employee->salary ?? 0;
         if ($totalDays > 0 && $totalWorkingDays != $totalAttendance) {
             $payableSalary = ($payableSalary / $totalDays) * ($totalWeekends + $totalHolidays + $totalAttendance);
         }
