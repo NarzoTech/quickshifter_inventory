@@ -36,23 +36,33 @@ class EmployeeService
 
     public function update($id, array $data)
     {
-        $this->employee->find($id)->update($data);
+        $employee = $this->employee->find($id);
+        if (!$employee) {
+            throw new \Exception('Employee not found');
+        }
+        $employee->update($data);
     }
 
     public function destroy($id)
     {
-        $this->employee->find($id)->delete();
+        $employee = $this->employee->find($id);
+        if ($employee) {
+            $employee->delete();
+        }
     }
 
     public function changeStatus($id)
     {
         $employee = $this->employee->find($id);
+        if (!$employee) {
+            throw new \Exception('Employee not found');
+        }
         $employee->update(['status' => $employee->status == 1 ? 0 : 1]);
     }
 
     public function addSalary($request, $employee)
     {
-        $data = $request->except('_token');
+        $data = [];
         $data['employee_id'] = $employee->id;
         $data['date'] = $request->date ? now()->parse($request->date) : now();
         $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
@@ -85,7 +95,7 @@ class EmployeeService
 
     public function updateSalary($request, $payment)
     {
-        $data = $request->except('_token');
+        $data = [];
         $data['date'] = $request->date ? now()->parse($request->date) : now();
         $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
         $year = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
@@ -128,9 +138,12 @@ class EmployeeService
         }
 
         // get the  weekend days
-        $weekends = Cache::get('weekends');
+        $weekends = Cache::get('weekends', []);
 
         $employee = $this->employee->find($id);
+        if (!$employee) {
+            throw new \Exception('Employee not found');
+        }
         $month = $request->month ?? now()->format('F');
         $monthNumber = now()->parse($month)->month;
         $year = $request->year ?? now()->format('Y');

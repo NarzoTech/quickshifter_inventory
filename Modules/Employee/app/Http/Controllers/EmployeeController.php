@@ -91,7 +91,7 @@ class EmployeeController extends Controller
         checkAdminHasPermissionAndThrowException('employee.create');
         try {
             $data = $request->validated();
-            $data['join_date'] = now()->parse($request->join_date);
+            $data['join_date'] = $request->join_date ? now()->parse($request->join_date) : null;
             $data['yearly_leaves'] = $request->yearly_leaves ?? 0;
             if ($request->hasFile('image')) {
                 $data['image'] = file_upload($request->file('image'));
@@ -114,6 +114,9 @@ class EmployeeController extends Controller
     {
         checkAdminHasPermissionAndThrowException('employee.edit');
         $employee = $this->employee->find($id);
+        if (!$employee) {
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => 'Employee not found', 'alert-type' => 'error']);
+        }
         return view('employee::edit', compact('employee'));
     }
 
@@ -125,7 +128,7 @@ class EmployeeController extends Controller
         checkAdminHasPermissionAndThrowException('employee.edit');
         try {
             $data = $request->validated();
-            $data['join_date'] = now()->parse($request->join_date);
+            $data['join_date'] = $request->join_date ? now()->parse($request->join_date) : null;
             $data['yearly_leaves'] = $request->yearly_leaves ?? 0;
             if ($request->hasFile('image')) {
                 $data['image'] = file_upload($request->file('image'), oldFile: $this->employee->find($id)->image);

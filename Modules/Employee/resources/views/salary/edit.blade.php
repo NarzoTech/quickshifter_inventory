@@ -1,6 +1,6 @@
 @extends('admin.layouts.master')
 @section('title')
-    <title>{{ __('Create Employee') }}</title>
+    <title>{{ __('Edit Salary') }}</title>
 @endsection
 
 
@@ -35,7 +35,7 @@
                                             <div class="form-group">
                                                 <label for="salary"
                                                     class="">{{ __('Employee Monthly Salary') }}</label>
-                                                <input type="text" id="salary" name="salary"
+                                                <input type="text" id="salary"
                                                     value="{{ $employee->salary }}" class="form-control" readonly>
                                             </div>
                                         </div>

@@ -38,11 +38,10 @@ class Employee extends Model
     public function employeeSalary()
     {
         $month = request('month');
-
         $month = ($month != null && $month != '' && $month != '0') ? now()->parse($month)->format('F') : now()->format('F');
+        $year = request('year') ?? now()->format('Y');
 
-        // dd($month);
-        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id')->where('month', $month)->where('year', request('year'));
+        return $this->hasMany(EmployeeSalary::class, 'employee_id', 'id')->where('month', $month)->where('year', $year);
     }
 
     public function currentSalary()

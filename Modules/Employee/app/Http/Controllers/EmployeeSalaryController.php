@@ -50,8 +50,11 @@ class EmployeeSalaryController extends Controller
             abort(403);
         }
 
-        $accounts = $this->purchaseService->getAccounts();
         $employee = $this->employee->find($id);
+        if (!$employee) {
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['message' => 'Employee not found', 'alert-type' => 'error']);
+        }
+        $accounts = $this->purchaseService->getAccounts();
         [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary(request(), $id);
         $paidAmount = $employee->getPaidAmountAttribute();
         $carryForward = $employee->getCarryForwardAttribute();
@@ -105,6 +108,9 @@ class EmployeeSalaryController extends Controller
         checkAdminHasPermissionAndThrowException('employee.edit.salary');
         try {
             $payment = EmployeeSalary::with('account')->find($id);
+            if (!$payment) {
+                return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => 'Salary record not found', 'alert-type' => 'error']);
+            }
             $this->employee->updateSalary($request, $payment);
             return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => 'Employee salary updated successfully', 'alert-type' => 'success']);
         } catch (\Exception $ex) {
@@ -132,6 +138,9 @@ class EmployeeSalaryController extends Controller
     public function salaryInfo(Request $request, $id)
     {
         $employee = $this->employee->find($id);
+        if (!$employee) {
+            return response()->json(['error' => 'Employee not found'], 404);
+        }
 
         $amount = $employee->getPaidAmountAttribute($request->month, $request->year);
         // (,,,,) skipping destructuring
