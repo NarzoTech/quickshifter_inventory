@@ -20,6 +20,11 @@ class EmployeeService
         return $this->employee->with(['employeeSalary', 'attendance', 'currentSalary']);
     }
 
+    public function allActive()
+    {
+        return $this->employee->where('status', 1)->with(['employeeSalary', 'attendance', 'currentSalary']);
+    }
+
     public function find($id)
     {
         return $this->all()->find($id);
