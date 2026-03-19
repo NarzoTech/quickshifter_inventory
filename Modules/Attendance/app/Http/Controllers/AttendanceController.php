@@ -56,7 +56,7 @@ class AttendanceController extends Controller
         checkAdminHasPermissionAndThrowException('attendance.create');
 
         $request->validate([
-            'date' => 'required',
+            'date' => 'required|date|before_or_equal:today',
             'employee_id' => 'required',
             'employee_id.*' => 'required|numeric',
             'attendance' => 'required',

@@ -69,6 +69,9 @@ class EmployeeSalaryController extends Controller
         }
         try {
             $employee = $this->employee->find($id);
+            if (!$employee) {
+                return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['message' => 'Employee not found', 'alert-type' => 'error']);
+            }
             $this->employee->addSalary($request, $employee);
             return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.employee.index', [], ['message' => 'Employee salary added successfully', 'alert-type' => 'success']);
         } catch (\Exception $ex) {

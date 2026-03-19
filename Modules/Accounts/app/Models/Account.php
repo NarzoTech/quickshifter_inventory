@@ -71,13 +71,14 @@ class Account extends Model
         $withdraw = $this->withdraws()->sum('amount');
         $asset = $this->assets()->sum('amount');
         $expenses = $this->expenses->sum('amount');
+        $salary = $this->salary()->sum('amount');
 
         // Balance Transfers
         $transfersIn = $this->transfersIn()->sum('amount');
         $transfersOut = $this->transfersOut()->sum('amount');
 
         $balance = ($receive + $deposit + $supplierPaymentsReceived + $customerPaymentsReceived + $expenseSupplierPaymentsReceived + $transfersIn)
-            - ($paid + $withdraw + $asset + $expenses + $supplierPaymentsPaid + $customerPaymentsPaid + $expenseSupplierPaymentsPaid + $transfersOut);
+            - ($paid + $withdraw + $asset + $expenses + $salary + $supplierPaymentsPaid + $customerPaymentsPaid + $expenseSupplierPaymentsPaid + $transfersOut);
         return $balance;
     }
 

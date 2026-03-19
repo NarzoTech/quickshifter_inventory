@@ -70,12 +70,13 @@ class EmployeeService
         $data['payable_salary'] = $payableSalary;
 
         $account = Account::where('account_type', $request->payment_type);
-        if (
-            $request->payment_type == 'cash'
-        ) {
+        if ($request->payment_type == 'cash') {
             $account = $account->first();
         } else {
             $account = $account->where('id', $request->account_id)->first();
+        }
+        if (!$account) {
+            throw new \Exception('Payment account not found. Please check account settings.');
         }
         $data['account_id'] = $account->id;
         $employee->employeeSalary()->create($data);
@@ -101,12 +102,13 @@ class EmployeeService
         $data['payable_salary'] = $payableSalary;
 
         $account = Account::where('account_type', $request->payment_type);
-        if (
-            $request->payment_type == 'cash'
-        ) {
+        if ($request->payment_type == 'cash') {
             $account = $account->first();
         } else {
             $account = $account->where('id', $request->account_id)->first();
+        }
+        if (!$account) {
+            throw new \Exception('Payment account not found. Please check account settings.');
         }
         $data['account_id'] = $account->id;
 
@@ -181,7 +183,14 @@ class EmployeeService
                 $loopDate->addDay();
             }
         } else {
-            $totalWeekends = 0;
+            // Future month: still calculate weekends for full month
+            $loopDate = $startOfMonth->copy();
+            while ($loopDate <= $endOfMonth) {
+                if (in_array($loopDate->dayOfWeek, $weekendDays)) {
+                    $totalWeekends++;
+                }
+                $loopDate->addDay();
+            }
         }
 
         // Get holidays that overlap with the current month (start in this month OR end in this month OR span across this month)
@@ -236,7 +245,7 @@ class EmployeeService
         $totalDayOff = $totalWeekends + $totalHolidays;
 
         $payableSalary = $employee->salary;
-        if ($totalWorkingDays != $totalAttendance) {
+        if ($totalDays > 0 && $totalWorkingDays != $totalAttendance) {
             $payableSalary = ($payableSalary / $totalDays) * ($totalWeekends + $totalHolidays + $totalAttendance);
         }
         $payableSalary = (int) $payableSalary;
