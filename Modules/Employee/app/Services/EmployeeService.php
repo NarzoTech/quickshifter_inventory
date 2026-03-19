@@ -47,18 +47,22 @@ class EmployeeService
 
     public function addSalary($request, $employee)
     {
-
         $data = $request->except('_token');
         $data['employee_id'] = $employee->id;
         $data['date'] = $request->date ? now()->parse($request->date) : now();
-        $data['month'] = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
-        $data['year'] = $request->date ? now()->parse($request->date)->format('Y') : now()->format('Y');
+        $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
+        $year = $request->date ? now()->parse($request->date)->format('Y') : now()->format('Y');
+        $data['month'] = $month;
+        $data['year'] = $year;
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
-        $data['salary'] = $request->salary;
-        $data['payable_salary'] = $request->payable_salary;
+        $data['salary'] = $employee->salary;
         $data['payment_type'] = $request->payment_type;
         $data['amount'] = $request->amount;
         $data['note'] = $request->note;
+
+        // Recalculate payable salary on the backend (don't trust frontend value)
+        [,,, $payableSalary] = $this->calculateSalary($request, $employee->id);
+        $data['payable_salary'] = $payableSalary;
 
         $account = Account::where('account_type', $request->payment_type);
         if (
@@ -75,16 +79,21 @@ class EmployeeService
 
     public function updateSalary($request, $payment)
     {
-
         $data = $request->except('_token');
         $data['date'] = $request->date ? now()->parse($request->date) : now();
-        $data['month'] = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
-        $data['year'] = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
+        $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
+        $year = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
+        $data['month'] = $month;
+        $data['year'] = $year;
         $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
         $data['payment_type'] = $request->payment_type;
         $data['amount'] = $request->amount;
         $data['note'] = $request->note;
-        $data['account_id'] = $payment->account_id;
+
+        // Recalculate payable salary on the backend (don't trust frontend value)
+        $employee = $payment->employee;
+        [,,, $payableSalary] = $this->calculateSalary($request, $employee->id);
+        $data['payable_salary'] = $payableSalary;
 
         $account = Account::where('account_type', $request->payment_type);
         if (

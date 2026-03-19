@@ -115,7 +115,11 @@ class HolidaysController extends Controller
     {
         checkAdminHasPermissionAndThrowException('attendance.setting.delete');
         try {
-            HolidaySetup::find($id)->delete();
+            $holiday = HolidaySetup::find($id);
+            if (!$holiday) {
+                return back()->with(['message' => 'Holiday not found', 'alert-type' => 'error']);
+            }
+            $holiday->delete();
             $notification = [
                 'message' => 'Holiday deleted successfully',
                 'alert-type' => 'success',

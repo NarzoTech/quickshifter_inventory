@@ -61,6 +61,51 @@ class Employee extends Model
             ->sum('amount');
     }
 
+    /**
+     * Calculate carry-forward amount from all previous months.
+     * If total paid in previous months exceeds total payable, the excess carries forward.
+     */
+    public function getCarryForwardAttribute($month = null, $year = null)
+    {
+        $month = $month ?? now()->format('F');
+        $year = $year ?? now()->format('Y');
+
+        $targetDate = \Carbon\Carbon::parse("1 {$month} {$year}");
+
+        // Get all salary records before this month
+        $previousRecords = $this->currentSalary()
+            ->get()
+            ->filter(function ($record) use ($targetDate) {
+                $recordDate = \Carbon\Carbon::parse("1 {$record->month} {$record->year}");
+                return $recordDate->lt($targetDate);
+            });
+
+        if ($previousRecords->isEmpty()) {
+            return 0;
+        }
+
+        // Group by month-year
+        $grouped = $previousRecords->groupBy(function ($record) {
+            return $record->year . '-' . $record->month;
+        });
+
+        $totalPaidAllPrevious = 0;
+        $totalMonths = $grouped->count();
+
+        foreach ($grouped as $key => $records) {
+            $totalPaidAllPrevious += $records->sum('amount');
+        }
+
+        // Compare against base salary (not attendance-based payable)
+        // Carry-forward only happens when employee is paid MORE than their monthly salary
+        // e.g., salary=10000, paid=11000 in March → 1000 carries to April
+        $totalPayableAllPrevious = $this->salary * $totalMonths;
+
+        // Only carry forward overpayments (positive excess)
+        $excess = $totalPaidAllPrevious - $totalPayableAllPrevious;
+        return max(0, $excess);
+    }
+
     // due amount
 
     public function getDueAmountAttribute($month = null, $year = null)

@@ -51,6 +51,24 @@
                                                     value="{{ $payableSalary }}" class="form-control" readonly>
                                             </div>
                                         </div>
+                                        @if($carryForward > 0)
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="carry_forward"
+                                                    class="text-danger">{{ __('Previous Month Advance (Carry Forward)') }}</label>
+                                                <input type="text" id="carry_forward"
+                                                    value="{{ $carryForward }}" class="form-control text-danger" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="effective_payable"
+                                                    class="text-success">{{ __('Effective Payable (After Deduction)') }}</label>
+                                                <input type="text" id="effective_payable"
+                                                    value="{{ $effectivePayable }}" class="form-control text-success" readonly>
+                                            </div>
+                                        </div>
+                                        @endif
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="date"
@@ -133,7 +151,7 @@
                                             <div class="form-group">
                                                 <label for="salary" class="col-form-label">{{ __('Pay Amount') }}</label>
                                                 <input type="text" name="amount" id="amount"
-                                                    value="{{ old('amount', $payableSalary - $employee->paidAmount) }}"
+                                                    value="{{ old('amount', $effectivePayable - $paidAmount) }}"
                                                     placeholder="Pay Amount" class="form-control">
                                             </div>
                                         </div>
@@ -250,6 +268,30 @@
                         $('#already_salary').val(data.advanceAmount);
                         $('#amount').val(data.dueAmount);
                         $('#payable_salary').val(data.payableSalary);
+
+                        // Show/hide carry-forward fields
+                        if (data.carryForward > 0) {
+                            if ($('#carry_forward').length === 0) {
+                                // Add carry-forward fields dynamically
+                                var carryHtml = '<div class="col-md-4" id="carry_forward_wrapper">' +
+                                    '<div class="form-group">' +
+                                    '<label class="text-danger">{{ __("Previous Month Advance (Carry Forward)") }}</label>' +
+                                    '<input type="text" id="carry_forward" value="' + data.carryForward + '" class="form-control text-danger" readonly>' +
+                                    '</div></div>' +
+                                    '<div class="col-md-4" id="effective_payable_wrapper">' +
+                                    '<div class="form-group">' +
+                                    '<label class="text-success">{{ __("Effective Payable (After Deduction)") }}</label>' +
+                                    '<input type="text" id="effective_payable" value="' + data.effectivePayable + '" class="form-control text-success" readonly>' +
+                                    '</div></div>';
+                                $('#payable_salary').closest('.col-md-4').after(carryHtml);
+                            } else {
+                                $('#carry_forward').val(data.carryForward);
+                                $('#effective_payable').val(data.effectivePayable);
+                            }
+                        } else {
+                            $('#carry_forward_wrapper').remove();
+                            $('#effective_payable_wrapper').remove();
+                        }
                     },
                     complete: function() {
                         // Hide full page loader

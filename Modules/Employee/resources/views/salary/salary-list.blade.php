@@ -93,9 +93,10 @@
                                 <tr>
                                     <th>{{ __('Sl') }}</th>
                                     <th>{{ __('Employee') }}</th>
+                                    <th>{{ __('Month/Year') }}</th>
+                                    <th>{{ __('Type') }}</th>
                                     <th>{{ __('Paid') }}</th>
                                     <th>{{ __('Date') }}</th>
-                                    {{-- <th style="display: none;">Business Branch</th> --}}
                                     <th>{{ __('Note') }}</th>
                                     <th>{{ __('Action') }}</th>
                                 </tr>
@@ -105,6 +106,14 @@
                                     <tr>
                                         <td>{{ method_exists($payments, 'firstItem') ? $payments->firstItem() + $index : $index + 1 }}</td>
                                         <td>{{ $payment->employee?->name }}</td>
+                                        <td>{{ $payment->month }} {{ $payment->year }}</td>
+                                        <td>
+                                            @if($payment->type == 'advance')
+                                                <span class="badge bg-warning">{{ __('Advance') }}</span>
+                                            @else
+                                                <span class="badge bg-success">{{ __('Salary') }}</span>
+                                            @endif
+                                        </td>
                                         <td>{{ currency($payment->amount) }}</td>
                                         <td>{{ formatDate($payment->date) }}</td>
                                         <td>{{ $payment->note }}</td>
@@ -130,7 +139,7 @@
                                     </tr>
                                 @empty
                                     <x-empty-table :name="__('Paid Salary List')" route="" create="no" :message="__('No data found!')"
-                                        colspan="6"></x-empty-table>
+                                        colspan="8"></x-empty-table>
                                 @endforelse
                             </tbody>
                         </table>

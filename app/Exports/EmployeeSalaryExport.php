@@ -32,6 +32,8 @@ class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping,
             [
                 __('SN'),
                 __('Employee'),
+                __('Month/Year'),
+                __('Type'),
                 __('Paid'),
                 __('Date'),
                 __('Note')
@@ -44,6 +46,8 @@ class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping,
         return [
             ++$this->index,
             $payment->employee?->name,
+            $payment->month . ' ' . $payment->year,
+            ucfirst($payment->type),
             $payment->amount,
             now()->parse($payment->date)->format('d-m-Y'),
             $payment->note,
@@ -52,9 +56,9 @@ class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping,
     public function styles(Worksheet $sheet)
     {
         // Merge cells for title and subtitle
-        $sheet->mergeCells('A1:E1');  // Title
-        $sheet->mergeCells('A2:E2');  // Subtitle
-        $sheet->mergeCells('A3:E3');  // Time
+        $sheet->mergeCells('A1:G1');  // Title
+        $sheet->mergeCells('A2:G2');  // Subtitle
+        $sheet->mergeCells('A3:G3');  // Time
 
 
         // Apply styles to title and subtitle
@@ -63,26 +67,24 @@ class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping,
         $sheet->getStyle('A3')->getFont()->setItalic(true)->setSize(10);
 
         // Apply borders and center alignment to header rows
-        $sheet->getStyle('A4:E' . $sheet->getHighestRow())
+        $sheet->getStyle('A4:G' . $sheet->getHighestRow())
             ->getBorders()
             ->getAllBorders()
             ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
-        // Column Widths (Optional)
+        // Column Widths
         $sheet->getColumnDimension('A')->setWidth(5);
         $sheet->getColumnDimension('B')->setWidth(25);
-        $sheet->getColumnDimension('C')->setWidth(25);
-        $sheet->getColumnDimension('D')->setWidth(25);
-        $sheet->getColumnDimension('E')->setWidth(25);
+        $sheet->getColumnDimension('C')->setWidth(20);
+        $sheet->getColumnDimension('D')->setWidth(12);
+        $sheet->getColumnDimension('E')->setWidth(15);
+        $sheet->getColumnDimension('F')->setWidth(15);
+        $sheet->getColumnDimension('G')->setWidth(25);
 
-
-
-        // a1 to j1 will be center aligned
-        $sheet->getStyle('A1:E1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-        // a2 to j2, a3 to j3  will be center aligned
-        $sheet->getStyle('A2:E2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $sheet->getStyle('A3:E3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        // Center align title rows
+        $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A2:G2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A3:G3')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     }
 
     public function registerEvents(): array
@@ -97,14 +99,11 @@ class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping,
                 $total = $this->payments->sum('amount');
                 
                 // Add total row
-                $event->sheet->getDelegate()->setCellValue('A' . $lastRow, '');
-                $event->sheet->getDelegate()->setCellValue('B' . $lastRow, 'Total');
-                $event->sheet->getDelegate()->setCellValue('C' . $lastRow, $total);
-                $event->sheet->getDelegate()->setCellValue('D' . $lastRow, '');
-                $event->sheet->getDelegate()->setCellValue('E' . $lastRow, '');
-                
+                $event->sheet->getDelegate()->setCellValue('D' . $lastRow, 'Total');
+                $event->sheet->getDelegate()->setCellValue('E' . $lastRow, $total);
+
                 // Make the total row bold
-                $event->sheet->getDelegate()->getStyle('B' . $lastRow . ':C' . $lastRow)->getFont()->setBold(true);
+                $event->sheet->getDelegate()->getStyle('D' . $lastRow . ':E' . $lastRow)->getFont()->setBold(true);
             },
         ];
     }

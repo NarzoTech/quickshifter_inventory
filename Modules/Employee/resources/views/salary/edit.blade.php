@@ -19,7 +19,8 @@
                                     enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
-                                    <input type="hidden" name="type" value="{{ request('pay') }}">
+                                    <input type="hidden" name="type" value="{{ $payment->type == 'advance' ? 2 : 1 }}">
+                                    <input type="hidden" name="salary" value="{{ $employee->salary }}">
 
                                     <div class="row">
                                         <div class="col-md-6">
@@ -43,7 +44,7 @@
                                                 <label for="date"
                                                     class="col-form-label p-0">{{ __('Salary Date') }}</label>
                                                 <input type="text" name="date" id="date"
-                                                    value="{{ old('date', formatDate(now())) }}"
+                                                    value="{{ old('date', formatDate($payment->date)) }}"
                                                     class="form-control datepicker" autocomplete="off">
                                             </div>
                                         </div>
@@ -122,7 +123,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="">{{ __('Note') }}</label>
-                                                <textarea name="note" id="" rows="3" class="form-control" placeholder="Note">{{ old('note') }}</textarea>
+                                                <textarea name="note" id="" rows="3" class="form-control" placeholder="Note">{{ old('note', $payment->note) }}</textarea>
                                             </div>
                                         </div>
                                     </div>

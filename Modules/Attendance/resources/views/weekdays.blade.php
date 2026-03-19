@@ -20,26 +20,6 @@
                             </div>
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
-                                    <select name="subscription_status" id="subscription_status" class="form-select">
-                                        <option value="">{{ __('Subscription Status') }}</option>
-                                        <option value="all">{{ __('All') }}</option>
-                                        <option value="1"
-                                            {{ request('subscription_status') == '1' ? 'selected' : '' }}>
-                                            {{ __('Active') }}
-                                        </option>
-                                        <option value="expired"
-                                            {{ request('subscription_status') == 'expired' ? 'selected' : '' }}>
-                                            {{ __('Expired') }}
-                                        </option>
-                                        <option value="no_plan"
-                                            {{ request('subscription_status') == 'no_plan' ? 'selected' : '' }}>
-                                            {{ __('No Plan') }}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-select">
                                         <option value="">{{ __('Per Page') }}</option>
                                         <option value="10" {{ '10' == request('par-page') ? 'selected' : '' }}>

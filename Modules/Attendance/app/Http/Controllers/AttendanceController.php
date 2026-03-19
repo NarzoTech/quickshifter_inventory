@@ -136,6 +136,7 @@ class AttendanceController extends Controller
             'is_weekend' => 'required|boolean'
         ]);
         WeekendSetup::updateOrCreate(['id' => $id], $request->except('_token'));
+        \Illuminate\Support\Facades\Cache::forget('weekends');
         return back()->with(['message' => 'Weekend days updated successfully', 'alert-type' => 'success']);
     }
 }

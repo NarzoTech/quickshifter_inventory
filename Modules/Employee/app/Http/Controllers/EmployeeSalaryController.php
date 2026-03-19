@@ -34,7 +34,11 @@ class EmployeeSalaryController extends Controller
         checkAdminHasPermissionAndThrowException('employee.view.payment');
         [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary($request, $id);
 
-        return view('employee::salary.index', compact('payments', 'employee', 'month', 'payableSalary', 'totalAttendance', 'totalDayOff'));
+        $year = $request->year ?? now()->format('Y');
+        $carryForward = $employee->getCarryForwardAttribute($month, $year);
+        $effectivePayable = $payableSalary - $carryForward;
+
+        return view('employee::salary.index', compact('payments', 'employee', 'month', 'payableSalary', 'totalAttendance', 'totalDayOff', 'carryForward', 'effectivePayable'));
     }
 
     /**
@@ -50,7 +54,9 @@ class EmployeeSalaryController extends Controller
         $employee = $this->employee->find($id);
         [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff] = $this->employee->calculateSalary(request(), $id);
         $paidAmount = $employee->getPaidAmountAttribute();
-        return view('employee::salary.create', compact('accounts', 'employee', 'payableSalary', 'paidAmount'));
+        $carryForward = $employee->getCarryForwardAttribute();
+        $effectivePayable = $payableSalary - $carryForward;
+        return view('employee::salary.create', compact('accounts', 'employee', 'payableSalary', 'paidAmount', 'carryForward', 'effectivePayable'));
     }
 
     /**
@@ -80,6 +86,9 @@ class EmployeeSalaryController extends Controller
     {
         checkAdminHasPermissionAndThrowException('employee.edit.salary');
         $payment = EmployeeSalary::with('account')->find($id);
+        if (!$payment) {
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.employee.index', [], ['message' => 'Salary record not found', 'alert-type' => 'error']);
+        }
         $employee = $this->employee->find($payment->employee_id);
         $accounts = $this->purchaseService->getAccounts();
         return view('employee::salary.edit', compact('payment', 'employee', 'accounts'));
@@ -122,10 +131,20 @@ class EmployeeSalaryController extends Controller
         $employee = $this->employee->find($id);
 
         $amount = $employee->getPaidAmountAttribute($request->month, $request->year);
-        // $employee->getDueAmountAttribute($request->month, $request->year)
         // (,,,,) skipping destructuring
         [,,, $payableSalary] = $this->employee->calculateSalary($request, $id);
-        return ['advanceAmount' => $amount, 'dueAmount' => $payableSalary - $amount, 'payableSalary' => $payableSalary];
+
+        // Deduct carry-forward (overpayment from previous months) from payable salary
+        $carryForward = $employee->getCarryForwardAttribute($request->month, $request->year);
+        $effectivePayable = $payableSalary - $carryForward;
+
+        return [
+            'advanceAmount' => $amount,
+            'dueAmount' => $effectivePayable - $amount,
+            'payableSalary' => $payableSalary,
+            'carryForward' => $carryForward,
+            'effectivePayable' => $effectivePayable,
+        ];
     }
 
     public function salaryList()

@@ -6,7 +6,7 @@
     <table style="width: 100%; border-collapse: collapse; margin-top: 20px;" page-break-inside: avoid>
         <thead>
             @php
-                $list = [__('Employee'), __('Paid'), __('Date'), __('Note')];
+                $list = [__('Employee'), __('Month/Year'), __('Type'), __('Paid'), __('Date'), __('Note')];
             @endphp
             <tr style="background-color: #003366; color: white;">
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('SN') }}</th>
@@ -26,6 +26,8 @@
                 <tr>
                     <td>{{ ++$index }}</td>
                     <td>{{ $payment->employee?->name }}</td>
+                    <td>{{ $payment->month }} {{ $payment->year }}</td>
+                    <td>{{ ucfirst($payment->type) }}</td>
                     <td>{{ $payment->amount }}</td>
                     <td>{{ formatDate($payment->date) }}</td>
                     <td>{{ $payment->note }}</td>
@@ -33,7 +35,7 @@
             @endforeach
             @if ($payments->count() > 0)
                 <tr>
-                    <td colspan="2" style="text-align: center; font-weight: bold">
+                    <td colspan="4" style="text-align: center; font-weight: bold">
                         <b>{{ __('Total') }}</b>
                     </td>
                     <td>

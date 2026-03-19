@@ -12,9 +12,13 @@
         <div class="card-body">
             <p><b class="me-2">{{ __('Salary') }}:</b> {{ currency($employee->salary) }}</p>
             <p><b class="me-2">{{ __('Payable Salary') }}:</b> {{ currency($payableSalary) }}</p>
+            @if($carryForward > 0)
+            <p class="text-danger"><b class="me-2">{{ __('Previous Month Advance (Carry Forward)') }}:</b> {{ currency($carryForward) }}</p>
+            <p class="text-success"><b class="me-2">{{ __('Effective Payable (After Deduction)') }}:</b> {{ currency($effectivePayable) }}</p>
+            @endif
             <p><b class="me-2">{{ __('Total Working Day & Weekend') }}:</b> {{ $totalAttendance }} {{ __('Days') }}</p>
             <p><b class="me-2">{{ __('Total Holiday') }}:</b> {{ $totalDayOff }} {{ __('Days') }}</p>
-            <p><b class="me-2">{{ __('Phone') }}:</b> {{ $employee->phone }}</p>
+            <p><b class="me-2">{{ __('Phone') }}:</b> {{ $employee->mobile }}</p>
             <p><b class="me-2">{{ __('Paid Amount') }}:</b> {{ currency($payments->sum('amount')) }}</p>
             <p><b class="me-2">{{ __('Payment Month') }}:</b> {{ $month }}</p>
         </div>
@@ -31,9 +35,8 @@
                         <tr>
                             <th>{{ __('Sl') }}</th>
                             <th>{{ __('Paid') }}</th>
-                            <th>{{ __('Due') }}</th>
+                            <th>{{ __('Due / Advance') }}</th>
                             <th>{{ __('Date') }}</th>
-                            {{-- <th style="display: none;">Business Branch</th> --}}
                             <th>{{ __('Note') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
@@ -43,7 +46,7 @@
                             <tr>
                                 <td>0</td>
                                 <td>{{ currency(0) }}</td>
-                                <td>{{ currency($payableSalary) }}</td>
+                                <td class="text-success">{{ currency($effectivePayable) }} {{ __('Due') }}</td>
                                 <td>-</td>
                                 <td>-</td>
                                 <td>-</td>
@@ -55,11 +58,18 @@
                         @foreach ($payments as $index => $payment)
                             @php
                                 $paidAmount += $payment->amount;
+                                $remaining = $effectivePayable - $paidAmount;
                             @endphp
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ currency($payment->amount) }}</td>
-                                <td>{{ currency($payableSalary - $paidAmount) }}</td>
+                                <td>
+                                    @if($remaining >= 0)
+                                        <span class="text-success">{{ currency($remaining) }} {{ __('Due') }}</span>
+                                    @else
+                                        <span class="text-danger">{{ currency(abs($remaining)) }} {{ __('Advance (Carry to Next Month)') }}</span>
+                                    @endif
+                                </td>
                                 <td>{{ formatDate($payment->date) }}</td>
                                 <td>{{ $payment->note }}</td>
                                 <td>
@@ -75,13 +85,20 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    @php
+                        $totalRemaining = $effectivePayable - $payments->sum('amount');
+                    @endphp
                     <tfoot>
                         <tr>
                             <td class="font-weight-bold">{{ __('Total') }}</td>
-
                             <td class="font-weight-bold">{{ currency($payments->sum('amount')) }}</td>
                             <td class="font-weight-bold">
-                                {{ currency($payableSalary - $payments->sum('amount')) }}</td>
+                                @if($totalRemaining >= 0)
+                                    <span class="text-success">{{ currency($totalRemaining) }} {{ __('Due') }}</span>
+                                @else
+                                    <span class="text-danger">{{ currency(abs($totalRemaining)) }} {{ __('Advance (Carry to Next Month)') }}</span>
+                                @endif
+                            </td>
                         </tr>
                     </tfoot>
                 </table>

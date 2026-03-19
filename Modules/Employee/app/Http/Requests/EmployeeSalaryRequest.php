@@ -19,7 +19,7 @@ class EmployeeSalaryRequest extends FormRequest
             'account_id' => 'required',
             'note' => 'nullable',
             'month' => 'required',
-            'year' => 'required',
+            'year' => 'required|numeric|digits:4',
             'salary' => 'required',
         ];
     }
