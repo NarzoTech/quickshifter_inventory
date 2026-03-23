@@ -12,13 +12,16 @@ class ExpenseRequest extends FormRequest
     {
         return [
             'date'                => 'required|date',
-            'amount'              => 'required|numeric',
-            'payment_type'        => 'required',
-            'account_id'          => 'required',
-            'expense_type_id'     => 'required',
+            'amount'              => 'required|numeric|min:0.01',
+            'payment_type'        => 'required|array|min:1',
+            'payment_type.*'      => 'required|string',
+            'account_id'          => 'required|array|min:1',
+            'paying_amount'       => 'nullable|array',
+            'paying_amount.*'     => 'nullable|numeric|min:0',
+            'expense_type_id'     => 'required|exists:expense_types,id',
             'sub_expense_type_id' => 'nullable',
-            'note'                => 'nullable',
-
+            'expense_supplier_id' => 'nullable|exists:expense_suppliers,id',
+            'note'                => 'nullable|string',
         ];
     }
 

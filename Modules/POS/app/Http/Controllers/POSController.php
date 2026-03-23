@@ -343,8 +343,14 @@ class POSController extends Controller
             ], 404);
         }
 
-        $cart_contents[$request->rowid]['qty'] = $request->quantity;
-        $cart_contents[$request->rowid]['sub_total'] = (float)$cart_contents[$request->rowid]['price'] * $request->quantity;
+        // Validate quantity is positive
+        $quantity = (float) $request->quantity;
+        if ($quantity < 0.01) {
+            return response()->json(['success' => false, 'message' => 'Quantity must be at least 0.01'], 422);
+        }
+
+        $cart_contents[$request->rowid]['qty'] = $quantity;
+        $cart_contents[$request->rowid]['sub_total'] = (float)$cart_contents[$request->rowid]['price'] * $quantity;
 
         session()->put($cartName, $cart_contents);
 
@@ -586,9 +592,15 @@ class POSController extends Controller
         $cart_contents = session()->get($cartName);
 
         if ($cart_contents != null && count($cart_contents) > 0 && isset($cart_contents[$request->rowId])) {
+            // Validate price is non-negative number
+            $price = (float) $request->price;
+            if ($price < 0) {
+                return response()->json(['success' => false, 'message' => 'Price cannot be negative'], 422);
+            }
+
             $item = $cart_contents[$request->rowId];
-            $item['price'] = $request->price;
-            $item['sub_total'] = $request->price * $item['qty'];
+            $item['price'] = $price;
+            $item['sub_total'] = $price * $item['qty'];
             $cart_contents[$request->rowId] = $item;
 
             session()->put($cartName, $cart_contents);
@@ -667,7 +679,13 @@ class POSController extends Controller
             return response()->json(['status' => false, 'message' => 'Item not found in cart'], 404);
         }
 
-        $cart_contents[$request->rowid]['source'] = $request->source;
+        // Validate source is 0 (external) or 1 (own inventory)
+        $source = (int) $request->source;
+        if (!in_array($source, [0, 1])) {
+            return response()->json(['status' => false, 'message' => 'Invalid source value'], 422);
+        }
+
+        $cart_contents[$request->rowid]['source'] = $source;
 
         session()->put($cartName, $cart_contents);
 
@@ -688,10 +706,18 @@ class POSController extends Controller
             return response()->json(['status' => false, 'message' => 'Item not found in cart'], 404);
         }
 
-        $cart_contents[$request->rowid]['purchase_price'] = $request->purchase_price;
-        $cart_contents[$request->rowid]['selling_price'] = $request->selling_price;
-        $cart_contents[$request->rowid]['price'] = $request->price;
-        $cart_contents[$request->rowid]['sub_total'] = (float)$request->price * $cart_contents[$request->rowid]['qty'];
+        // Validate prices are non-negative
+        $price = (float) $request->price;
+        $purchasePrice = (float) $request->purchase_price;
+        $sellingPrice = (float) $request->selling_price;
+        if ($price < 0 || $purchasePrice < 0 || $sellingPrice < 0) {
+            return response()->json(['status' => false, 'message' => 'Prices cannot be negative'], 422);
+        }
+
+        $cart_contents[$request->rowid]['purchase_price'] = $purchasePrice;
+        $cart_contents[$request->rowid]['selling_price'] = $sellingPrice;
+        $cart_contents[$request->rowid]['price'] = $price;
+        $cart_contents[$request->rowid]['sub_total'] = $price * $cart_contents[$request->rowid]['qty'];
         session()->put($cartName, $cart_contents);
         return response()->json(['status' => true, 'cart' => session()->get($cartName)]);
     }

@@ -156,7 +156,7 @@ class ReportController extends Controller
         $date = date('Y-m-d');
 
         // services calculation
-        $services = ProductSale::whereNotNull('service_id')->where(function ($query)  use ($fromDate, $toDate) {
+        $services = ProductSale::with('sale')->whereNotNull('service_id')->where(function ($query)  use ($fromDate, $toDate) {
             $query->whereHas('sale', function ($q) use ($fromDate, $toDate) {
                 $q->where('order_date', '>=', $fromDate);
                 $q->where('order_date', '<=', $toDate);
@@ -196,7 +196,7 @@ class ReportController extends Controller
             $data->push($serviceData);
         }
 
-        $sales = ProductSale::where('source', 1)
+        $sales = ProductSale::with('product', 'sale')->where('source', 1)
             ->where(function ($query)  use ($fromDate, $toDate) {
                 $query->whereHas('sale', function ($q) use ($fromDate, $toDate) {
                     $q->where('order_date', '>=', $fromDate);
@@ -227,7 +227,7 @@ class ReportController extends Controller
         }
 
 
-        $otherIncome = ProductSale::where('source', 2)
+        $otherIncome = ProductSale::with('sale')->where('source', 2)
             ->where(function ($query)  use ($fromDate, $toDate) {
                 $query->whereHas('sale', function ($q) use ($fromDate, $toDate) {
                     $q->where('order_date', '>=', $fromDate);
@@ -257,7 +257,7 @@ class ReportController extends Controller
 
 
         // customer dues
-        $todaySales = Sale::where(function ($q)  use ($fromDate, $toDate) {
+        $todaySales = Sale::with('customer_due.customer')->where(function ($q)  use ($fromDate, $toDate) {
             $q->whereHas('customer_due');
             $q->where('order_date', '>=', $fromDate);
             $q->where('order_date', '<=', $toDate);
@@ -279,7 +279,7 @@ class ReportController extends Controller
 
         // customer due receive
 
-        $customerPayments = CustomerPayment::whereDate('payment_date', '>=', $fromDate)->whereDate('payment_date', '<=', $toDate)->where('payment_type', 'due_receive')->get();
+        $customerPayments = CustomerPayment::with('account', 'customer')->whereDate('payment_date', '>=', $fromDate)->whereDate('payment_date', '<=', $toDate)->where('payment_type', 'due_receive')->get();
 
         foreach ($customerPayments as $cusPayment) {
             if ($cusPayment->amount == 0) continue;
@@ -305,7 +305,7 @@ class ReportController extends Controller
         if ($toDate) {
             $purchases = $purchases->where('purchase_date', '<=', $toDate);
         }
-        $purchases = $purchases->with('payments')->get();
+        $purchases = $purchases->with('payments.account', 'supplier')->get();
 
         // purchase
         foreach ($purchases as $purchase) {
@@ -342,7 +342,7 @@ class ReportController extends Controller
 
 
         // supplier payments
-        $supplierPayment = SupplierPayment::whereBetween('payment_date', [$fromDate, $toDate])
+        $supplierPayment = SupplierPayment::with('purchase', 'supplier')->whereBetween('payment_date', [$fromDate, $toDate])
             ->whereNotNull('purchase_id')
             ->whereHas('purchase', function ($q) {
                 $q->whereColumn(
@@ -380,7 +380,7 @@ class ReportController extends Controller
 
 
         // expense calculation
-        $expenses = Expense::whereBetween('date', [$fromDate, $toDate])->get();
+        $expenses = Expense::with('expenseType')->whereBetween('date', [$fromDate, $toDate])->get();
 
         foreach ($expenses as $expense) {
             $newData = [];
@@ -398,7 +398,7 @@ class ReportController extends Controller
 
 
         // salary calculation
-        $salaries = EmployeeSalary::whereBetween('date', [$fromDate, $toDate])->get();
+        $salaries = EmployeeSalary::with('employee')->whereBetween('date', [$fromDate, $toDate])->get();
         foreach ($salaries as $salary) {
             $newData = [];
             $newData['date'] = now()->parse($salary->date)->format('d-M');
@@ -464,6 +464,30 @@ class ReportController extends Controller
         // Calculate totals from ALL products before pagination
         $allProducts = $products->get();
 
+        $productIds = $allProducts->pluck('id')->toArray();
+
+        // Batch query: sales grouped by product (eliminates N+1)
+        $salesQuery = ProductSale::where('source', 1)->whereIn('product_id', $productIds);
+        $returnsQuery = SalesReturnDetails::whereIn('product_id', $productIds);
+
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+            $salesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('order_date', [$fromDate, $toDate]);
+            });
+            $returnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('created_at', [$fromDate, $toDate]);
+            });
+        }
+
+        $salesByProduct = $salesQuery->selectRaw('product_id, SUM(quantity) as total_qty, SUM(sub_total) as total_price')
+            ->groupBy('product_id')->get()->keyBy('product_id');
+
+        $returnsByProduct = $returnsQuery->selectRaw('product_id, SUM(quantity) as total_qty, SUM(sub_total) as total_price')
+            ->groupBy('product_id')->get()->keyBy('product_id');
+
         $totalSalePrice = 0;
         $totalSaleQty = 0;
         $totalReturnPrice = 0;
@@ -472,43 +496,17 @@ class ReportController extends Controller
         $totalPurchaseQty = 0;
 
         foreach ($allProducts as $product) {
-            // Only count sales from own inventory (source = 1)
-            $ownSalesQuery = ProductSale::where('product_id', $product->id)
-                ->where('source', 1);
-            
-            $ownSalesReturnsQuery = SalesReturnDetails::where('product_id', $product->id)
-                ->where('source', 1);
-            
-            // Apply date filters if provided
-            if (request('from_date') || request('to_date')) {
-                $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
-                $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-                
-                $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
-                    $q->whereBetween('order_date', [$fromDate, $toDate]);
-                });
-                
-                $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
-                    $q->whereBetween('created_at', [$fromDate, $toDate]);
-                });
-            }
-            
-            $ownSales = $ownSalesQuery->get();
-            $ownSalesReturns = $ownSalesReturnsQuery->get();
-            
-            // Calculate sales
-            $saleQty = $ownSales->sum('quantity');
-            $salePrice = $ownSales->sum('sub_total');
-            
-            // Calculate returns
-            $returnQty = $ownSalesReturns->sum('quantity');
-            $returnPrice = $ownSalesReturns->sum('sub_total');
-            
-            // Get purchase data (keep the existing logic for purchases)
+            $sale = $salesByProduct->get($product->id);
+            $return = $returnsByProduct->get($product->id);
+
+            $saleQty = $sale ? (int) $sale->total_qty : 0;
+            $salePrice = $sale ? (float) $sale->total_price : 0;
+            $returnQty = $return ? (int) $return->total_qty : 0;
+            $returnPrice = $return ? (float) $return->total_price : 0;
+
             $purchasePrice = (int) $product->total_purchase['price'];
             $purchaseQty = $product->total_purchase['qty'];
-            
-            // Accumulate totals
+
             $totalSalePrice += $salePrice;
             $totalSaleQty += $saleQty;
             $totalReturnPrice += $returnPrice;
@@ -564,6 +562,30 @@ class ReportController extends Controller
         $products = $products->where('status', 1);
         $allProducts = $products->get();
 
+        $productIds = $allProducts->pluck('id')->toArray();
+
+        // Batch query: sales and returns grouped by product (eliminates N+1)
+        $salesQuery = ProductSale::where('source', 1)->whereIn('product_id', $productIds);
+        $returnsQuery = SalesReturnDetails::whereIn('product_id', $productIds);
+
+        if (request('from_date') || request('to_date')) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
+            $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
+
+            $salesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('order_date', [$fromDate, $toDate]);
+            });
+            $returnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
+                $q->whereBetween('created_at', [$fromDate, $toDate]);
+            });
+        }
+
+        $salesByProduct = $salesQuery->selectRaw('product_id, SUM(quantity) as total_qty, SUM(sub_total) as total_price')
+            ->groupBy('product_id')->get()->keyBy('product_id');
+
+        $returnsByProduct = $returnsQuery->selectRaw('product_id, SUM(quantity) as total_qty, SUM(sub_total) as total_price')
+            ->groupBy('product_id')->get()->keyBy('product_id');
+
         $totalStock = 0;
         $sellCount = 0;
         $sellPrice = 0;
@@ -571,48 +593,20 @@ class ReportController extends Controller
         $totalProfitLoss = 0;
 
         foreach ($allProducts as $product) {
-            // Only count sales from own inventory (source = 1)
-            $ownSalesQuery = ProductSale::where('product_id', $product->id)
-                ->where('source', 1);
-            
-            $ownSalesReturnsQuery = SalesReturnDetails::where('product_id', $product->id)
-                ->where('source', 1);
-            
-            // Apply date filters if provided
-            if (request('from_date') || request('to_date')) {
-                $fromDate = request('from_date') ? now()->parse(request('from_date')) : now()->subYear();
-                $toDate = request('to_date') ? now()->parse(request('to_date')) : now();
-                
-                $ownSalesQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
-                    $q->whereBetween('order_date', [$fromDate, $toDate]);
-                });
-                
-                $ownSalesReturnsQuery->whereHas('saleReturn', function ($q) use ($fromDate, $toDate) {
-                    $q->whereBetween('created_at', [$fromDate, $toDate]);
-                });
-            }
-            
-            $ownSales = $ownSalesQuery->get();
-            $ownSalesReturns = $ownSalesReturnsQuery->get();
-            
-            // Calculate quantities
-            $sellQty = $ownSales->sum('quantity') - $ownSalesReturns->sum('quantity');
-            $totalSalesPrice = $ownSales->sum('sub_total');
-            $totalSalesReturnPrice = $ownSalesReturns->sum('sub_total');
-            
-            // Net sales price after returns
+            $sale = $salesByProduct->get($product->id);
+            $return = $returnsByProduct->get($product->id);
+
+            $saleQty = $sale ? (int) $sale->total_qty : 0;
+            $returnQty = $return ? (int) $return->total_qty : 0;
+            $sellQty = $saleQty - $returnQty;
+
+            $totalSalesPrice = $sale ? (float) $sale->total_price : 0;
+            $totalSalesReturnPrice = $return ? (float) $return->total_price : 0;
             $netSalesPrice = $totalSalesPrice - $totalSalesReturnPrice;
-            
-            // Average selling price per unit
-            $avgSellingPrice = $sellQty > 0 ? $netSalesPrice / $sellQty : 0;
-            
-            // Get purchase price (use LastPurchasePrice or cost)
+
             $purchasePrice = $product->LastPurchasePrice ?: $product->cost;
-            
-            // Calculate profit/loss: Net sales price - (sell quantity * purchase price)
             $profitLoss = $netSalesPrice - ($sellQty * $purchasePrice);
 
-            // Accumulate totals
             $totalStock += $product->stock_count;
             $sellCount += $sellQty;
             $sellPrice += $netSalesPrice;

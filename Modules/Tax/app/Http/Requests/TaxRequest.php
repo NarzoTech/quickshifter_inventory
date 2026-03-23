@@ -13,7 +13,7 @@ class TaxRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'rate' => 'required|numeric',
+            'rate' => 'required|numeric|min:0|max:100',
             'status' => 'required|boolean',
         ];
     }

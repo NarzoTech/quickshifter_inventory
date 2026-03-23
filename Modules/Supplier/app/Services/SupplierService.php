@@ -168,7 +168,55 @@ class SupplierService
     {
         $supplier = $this->supplier->find($id);
 
-        $supplier->balance = $supplier->balance - $request->paying_amount;
+        // Validate array lengths match
+        if (count($request->purchase_id) !== count($request->amount)) {
+            throw new \Exception('Purchase IDs and amounts array length mismatch.');
+        }
+
+        // Server-side validation: verify each payment, ownership, and amount limits
+        $totalPayingAmount = 0;
+        foreach ($request->purchase_id as $index => $purchaseId) {
+            $payAmount = round((float) ($request->amount[$index] ?? 0), 2);
+
+            // Skip zero amounts
+            if ($payAmount <= 0) continue;
+
+            $purchase = Purchase::findOrFail($purchaseId);
+
+            // Verify purchase belongs to this supplier
+            if ((int) $purchase->supplier_id !== (int) $id) {
+                throw new \Exception(
+                    "Purchase #{$purchase->invoice_number} does not belong to this supplier."
+                );
+            }
+
+            // Get raw due_amount from DB to bypass any accessor issues
+            $rawDue = (float) \DB::table('purchases')->where('id', $purchaseId)->value('due_amount');
+
+            if ($payAmount > $rawDue + 0.01) {
+                throw new \Exception(
+                    "Payment amount (" . number_format($payAmount, 2)
+                    . ") exceeds due amount (" . number_format($rawDue, 2)
+                    . ") for invoice: {$purchase->invoice_number}"
+                );
+            }
+
+            // Cap payment at actual due (prevent tiny overpayment from float)
+            $request->merge([
+                'amount' => array_replace($request->amount, [$index => min($payAmount, $rawDue)]),
+            ]);
+
+            $totalPayingAmount += min($payAmount, $rawDue);
+        }
+
+        if ($totalPayingAmount <= 0) {
+            throw new \Exception('No valid payment amounts provided.');
+        }
+
+        // Use server-calculated total — never trust client's paying_amount
+        $request->merge(['paying_amount' => round($totalPayingAmount, 2)]);
+
+        $supplier->balance = $supplier->balance - $totalPayingAmount;
         $supplier->save();
 
         // account information
@@ -185,12 +233,12 @@ class SupplierService
         // create Ledger
         $ledger = new Ledger();
         $ledger->supplier_id = $id;
-        $ledger->amount = $request->paying_amount;
+        $ledger->amount = $totalPayingAmount;
         $ledger->invoice_type = 'Due Payment';
         $ledger->is_paid = 1;
         $ledger->invoice_no = $this->genLedgerInvoiceNumber('Due Payment', $request->payment_date);
         $ledger->note = $request->note;
-        $ledger->due_amount = -$request->paying_amount;
+        $ledger->due_amount = -$totalPayingAmount;
         $ledger->total_amount = 0;
         $ledger->date = now()->parse($request->payment_date);
         $ledger->created_by = auth('admin')->user()->id;
@@ -199,18 +247,27 @@ class SupplierService
         $ledger->invoice_url = route('admin.suppliers.ledger-details', $ledger->id);
         $ledger->save();
 
-        // create payment
+        // create payment for each purchase with non-zero amount
         foreach ($request->purchase_id as $index => $purchaseId) {
+            $payAmount = round((float) ($request->amount[$index] ?? 0), 2);
 
-            if (isset($request->amount[$index]) && $request->amount[$index] == 0) {
+            if ($payAmount <= 0) {
                 continue;
             }
             $purchase = Purchase::findOrFail($purchaseId);
 
-            $purchase->paid_amount = $purchase->paid_amount + $request->amount[$index];
-            $purchase->due_amount = $purchase->due_amount - $request->amount[$index];
-            $purchase->payment_status = $purchase->due_amount == 0 ? 'paid' : 'due';
-            $purchase->save();
+            // Use DB-level arithmetic to avoid number_format accessor issues
+            $rawPaid = (float) \DB::table('purchases')->where('id', $purchaseId)->value('paid_amount');
+            $rawDue = (float) \DB::table('purchases')->where('id', $purchaseId)->value('due_amount');
+
+            $newPaid = round($rawPaid + $payAmount, 2);
+            $newDue = round(max(0, $rawDue - $payAmount), 2);
+
+            \DB::table('purchases')->where('id', $purchaseId)->update([
+                'paid_amount'    => $newPaid,
+                'due_amount'     => $newDue,
+                'payment_status' => $newDue == 0 ? 'paid' : 'due',
+            ]);
 
             // create payment data
             SupplierPayment::create([
@@ -325,13 +382,25 @@ class SupplierService
     public function dueReceiveDelete($id)
     {
         $payment = SupplierPayment::find($id);
+        if (!$payment) {
+            throw new \Exception('Payment not found.');
+        }
 
-        // Update purchase paid/due amounts
-        if ($payment->purchase && $payment->purchase->id) {
-            $payment->purchase->paid_amount = $payment->purchase->paid_amount - $payment->amount;
-            $payment->purchase->due_amount = $payment->purchase->due_amount + $payment->amount;
-            $payment->purchase->payment_status = $payment->purchase->due_amount == 0 ? 'paid' : 'due';
-            $payment->purchase->save();
+        $paymentAmount = round((float) $payment->amount, 2);
+
+        // Update purchase paid/due amounts using DB-level arithmetic
+        if ($payment->purchase_id) {
+            $rawPaid = (float) \DB::table('purchases')->where('id', $payment->purchase_id)->value('paid_amount');
+            $rawDue = (float) \DB::table('purchases')->where('id', $payment->purchase_id)->value('due_amount');
+
+            $newPaid = round(max(0, $rawPaid - $paymentAmount), 2);
+            $newDue = round($rawDue + $paymentAmount, 2);
+
+            \DB::table('purchases')->where('id', $payment->purchase_id)->update([
+                'paid_amount'    => $newPaid,
+                'due_amount'     => $newDue,
+                'payment_status' => $newDue == 0 ? 'paid' : 'due',
+            ]);
         }
 
         $ledger = $payment->ledger;
@@ -350,10 +419,14 @@ class SupplierService
                 // Other payments exist, only delete the specific ledger detail for this payment
                 $ledger->details()->where('invoice', $payment->purchase?->invoice_number)->delete();
 
-                // Update ledger amount
-                $ledger->amount = $ledger->amount - $payment->amount;
-                $ledger->due_amount = $ledger->due_amount + $payment->amount;
-                $ledger->save();
+                // Update ledger amount using raw DB values
+                $rawLedgerAmount = (float) \DB::table('ledgers')->where('id', $ledger->id)->value('amount');
+                $rawLedgerDue = (float) \DB::table('ledgers')->where('id', $ledger->id)->value('due_amount');
+
+                \DB::table('ledgers')->where('id', $ledger->id)->update([
+                    'amount'     => round($rawLedgerAmount - $paymentAmount, 2),
+                    'due_amount' => round($rawLedgerDue + $paymentAmount, 2),
+                ]);
             }
         }
 
@@ -368,6 +441,18 @@ class SupplierService
 
     public function advancePay(Request $request, $id)
     {
+        // Validate refund doesn't exceed available advance
+        if ($request->refund_amount) {
+            $supplier = $this->supplier->find($id);
+            $availableAdvance = $supplier ? $supplier->advance : 0;
+            if ((float) $request->refund_amount > $availableAdvance + 0.01) {
+                throw new \Exception(
+                    "Refund amount (" . number_format($request->refund_amount, 2)
+                    . ") exceeds available advance balance (" . number_format($availableAdvance, 2) . ")"
+                );
+            }
+        }
+
         $account = $request->account_id;
 
         // create ledger
@@ -517,12 +602,12 @@ class SupplierService
             'created_by' => auth('admin')->user()->id,
         ]);
 
-        // Create Advance Deduct ledger
+        // Create Advance Deduct ledger (records advance consumption, no due impact — due already reduced by Due Payment entry)
         $advLedger = new Ledger();
         $advLedger->supplier_id = $supplierId;
-        $advLedger->amount = 0;
+        $advLedger->amount = $actualOffset;
         $advLedger->total_amount = 0;
-        $advLedger->due_amount = $actualOffset;
+        $advLedger->due_amount = 0;
         $advLedger->invoice_type = 'Advance Deduct';
         $advLedger->is_paid = 1;
         $advLedger->invoice_no = $ledger->invoice_no;

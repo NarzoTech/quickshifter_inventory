@@ -40,7 +40,7 @@ class CurrencyController extends Controller
             'country_code' => 'required|unique:multi_currencies',
             'currency_code' => 'required|unique:multi_currencies',
             'currency_icon' => 'required|unique:multi_currencies',
-            'currency_rate' => 'required|numeric',
+            'currency_rate' => 'required|numeric|min:0.0001',
         ];
         $customMessages = [
             'currency_name.required' => __('Currency name is required'),
@@ -101,7 +101,7 @@ class CurrencyController extends Controller
             'country_code' => 'required|unique:multi_currencies,country_code,'.$id,
             'currency_code' => 'required|unique:multi_currencies,currency_code,'.$id,
             'currency_icon' => 'required|unique:multi_currencies,currency_icon,'.$id,
-            'currency_rate' => 'required|numeric',
+            'currency_rate' => 'required|numeric|min:0.0001',
         ];
         $customMessages = [
             'currency_name.required' => __('Currency name is required'),
@@ -125,7 +125,11 @@ class CurrencyController extends Controller
         }
 
         if ($currency->is_default == 'yes' && $request->is_default == 'no') {
-            MultiCurrency::where('id', 1)->update(['is_default' => 'yes']);
+            // Assign default to another currency (first available that's not this one)
+            $fallback = MultiCurrency::where('id', '!=', $id)->first();
+            if ($fallback) {
+                $fallback->update(['is_default' => 'yes']);
+            }
         }
 
         $currency->currency_name = $request->currency_name;
@@ -154,7 +158,11 @@ class CurrencyController extends Controller
         return 'pending, admin can not be able to delete item when currency has assign to payment gateway';
         $currency = MultiCurrency::find($id);
         if ($currency->is_default == 'yes') {
-            MultiCurrency::where('id', 1)->update(['is_default' => 'yes']);
+            // Assign default to another currency (first available that's not this one)
+            $fallback = MultiCurrency::where('id', '!=', $id)->first();
+            if ($fallback) {
+                $fallback->update(['is_default' => 'yes']);
+            }
         }
         $currency->delete();
 

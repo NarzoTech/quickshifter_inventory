@@ -80,8 +80,16 @@ class PurchaseReturnController extends Controller
     {
         checkAdminHasPermissionAndThrowException('purchase.return.create');
         $request->validate([
-            'supplier_id' => 'required',
-            'return_date' => 'required',
+            'supplier_id'       => 'required',
+            'return_date'       => 'required',
+            'purchase_id'       => 'required|exists:purchases,id',
+            'product_id'        => 'required|array|min:1',
+            'product_id.*'      => 'required|exists:products,id',
+            'return_quantity'    => 'required|array|min:1',
+            'return_quantity.*'  => 'required|numeric|min:0.01',
+            'return_subtotal'   => 'required|array',
+            'return_subtotal.*' => 'required|numeric|min:0',
+            'received_amount'   => 'nullable|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -120,8 +128,16 @@ class PurchaseReturnController extends Controller
     {
         checkAdminHasPermissionAndThrowException('purchase.return.edit');
         $request->validate([
-            'supplier_id' => 'required',
-            'return_date' => 'required',
+            'supplier_id'       => 'required',
+            'return_date'       => 'required',
+            'purchase_id'       => 'required|exists:purchases,id',
+            'product_id'        => 'required|array|min:1',
+            'product_id.*'      => 'required|exists:products,id',
+            'return_quantity'    => 'required|array|min:1',
+            'return_quantity.*'  => 'required|numeric|min:0.01',
+            'return_subtotal'   => 'required|array',
+            'return_subtotal.*' => 'required|numeric|min:0',
+            'received_amount'   => 'nullable|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -144,11 +160,17 @@ class PurchaseReturnController extends Controller
     public function destroy($id)
     {
         checkAdminHasPermissionAndThrowException('purchase.return.delete');
-        // delete ledger
 
-        $this->purchaseService->deleteReturn($id);
+        DB::beginTransaction();
+        try {
+            $this->purchaseService->deleteReturn($id);
 
-
-        return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Deleted Successfully', 'alert-type' => 'success']);
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::DELETE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Deleted Successfully', 'alert-type' => 'success']);
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            Log::error($ex->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, 'admin.purchase.return.index', [], ['messege' => 'Something Went Wrong', 'alert-type' => 'error']);
+        }
     }
 }

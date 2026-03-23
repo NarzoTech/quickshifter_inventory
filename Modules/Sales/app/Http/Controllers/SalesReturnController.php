@@ -20,6 +20,7 @@ use Modules\Accounts\app\Services\AccountsService;
 use Modules\Customer\app\Models\CustomerPayment;
 use Modules\Sales\app\Models\Sale;
 use Modules\Sales\app\Models\SalesReturn;
+use Modules\Product\app\Models\Product;
 use Modules\Sales\app\Models\SalesReturnDetails;
 
 class SalesReturnController extends Controller
@@ -155,12 +156,12 @@ class SalesReturnController extends Controller
                 );
 
 
-                // update stock
-                if ($details->product) {
-                    $stock = $details->product->stock;
-                    $stock = $stock + $request->return_quantity[$key];
-                    $details->product->update([
-                        'stock' => $stock
+                // Update stock using DB-level increment (bypasses number_format accessor)
+                if ($details->product_id) {
+                    $returnQty = (int) $request->return_quantity[$key];
+                    Product::where('id', $details->product_id)->update([
+                        'stock' => DB::raw("stock + {$returnQty}"),
+                        'stock_status' => DB::raw("CASE WHEN stock + {$returnQty} > 0 THEN 'in_stock' ELSE 'out_of_stock' END"),
                     ]);
                 }
 
@@ -276,12 +277,14 @@ class SalesReturnController extends Controller
                 $return->invoice = $this->returnInvoice($request->return_date);
             }
 
-            // 1. Reverse old stock (subtract old return quantities from product stock)
+            // 1. Reverse old stock using DB-level decrement
             foreach ($return->details as $detail) {
-                $product = $detail->product;
-                if ($product) {
-                    $product->stock = $product->stock - $detail->quantity;
-                    $product->save();
+                if ($detail->product_id) {
+                    $qty = (int) $detail->quantity;
+                    Product::where('id', $detail->product_id)->update([
+                        'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                        'stock_status' => DB::raw("CASE WHEN stock - {$qty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
+                    ]);
                 }
             }
 
@@ -327,10 +330,13 @@ class SalesReturnController extends Controller
                     'sub_total' => $request->return_subtotal[$key],
                 ]);
 
-                // Update stock (add back to inventory)
-                if ($details->product) {
-                    $stock = $details->product->stock + $request->return_quantity[$key];
-                    $details->product->update(['stock' => $stock]);
+                // Update stock using DB-level increment
+                if ($details->product_id) {
+                    $returnQty = (int) $request->return_quantity[$key];
+                    Product::where('id', $details->product_id)->update([
+                        'stock' => DB::raw("stock + {$returnQty}"),
+                        'stock_status' => DB::raw("CASE WHEN stock + {$returnQty} > 0 THEN 'in_stock' ELSE 'out_of_stock' END"),
+                    ]);
                 }
 
                 // Create stock record
@@ -399,48 +405,59 @@ class SalesReturnController extends Controller
     public function destroy($id)
     {
         checkAdminHasPermissionAndThrowException('sales.return.delete');
-        $return = SalesReturn::find($id);
 
-        // IMPORTANT: Restore stock BEFORE deleting details
-        foreach ($return->details as $detail) {
-            $product = $detail->product;
-            if ($product) {
-                $product->stock = $product->stock - $detail->quantity;
-                $product->save();
+        DB::beginTransaction();
+        try {
+            $return = SalesReturn::find($id);
+
+            // Reverse stock using DB-level decrement (sales return added stock, so removing it subtracts)
+            foreach ($return->details as $detail) {
+                if ($detail->product_id) {
+                    $qty = (int) $detail->quantity;
+                    Product::where('id', $detail->product_id)->update([
+                        'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                        'stock_status' => DB::raw("CASE WHEN stock - {$qty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
+                    ]);
+                }
             }
+
+            // delete stock records
+            $return->stock()->delete();
+
+            // delete return details
+            $return->details()->delete();
+
+            // delete ledger and ledger details (via relationship and by invoice)
+            if ($return->ledger) {
+                $return->ledger->details()->delete();
+                $return->ledger->delete();
+            }
+
+            // Also delete any orphaned ledgers by sale_return_id
+            $orphanedLedgers = Ledger::where('sale_return_id', $return->id)->get();
+            foreach ($orphanedLedgers as $ledger) {
+                $ledger->details()->delete();
+                $ledger->delete();
+            }
+
+            // delete payments (CustomerPayment with sale_return_id)
+            $return->payments()->delete();
+
+            // Also delete any payments that might have been saved with wrong reference
+            CustomerPayment::where('sale_return_id', $return->id)
+                ->where('payment_type', 'sale return')
+                ->delete();
+
+            // delete return
+            $return->delete();
+
+            DB::commit();
+            return $this->redirectWithMessage(RedirectType::DELETE->value, '', [], ['messege' => 'Sales return deleted successfully', 'alert-type' => 'success']);
+        } catch (Exception $ex) {
+            DB::rollBack();
+            Log::error($ex->getMessage());
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
         }
-
-        // delete stock records
-        $return->stock()->delete();
-
-        // delete return details
-        $return->details()->delete();
-
-        // delete ledger and ledger details (via relationship and by invoice)
-        if ($return->ledger) {
-            $return->ledger->details()->delete();
-            $return->ledger->delete();
-        }
-
-        // Also delete any orphaned ledgers by sale_return_id
-        $orphanedLedgers = Ledger::where('sale_return_id', $return->id)->get();
-        foreach ($orphanedLedgers as $ledger) {
-            $ledger->details()->delete();
-            $ledger->delete();
-        }
-
-        // delete payments (CustomerPayment with sale_return_id)
-        $return->payments()->delete();
-
-        // Also delete any payments that might have been saved with wrong reference
-        CustomerPayment::where('sale_return_id', $return->id)
-            ->where('payment_type', 'sale return')
-            ->delete();
-
-        // delete return
-        $return->delete();
-
-        return $this->redirectWithMessage(RedirectType::DELETE->value, '', [], ['messege' => 'Sales return deleted successfully', 'alert-type' => 'success']);
     }
 
     public function invoice($id)

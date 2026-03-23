@@ -58,7 +58,7 @@
                                                     </thead>
                                                     <tbody id="purchase_table">
                                                         @foreach ($supplier->duePurchase as $purchase)
-                                                            <tr>
+                                                            <tr data-due="{{ $purchase->due_amount }}">
                                                                 <td>
                                                                     <div class="custom-checkbox custom-control">
                                                                         <input type="checkbox" data-checkboxes="checkgroup"
@@ -86,8 +86,9 @@
                                                                     {{ currency($purchase->due_amount) }}
                                                                 </td>
                                                                 <td>
-                                                                    <input type="text" class="form-control"
-                                                                        name="amount[]" value="0">
+                                                                    <input type="number" class="form-control"
+                                                                        name="amount[]" value="0"
+                                                                        min="0" max="{{ $purchase->due_amount }}" step="0.01">
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -155,169 +156,124 @@
         $(document).ready(function() {
             'use strict';
 
-            //check all checkboxes
+            /**
+             * Get the due amount for a row from the data-due attribute (reliable, not DOM text).
+             */
+            function getRowDue(row) {
+                return parseFloat($(row).data('due')) || 0;
+            }
+
+            /**
+             * Enforce max limit: amount cannot exceed the row's due.
+             */
+            function clampAmount(input) {
+                let val = parseFloat($(input).val()) || 0;
+                let max = getRowDue($(input).closest('tr'));
+                if (val < 0) val = 0;
+                if (val > max) val = max;
+                $(input).val(val);
+            }
+
+            /**
+             * Update checkbox-all state based on individual checkboxes.
+             */
+            function updateCheckAllState() {
+                var total = $('input[name="select"]').length;
+                var checked = $('input[name="select"]:checked').length;
+                $('#checkbox-all').prop('checked', total > 0 && total === checked);
+            }
+
+            /**
+             * Recalculate total paying amount from individual amounts.
+             */
+            function totalAmount() {
+                let total = 0;
+                $('input[name="amount[]"]').each(function() {
+                    let val = parseFloat($(this).val()) || 0;
+                    if (val > 0) total += val;
+                });
+                $('input[name="paying_amount"]').val(Math.round(total * 100) / 100);
+            }
+
+            // Check-all: set each row's amount to its OWN due (not the total)
             $('#checkbox-all').on('click', function() {
-                var $this = $(this);
-                var check = $this.prop('checked');
+                var check = $(this).prop('checked');
+
                 $('input[name="select"]').each(function() {
                     $(this).prop('checked', check);
+                    let row = $(this).closest('tr');
+                    let amountInput = row.find('input[name="amount[]"]');
 
-                    // change the count number
                     if (check) {
-                        $('.number').text($('input[name="select"]').length);
-                        $('.delete-section').removeClass('d-none');
-                        $('.delete-section').addClass('d-flex');
-
-
-                        // get the due amount of selected items
-                        let total_due = 0;
-                        $('input[name="select"]:checked').each(function() {
-                            let due = $(this).closest('tr').find('td:eq(4)').text();
-                            // remove icon
-                            due = due.replace(/[^0-9.]/g, '');
-                            total_due += parseFloat(due);
-                        });
-
-                        // set the total due amount to nearest input field
-                        $('input[name="amount[]"]').val(total_due);
-
+                        amountInput.val(getRowDue(row));
                     } else {
-                        $('.number').text(0);
-                        $('.delete-section').addClass('d-none');
-                        $('.delete-section').removeClass('d-flex');
-
-                        $('input[name="amount[]"]').val(0);
+                        amountInput.val(0);
                     }
-
-                    totalAmount()
                 });
+
+                totalAmount();
             });
 
+            // Individual checkbox: set amount to due when checked, 0 when unchecked
             $('input[name="select"]').on('click', function() {
-                var total = $('input[name="select"]').length;
-                var number = $('input[name="select"]:checked').length;
-                if (total == number) {
-                    $('#checkbox-all').prop('checked', true);
+                let row = $(this).closest('tr');
+                let amountInput = row.find('input[name="amount[]"]');
+
+                if ($(this).prop('checked')) {
+                    amountInput.val(getRowDue(row));
                 } else {
-                    $('#checkbox-all').prop('checked', false);
-                }
-                $('.number').text(number);
-
-                if (number > 0) {
-                    $('.delete-section').removeClass('d-none');
-                    $('.delete-section').addClass('d-flex');
-                } else {
-                    $('.delete-section').addClass('d-none');
-                    $('.delete-section').removeClass('d-flex');
+                    amountInput.val(0);
                 }
 
-
-                // get the due amount of selected items
-                let total_due = 0;
-                $('input[name="select"]:checked').each(function() {
-                    let due = $(this).closest('tr').find('td:eq(4)').text();
-                    // remove icon
-                    due = due.replace(/[^0-9.]/g, '');
-                    total_due += parseFloat(due);
-
-                    // set the total due amount to nearest input field
-                    $(this).closest('tr').find('input[name="amount[]"]').val(due);
-                });
-
-
-
-                // $('input[name="amount[]"]').val(total_due);
-
-                if (number == 0) {
-                    $('input[name="paying_amount"]').val(0);
-                }
-
-                totalAmount()
+                updateCheckAllState();
+                totalAmount();
             });
 
+            // Manual amount entry: clamp to max, sync checkbox state
             $('[name="amount[]"]').on('input', function() {
-                const value = $(this).val();
+                clampAmount(this);
 
-                if (value > 0) {
-                    $(this).closest('tr').find('input[name="select"]').prop('checked', true);
-                } else {
-                    $(this).closest('tr').find('input[name="select"]').prop('checked', false);
-                }
+                let val = parseFloat($(this).val()) || 0;
+                $(this).closest('tr').find('input[name="select"]').prop('checked', val > 0);
 
-                // check checkbox-all if all are checked
-                var total = $('input[name="select"]').length;
-                var number = $('input[name="select"]:checked').length;
-                if (total == number) {
-                    $('#checkbox-all').prop('checked', true);
-                } else {
-                    $('#checkbox-all').prop('checked', false);
-                }
+                updateCheckAllState();
+                totalAmount();
+            });
 
-                totalAmount()
-            })
-
+            // Paying amount: distribute across invoices (oldest first)
             $('input[name="paying_amount"]').on('input', function() {
-                let value = parseFloat($(this).val());
+                let remaining = parseFloat($(this).val()) || 0;
+                if (remaining < 0) remaining = 0;
 
+                // Cap at total payable
+                let totalPayable = parseFloat($('input[name="total_payable"]').val()) || 0;
+                if (remaining > totalPayable) {
+                    remaining = totalPayable;
+                    $(this).val(remaining);
+                }
 
-                // reset all the amount
+                // Reset all amounts and checkboxes
                 $('input[name="amount[]"]').val(0);
-
-                // uncheck checkbox-all
-                $('#checkbox-all').prop('checked', false);
-
-                // uncheck all the checkbox
                 $('input[name="select"]').prop('checked', false);
-                $('.number').text(0);
-                $('.delete-section').addClass('d-none');
-                $('.delete-section').removeClass('d-flex');
 
-
-                // get all the row
+                // Distribute across rows
                 $('input[name="amount[]"]').each(function() {
-                    // due amount the previous sibling
-                    let due = $(this).closest('tr').find('td:eq(4)').text();
-                    // remove icon
-                    due = parseFloat(due.replace(/[^0-9.]/g, ''));
+                    if (remaining <= 0) return;
 
-                    // calculate the due amount
-                    if (value <= due) {
-                        if (value > 0) {
-                            $(this).val(value);
-                            $(this).closest('tr').find('input[name="select"]').prop('checked',
-                                true);
-                            value = value - due;
-                        }
+                    let due = getRowDue($(this).closest('tr'));
+                    if (due <= 0) return;
 
-                    } else {
-                        if (due > 0) {
-                            $(this).val(due);
-                            value = value - due;
-                            $(this).closest('tr').find('input[name="select"]').prop('checked',
-                                true);
-                        }
-                    }
+                    let allocate = Math.min(remaining, due);
+                    // Round to 2 decimals to avoid floating point drift
+                    allocate = Math.round(allocate * 100) / 100;
+
+                    $(this).val(allocate);
+                    $(this).closest('tr').find('input[name="select"]').prop('checked', true);
+                    remaining = Math.round((remaining - allocate) * 100) / 100;
                 });
 
-                // check checkbox-all if all are checked
-                var total = $('input[name="select"]').length;
-                var number = $('input[name="select"]:checked').length;
-                if (total == number) {
-                    $('#checkbox-all').prop('checked', true);
-                } else {
-                    $('#checkbox-all').prop('checked', false);
-                }
-
-            })
-        });
-
-
-        function totalAmount() {
-            let total = 0;
-            $('input[name="amount[]"]').each(function() {
-                total += parseFloat($(this).val() || 0);
+                updateCheckAllState();
             });
-            $('input[name="paying_amount"]').val(total);
-        }
+        });
     </script>
 @endpush

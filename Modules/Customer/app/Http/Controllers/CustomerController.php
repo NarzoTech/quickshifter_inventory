@@ -364,9 +364,15 @@ class CustomerController extends Controller
 
         // Base validation
         $request->validate([
-            'receiving_amount' => 'required|numeric|min:0.01',
-            'payment_date' => 'required',
-            'account_id' => 'required',
+            'customer_id'            => 'required|exists:users,id',
+            'receiving_amount'       => 'required|numeric|min:0.01',
+            'payment_date'           => 'required|date',
+            'account_id'             => 'required',
+            'sale_id'                => 'nullable|array',
+            'sale_id.*'              => 'nullable|integer|exists:sales,id',
+            'amount'                 => 'nullable|array',
+            'amount.*'               => 'nullable|numeric|min:0',
+            'direct_balance_amount'  => 'nullable|numeric|min:0',
         ]);
 
         $hasInvoicePayment = $request->has('invoice_no') && is_array($request->invoice_no) && count($request->invoice_no) > 0;
@@ -425,18 +431,34 @@ class CustomerController extends Controller
 
                     $sale = Sale::findOrFail($saleId);
 
+                    // Verify sale belongs to this customer — prevent cross-customer payment
+                    $saleCustomerId = $sale->user_id ?? $sale->customer_id;
+                    if ($saleCustomerId && (int) $saleCustomerId !== (int) $request->customer_id) {
+                        throw new \Exception(
+                            "Sale #{$sale->invoice} does not belong to this customer."
+                        );
+                    }
+
                     // Cap payment at remaining due — prevent overpayment
-                    $maxPayable = max(0, $sale->grand_total - $sale->paid_amount);
+                    $rawDue = (float) DB::table('sales')->where('id', $saleId)->value('due_amount');
+                    $maxPayable = max(0, $rawDue);
                     $paymentAmount = min($paymentAmount, $maxPayable);
 
                     if ($paymentAmount <= 0) {
                         continue; // already fully paid
                     }
 
-                    $sale->paid_amount = $sale->paid_amount + $paymentAmount;
-                    $sale->due_amount  = max(0, $sale->grand_total - $sale->paid_amount);
-                    $sale->payment_status = $sale->due_amount == 0 ? 'paid' : 'due';
-                    $sale->save();
+                    // Use DB-level arithmetic for safe updates
+                    $rawPaid = (float) DB::table('sales')->where('id', $saleId)->value('paid_amount');
+                    $rawGrand = (float) DB::table('sales')->where('id', $saleId)->value('grand_total');
+                    $newPaid = round($rawPaid + $paymentAmount, 2);
+                    $newDue = round(max(0, $rawGrand - $newPaid), 2);
+
+                    DB::table('sales')->where('id', $saleId)->update([
+                        'paid_amount'    => $newPaid,
+                        'due_amount'     => $newDue,
+                        'payment_status' => $newDue == 0 ? 'paid' : 'due',
+                    ]);
 
                     // Create payment data
                     CustomerPayment::create([
@@ -472,8 +494,18 @@ class CustomerController extends Controller
                 $customer = User::find($request->customer_id);
 
                 if ($customer) {
+                    // Validate direct balance doesn't exceed wallet balance
+                    $actualWalletBalance = (float) ($customer->wallet_balance ?? 0);
+                    if ($directBalanceAmount > $actualWalletBalance + 0.01) {
+                        throw new \Exception(
+                            "Direct balance amount (" . number_format($directBalanceAmount, 2)
+                            . ") exceeds wallet balance (" . number_format($actualWalletBalance, 2) . ")"
+                        );
+                    }
+                    $directBalanceAmount = min($directBalanceAmount, $actualWalletBalance);
+
                     // Update customer wallet balance
-                    $customer->wallet_balance = ($customer->wallet_balance ?? 0) - $directBalanceAmount;
+                    $customer->wallet_balance = round($actualWalletBalance - $directBalanceAmount, 2);
                     $customer->save();
 
                     // Create payment record for direct balance (no sale_id)
@@ -634,10 +666,20 @@ class CustomerController extends Controller
     public function dueReceiveUpdate(Request $request, $id)
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive.edit');
+
+        $request->validate([
+            'amount'       => 'required|numeric|min:0.01',
+            'payment_date' => 'required|date',
+            'note'         => 'nullable|string',
+        ]);
+
         $payment = CustomerPayment::findOrFail($id);
-        $payment->update($request->except('_token'));
+
+        // Only allow safe fields to be updated — prevent mass assignment of customer_id, payment_type, sale_id etc.
+        $payment->update($request->only(['amount', 'payment_date', 'note', 'account_id']));
+
         return to_route('admin.customer.due-receive.list')->with([
-            'messege'    => 'Customer due receive successfully.',
+            'messege'    => 'Customer due receive updated successfully.',
             'alert-type' => 'success',
         ]);
     }
@@ -645,73 +687,31 @@ class CustomerController extends Controller
     public function dueReceiveDelete($id)
     {
         checkAdminHasPermissionAndThrowException('customer.due.receive.delete');
-        $payment = CustomerPayment::findOrFail($id);
 
-        // Check if this is a direct balance payment or invoice-based payment
-        if ($payment->payment_type == 'direct_due_receive' || $payment->sale_id == null) {
-            // Direct balance payment - restore customer wallet balance
-            $customer = User::find($payment->customer_id);
-            if ($customer) {
-                $customer->wallet_balance = ($customer->wallet_balance ?? 0) + $payment->amount;
-                $customer->save();
-            }
+        DB::beginTransaction();
+        try {
+            $payment = CustomerPayment::findOrFail($id);
+            $paymentAmount = round((float) $payment->amount, 2);
 
-            // Delete ledger detail for direct balance
-            $ledgerDetail = LedgerDetails::where('invoice', 'DIRECT-BALANCE')
-                ->whereHas('ledger', function($q) use ($payment) {
-                    $q->where('customer_id', $payment->customer_id)
-                      ->whereDate('date', $payment->payment_date);
-                })
-                ->first();
-
-            if ($ledgerDetail) {
-                $ledger = $ledgerDetail->ledger;
-                $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
-                    ->where('id', '!=', $ledgerDetail->id)
-                    ->count();
-
-                $ledgerDetail->delete();
-
-                if ($otherDetailsCount == 0) {
-                    $ledger->delete();
-                } else {
-                    $ledger->amount = $ledger->amount - $payment->amount;
-                    $ledger->due_amount = $ledger->due_amount + $payment->amount;
-                    $ledger->save();
+            // Check if this is a direct balance payment or invoice-based payment
+            if ($payment->payment_type == 'direct_due_receive' || $payment->sale_id == null) {
+                // Direct balance payment - restore customer wallet balance using DB-level arithmetic
+                if ($payment->customer_id) {
+                    DB::table('users')->where('id', $payment->customer_id)->update([
+                        'wallet_balance' => DB::raw("COALESCE(wallet_balance, 0) + {$paymentAmount}"),
+                    ]);
                 }
-            }
-        } else {
-            // Invoice-based payment
-            // update customer due amount
-            $due = CustomerDue::where('invoice', $payment->sale->invoice)->first();
-            if ($due) {
-                $due->due_amount  = $due->due_amount + $payment->amount;
-                $due->paid_amount = $due->paid_amount - $payment->amount;
-                $due->save();
-            }
 
-            // update sale
-            $sale = $payment->sale;
-            if ($sale) {
-                $sale->payment_status = 'due';
-                $sale->paid_amount    = $sale->paid_amount - $payment->amount;
-                $sale->due_amount     = $sale->due_amount + $payment->amount;
-                $sale->save();
-            }
-
-            // customer ledger delete
-            $invoiceNumber = $payment->sale->invoice ?? null;
-            if ($invoiceNumber) {
-                $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)
+                // Delete ledger detail for direct balance
+                $ledgerDetail = LedgerDetails::where('invoice', 'DIRECT-BALANCE')
                     ->whereHas('ledger', function($q) use ($payment) {
-                        $q->where('invoice_type', 'Due Receive')
-                          ->where('customer_id', $payment->customer_id);
+                        $q->where('customer_id', $payment->customer_id)
+                          ->whereDate('date', $payment->payment_date);
                     })
                     ->first();
 
                 if ($ledgerDetail) {
                     $ledger = $ledgerDetail->ledger;
-
                     $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
                         ->where('id', '!=', $ledgerDetail->id)
                         ->count();
@@ -721,19 +721,77 @@ class CustomerController extends Controller
                     if ($otherDetailsCount == 0) {
                         $ledger->delete();
                     } else {
-                        $ledger->amount     = $ledger->amount - $payment->amount;
-                        $ledger->due_amount = $ledger->due_amount + $payment->amount;
-                        $ledger->save();
+                        DB::table('ledgers')->where('id', $ledger->id)->update([
+                            'amount'     => DB::raw("amount - {$paymentAmount}"),
+                            'due_amount' => DB::raw("due_amount + {$paymentAmount}"),
+                        ]);
+                    }
+                }
+            } else {
+                // Invoice-based payment — use DB-level arithmetic
+                $due = CustomerDue::where('invoice', $payment->sale->invoice)->first();
+                if ($due) {
+                    DB::table('customer_dues')->where('id', $due->id)->update([
+                        'due_amount'  => DB::raw("due_amount + {$paymentAmount}"),
+                        'paid_amount' => DB::raw("CASE WHEN paid_amount >= {$paymentAmount} THEN paid_amount - {$paymentAmount} ELSE 0 END"),
+                    ]);
+                }
+
+                // update sale
+                if ($payment->sale_id) {
+                    DB::table('sales')->where('id', $payment->sale_id)->update([
+                        'payment_status' => 'due',
+                        'paid_amount'    => DB::raw("CASE WHEN paid_amount >= {$paymentAmount} THEN paid_amount - {$paymentAmount} ELSE 0 END"),
+                        'due_amount'     => DB::raw("due_amount + {$paymentAmount}"),
+                    ]);
+                }
+
+                // customer ledger delete
+                $invoiceNumber = $payment->sale->invoice ?? null;
+                if ($invoiceNumber) {
+                    $ledgerDetail = LedgerDetails::where('invoice', $invoiceNumber)
+                        ->whereHas('ledger', function($q) use ($payment) {
+                            $q->where('invoice_type', 'Due Receive')
+                              ->where('customer_id', $payment->customer_id);
+                        })
+                        ->first();
+
+                    if ($ledgerDetail) {
+                        $ledger = $ledgerDetail->ledger;
+
+                        $otherDetailsCount = LedgerDetails::where('ledger_id', $ledger->id)
+                            ->where('id', '!=', $ledgerDetail->id)
+                            ->count();
+
+                        $ledgerDetail->delete();
+
+                        if ($otherDetailsCount == 0) {
+                            $ledger->delete();
+                        } else {
+                            DB::table('ledgers')->where('id', $ledger->id)->update([
+                                'amount'     => DB::raw("amount - {$paymentAmount}"),
+                                'due_amount' => DB::raw("due_amount + {$paymentAmount}"),
+                            ]);
+                        }
                     }
                 }
             }
-        }
 
-        $payment->delete();
-        return to_route('admin.customer.due-receive.list')->with([
-            'messege'    => 'Customer due receive deleted successfully.',
-            'alert-type' => 'success',
-        ]);
+            $payment->delete();
+            DB::commit();
+
+            return to_route('admin.customer.due-receive.list')->with([
+                'messege'    => 'Customer due receive deleted successfully.',
+                'alert-type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return to_route('admin.customer.due-receive.list')->with([
+                'messege'    => 'Failed to delete due receive.',
+                'alert-type' => 'error',
+            ]);
+        }
     }
 
     public function dueReceiveBulkDelete(Request $request)
@@ -902,6 +960,19 @@ class CustomerController extends Controller
     public function advancePay(Request $request, $id)
     {
         checkAdminHasPermissionAndThrowException('customer.advance');
+
+        // Validate refund doesn't exceed available advance balance
+        if ($request->refund_amount) {
+            $customer = User::find($id);
+            $availableAdvance = $customer ? $customer->advances() : 0;
+            if ((float) $request->refund_amount > $availableAdvance + 0.01) {
+                throw new \Exception(
+                    "Refund amount (" . number_format($request->refund_amount, 2)
+                    . ") exceeds available advance balance (" . number_format($availableAdvance, 2) . ")"
+                );
+            }
+        }
+
         $account = $request->account_id;
 
         if ($account == 'cash' || $account == 'advance') {

@@ -11,16 +11,17 @@ class EmployeeSalaryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $currentYear = (int) now()->format('Y');
         return [
-            'amount' => 'required|numeric',
-            'type' => 'required',
-            'date' => 'required',
-            'payment_type' => 'required',
-            'account_id' => 'required',
-            'note' => 'nullable',
-            'month' => 'required',
-            'year' => 'required|numeric|digits:4',
-            'salary' => 'required',
+            'amount'       => 'required|numeric|min:0.01',
+            'type'         => 'required|in:1,2',
+            'date'         => 'required|date',
+            'payment_type' => 'required|string',
+            'account_id'   => 'required',
+            'note'         => 'nullable|string',
+            'month'        => 'required|string',
+            'year'         => 'required|numeric|digits:4|min:2000|max:' . ($currentYear + 1),
+            'salary'       => 'required|numeric|min:0',
         ];
     }
 

@@ -145,7 +145,44 @@ class ExpenseSupplierService
     {
         $supplier = $this->expenseSupplier->find($id);
 
-        $supplier->balance = $supplier->balance - $request->paying_amount;
+        // Validate array lengths match
+        if (count($request->expense_id) !== count($request->amount)) {
+            throw new \Exception('Expense IDs and amounts array length mismatch.');
+        }
+
+        // Server-side validation: verify each payment amount and ownership
+        $totalPayingAmount = 0;
+        foreach ($request->expense_id as $index => $expenseId) {
+            $payAmount = round((float) ($request->amount[$index] ?? 0), 2);
+            if ($payAmount <= 0) continue;
+
+            $expense = Expense::findOrFail($expenseId);
+
+            // Verify expense belongs to this supplier
+            if ((int) $expense->expense_supplier_id !== (int) $id) {
+                throw new \Exception("Expense #{$expense->invoice} does not belong to this supplier.");
+            }
+
+            // Verify amount doesn't exceed due
+            $rawDue = (float) \Illuminate\Support\Facades\DB::table('expenses')->where('id', $expenseId)->value('due_amount');
+            if ($payAmount > $rawDue + 0.01) {
+                throw new \Exception(
+                    "Payment amount (" . number_format($payAmount, 2) . ") exceeds due amount ("
+                    . number_format($rawDue, 2) . ") for expense: {$expense->invoice}"
+                );
+            }
+
+            $totalPayingAmount += min($payAmount, $rawDue);
+        }
+
+        if ($totalPayingAmount <= 0) {
+            throw new \Exception('No valid payment amounts provided.');
+        }
+
+        // Use server-calculated total
+        $request->merge(['paying_amount' => round($totalPayingAmount, 2)]);
+
+        $supplier->balance = $supplier->balance - $totalPayingAmount;
         $supplier->save();
 
         $account = $request->account_id;
@@ -159,12 +196,12 @@ class ExpenseSupplierService
         // Create Ledger
         $ledger = new Ledger();
         $ledger->expense_supplier_id = $id;
-        $ledger->amount = $request->paying_amount;
+        $ledger->amount = $totalPayingAmount;
         $ledger->invoice_type = 'Expense Due Payment';
         $ledger->is_paid = 1;
         $ledger->invoice_no = $this->genLedgerInvoiceNumber($request->payment_date);
         $ledger->note = $request->note;
-        $ledger->due_amount = -$request->paying_amount;
+        $ledger->due_amount = -$totalPayingAmount;
         $ledger->total_amount = 0;
         $ledger->date = now()->parse($request->payment_date);
         $ledger->created_by = auth('admin')->user()->id;
@@ -173,17 +210,24 @@ class ExpenseSupplierService
         $ledger->invoice_url = route('admin.expense-suppliers.ledger-details', $ledger->id);
         $ledger->save();
 
-        // Create payment for each expense
+        // Create payment for each expense with non-zero amount
         foreach ($request->expense_id as $index => $expenseId) {
-            if (!isset($request->amount[$index]) || $request->amount[$index] == 0) {
+            $payAmount = round((float) ($request->amount[$index] ?? 0), 2);
+            if ($payAmount <= 0) {
                 continue;
             }
 
-            $expense = Expense::find($expenseId);
+            $expense = Expense::findOrFail($expenseId);
 
-            $expense->paid_amount = $expense->paid_amount + $request->amount[$index];
-            $expense->due_amount = $expense->due_amount - $request->amount[$index];
-            $expense->save();
+            // Use DB-level arithmetic for safe updates
+            $rawPaid = (float) \Illuminate\Support\Facades\DB::table('expenses')->where('id', $expenseId)->value('paid_amount');
+            $rawDue = (float) \Illuminate\Support\Facades\DB::table('expenses')->where('id', $expenseId)->value('due_amount');
+            $payAmount = min($payAmount, $rawDue);
+
+            \Illuminate\Support\Facades\DB::table('expenses')->where('id', $expenseId)->update([
+                'paid_amount' => round($rawPaid + $payAmount, 2),
+                'due_amount'  => round(max(0, $rawDue - $payAmount), 2),
+            ]);
 
             // Create payment data
             ExpenseSupplierPayment::create([
@@ -251,12 +295,21 @@ class ExpenseSupplierService
     public function duePayDelete($id)
     {
         $payment = ExpenseSupplierPayment::find($id);
+        if (!$payment) {
+            throw new \Exception('Payment not found.');
+        }
 
-        // Update expense paid/due amounts
-        if ($payment->expense && $payment->expense->id) {
-            $payment->expense->paid_amount = $payment->expense->paid_amount - $payment->amount;
-            $payment->expense->due_amount = $payment->expense->due_amount + $payment->amount;
-            $payment->expense->save();
+        $paymentAmount = round((float) $payment->amount, 2);
+
+        // Update expense paid/due amounts using DB-level arithmetic
+        if ($payment->expense_id) {
+            $rawPaid = (float) \Illuminate\Support\Facades\DB::table('expenses')->where('id', $payment->expense_id)->value('paid_amount');
+            $rawDue = (float) \Illuminate\Support\Facades\DB::table('expenses')->where('id', $payment->expense_id)->value('due_amount');
+
+            \Illuminate\Support\Facades\DB::table('expenses')->where('id', $payment->expense_id)->update([
+                'paid_amount' => round(max(0, $rawPaid - $paymentAmount), 2),
+                'due_amount'  => round($rawDue + $paymentAmount, 2),
+            ]);
         }
 
         $ledger = $payment->ledger;
@@ -271,9 +324,14 @@ class ExpenseSupplierService
                 $ledger->delete();
             } else {
                 $ledger->details()->where('invoice', $payment->expense ? $payment->expense->invoice : null)->delete();
-                $ledger->amount = $ledger->amount - $payment->amount;
-                $ledger->due_amount = $ledger->due_amount + $payment->amount;
-                $ledger->save();
+
+                $rawLedgerAmount = (float) \Illuminate\Support\Facades\DB::table('ledgers')->where('id', $ledger->id)->value('amount');
+                $rawLedgerDue = (float) \Illuminate\Support\Facades\DB::table('ledgers')->where('id', $ledger->id)->value('due_amount');
+
+                \Illuminate\Support\Facades\DB::table('ledgers')->where('id', $ledger->id)->update([
+                    'amount'     => round($rawLedgerAmount - $paymentAmount, 2),
+                    'due_amount' => round($rawLedgerDue + $paymentAmount, 2),
+                ]);
             }
         }
 
@@ -287,6 +345,18 @@ class ExpenseSupplierService
 
     public function advancePay(Request $request, $id)
     {
+        // Validate refund doesn't exceed available advance
+        if ($request->refund_amount) {
+            $supplier = $this->expenseSupplier->find($id);
+            $availableAdvance = $supplier ? $supplier->advance : 0;
+            if ((float) $request->refund_amount > $availableAdvance + 0.01) {
+                throw new \Exception(
+                    "Refund amount (" . number_format($request->refund_amount, 2)
+                    . ") exceeds available advance balance (" . number_format($availableAdvance, 2) . ")"
+                );
+            }
+        }
+
         $account = $request->account_id;
 
         $ledger = new Ledger();

@@ -137,6 +137,7 @@ class EmployeeSalaryController extends Controller
 
     public function salaryInfo(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('employee.view.payment');
         $employee = $this->employee->find($id);
         if (!$employee) {
             return response()->json(['error' => 'Employee not found'], 404);

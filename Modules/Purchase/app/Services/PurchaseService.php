@@ -9,6 +9,7 @@ use App\Services\TransactionLoggerService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Services\AccountsService;
 use Modules\Product\app\Models\Product;
@@ -36,6 +37,157 @@ class PurchaseService
         private PurchaseReturnDetails $purchaseReturnDetials,
         private TransactionLoggerService $transactionLogger,
     ) {}
+
+    /**
+     * Recalculate purchase totals server-side. Never trust client-calculated values.
+     */
+    private function recalculatePurchaseTotals($request): array
+    {
+        $totalAmount = 0;
+        $items = 0;
+        $lineItems = [];
+
+        foreach ($request->product_id as $index => $id) {
+            $qty = (float) $request->quantity[$index];
+            $unitPrice = (float) $request->unit_price[$index];
+            $sellingPrice = (float) $request->selling_price[$index];
+
+            $subTotal = round($qty * $unitPrice, 2);
+            $profit = $unitPrice > 0
+                ? round((($sellingPrice - $unitPrice) / $unitPrice) * 100, 2)
+                : ($sellingPrice > 0 ? 100 : 0);
+
+            $lineItems[$index] = [
+                'sub_total' => $subTotal,
+                'profit' => $profit,
+            ];
+
+            $totalAmount += $subTotal;
+            $items += $qty;
+        }
+
+        $paidAmount = 0;
+        foreach ($request->paid_amount as $amount) {
+            $paidAmount += (float) $amount;
+        }
+        $paidAmount = round(min($paidAmount, $totalAmount), 2);
+        $dueAmount = round(max(0, $totalAmount - $paidAmount), 2);
+
+        return [
+            'total_amount' => $totalAmount,
+            'paid_amount' => $paidAmount,
+            'due_amount' => $dueAmount,
+            'items' => $items,
+            'line_items' => $lineItems,
+        ];
+    }
+
+    /**
+     * Validate that supplier has sufficient advance balance for advance payments.
+     */
+    private function validateAdvanceBalance($request): void
+    {
+        $advanceTotal = 0;
+        foreach ($request->payment_type as $key => $type) {
+            if ($type === 'advance') {
+                $advanceTotal += (float) $request->paid_amount[$key];
+            }
+        }
+
+        if ($advanceTotal > 0) {
+            $supplier = Supplier::find($request->supplier_id);
+            $availableAdvance = $supplier ? $supplier->advance : 0;
+            if ($advanceTotal > $availableAdvance + 0.01) {
+                throw new \Exception(
+                    "Insufficient supplier advance balance. Available: " . number_format($availableAdvance, 2)
+                    . ", Requested: " . number_format($advanceTotal, 2)
+                );
+            }
+        }
+    }
+
+    /**
+     * Recalculate purchase return totals and validate against original purchase.
+     */
+    private function recalculateReturnTotals($request, $purchaseId, $excludeReturnId = null): array
+    {
+        $purchaseDetails = PurchaseDetails::where('purchase_id', $purchaseId)
+            ->get()
+            ->keyBy('product_id');
+
+        $existingReturns = PurchaseReturnDetails::where('purchase_id', $purchaseId);
+        if ($excludeReturnId) {
+            $existingReturns = $existingReturns->where('purchase_return_id', '!=', $excludeReturnId);
+        }
+        $existingReturns = $existingReturns->get()->groupBy('product_id');
+
+        $returnAmount = 0;
+        $lineItems = [];
+
+        foreach ($request->product_id as $index => $productId) {
+            $returnQty = (float) $request->return_quantity[$index];
+            $detail = $purchaseDetails->get($productId);
+
+            if (!$detail) {
+                $product = Product::find($productId);
+                throw new \Exception("Product '" . ($product->name ?? $productId) . "' not found in this purchase.");
+            }
+
+            // Check return quantity doesn't exceed what was purchased minus already returned
+            $alreadyReturned = isset($existingReturns[$productId])
+                ? $existingReturns[$productId]->sum('quantity')
+                : 0;
+            $maxReturnable = $detail->quantity - $alreadyReturned;
+
+            if ($returnQty > $maxReturnable + 0.01) {
+                $product = Product::find($productId);
+                throw new \Exception(
+                    "Return quantity ({$returnQty}) exceeds returnable quantity ({$maxReturnable}) for product: "
+                    . ($product->name ?? $productId)
+                );
+            }
+
+            // Recalculate subtotal from DB purchase price (not client value)
+            $subTotal = round($returnQty * $detail->purchase_price, 2);
+            $lineItems[$index] = ['return_subtotal' => $subTotal];
+            $returnAmount += $subTotal;
+        }
+
+        // Validate received amount cannot exceed return amount
+        $receivedAmount = (float) ($request->received_amount ?? 0);
+        if ($receivedAmount > $returnAmount + 0.01) {
+            throw new \Exception(
+                "Received amount (" . number_format($receivedAmount, 2)
+                . ") cannot exceed return amount (" . number_format($returnAmount, 2) . ")"
+            );
+        }
+        $receivedAmount = min($receivedAmount, $returnAmount);
+
+        return [
+            'return_amount' => $returnAmount,
+            'received_amount' => round($receivedAmount, 2),
+            'line_items' => $lineItems,
+        ];
+    }
+
+    /**
+     * Validate stock availability for purchase return items.
+     */
+    private function validateReturnStock($request): void
+    {
+        foreach ($request->product_id as $index => $productId) {
+            $returnQty = (float) $request->return_quantity[$index];
+            $currentStock = (int) Product::where('id', $productId)->value('stock');
+
+            if ($currentStock < $returnQty) {
+                $product = Product::find($productId);
+                throw new \Exception(
+                    "Insufficient stock ({$currentStock}) to return {$returnQty} units of: "
+                    . ($product->name ?? $productId)
+                );
+            }
+        }
+    }
 
     public function all()
     {
@@ -74,6 +226,12 @@ class PurchaseService
     }
     public function store($request)
     {
+        // Server-side recalculation — never trust client-calculated totals
+        $totals = $this->recalculatePurchaseTotals($request);
+
+        // Validate advance balance before proceeding
+        $this->validateAdvanceBalance($request);
+
         $attachment_name = null;
         if ($request->hasFile('attachment')) {
             $attachment      = $request->file('attachment');
@@ -82,19 +240,18 @@ class PurchaseService
         }
         $purchase                 = new Purchase();
         $invoiceNumber            = $this->genInvoiceNumber($request->purchase_date);
-        $paidAmount               = $request->total_amount - $request->due_amount;
         $purchase->supplier_id    = $request->supplier_id;
         $purchase->warehouse_id   = $request->warehouse_id;
         $purchase->invoice_number = $invoiceNumber;
         $purchase->memo_no        = $request->memo_no;
         $purchase->reference_no   = $request->reference_no;
         $purchase->purchase_date  = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
-        $purchase->items          = $request->items;
+        $purchase->items          = $totals['items'];
         $purchase->attachment     = $attachment_name;
-        $purchase->total_amount   = $request->total_amount;
-        $purchase->paid_amount    = $paidAmount;
-        $purchase->due_amount     = $request->due_amount;
-        $purchase->payment_status = $paidAmount == $request->total_amount ? 'paid' : 'due';
+        $purchase->total_amount   = $totals['total_amount'];
+        $purchase->paid_amount    = $totals['paid_amount'];
+        $purchase->due_amount     = $totals['due_amount'];
+        $purchase->payment_status = $totals['due_amount'] == 0 ? 'paid' : 'due';
         $purchase->payment_type   = $request->payment_type;
         $purchase->note           = $request->note;
         $purchase->created_by     = Auth::id();
@@ -107,30 +264,36 @@ class PurchaseService
         $cashPaid = 0;
         foreach ($request->payment_type as $key => $type) {
             if ($type !== 'advance') {
-                $cashPaid += $request->paid_amount[$key];
+                $cashPaid += (float) $request->paid_amount[$key];
             }
         }
-        $cashDue = $request->total_amount - $cashPaid;
+        $cashPaid = min($cashPaid, $totals['total_amount']);
+        $cashDue = $totals['total_amount'] - $cashPaid;
 
-        $this->purchaseLedger($request, $purchase->id, $cashPaid, $request->total_amount, 'purchase', 1, $cashDue);
+        $this->purchaseLedger($request, $purchase->id, $cashPaid, $totals['total_amount'], 'purchase', 1, $cashDue);
 
         foreach ($request->product_id as $index => $id) {
+            $lineItem = $totals['line_items'][$index];
+
             $purchaseDetails                 = new PurchaseDetails();
             $purchaseDetails->purchase_id    = $purchase->id;
             $purchaseDetails->product_id     = $id;
             $purchaseDetails->quantity       = $request->quantity[$index];
             $purchaseDetails->purchase_price = $request->unit_price[$index];
             $purchaseDetails->sale_price     = $request->selling_price[$index];
-            $purchaseDetails->sub_total      = $request->total[$index];
-            $purchaseDetails->profit         = $request->profit[$index];
+            $purchaseDetails->sub_total      = $lineItem['sub_total'];
+            $purchaseDetails->profit         = $lineItem['profit'];
             $purchaseDetails->created_by     = Auth::id();
             $purchaseDetails->save();
 
+            // Use DB-level increment to bypass Product::getStockAttribute number_format issue
+            $qty = (int) $request->quantity[$index];
+            Product::where('id', $id)->update([
+                'stock' => DB::raw("stock + {$qty}"),
+                'cost'  => $request->unit_price[$index],
+                'price' => $request->selling_price[$index],
+            ]);
             $product = Product::find($id);
-            $product->stock += $request->quantity[$index];
-            $product->cost  = $request->unit_price[$index];
-            $product->price = $request->selling_price[$index];
-            $product->save();
 
             // create stock
             Stock::create([
@@ -149,12 +312,11 @@ class PurchaseService
             ]);
         }
 
-        // if ($paidAmount) {
-        //     $this->purchaseLedger($request, $purchase->id, -$paidAmount, 'purchase payment', 1, $request->due_amount);
-        // }
-
         // create payments
         foreach ($request->payment_type as $key => $item) {
+            $payAmount = (float) ($request->paid_amount[$key] ?? 0);
+            if ($payAmount <= 0) continue;
+
             $account = Account::where('account_type', $item);
             if ($item == 'cash' || $item == 'advance') {
                 $account = $account->first();
@@ -162,34 +324,35 @@ class PurchaseService
                     $account = Account::create(['account_type' => $item]);
                 }
             } else {
-                $account = $account->where('id', $request->account_id[$key])->first();
+                $accountId = $request->account_id[$key] ?? null;
+                $account = $accountId ? $account->where('id', $accountId)->first() : null;
             }
-            $data = [
+
+            if (!$account) {
+                throw new \Exception("Payment account not found for payment type: {$item}. Please check account settings.");
+            }
+
+            SupplierPayment::create([
                 'payment_type' => $item == 'advance' ? 'advance_deduct' : 'purchase',
                 'purchase_id'  => $purchase->id,
                 'is_paid'      => 1,
                 'supplier_id'  => $request->supplier_id,
                 'account_id'   => $account->id,
-                'amount'       => $request->paid_amount[$key],
+                'amount'       => $payAmount,
                 'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'note'         => $request->note,
                 'created_by'   => auth('admin')->user()->id,
                 'account_type' => accountList()[$item] ?? $item,
                 'invoice'      => $request->invoice_number,
-            ];
-            if ($request->paid_amount[$key]) {
-                SupplierPayment::create($data);
-            }
-        }
+            ]);
 
-        // Create advance deduct ledger entries to offset advance credit
-        foreach ($request->payment_type as $key => $item) {
-            if ($item == 'advance' && $request->paid_amount[$key]) {
+            // Create advance deduct ledger entry
+            if ($item == 'advance') {
                 $advanceLedger = new Ledger();
                 $advanceLedger->supplier_id = $request->supplier_id;
-                $advanceLedger->amount = $request->paid_amount[$key];
+                $advanceLedger->amount = $payAmount;
                 $advanceLedger->total_amount = 0;
-                $advanceLedger->due_amount = 0;
+                $advanceLedger->due_amount = -$payAmount; // Reduces supplier due in ledger running balance
                 $advanceLedger->invoice_type = 'Advance Deduct';
                 $advanceLedger->is_paid = 1;
                 $advanceLedger->invoice_no = $request->invoice_number;
@@ -208,6 +371,32 @@ class PurchaseService
     public function update($request, $id)
     {
         $purchase = $this->purchase->find($id);
+
+        // Server-side recalculation — never trust client-calculated totals
+        $totals = $this->recalculatePurchaseTotals($request);
+
+        // Calculate how much advance this purchase currently uses (will be released on delete)
+        $oldAdvanceUsed = SupplierPayment::where('purchase_id', $id)
+            ->where('payment_type', 'advance_deduct')
+            ->sum('amount');
+
+        // Validate advance balance accounting for the old advance being released
+        $newAdvanceRequested = 0;
+        foreach ($request->payment_type as $key => $type) {
+            if ($type === 'advance') {
+                $newAdvanceRequested += (float) $request->paid_amount[$key];
+            }
+        }
+        if ($newAdvanceRequested > 0) {
+            $supplier = Supplier::find($request->supplier_id);
+            $availableAdvance = ($supplier ? $supplier->advance : 0) + $oldAdvanceUsed;
+            if ($newAdvanceRequested > $availableAdvance + 0.01) {
+                throw new \Exception(
+                    "Insufficient supplier advance balance. Available: " . number_format($availableAdvance, 2)
+                    . ", Requested: " . number_format($newAdvanceRequested, 2)
+                );
+            }
+        }
 
         $attachment_name = $purchase->attachment; // Keep existing attachment by default
         if ($request->hasFile('attachment')) {
@@ -231,19 +420,18 @@ class PurchaseService
                 ->update(['invoice' => $newInvoiceNumber]);
         }
 
-        $paidAmount               = $request->total_amount - $request->due_amount;
         $purchase->supplier_id    = $request->supplier_id;
         $purchase->warehouse_id   = $request->warehouse_id;
         $purchase->invoice_number = $newInvoiceNumber;
         $purchase->memo_no        = $request->memo_no;
         $purchase->reference_no   = $request->reference_no;
         $purchase->purchase_date  = $purchaseDate;
-        $purchase->items          = $request->items;
+        $purchase->items          = $totals['items'];
         $purchase->attachment     = $attachment_name;
-        $purchase->total_amount   = $request->total_amount;
-        $purchase->paid_amount    = $paidAmount;
-        $purchase->due_amount     = $request->due_amount;
-        $purchase->payment_status = $paidAmount == $request->total_amount ? 'paid' : 'due';
+        $purchase->total_amount   = $totals['total_amount'];
+        $purchase->paid_amount    = $totals['paid_amount'];
+        $purchase->due_amount     = $totals['due_amount'];
+        $purchase->payment_status = $totals['due_amount'] == 0 ? 'paid' : 'due';
         $purchase->payment_type   = $request->payment_type;
         $purchase->note           = $request->note;
         $purchase->updated_by     = Auth::id();
@@ -262,12 +450,13 @@ class PurchaseService
         $cashPaid = 0;
         foreach ($request->payment_type as $key => $type) {
             if ($type !== 'advance') {
-                $cashPaid += $request->paid_amount[$key];
+                $cashPaid += (float) $request->paid_amount[$key];
             }
         }
-        $cashDue = $request->total_amount - $cashPaid;
+        $cashPaid = min($cashPaid, $totals['total_amount']);
+        $cashDue = $totals['total_amount'] - $cashPaid;
 
-        $this->purchaseLedger($request, $purchase->id, $cashPaid, $request->total_amount, 'purchase', 1, $cashDue, $ledger);
+        $this->purchaseLedger($request, $purchase->id, $cashPaid, $totals['total_amount'], 'purchase', 1, $cashDue, $ledger);
 
         // Delete old advance deduct ledger entries using the OLD invoice number
         Ledger::where('invoice_type', 'Advance Deduct')
@@ -275,13 +464,12 @@ class PurchaseService
             ->where('supplier_id', $request->supplier_id)
             ->delete();
 
-        // restore product stock
+        // Restore product stock using DB-level decrement (bypasses number_format accessor)
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
-            $product = Product::find($purchaseDetail->product_id);
-            if ($product) {
-                $product->stock -= $purchaseDetail->quantity;
-                $product->save();
-            }
+            $qty = (int) $purchaseDetail->quantity;
+            Product::where('id', $purchaseDetail->product_id)->update([
+                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+            ]);
         }
 
         // delete old purchase details
@@ -289,22 +477,27 @@ class PurchaseService
         $purchase->payments()->delete();
         $purchase->stock()->delete();
 
-        // store new purchase details
+        // store new purchase details with server-recalculated values
         foreach ($request->product_id as $index => $id) {
+            $lineItem = $totals['line_items'][$index];
+
             $purchaseDetails                 = new PurchaseDetails();
             $purchaseDetails->purchase_id    = $purchase->id;
             $purchaseDetails->product_id     = $id;
             $purchaseDetails->quantity       = $request->quantity[$index];
             $purchaseDetails->purchase_price = $request->unit_price[$index];
             $purchaseDetails->sale_price     = $request->selling_price[$index];
-            $purchaseDetails->sub_total      = $request->total[$index];
-            $purchaseDetails->profit         = $request->profit[$index];
+            $purchaseDetails->sub_total      = $lineItem['sub_total'];
+            $purchaseDetails->profit         = $lineItem['profit'];
             $purchaseDetails->created_by     = Auth::id();
             $purchaseDetails->save();
 
+            // Use DB-level increment to bypass Product::getStockAttribute number_format issue
+            $qty = (int) $request->quantity[$index];
+            Product::where('id', $id)->update([
+                'stock' => DB::raw("stock + {$qty}"),
+            ]);
             $product = Product::find($id);
-            $product->stock += $request->quantity[$index];
-            $product->save();
 
             // create stock
             Stock::create([
@@ -325,6 +518,9 @@ class PurchaseService
 
         // create payments
         foreach ($request->payment_type as $key => $item) {
+            $payAmount = (float) ($request->paid_amount[$key] ?? 0);
+            if ($payAmount <= 0) continue;
+
             $account = Account::where('account_type', $item);
             if ($item == 'cash' || $item == 'advance') {
                 $account = $account->first();
@@ -332,34 +528,35 @@ class PurchaseService
                     $account = Account::create(['account_type' => $item]);
                 }
             } else {
-                $account = $account->where('id', $request->account_id[$key])->first();
+                $accountId = $request->account_id[$key] ?? null;
+                $account = $accountId ? $account->where('id', $accountId)->first() : null;
             }
-            $data = [
+
+            if (!$account) {
+                throw new \Exception("Payment account not found for payment type: {$item}. Please check account settings.");
+            }
+
+            SupplierPayment::create([
                 'payment_type' => $item == 'advance' ? 'advance_deduct' : 'purchase',
                 'purchase_id'  => $purchase->id,
                 'is_paid'      => 1,
                 'supplier_id'  => $request->supplier_id,
                 'account_id'   => $account->id,
-                'amount'       => $request->paid_amount[$key],
+                'amount'       => $payAmount,
                 'payment_date' => Carbon::createFromFormat('d-m-Y', $request->purchase_date),
                 'note'         => $request->note,
                 'created_by'   => auth('admin')->user()->id,
                 'invoice'      => $newInvoiceNumber,
                 'account_type' => accountList()[$item] ?? $item,
-            ];
-            if ($request->paid_amount[$key]) {
-                SupplierPayment::create($data);
-            }
-        }
+            ]);
 
-        // Create advance deduct ledger entries to offset advance credit
-        foreach ($request->payment_type as $key => $item) {
-            if ($item == 'advance' && $request->paid_amount[$key]) {
+            // Create advance deduct ledger entry
+            if ($item == 'advance') {
                 $advanceLedger = new Ledger();
                 $advanceLedger->supplier_id = $request->supplier_id;
-                $advanceLedger->amount = $request->paid_amount[$key];
+                $advanceLedger->amount = $payAmount;
                 $advanceLedger->total_amount = 0;
-                $advanceLedger->due_amount = 0;
+                $advanceLedger->due_amount = -$payAmount; // Reduces supplier due in ledger running balance
                 $advanceLedger->invoice_type = 'Advance Deduct';
                 $advanceLedger->is_paid = 1;
                 $advanceLedger->invoice_no = $newInvoiceNumber;
@@ -382,25 +579,25 @@ class PurchaseService
         // Log purchase deletion before deleting
         $this->transactionLogger->logPurchase('delete', [], $purchase);
 
-        // restore product stock
+        // Restore product stock using DB-level decrement
         foreach ($this->purchase->find($id)->purchaseDetails as $purchaseDetail) {
-            $product = Product::find($purchaseDetail->product_id);
-            if ($product) {
-                $product->stock -= $purchaseDetail->quantity;
-                $product->save();
-            }
+            $qty = (int) $purchaseDetail->quantity;
+            Product::where('id', $purchaseDetail->product_id)->update([
+                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+            ]);
         }
 
         PurchaseDetails::where('purchase_id', $id)?->delete();
         Stock::where('purchase_id', $id)?->delete();
         SupplierPayment::where('purchase_id', $id)?->delete();
 
-        // delete ledger and ledger details
-        $ledgers = Ledger::where(function ($query) use ($purchase) {
-            $query->where('invoice_type', 'purchase')
-                  ->orWhere('invoice_type', 'purchase payment')
-                  ->orWhere('invoice_type', 'Advance Deduct');
-        })->where('invoice_no', $purchase->invoice_number)->get();
+        // delete ledger and ledger details (scoped to supplier to prevent cross-supplier deletion)
+        $ledgers = Ledger::where('supplier_id', $purchase->supplier_id)
+            ->where(function ($query) {
+                $query->where('invoice_type', 'purchase')
+                      ->orWhere('invoice_type', 'purchase payment')
+                      ->orWhere('invoice_type', 'Advance Deduct');
+            })->where('invoice_no', $purchase->invoice_number)->get();
 
         foreach ($ledgers as $ledger) {
             // Delete ledger details first
@@ -464,7 +661,13 @@ class PurchaseService
     }
     public function storeReturn(Request $request, $id)
     {
-        // store purchase return
+        // Server-side recalculation and validation for purchase returns
+        $returnTotals = $this->recalculateReturnTotals($request, $request->purchase_id);
+
+        // Validate stock availability before returning
+        $this->validateReturnStock($request);
+
+        // store purchase return with server-calculated amounts
         $purchase = $this->purchaseReturn->create([
             'supplier_id'     => $request->supplier_id,
             'warehouse_id'    => $request->warehouse_id,
@@ -474,26 +677,30 @@ class PurchaseService
             'return_date'     => Carbon::createFromFormat('d-m-Y', $request->return_date),
             'note'            => $request->note,
             'payment_method'  => $request->payment_type,
-            'received_amount' => $request->received_amount ?? 0,
-            'return_amount'   => $request->invoice_amount,
+            'received_amount' => $returnTotals['received_amount'],
+            'return_amount'   => $returnTotals['return_amount'],
             'shipping_cost'   => $request->shipping_cost,
             'invoice'         => $this->returnInvoice($request->return_date),
         ]);
 
-        // store purchase return details
+        // store purchase return details with server-calculated subtotals
 
         foreach ($request->product_id as $index => $val) {
+            $lineItem = $returnTotals['line_items'][$index];
+
             $purchase->purchaseDetails()->create([
                 'product_id'  => $val,
                 'purchase_id' => $request->purchase_id,
                 'quantity'    => $request->return_quantity[$index],
-                'total'       => $request->return_subtotal[$index],
+                'total'       => $lineItem['return_subtotal'],
             ]);
 
-            // update product stock
-            $prod        = Product::find($val);
-            $prod->stock = $prod->stock - $request->return_quantity[$index];
-            $prod->save();
+            // Update product stock using DB-level decrement
+            $qty = (int) $request->return_quantity[$index];
+            Product::where('id', $val)->update([
+                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+            ]);
+            $prod = Product::find($val);
 
             // update stock
             Stock::create([
@@ -509,24 +716,21 @@ class PurchaseService
         }
 
         // Always create ledger entry for purchase return
-        // amount = received back from supplier (negative = money coming back)
-        // total_amount = returned goods value (negative = reduces purchases)
-        // due_amount = net balance impact = -(return_amount - received_amount)
-        $returnDue = $request->invoice_amount - ($request->received_amount ?? 0);
+        $returnDue = $returnTotals['return_amount'] - $returnTotals['received_amount'];
         $ledger = $this->purchaseReturnLedger(
             $request,
             $purchase->id,
-            -($request->received_amount ?? 0),
+            -$returnTotals['received_amount'],
             'purchase return',
             0,
             -$returnDue,
             null,
-            -$request->invoice_amount,
+            -$returnTotals['return_amount'],
             $purchase->invoice
         );
 
         // Only create payment if received_amount > 0
-        if (($request->received_amount ?? 0)) {
+        if ($returnTotals['received_amount'] > 0) {
             $account = Account::where('account_type', $request->payment_type);
             if ($request->payment_type == 'cash') {
                 $account = $account->first();
@@ -541,7 +745,7 @@ class PurchaseService
                 'account_id'         => $account->id,
                 'is_received'        => 1,
                 'account_type'       => accountList()[$request->payment_type],
-                'amount'             => ($request->received_amount ?? 0),
+                'amount'             => $returnTotals['received_amount'],
                 'payment_date'       => now(),
                 'created_by'         => auth()->user()->id,
                 'ledger_id'          => $ledger->id,
@@ -569,6 +773,20 @@ class PurchaseService
                 ->update(['invoice' => $newInvoice]);
         }
 
+        // Restore product stock from old return FIRST (DB-level increment)
+        foreach ($return->purchaseDetails as $purchaseDetail) {
+            $qty = (int) $purchaseDetail->quantity;
+            Product::where('id', $purchaseDetail->product_id)->update([
+                'stock' => DB::raw("stock + {$qty}"),
+            ]);
+        }
+
+        // Server-side recalculation and validation AFTER stock is restored
+        $returnTotals = $this->recalculateReturnTotals($request, $request->purchase_id, $return->id);
+
+        // Validate stock availability for the new return quantities
+        $this->validateReturnStock($request);
+
         $return->update([
             'supplier_id'     => $request->supplier_id,
             'warehouse_id'    => $request->warehouse_id,
@@ -576,20 +794,11 @@ class PurchaseService
             'return_date'     => Carbon::createFromFormat('d-m-Y', $request->return_date),
             'note'            => $request->note,
             'payment_method'  => $request->payment_type,
-            'received_amount' => $request->received_amount ?? 0,
-            'return_amount'   => $request->invoice_amount,
+            'received_amount' => $returnTotals['received_amount'],
+            'return_amount'   => $returnTotals['return_amount'],
             'shipping_cost'   => $request->shipping_cost,
             'invoice'         => $newInvoice,
         ]);
-
-        // restore product stock from old return
-        foreach ($return->purchaseDetails as $purchaseDetail) {
-            $product = Product::find($purchaseDetail->product_id);
-            if ($product) {
-                $product->stock += $purchaseDetail->quantity;
-                $product->save();
-            }
-        }
 
         // delete old purchase return details, payment, ledger, and stock
         $return->purchaseDetails()->delete();
@@ -622,19 +831,23 @@ class PurchaseService
 
         $return->stock()->delete();
 
-        // create new purchase return details
+        // create new purchase return details with server-calculated subtotals
         foreach ($request->product_id as $index => $val) {
+            $lineItem = $returnTotals['line_items'][$index];
+
             $return->purchaseDetails()->create([
                 'product_id'  => $val,
                 'purchase_id' => $request->purchase_id,
                 'quantity'    => $request->return_quantity[$index],
-                'total'       => $request->return_subtotal[$index],
+                'total'       => $lineItem['return_subtotal'],
             ]);
 
-            // update product stock with new return quantities
-            $prod        = Product::find($val);
-            $prod->stock = $prod->stock - $request->return_quantity[$index];
-            $prod->save();
+            // Update product stock using DB-level decrement
+            $qty = (int) $request->return_quantity[$index];
+            Product::where('id', $val)->update([
+                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+            ]);
+            $prod = Product::find($val);
 
             // create new stock entries
             Stock::create([
@@ -649,25 +862,22 @@ class PurchaseService
             ]);
         }
 
-        // Always create ledger entry for purchase return
-        // amount = received back from supplier (negative = money coming back)
-        // total_amount = returned goods value (negative = reduces purchases)
-        // due_amount = net balance impact = -(return_amount - received_amount)
-        $returnDue = $request->invoice_amount - ($request->received_amount ?? 0);
+        // Create ledger entry for purchase return with server-calculated amounts
+        $returnDue = $returnTotals['return_amount'] - $returnTotals['received_amount'];
         $ledger = $this->purchaseReturnLedger(
             $request,
             $return->id,
-            -($request->received_amount ?? 0),
+            -$returnTotals['received_amount'],
             'purchase return',
             0,
             -$returnDue,
             null,
-            -$request->invoice_amount,
+            -$returnTotals['return_amount'],
             $return->invoice
         );
 
         // Only create payment if received_amount > 0
-        if (($request->received_amount ?? 0)) {
+        if ($returnTotals['received_amount'] > 0) {
             $account = Account::where('account_type', $request->payment_type);
             if ($request->payment_type == 'cash') {
                 $account = $account->first();
@@ -682,7 +892,7 @@ class PurchaseService
                 'account_id'         => $account->id,
                 'is_received'        => 1,
                 'account_type'       => accountList()[$request->payment_type],
-                'amount'             => ($request->received_amount ?? 0),
+                'amount'             => $returnTotals['received_amount'],
                 'payment_date'       => now(),
                 'created_by'         => auth('admin')->user()->id,
                 'ledger_id'          => $ledger->id,
@@ -789,13 +999,12 @@ class PurchaseService
     {
         $return = $this->purchaseReturn->find($id);
 
-        // restore product stock
+        // Restore product stock using DB-level increment
         foreach ($return->purchaseDetails as $purchaseDetail) {
-            $product = Product::find($purchaseDetail->product_id);
-            if ($product) {
-                $product->stock += $purchaseDetail->quantity;
-                $product->save();
-            }
+            $qty = (int) $purchaseDetail->quantity;
+            Product::where('id', $purchaseDetail->product_id)->update([
+                'stock' => DB::raw("stock + {$qty}"),
+            ]);
         }
 
         // delete stock records

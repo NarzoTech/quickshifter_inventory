@@ -7,6 +7,7 @@ use App\Models\User;
 
 use App\Traits\MailSenderTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Modules\Accounts\app\Models\Account;
 use Modules\GlobalSetting\app\Models\EmailTemplate;
 use Modules\GlobalSetting\app\Models\Setting;
@@ -75,11 +76,13 @@ class OrderService
             $orderDetails->save();
 
 
-            // update stock
+            // Update stock using DB-level decrement (bypasses number_format accessor)
             $product = Product::where('id', $item['id'])->first();
             if ($product != null) {
-                $product->stock = $product->stock - $item['qty'];
-                $product->save();
+                $orderQty = (int) $item['qty'];
+                Product::where('id', $item['id'])->update([
+                    'stock' => DB::raw("CASE WHEN stock >= {$orderQty} THEN stock - {$orderQty} ELSE 0 END"),
+                ]);
             }
         }
 

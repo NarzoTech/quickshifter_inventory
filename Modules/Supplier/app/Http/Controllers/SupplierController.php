@@ -212,21 +212,27 @@ class SupplierController extends Controller
     {
         checkAdminHasPermissionAndThrowException('supplier.due.pay');
         $rule = [
-            'invoice_no' => 'required|array',
-            'invoice_no.*' => 'required',
-            'amount' => 'required|array',
-            'amount.*' => 'numeric',
-            'payment_date' => 'required|date',
-            'paying_amount' => 'required',
-            'payment_type' => 'required',
+            'purchase_id'    => 'required|array|min:1',
+            'purchase_id.*'  => 'required|integer|exists:purchases,id',
+            'invoice_no'     => 'required|array',
+            'invoice_no.*'   => 'required',
+            'amount'         => 'required|array',
+            'amount.*'       => 'required|numeric|min:0',
+            'payment_date'   => 'required|date',
+            'paying_amount'  => 'required|numeric|min:0.01',
+            'payment_type'   => 'required',
         ];
 
         $message = [
-            'invoice_no.required' => 'Invoice number is required',
-            'amount.required' => 'Amount is required',
-            'date.required' => 'Date is required',
+            'purchase_id.required'   => 'Purchase ID is required',
+            'purchase_id.*.exists'   => 'Invalid purchase selected',
+            'invoice_no.required'    => 'Invoice number is required',
+            'amount.required'        => 'Amount is required',
+            'amount.*.min'           => 'Amount cannot be negative',
+            'payment_date.required'  => 'Date is required',
             'paying_amount.required' => 'Paying amount is required',
-            'payment_type.required' => 'Payment type is required',
+            'paying_amount.min'      => 'Paying amount must be greater than zero',
+            'payment_type.required'  => 'Payment type is required',
         ];
 
         $request->validate($rule, $message);
@@ -277,7 +283,7 @@ class SupplierController extends Controller
 
         if (request('par-page')) {
             if (request('par-page') == 'all') {
-                $payments = $payments->paginate();
+                $payments = $payments->get();
             } else {
                 $payments = $payments->paginate(request('par-page'));
                 $payments->appends(request()->query());
@@ -300,9 +306,17 @@ class SupplierController extends Controller
     {
         checkAdminHasPermissionAndThrowException('supplier.due.pay.delete');
 
-        $payments = $this->supplierService->dueReceiveDelete($id);
+        DB::beginTransaction();
+        try {
+            $this->supplierService->dueReceiveDelete($id);
 
-        return back()->with(['messege' => 'Payment deleted successfully', 'alert-type' => 'success']);
+            DB::commit();
+            return back()->with(['messege' => 'Payment deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->with(['messege' => 'Payment deletion failed', 'alert-type' => 'error']);
+        }
     }
 
     public function changeStatus($id)

@@ -114,6 +114,11 @@ class Supplier extends Model
         return $this->hasMany(PurchaseReturn::class);
     }
 
+    public function getTotalDueDismissAttribute()
+    {
+        return $this->otherSummery->sum('due');
+    }
+
     public function otherSummery()
     {
         return $this->hasMany(OtherSummery::class);

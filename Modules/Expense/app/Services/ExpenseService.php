@@ -27,7 +27,13 @@ class ExpenseService
 
     public function store(Request $request)
     {
-        $amount = $request->amount;
+        $amount = round((float) $request->amount, 2);
+        if ($amount <= 0) {
+            throw new \Exception('Expense amount must be greater than zero.');
+        }
+
+        DB::beginTransaction();
+        try {
 
         // Calculate total paid from multiple payments
         $paymentTypes = $request->payment_type ?? [];
@@ -139,7 +145,13 @@ class ExpenseService
             ]);
         }
 
+        DB::commit();
         return $expense;
+
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
     }
 
     public function update(Request $request, $id)
@@ -287,19 +299,36 @@ class ExpenseService
 
     public function destroy($id)
     {
-        $expense = $this->expense->find($id);
+        DB::beginTransaction();
+        try {
+            $expense = $this->expense->find($id);
 
-        // Delete associated payments and ledger entries
-        $payments = ExpenseSupplierPayment::where('expense_id', $id)->get();
-        foreach ($payments as $payment) {
-            if ($payment->ledger) {
-                $payment->ledger->details()->delete();
-                $payment->ledger->delete();
+            // Delete associated payments and ledger entries
+            $payments = ExpenseSupplierPayment::where('expense_id', $id)->get();
+            foreach ($payments as $payment) {
+                if ($payment->ledger) {
+                    $payment->ledger->details()->delete();
+                    $payment->ledger->delete();
+                }
+                $payment->delete();
             }
-            $payment->delete();
-        }
 
-        return $expense->delete();
+            // Also clean up any orphaned ledger entries linked via invoice
+            $orphanedLedgers = Ledger::where('invoice_no', $expense->invoice)
+                ->where('invoice_type', 'Expense')
+                ->get();
+            foreach ($orphanedLedgers as $ledger) {
+                $ledger->details()->delete();
+                $ledger->delete();
+            }
+
+            $result = $expense->delete();
+            DB::commit();
+            return $result;
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
     }
 
     public function genInvoiceNumber($date = null)

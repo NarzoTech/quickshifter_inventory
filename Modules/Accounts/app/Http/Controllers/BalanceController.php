@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Models\BalanceTransfer;
 use Modules\Accounts\app\Services\AccountsService;
@@ -53,6 +54,14 @@ class BalanceController extends Controller
     public function store(Request $request): RedirectResponse
     {
         checkAdminHasPermissionAndThrowException('deposit.withdraw.create');
+
+        $request->validate([
+            'balance_type' => 'required|in:deposit,withdraw',
+            'date'         => 'required|date',
+            'amount'       => 'required|numeric|min:0.01',
+            'payment_type' => 'required|string',
+        ]);
+
         try {
             if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
                 $account = $this->account->all()->where('account_type', 'cash')->first();
@@ -63,16 +72,13 @@ class BalanceController extends Controller
                 $account = $this->account->find((int) $request->account_id);
             }
 
-            // balance
-
             $balance = Balance::create([
                 'balance_type' => $request->balance_type,
                 'date' => now()->parse($request->date),
-                'amount' => $request->amount,
+                'amount' => round((float) $request->amount, 2),
                 'account_id' => $account->id,
                 'note' => $request->note,
                 'payment_type' => $request->payment_type,
-                'type_id' => $request->type_id,
                 'created_by' => auth('admin')->id(),
             ]);
 
@@ -123,6 +129,14 @@ class BalanceController extends Controller
     public function update(Request $request, $id): RedirectResponse
     {
         checkAdminHasPermissionAndThrowException('deposit.withdraw.edit');
+
+        $request->validate([
+            'balance_type' => 'required|in:deposit,withdraw',
+            'date'         => 'required|date',
+            'amount'       => 'required|numeric|min:0.01',
+            'payment_type' => 'required|string',
+        ]);
+
         if ($request->payment_type == 'cash' || $request->payment_type == 'advance') {
             $account = $this->account->all()->where('account_type', 'cash')->first();
         } else {
@@ -131,11 +145,16 @@ class BalanceController extends Controller
 
         $balance = Balance::find($id);
 
-        $data = $request->except('_token');
-        $data['updated_by'] = auth('admin')->id();
-        $data['account_id'] = $account->id;
-        $data['date'] = now()->parse($request->date);
-        $balance->update($data);
+        // Only update safe fields — prevent mass assignment of arbitrary fields
+        $balance->update([
+            'balance_type' => $request->balance_type,
+            'amount'       => round((float) $request->amount, 2),
+            'payment_type' => $request->payment_type,
+            'note'         => $request->note,
+            'updated_by'   => auth('admin')->id(),
+            'account_id'   => $account->id,
+            'date'         => now()->parse($request->date),
+        ]);
         return to_route('admin.opening-balance')->with(['messege' => 'Balance updated successfully.', 'alert-type' => 'success']);
     }
 
@@ -241,10 +260,21 @@ class BalanceController extends Controller
 
         $data['to_account_id'] = $toAccount->id;
 
+        // Prevent transfer to same account
+        if ($fromAccount->id === $toAccount->id) {
+            return back()->with(['messege' => 'Cannot transfer to the same account.', 'alert-type' => 'error']);
+        }
 
-
-        BalanceTransfer::create($data);
-        return back()->with(['messege' => 'Balance transfer created successfully.', 'alert-type' => 'success']);
+        DB::beginTransaction();
+        try {
+            BalanceTransfer::create($data);
+            DB::commit();
+            return back()->with(['messege' => 'Balance transfer created successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->with(['messege' => 'Balance transfer failed.', 'alert-type' => 'error']);
+        }
     }
 
     public function transferUpdate(Request $request, $id)
@@ -296,8 +326,21 @@ class BalanceController extends Controller
 
         $data['to_account_id'] = $toAccount->id;
 
-        $balance->update($data);
-        return back()->with(['messege' => 'Balance transfer updated successfully.', 'alert-type' => 'success']);
+        // Prevent transfer to same account
+        if ($fromAccount->id === $toAccount->id) {
+            return back()->with(['messege' => 'Cannot transfer to the same account.', 'alert-type' => 'error']);
+        }
+
+        DB::beginTransaction();
+        try {
+            $balance->update($data);
+            DB::commit();
+            return back()->with(['messege' => 'Balance transfer updated successfully.', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->with(['messege' => 'Balance transfer update failed.', 'alert-type' => 'error']);
+        }
     }
 
 

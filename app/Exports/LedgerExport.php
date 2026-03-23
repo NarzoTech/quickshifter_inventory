@@ -31,6 +31,25 @@ class LedgerExport implements FromArray, WithHeadings, WithStyles, WithTitle
         $debit = 0;
         $index = 0;
 
+        // Add opening balance row if non-zero
+        if ($this->openingBalance != 0) {
+            $openingRow = [
+                '',
+                '',
+            ];
+            if ($this->title == 'Supplier Ledger') {
+                $openingRow[] = '';
+            }
+            $openingRow = array_merge($openingRow, [
+                '',
+                __('Opening Balance'),
+                '',
+                '',
+                currency($this->openingBalance),
+            ]);
+            $data[] = $openingRow;
+        }
+
         foreach ($this->ledgers as $ledger) {
             $opening += $ledger->due_amount;
             $credit += $ledger->amount;

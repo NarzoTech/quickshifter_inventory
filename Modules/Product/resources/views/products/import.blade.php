@@ -16,7 +16,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
                                 <h4>
-                                    <a href="{{ asset('backend/product.xlsx') }}" download>{{ __('Sample Download') }}</a>
+                                    <a href="{{ asset('backend/product.csv') }}" download>{{ __('Sample Download') }}</a>
                                 </h4>
                                 <div>
                                     <a href="{{ route('admin.product.index') }}" class="btn btn-primary"><i

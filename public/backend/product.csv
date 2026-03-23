@@ -1,0 +1,3 @@
+Name,SKU,Category,Barcode,Unit,Brand,Stock Alert,Cost (Purchase Price),Price (Selling Price),Stock (Opening Qty)
+"Sample Product 1",PRD001,"Electronics","1234567890","Piece","Samsung",10,500.00,750.00,100
+"Sample Product 2",PRD002,"Accessories","1234567891","Piece","Generic",5,100.00,150.00,50

@@ -159,21 +159,24 @@ class ExpenseSupplierController extends Controller
     {
         checkAdminHasPermissionAndThrowException('expense_supplier.due_pay');
         $rule = [
-            'expense_id' => 'required|array',
-            'expense_id.*' => 'required',
-            'amount' => 'required|array',
-            'amount.*' => 'numeric',
-            'payment_date' => 'required|date',
-            'paying_amount' => 'required',
-            'payment_type' => 'required',
+            'expense_id'     => 'required|array|min:1',
+            'expense_id.*'   => 'required|integer|exists:expenses,id',
+            'amount'         => 'required|array',
+            'amount.*'       => 'required|numeric|min:0',
+            'payment_date'   => 'required|date',
+            'paying_amount'  => 'required|numeric|min:0.01',
+            'payment_type'   => 'required',
         ];
 
         $message = [
-            'expense_id.required' => 'Expense is required',
-            'amount.required' => 'Amount is required',
-            'date.required' => 'Date is required',
+            'expense_id.required'    => 'Expense is required',
+            'expense_id.*.exists'    => 'Invalid expense selected',
+            'amount.required'        => 'Amount is required',
+            'amount.*.min'           => 'Amount cannot be negative',
+            'payment_date.required'  => 'Date is required',
             'paying_amount.required' => 'Paying amount is required',
-            'payment_type.required' => 'Payment type is required',
+            'paying_amount.min'      => 'Paying amount must be greater than zero',
+            'payment_type.required'  => 'Payment type is required',
         ];
 
         $request->validate($rule, $message);
@@ -215,9 +218,16 @@ class ExpenseSupplierController extends Controller
     {
         checkAdminHasPermissionAndThrowException('expense_supplier.due_pay');
 
-        $this->expenseSupplierService->duePayDelete($id);
-
-        return back()->with(['messege' => 'Payment deleted successfully', 'alert-type' => 'success']);
+        DB::beginTransaction();
+        try {
+            $this->expenseSupplierService->duePayDelete($id);
+            DB::commit();
+            return back()->with(['messege' => 'Payment deleted successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->with(['messege' => 'Payment deletion failed', 'alert-type' => 'error']);
+        }
     }
 
     public function changeStatus($id)
@@ -247,10 +257,10 @@ class ExpenseSupplierController extends Controller
         checkAdminHasPermissionAndThrowException('expense_supplier.advance');
         $validator = Validator::make($request->all(), [
             'advance' => 'nullable',
-            'paying_amount' => 'nullable',
-            'refund_amount' => 'nullable',
-            'date' => 'required',
-            'total_amount' => 'required',
+            'paying_amount' => 'nullable|numeric|min:0.01',
+            'refund_amount' => 'nullable|numeric|min:0.01',
+            'date' => 'required|date',
+            'total_amount' => 'required|numeric',
             'payment_type' => 'required',
         ]);
 

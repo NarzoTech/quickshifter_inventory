@@ -358,107 +358,134 @@ class ProductService
         return $variant->delete();
     }
 
+    /**
+     * Bulk import products from Excel/CSV.
+     *
+     * Expected column layout (0-indexed):
+     *  [0] Name
+     *  [1] SKU
+     *  [2] Category
+     *  [3] Barcode
+     *  [4] Unit
+     *  [5] Brand
+     *  [6] Stock Alert
+     *  [7] Cost (Purchase Price)
+     *  [8] Price (Selling Price)
+     *  [9] Stock (Opening Quantity)
+     */
     public function bulkImport($request)
     {
         $file = $request->file('file');
 
-        // read xlxs / xls / csv file
         $data = Excel::toCollection(null, $file);
+        $data = $data->first()->slice(1); // skip header row
 
-        $data = $data->first()->slice(0);
-        //  remove the first row
-        $data = $data->slice(1);
-
-
-        //  loop through the data and store the products
         $unsavedData = [];
         foreach ($data as $row) {
-            $findProduct = $this->product->where(function ($q) use ($row) {
-                $q->where('barcode', trim($row[2]));
-            })->first();
-
-            if ($findProduct) {
-                $unsavedData[] = $row;
+            // Skip empty rows
+            if (!isset($row[0]) || empty(trim($row[0] ?? ''))) {
                 continue;
             }
 
-            // if category not found, create a new one
+            $name       = trim($row[0] ?? '');
+            $sku        = trim($row[1] ?? '');
+            $catName    = trim($row[2] ?? '');
+            $barcode    = trim($row[3] ?? '');
+            $unitName   = trim($row[4] ?? '');
+            $brandName  = trim($row[5] ?? '');
+            $stockAlert = (int) ($row[6] ?? 0);
+            $cost       = max(0, (float) ($row[7] ?? 0));
+            $price      = max(0, (float) ($row[8] ?? 0));
+            $stock      = max(0, (int) ($row[9] ?? 0));
 
-            $categoryName = trim($row[2]);
-
-            $category = Category::where('name', $categoryName)->first();
-            if ($categoryName && !$category) {
-                $category = Category::create([
-                    'name' => $categoryName,
-                    'status' => 1,
-                ]);
+            // Skip duplicate barcode (if barcode is provided)
+            if ($barcode) {
+                $findProduct = $this->product->where('barcode', $barcode)->first();
+                if ($findProduct) {
+                    $unsavedData[] = $row;
+                    continue;
+                }
             }
 
-            // if brand not found, create a new one
-
-            $brand_id = null;
-            if (isset($row[5])) {
-                $brandName = trim($row[5]);
-                $brand = ProductBrand::where('name', $brandName)->first();
-                if ($brandName && !$brand) {
-                    $brand = ProductBrand::create([
-                        'name' => $brandName,
-                        'status' => '1',
-                    ]);
+            // Also skip duplicate SKU
+            if ($sku) {
+                $findProduct = $this->product->where('sku', $sku)->first();
+                if ($findProduct) {
+                    $unsavedData[] = $row;
+                    continue;
                 }
+            }
 
+            // Find or create category
+            $category = null;
+            if ($catName) {
+                $category = Category::where('name', $catName)->first();
+                if (!$category) {
+                    $category = Category::create(['name' => $catName, 'status' => 1]);
+                }
+            }
+
+            // Find or create brand
+            $brand_id = null;
+            if ($brandName) {
+                $brand = ProductBrand::where('name', $brandName)->first();
+                if (!$brand) {
+                    $brand = ProductBrand::create(['name' => $brandName, 'status' => '1']);
+                }
                 $brand_id = $brand->id;
             }
 
-            // if unit not found, create a new one
-
-            $unitName = trim($row[4]);
-            $unit = UnitType::where('name', $unitName)->first();
-            if ($unitName && !$unit) {
-                $unit = UnitType::create([
-                    'name' => $unitName,
-                    'ShortName' => $unitName,
-                    'status' => 1,
-                ]);
+            // Find or create unit
+            $unit = null;
+            if ($unitName) {
+                $unit = UnitType::where('name', $unitName)->first();
+                if (!$unit) {
+                    $unit = UnitType::create([
+                        'name' => $unitName,
+                        'ShortName' => $unitName,
+                        'status' => 1,
+                    ]);
+                }
             }
 
-            // if product not found, create a new one
+            // Generate SKU if not provided
+            if (!$sku) {
+                $sku = (string) mt_rand(10000000, 99999999);
+            }
 
-
-            // generate product sku
-            $sku = mt_rand(10000000, 99999999);
             $product = $this->product->create([
-                'name' => trim($row[0]),
-                'sku' => trim($row[1]) != null ? trim($row[1]) : $sku,
-                'category_id' => $category->id,
-                'unit_id' => $unit->id,
-                'unit_sale_id' => $unit->id,
-                'unit_purchase_id' => $unit->id,
-                'brand_id' => $brand_id,
-                'stock_alert' => trim($row[6]),
-                'barcode' => trim($row[10]),
-                'cost' => trim($row[11]),
-                'price' => trim($row[12]),
-                'stock' => (trim($row[18]) == null || trim($row[18]) < 0) ? 0 : trim($row[18]),
-                'status' => 1,
-                'images' => ['null'],
+                'name'             => $name,
+                'sku'              => $sku,
+                'category_id'      => $category ? $category->id : null,
+                'unit_id'          => $unit ? $unit->id : null,
+                'unit_sale_id'     => $unit ? $unit->id : null,
+                'unit_purchase_id' => $unit ? $unit->id : null,
+                'brand_id'         => $brand_id,
+                'stock_alert'      => $stockAlert,
+                'barcode'          => $barcode ?: null,
+                'cost'             => $cost,
+                'price'            => $price,
+                'stock'            => $stock,
+                'status'           => 1,
             ]);
 
-
-            // store product stock
-
-            Stock::create([
-                'product_id' => $product->id,
-                'date' => now(),
-                'type' => '	Opening Stock',
-                'in_quantity' => (trim($row[18]) == null || trim($row[18]) < 0) ? 0 : trim($row[18]),
-                'sku' => $product->sku,
-                'purchase_price' => 0,
-                'rate' => 0,
-                'sale_price' => 0,
-                'created_by' => auth('admin')->user()->id,
-            ]);
+            // Store opening stock record with proper financial data
+            if ($stock > 0) {
+                Stock::create([
+                    'product_id'     => $product->id,
+                    'date'           => now(),
+                    'type'           => 'Opening Stock',
+                    'in_quantity'    => $stock,
+                    'sku'            => $product->sku,
+                    'purchase_price' => $cost,
+                    'rate'           => $cost,
+                    'sale_price'     => $price,
+                    'created_by'     => auth('admin')->user()->id,
+                ]);
+            }
         }
+
+        return $unsavedData;
     }
 
 

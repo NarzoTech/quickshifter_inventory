@@ -4,6 +4,7 @@ namespace Modules\Employee\app\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Modules\Accounts\app\Models\Account;
 use Modules\Attendance\app\Models\HolidaySetup;
 use Modules\Attendance\app\Models\WeekendSetup;
@@ -62,69 +63,84 @@ class EmployeeService
 
     public function addSalary($request, $employee)
     {
-        $data = [];
-        $data['employee_id'] = $employee->id;
-        $data['date'] = $request->date ? now()->parse($request->date) : now();
-        $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
-        $year = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
-        $data['month'] = $month;
-        $data['year'] = $year;
-        $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
-        $data['salary'] = $employee->salary;
-        $data['payment_type'] = $request->payment_type;
-        $data['amount'] = $request->amount;
-        $data['note'] = $request->note;
+        DB::beginTransaction();
+        try {
+            $data = [];
+            $data['employee_id'] = $employee->id;
+            $data['date'] = $request->date ? now()->parse($request->date) : now();
+            $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
+            $year = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
+            $data['month'] = $month;
+            $data['year'] = $year;
+            $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
+            $data['salary'] = $employee->salary;
+            $data['payment_type'] = $request->payment_type;
+            $data['amount'] = round((float) $request->amount, 2);
+            $data['note'] = $request->note;
 
-        // Recalculate payable salary on the backend (don't trust frontend value)
-        [,,, $payableSalary] = $this->calculateSalary($request, $employee->id);
-        $data['payable_salary'] = $payableSalary;
+            // Recalculate payable salary on the backend (don't trust frontend value)
+            [,,, $payableSalary] = $this->calculateSalary($request, $employee->id);
+            $data['payable_salary'] = $payableSalary;
 
-        $account = Account::where('account_type', $request->payment_type);
-        if ($request->payment_type == 'cash') {
-            $account = $account->first();
-        } else {
-            $account = $account->where('id', $request->account_id)->first();
+            $account = Account::where('account_type', $request->payment_type);
+            if ($request->payment_type == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id)->first();
+            }
+            if (!$account) {
+                throw new \Exception('Payment account not found. Please check account settings.');
+            }
+            $data['account_id'] = $account->id;
+            $employee->employeeSalary()->create($data);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-        if (!$account) {
-            throw new \Exception('Payment account not found. Please check account settings.');
-        }
-        $data['account_id'] = $account->id;
-        $employee->employeeSalary()->create($data);
     }
 
 
     public function updateSalary($request, $payment)
     {
-        $data = [];
-        $data['date'] = $request->date ? now()->parse($request->date) : now();
-        $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
-        $year = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
-        $data['month'] = $month;
-        $data['year'] = $year;
-        $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
-        $data['payment_type'] = $request->payment_type;
-        $data['amount'] = $request->amount;
-        $data['note'] = $request->note;
+        DB::beginTransaction();
+        try {
+            $data = [];
+            $data['date'] = $request->date ? now()->parse($request->date) : now();
+            $month = $request->month ? now()->parse($request->month)->format('F') : now()->format('F');
+            $year = $request->year ?? ($request->date ? now()->parse($request->date)->format('Y') : now()->format('Y'));
+            $data['month'] = $month;
+            $data['year'] = $year;
+            $data['type'] = isset($request->type) && $request->type == 2 ? 'advance' : 'salary';
+            $data['payment_type'] = $request->payment_type;
+            $data['amount'] = round((float) $request->amount, 2);
+            $data['note'] = $request->note;
 
-        // Recalculate payable salary on the backend (don't trust frontend value)
-        $employee = $payment->employee;
-        [,,, $payableSalary] = $this->calculateSalary($request, $employee->id);
-        $data['payable_salary'] = $payableSalary;
+            // Recalculate payable salary on the backend (don't trust frontend value)
+            $employee = $payment->employee;
+            [,,, $payableSalary] = $this->calculateSalary($request, $employee->id);
+            $data['payable_salary'] = $payableSalary;
 
-        $account = Account::where('account_type', $request->payment_type);
-        if ($request->payment_type == 'cash') {
-            $account = $account->first();
-        } else {
-            $account = $account->where('id', $request->account_id)->first();
+            $account = Account::where('account_type', $request->payment_type);
+            if ($request->payment_type == 'cash') {
+                $account = $account->first();
+            } else {
+                $account = $account->where('id', $request->account_id)->first();
+            }
+            if (!$account) {
+                throw new \Exception('Payment account not found. Please check account settings.');
+            }
+            $data['account_id'] = $account->id;
+
+            $payment->update($data);
+
+            DB::commit();
+            return back()->with(['message' => 'Salary updated successfully', 'alert-type' => 'success']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-        if (!$account) {
-            throw new \Exception('Payment account not found. Please check account settings.');
-        }
-        $data['account_id'] = $account->id;
-
-        $payment->update($data);
-
-        return back()->with(['message' => 'Salary updated successfully', 'alert-type' => 'success']);
     }
 
 
@@ -210,7 +226,7 @@ class EmployeeService
         $monthStart = now()->month($monthNumber)->year($year)->startOfMonth()->format('Y-m-d');
         $monthEnd = now()->month($monthNumber)->year($year)->endOfMonth()->format('Y-m-d');
 
-        $holidays = HolidaySetup::where(function ($query) use ($monthStart, $monthEnd) {
+        $holidays = HolidaySetup::where('status', 1)->where(function ($query) use ($monthStart, $monthEnd) {
             $query->where(function ($q) use ($monthStart, $monthEnd) {
                 // Holiday starts within this month
                 $q->whereBetween('start_date', [$monthStart, $monthEnd]);
@@ -257,11 +273,17 @@ class EmployeeService
 
         $totalDayOff = $totalWeekends + $totalHolidays;
 
-        $payableSalary = $employee->salary ?? 0;
-        if ($totalDays > 0 && $totalWorkingDays != $totalAttendance) {
-            $payableSalary = ($payableSalary / $totalDays) * ($totalWeekends + $totalHolidays + $totalAttendance);
+        $baseSalary = (float) ($employee->salary ?? 0);
+        $payableSalary = $baseSalary;
+
+        // Prorate salary based on attendance vs working days
+        // Full salary is paid if attendance matches working days
+        // Otherwise: (salary / totalWorkingDays) * actualAttendance
+        if ($totalWorkingDays > 0 && $totalAttendance < $totalWorkingDays) {
+            $perWorkingDay = $baseSalary / $totalWorkingDays;
+            $payableSalary = round($perWorkingDay * $totalAttendance, 2);
         }
-        $payableSalary = (int) $payableSalary;
+        $payableSalary = round($payableSalary, 2);
 
         return [$payments, $employee, $month, $payableSalary, $totalAttendance, $totalDayOff];
     }

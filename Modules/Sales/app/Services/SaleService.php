@@ -206,9 +206,32 @@ class SaleService
     {
         return $this->sale->with('products', 'customer.payment', 'services', 'details', 'payment', 'saleReturns');
     }
+    /**
+     * Validate stock availability for all products in the cart before sale.
+     */
+    private function validateSaleStock(array $cart): void
+    {
+        foreach ($cart as $item) {
+            if ($item['type'] === 'product' && ($item['source'] ?? 0) == 1) {
+                $currentStock = (int) Product::where('id', $item['id'])->value('stock');
+                $qty = (int) $item['qty'];
+                if ($currentStock < $qty) {
+                    $product = Product::find($item['id']);
+                    throw new \Exception(
+                        "Insufficient stock for '" . ($product->name ?? $item['id'])
+                        . "'. Available: {$currentStock}, Requested: {$qty}"
+                    );
+                }
+            }
+        }
+    }
+
     public function createSale(Request $request, $user, $cart): Sale
     {
         $totals = $this->recalculateTotals($cart, $request);
+
+        // Validate stock availability before proceeding
+        $this->validateSaleStock($cart);
 
         $sale = new Sale();
         $sale->user_id = $user != null ?  $user->id : null;
@@ -258,12 +281,14 @@ class SaleService
             $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
             $orderDetails->save();
 
-            // update stock
+            // Update stock using DB-level decrement to bypass number_format accessor
             $product = Product::where('id', $item['id'])->first();
             if ($product != null && $item['type'] == 'product' && $item['source'] == 1) {
-                $product->stock = $product->stock - $item['qty'];
-                $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
-                $product->save();
+                $saleQty = (int) $item['qty'];
+                Product::where('id', $item['id'])->update([
+                    'stock' => DB::raw("CASE WHEN stock >= {$saleQty} THEN stock - {$saleQty} ELSE 0 END"),
+                    'stock_status' => DB::raw("CASE WHEN stock - {$saleQty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
+                ]);
 
                 // create stock
                 $purchasePrice = $product->last_purchase_price ?? 0;
@@ -423,17 +448,19 @@ class SaleService
             $sale->return_amount = $request->return_amount;
             $sale->updated_by = auth('admin')->user()->id;
 
-            // restore product stock
+            // Restore product stock using DB-level increment
             foreach ($sale->products as $item) {
-                $product = Product::where('id', $item->product_id)->first();
-                if ($product != null && $item->source == 1) {
-                    $product->stock = $product->stock + $item->quantity;
-                    $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
-                    $product->save();
+                if ($item->product_id && $item->source == 1) {
+                    $qty = (int) $item->quantity;
+                    Product::where('id', $item->product_id)->update([
+                        'stock' => DB::raw("stock + {$qty}"),
+                        'stock_status' => DB::raw("CASE WHEN stock + {$qty} > 0 THEN 'in_stock' ELSE 'out_of_stock' END"),
+                    ]);
                 }
             }
 
-
+            // Validate stock for new cart items after restoration
+            $this->validateSaleStock($cart);
 
             // delete old details
             $sale->details()->delete();
@@ -461,12 +488,14 @@ class SaleService
                 $orderDetails->attributes = $variant != null ? $item['variant']['attribute'] : null;
                 $orderDetails->save();
 
-                // update stock
+                // Update stock using DB-level decrement
                 $product = Product::where('id', $item['id'])->first();
                 if ($product != null && $item['type'] == 'product' && $item['source'] == 1) {
-                    $product->stock = $product->stock - $item['qty'];
-                    $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
-                    $product->save();
+                    $saleQty = (int) $item['qty'];
+                    Product::where('id', $item['id'])->update([
+                        'stock' => DB::raw("CASE WHEN stock >= {$saleQty} THEN stock - {$saleQty} ELSE 0 END"),
+                        'stock_status' => DB::raw("CASE WHEN stock - {$saleQty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
+                    ]);
 
                     // create stock
                     $purchasePrice = $product->last_purchase_price ?? 0;
@@ -608,13 +637,14 @@ class SaleService
         // Log sale deletion before deleting
         $this->transactionLogger->logSale('delete', [], $sale);
 
-        // restore product stock
+        // Restore product stock using DB-level increment
         foreach ($sale->products as $item) {
-            $product = Product::where('id', $item->product_id)->first();
-            if ($product != null && $item->source == 1) {
-                $product->stock = $product->stock + $item->quantity;
-                $product->stock_status = $product->stock <= 0 ? 'out_of_stock' : 'in_stock';
-                $product->save();
+            if ($item->product_id && $item->source == 1) {
+                $qty = (int) $item->quantity;
+                Product::where('id', $item->product_id)->update([
+                    'stock' => DB::raw("stock + {$qty}"),
+                    'stock_status' => DB::raw("CASE WHEN stock + {$qty} > 0 THEN 'in_stock' ELSE 'out_of_stock' END"),
+                ]);
             }
         }
 

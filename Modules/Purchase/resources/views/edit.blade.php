@@ -559,15 +559,12 @@
 
         $(document).on('input', 'input[name="quantity[]"], input[name="unit_price[]"]', function() {
             var tr = $(this).closest('tr');
-            var quantity = tr.find('input[name="quantity[]"]').val();
-            var unit_price = tr.find('input[name="unit_price[]"]').val();
-            var total = quantity * unit_price;
+            var quantity = parseFloat(tr.find('input[name="quantity[]"]').val()) || 0;
+            var unit_price = parseFloat(tr.find('input[name="unit_price[]"]').val()) || 0;
+            var total = Math.round(quantity * unit_price * 100) / 100;
             tr.find('input[name="total[]"]').val(total);
 
-
-
             calculateTotalAmount();
-
         });
 
         $(document).on('change', '[name="selling_price[]"]', function() {
@@ -640,10 +637,16 @@
             let totalAmount = parseFloat($('[name="total_amount"]').val()) || 0;
             let paidAmount = $('[name="paid_amount[]"]');
 
-            let dueAmount = totalAmount;
+            let totalPaid = 0;
             paidAmount.each(function() {
-                dueAmount -= parseFloat($(this).val()) || 0;
+                let val = parseFloat($(this).val()) || 0;
+                if (val < 0) val = 0; // prevent negative paid amounts
+                totalPaid += val;
             })
+
+            // Cap paid at total, floor due at 0
+            totalPaid = Math.min(totalPaid, totalAmount);
+            let dueAmount = Math.max(0, Math.round((totalAmount - totalPaid) * 100) / 100);
 
             $('[name="due_amount"]').val(dueAmount);
         }
