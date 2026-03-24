@@ -51,19 +51,29 @@ class POSController extends Controller
     public function index(Request $request)
     {
         checkAdminHasPermissionAndThrowException('pos.view');
+        $quotation = null;
         if ($request->quotation_id) {
-            $quotation = Quotation::find($request->quotation_id);
+            $quotation = Quotation::with('details')->find($request->quotation_id);
 
-            foreach ($quotation->details as $detail) {
-                $product = Product::find($detail->product_id);
-                $newReq = Request();
-                $newReq->product_id = $detail->product_id;
-                $newReq->qty = $detail->quantity;
-                $newReq->type = $product->has_variant ? 'variant' : 'single';
-                $newReq->serviceType = 'product';
-                $newReq->variant_price = $detail->price;
+            if ($quotation) {
+                // Clear existing cart before loading quotation items
+                session()->forget('POSCART');
 
-                $this->add_to_cart($newReq);
+                foreach ($quotation->details as $detail) {
+                    $product = Product::find($detail->product_id);
+                    if (!$product) continue;
+
+                    $newReq = new Request();
+                    $newReq->merge([
+                        'product_id' => $detail->product_id,
+                        'qty' => $detail->quantity,
+                        'type' => $product->has_variant ? 'variant' : 'single',
+                        'serviceType' => 'product',
+                        'variant_price' => $detail->price,
+                    ]);
+
+                    $this->add_to_cart($newReq);
+                }
             }
         }
 
@@ -121,6 +131,7 @@ class POSController extends Controller
             'services' => $services,
             'cart_holds' => $cart_holds,
             'serviceCategories' => $serviceCategories,
+            'quotation' => $quotation,
         ]);
     }
 
@@ -494,10 +505,12 @@ class POSController extends Controller
             DB::rollBack();
             Log::error($ex->getMessage());
 
+            $statusCode = str_contains($ex->getMessage(), 'Insufficient stock') ? 422 : 500;
+
             return response()->json([
                 'message' => $ex->getMessage(),
                 'alert-type' => 'error',
-            ], 500);
+            ], $statusCode);
         }
     }
 
@@ -679,9 +692,9 @@ class POSController extends Controller
             return response()->json(['status' => false, 'message' => 'Item not found in cart'], 404);
         }
 
-        // Validate source is 0 (external) or 1 (own inventory)
+        // Validate source: 1 = From Stock, 2 = From Out Side
         $source = (int) $request->source;
-        if (!in_array($source, [0, 1])) {
+        if (!in_array($source, [1, 2])) {
             return response()->json(['status' => false, 'message' => 'Invalid source value'], 422);
         }
 

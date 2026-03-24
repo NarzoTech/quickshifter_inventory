@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QuotationRequest;
 use App\Models\Quotation;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -37,9 +36,7 @@ class QuotationController extends Controller
             });
         }
 
-
-
-        $fromDate = request('from_date') ? now()->parse(request('from_date'))->subDay()->format('Y-m-d') : '';
+        $fromDate = request('from_date') ? now()->parse(request('from_date'))->format('Y-m-d') : '';
         $toDate = request('to_date') ? now()->parse(request('to_date'))->format('Y-m-d') : date('Y-m-d');
 
         // from date and to date
@@ -96,29 +93,76 @@ class QuotationController extends Controller
     }
 
     /**
+     * Server-side recalculation of quotation totals
+     */
+    private function recalculateTotals(array $quantities, array $unitPrices, $discount, $vat): array
+    {
+        $subtotal = 0;
+        $lineTotals = [];
+
+        foreach ($quantities as $key => $quantity) {
+            $qty = floatval($quantity);
+            $price = floatval($unitPrices[$key]);
+            $lineTotal = $qty * $price;
+            $lineTotals[$key] = round($lineTotal, 2);
+            $subtotal += $lineTotal;
+        }
+
+        $subtotal = round($subtotal, 2);
+
+        // Calculate discount
+        $discountStr = (string) ($discount ?? '0');
+        $discountAmount = 0;
+        if (str_contains($discountStr, '%')) {
+            $discountPercentage = floatval(str_replace('%', '', $discountStr));
+            $discountAmount = $subtotal * ($discountPercentage / 100);
+        } else {
+            $discountAmount = floatval($discountStr);
+        }
+
+        $afterDiscount = round($subtotal - $discountAmount, 2);
+
+        // Calculate VAT on after-discount amount
+        $vatStr = (string) ($vat ?? '0');
+        $vatAmount = 0;
+        if (str_contains($vatStr, '%')) {
+            $vatPercentage = floatval(str_replace('%', '', $vatStr));
+            $vatAmount = $afterDiscount * ($vatPercentage / 100);
+        } else {
+            $vatAmount = floatval($vatStr);
+        }
+
+        $total = round($afterDiscount + $vatAmount, 2);
+
+        return [
+            'subtotal' => $subtotal,
+            'after_discount' => $afterDiscount,
+            'total' => $total,
+            'line_totals' => $lineTotals,
+        ];
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(QuotationRequest $request)
     {
         checkAdminHasPermissionAndThrowException('quotation.create');
-        $request->validate([
-            'customer_id' => 'required',
-            'date' => 'required',
-            'product_id' => 'required|array',
-            'product_id.*' => 'required',
-            'unit_price' => 'required|array',
-            'unit_price.*' => 'required',
-            'quantity' => 'required|array',
-            'quantity.*' => 'required',
-        ]);
+
         DB::beginTransaction();
 
         try {
 
-            // check quotation no
-            // last quotation no
-            $quotation_no = Quotation::orderBy('id', 'desc')->first();
-            $quotation_no = $quotation_no ? $quotation_no->quotation_no + 1 : 1;
+            // Server-side recalculation
+            $calculated = $this->recalculateTotals(
+                $request->quantity,
+                $request->unit_price,
+                $request->discount,
+                $request->vat
+            );
+
+            // Generate unique quotation number (format: Q260324001)
+            $quotation_no = generateInvoiceNumber(Quotation::class, 'quotation_no', 'Q', [], $request->date);
 
             // create quotation
 
@@ -127,15 +171,14 @@ class QuotationController extends Controller
                 'date' => now()->parse($request->date),
                 'expiry_date' => $request->expiry_date ? now()->parse($request->expiry_date) : null,
                 'note' => $request->note,
-                'subtotal' => $request->subtotal ?? 0,
+                'subtotal' => $calculated['subtotal'],
                 'discount' => $request->discount ?? 0,
-                'after_discount' => $request->after_discount ?? 0,
+                'after_discount' => $calculated['after_discount'],
                 'vat' => $request->vat ?? 0,
-                'total' => $request->total_amount ?? 0,
+                'total' => $calculated['total'],
                 'created_by' => auth('admin')->user()->id,
                 'quotation_no' => $quotation_no,
                 'status' => $request->status ?? 'draft',
-                // 'warehouse_id' => $request->warehouse_id,
             ]);
 
 
@@ -146,7 +189,7 @@ class QuotationController extends Controller
                     'product_id' => $product_id,
                     'quantity' => $request->quantity[$key],
                     'price' => $request->unit_price[$key],
-                    'sub_total' => $request->total[$key],
+                    'sub_total' => $calculated['line_totals'][$key],
                 ]);
             }
 
@@ -173,7 +216,7 @@ class QuotationController extends Controller
     public function show(string $id)
     {
         checkAdminHasPermissionAndThrowException('quotation.view');
-        $quotation = Quotation::find($id);
+        $quotation = Quotation::findOrFail($id);
         return view('admin.pages.quotation.show', compact('quotation'));
     }
 
@@ -183,7 +226,7 @@ class QuotationController extends Controller
     public function edit(string $id)
     {
         checkAdminHasPermissionAndThrowException('quotation.edit');
-        $quotation = Quotation::find($id);
+        $quotation = Quotation::findOrFail($id);
         $customers = User::orderBy('name', 'asc')->where('status', 1)->get();
         $products = Product::where('status', 1)->whereHas('category', function ($query) {
             $query->where('status', 1);
@@ -194,34 +237,33 @@ class QuotationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(QuotationRequest $request, string $id)
     {
         checkAdminHasPermissionAndThrowException('quotation.edit');
-        $request->validate([
-            'customer_id' => 'required',
-            'date' => 'required',
-            'product_id' => 'required|array',
-            'product_id.*' => 'required',
-            'unit_price' => 'required|array',
-            'unit_price.*' => 'required',
-            'quantity' => 'required|array',
-            'quantity.*' => 'required',
-        ]);
 
         DB::beginTransaction();
 
         try {
-            $quotation = Quotation::find($id);
+            $quotation = Quotation::findOrFail($id);
+
+            // Server-side recalculation
+            $calculated = $this->recalculateTotals(
+                $request->quantity,
+                $request->unit_price,
+                $request->discount,
+                $request->vat
+            );
+
             $quotation->update([
                 'customer_id' => $request->customer_id,
                 'date' => now()->parse($request->date),
                 'expiry_date' => $request->expiry_date ? now()->parse($request->expiry_date) : null,
                 'note' => $request->note,
-                'subtotal' => $request->subtotal ?? 0,
+                'subtotal' => $calculated['subtotal'],
                 'discount' => $request->discount ?? 0,
-                'after_discount' => $request->after_discount ?? 0,
+                'after_discount' => $calculated['after_discount'],
                 'vat' => $request->vat ?? 0,
-                'total' => $request->total_amount ?? 0,
+                'total' => $calculated['total'],
                 'updated_by' => auth('admin')->user()->id,
                 'status' => $request->status ?? $quotation->status,
             ]); // update quotation
@@ -232,7 +274,7 @@ class QuotationController extends Controller
                     'product_id' => $product_id,
                     'quantity' => $request->quantity[$key],
                     'price' => $request->unit_price[$key],
-                    'sub_total' => $request->total[$key],
+                    'sub_total' => $calculated['line_totals'][$key],
                 ]);
             }
 
@@ -260,7 +302,7 @@ class QuotationController extends Controller
     public function destroy(string $id)
     {
         checkAdminHasPermissionAndThrowException('quotation.delete');
-        $quotation = Quotation::find($id);
+        $quotation = Quotation::findOrFail($id);
         $quotation->details()->delete();
         $quotation->delete();
         return redirect()->back()->with([
@@ -275,9 +317,9 @@ class QuotationController extends Controller
     public function convertToSale(string $id)
     {
         checkAdminHasPermissionAndThrowException('sale.create');
-        
+
         $quotation = Quotation::with('details.product')->findOrFail($id);
-        
+
         // Check if quotation is expired
         if ($quotation->isExpired()) {
             return redirect()->back()->with([
@@ -285,15 +327,18 @@ class QuotationController extends Controller
                 'messege' => 'Cannot convert expired quotation to sale'
             ]);
         }
-        
-        // Check if quotation is already accepted or rejected
+
+        // Check if quotation is rejected
         if (in_array($quotation->status, ['rejected'])) {
             return redirect()->back()->with([
                 'alert-type' => 'error',
                 'messege' => 'Cannot convert rejected quotation to sale'
             ]);
         }
-        
+
+        // Update quotation status to accepted
+        $quotation->update(['status' => 'accepted']);
+
         // Redirect to sale create page with quotation data pre-filled
         $products = [];
         foreach ($quotation->details as $detail) {
@@ -305,7 +350,7 @@ class QuotationController extends Controller
                 'sub_total' => $detail->sub_total,
             ];
         }
-        
+
         return redirect()->route('admin.sales.create')->with([
             'quotation_data' => [
                 'quotation_id' => $quotation->id,

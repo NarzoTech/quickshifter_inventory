@@ -355,7 +355,10 @@
                                                 <td colspan="3"> Total Vat </td>
                                                 <td>
                                                     <span id="totalVat">0</span>
+                                                    <span id="ttax2" class="d-none">0</span>
                                                     <input type="hidden" value="0" id="business_vat">
+                                                    <input type="hidden" value="percent" id="vat_type">
+                                                    <input type="hidden" value="0" id="vat_input_amount">
                                                 </td>
                                             </tr>
                                             <tr class="pay-row">
@@ -483,6 +486,14 @@
                                             <input type="hidden" name="discount_amount" value="0"
                                                 autocomplete="off">
                                             <td class="text-right w-40" id="discount_amountModal">0.00</td>
+                                        </tr>
+                                        <tr class="vat-row d-none">
+                                            <th class="text-right w-60" colspan="2">
+                                                VAT
+                                            </th>
+                                            <input type="hidden" name="total_tax" value="0"
+                                                autocomplete="off">
+                                            <td class="text-right w-40" id="vat_amountModal">0.00</td>
                                         </tr>
                                         <tr>
                                             <th class="text-right w-60" colspan="2">
@@ -793,7 +804,48 @@
             "use strict";
 
             $(document).ready(function() {
-                totalSummery();
+                @if(isset($quotation) && $quotation)
+                    // Auto-populate customer from quotation (trigger change first so any
+                    // customer-discount overrides happen before we set quotation values)
+                    @if($quotation->customer_id)
+                        $('#customer_id').val('{{ $quotation->customer_id }}').trigger('change');
+                        $('#order_customer_id').val('{{ $quotation->customer_id }}');
+                    @endif
+                @endif
+
+                @php
+                    $qDiscount = isset($quotation) && $quotation ? ($quotation->discount ?? 0) : 0;
+                    $qIsPercentDiscount = is_string($qDiscount) && str_contains($qDiscount, '%');
+                    $qDiscountValue = $qIsPercentDiscount ? floatval(str_replace('%', '', $qDiscount)) : floatval($qDiscount);
+                    $qDiscountType = $qIsPercentDiscount ? 2 : 1;
+
+                    $qVat = isset($quotation) && $quotation ? ($quotation->vat ?? 0) : 0;
+                    $qIsPercentVat = is_string($qVat) && str_contains($qVat, '%');
+                    $qVatValue = floatval(str_replace('%', '', $qVat));
+                @endphp
+
+                // Apply quotation discount & VAT after all event handlers settle
+                setTimeout(function() {
+                    @if(isset($quotation) && $quotation)
+                        @if($qDiscountValue > 0)
+                            $('#discount_type').val({{ $qDiscountType }});
+                            $('#discount_total_amount').val({{ $qDiscountValue }});
+                        @endif
+
+                        @if($qVatValue > 0)
+                            @if($qIsPercentVat)
+                                $('#vat_type').val('percent');
+                                $('#business_vat').val({{ $qVatValue }});
+                                $('#ttax2').text({{ $qVatValue }});
+                            @else
+                                $('#vat_type').val('fixed');
+                                $('#vat_input_amount').val({{ $qVatValue }});
+                            @endif
+                        @endif
+                    @endif
+
+                    totalSummery();
+                }, 100);
                 // Only load products tab initially (active tab)
                 loadTabData('products');
                 $("#flatpickr-date").flatpickr({
@@ -1433,6 +1485,7 @@
             const finalTotal = $('#finalTotal').text().replace(/[^0-9.]/g, '');
             const discountAmount = $('#tds').text();
             const subTotal = $('#total').text().replace(/[^0-9.]/g, '');
+            const vatAmount = $('#totalVat').text().replace(/[^0-9.]/g, '');
             const item = $('#titems').text();
 
 
@@ -1441,6 +1494,16 @@
 
             $('#discount_amountModal').text(discountAmount);
             $('[name="discount_amount"]').val(discountAmount);
+
+            // VAT
+            const vatVal = parseFloat(vatAmount) || 0;
+            $('[name="total_tax"]').val(vatVal);
+            $('#vat_amountModal').text(vatVal.toFixed(2));
+            if (vatVal > 0) {
+                $('.vat-row').removeClass('d-none');
+            } else {
+                $('.vat-row').addClass('d-none');
+            }
 
             let grandTotal = parseFloat(finalTotal);
             $('#total_amountModal').text(grandTotal);
@@ -1556,47 +1619,16 @@
         function discountExist() {
             let discount_total_amount = parseFloat($('#discount_total_amount').val()) || 0
             let discount_type = $('#discount_type').val()
-            let total_amount_get_text = Number($('#total').text().replace(/[^0-9.]/g, ''))
-            let vat_amount = Number($('#ttax2').text())
-            let totalAmount = 0
-            let discountDisplay = 0
 
-            if (discount_type == 1) {
-                if (discount_total_amount > total_amount_get_text) {
-                    discount_total_amount = total_amount_get_text
-                }
-                discountDisplay = discount_total_amount
-                totalAmount = numberFormat(
-                    Number(total_amount_get_text - discount_total_amount).toFixed(6)
-                )
-            } else {
-                if (discount_total_amount > 100) {
-                    discount_total_amount = 100
-                }
-                discountDisplay = (discount_total_amount * total_amount_get_text) / 100
-                totalAmount = total_amount_get_text - discountDisplay
+            // Only cap percentage values at 100, never cap amount values
+            if (discount_type == 2 && discount_total_amount > 100) {
+                discount_total_amount = 100
+                $('#discount_total_amount').val(discount_total_amount)
             }
 
-
-            $('#tds').text(discountDisplay)
-            $('input[name=discount_amount]').val(discountDisplay)
-            $('#discount_amountModal').text(discountDisplay)
-            vat_amount = 0
-            let grand_total = numberFormat(
-                // Number(exchange_total)
-                Number(totalAmount) + Number(vat_amount) - 0
-            )
-            $('#ttax2').text(vat_amount)
-            $('#gtotal').text(totalAmount)
-            $('#finalTotal').text(grand_total)
-            $('#discount_total_amount').val(discount_total_amount)
-            $('#discountModal').modal('hide')
-            $('input[name=total_amount]').val(grand_total)
-            $('#total_amountModal').text(grand_total)
-            $('input[name=paying_amount]').val(grand_total)
-            $('#paing_amountModal').text(grand_total)
-            $('#total_amountModal2').text(grand_total)
+            // Let totalSummery handle all calculations consistently
             totalSummery()
+            $('#discountModal').modal('hide')
         }
 
         const accountsList = @json($accounts);
@@ -1778,10 +1810,11 @@
                     }
                 },
                 error: function(response) {
-                    if (response.status == 500) {
-                        toastr.error("{{ __('Server error occurred') }}")
+                    if (response.responseJSON && response.responseJSON.message) {
+                        toastr.error(response.responseJSON.message);
+                    } else {
+                        toastr.error("{{ __('Server error occurred') }}");
                     }
-                    console.log(response);
                 }
             });
         }
@@ -1823,12 +1856,16 @@
 
             // vat
 
+            const vatType = $('#vat_type').val();
             const vat = $('#ttax2').text();
+            const vatFixedAmount = parseFloat($('#vat_input_amount').val()) || 0;
 
             let vatAmount = 0;
 
-            if (vat) {
-                vatAmount = total * parseFloat(vat) / 100
+            if (vatType === 'fixed' && vatFixedAmount > 0) {
+                vatAmount = vatFixedAmount;
+            } else if (vat) {
+                vatAmount = (total - discountAmount) * parseFloat(vat) / 100;
             }
 
             $('#totalVat').text(`{{ currency_icon() }}${vatAmount}`)

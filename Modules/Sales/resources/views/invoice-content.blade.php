@@ -256,18 +256,19 @@
                                 {{ $sale->order_discount }}
                             </td>
                         </tr>
-                        {{-- <tr>
-                                        <td colspan="5" style="border: none !important"></td>
-                                        <td class="text-right  ps-0"
-                                            style="border:none !important; border-bottom: 1px solid #fff !important">
-                                            Previous Due:</td>
-                                        <td class="text-right"
-                                            style="border:none !important; border-bottom: 1px solid #fff !important;">
-                                            TK
-                                            {{ $sale->customer->due->sum('due_amount') }}
-                                        </td>
-                                    </tr> --}}
-
+                        @if($sale->total_tax > 0)
+                        <tr>
+                            <td colspan="5" style="border: none !important"></td>
+                            <td class="text-right ps-0"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important ">
+                                VAT:</td>
+                            <td class="text-right"
+                                style="border:none !important; border-bottom: 1px solid rgb(136 136 136) !important ">
+                                TK
+                                {{ $sale->total_tax }}
+                            </td>
+                        </tr>
+                        @endif
 
                         <tr>
                             <td colspan="5" style="border: none !important"></td>
@@ -279,7 +280,7 @@
                                 style="border:none !important; border-bottom: 1px solid #fff !important;">
 
                                 <b>TK
-                                    {{ $subTotal - $sale->order_discount }}</b>
+                                    {{ $sale->grand_total }}</b>
                             </td>
                         </tr>
                         @php

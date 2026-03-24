@@ -26,7 +26,7 @@
                                                 <select class="form-control select2" name="customer_id">
                                                     <option value="">{{ __('Select Customer') }}</option>
                                                     @foreach ($customers as $customer)
-                                                        <option value="{{ $customer->id }}" @selected($quotation->customer_id == $customer->id)>
+                                                        <option value="{{ $customer->id }}" @selected(old('customer_id', $quotation->customer_id) == $customer->id)>
                                                             {{ $customer->name }}</option>
                                                     @endforeach
                                                 </select>
@@ -39,7 +39,7 @@
                                             <div class="form-group">
                                                 <label>{{ __('Date') }}</label>
                                                 <input type="text" class="form-control datepicker" name="date"
-                                                    value="{{ formatDate($quotation->date) }}"
+                                                    value="{{ old('date', formatDate($quotation->date)) }}"
                                                     autocomplete="off">
                                                 @error('date')
                                                     <span class="text-danger">{{ $message }}</span>
@@ -49,7 +49,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>{{ __('Note') }}</label>
-                                                <textarea name="note" id="note" class="form-control" rows="5">{{ $quotation->note }}</textarea>
+                                                <textarea name="note" id="note" class="form-control" rows="5">{{ old('note', $quotation->note) }}</textarea>
                                                 @error('note')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -86,33 +86,52 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="quotation_table">
-
-                                                        @foreach ($quotation->details as $details)
-                                                            <tr>
-                                                                <td>
-                                                                    {{ $details->product->name }}
-                                                                    <input type="hidden" name="product_id[]"
-                                                                        value="{{ $details->product_id }}">
-                                                                </td>
-                                                                <td>
-                                                                    <input type="number" class="form-control"
-                                                                        name="quantity[]" value="{{ $details->quantity }}">
-                                                                </td>
-                                                                <td>
-                                                                    <input type="number" class="form-control"
-                                                                        name="unit_price[]" value="{{ $details->price }}" step="0.01">
-                                                                </td>
-                                                                <td>
-                                                                    <input type="number" class="form-control"
-                                                                        name="total[]" value="{{ $details->sub_total }}" step="0.01">
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <button type="button" class="btn btn-white"
-                                                                        onclick="removequotationRow(this)"><i
-                                                                            class="fas fa-trash text-danger"></i></button>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
+                                                        @if(old('product_id'))
+                                                            @foreach(old('product_id') as $key => $productId)
+                                                                @php
+                                                                    $oldProduct = $products->firstWhere('id', $productId);
+                                                                @endphp
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" name="product_name[]" value="{{ $oldProduct->name ?? '' }}" readonly>
+                                                                        <input type="hidden" name="product_id[]" value="{{ $productId }}">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" class="form-control" name="quantity[]" value="{{ old('quantity')[$key] ?? 1 }}" min="1">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" class="form-control" name="unit_price[]" value="{{ old('unit_price')[$key] ?? 0 }}" min="0" step="0.01">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" class="form-control" name="total[]" value="{{ old('total')[$key] ?? 0 }}" readonly step="0.01">
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <button type="button" class="btn btn-white" onclick="removequotationRow(this)"><i class="fas fa-trash text-danger"></i></button>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($quotation->details as $details)
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="text" class="form-control" name="product_name[]" value="{{ $details->product->name }}" readonly>
+                                                                        <input type="hidden" name="product_id[]" value="{{ $details->product_id }}">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" class="form-control" name="quantity[]" value="{{ $details->quantity }}" min="1">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" class="form-control" name="unit_price[]" value="{{ $details->price }}" min="0" step="0.01">
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" class="form-control" name="total[]" value="{{ $details->sub_total }}" readonly step="0.01">
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <button type="button" class="btn btn-white" onclick="removequotationRow(this)"><i class="fas fa-trash text-danger"></i></button>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @endif
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -126,35 +145,35 @@
                                                     <div class="form-group">
                                                         <label>{{ __('Subtotal') }}</label>
                                                         <input type="number" class="form-control" name="subtotal"
-                                                            value="{{ $quotation->subtotal }}" readonly step="0.01">
+                                                            value="{{ old('subtotal', $quotation->subtotal) }}" readonly step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('Discount / Less') }}</label>
                                                         <input type="text" class="form-control" name="discount"
-                                                            value="{{ $quotation->discount }}" placeholder="amount or %" step="0.01">
+                                                            value="{{ old('discount', $quotation->discount) }}" placeholder="amount or %" step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('After Discount') }}</label>
                                                         <input type="number" class="form-control" name="after_discount"
-                                                            value="{{ $quotation->after_discount }}" readonly step="0.01">
+                                                            value="{{ old('after_discount', $quotation->after_discount) }}" readonly step="0.01">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('Vat / Add') }}</label>
                                                         <input type="text" class="form-control" name="vat"
-                                                            value="{{ $quotation->vat }}" placeholder="amount or %">
+                                                            value="{{ old('vat', $quotation->vat) }}" placeholder="amount or %">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label>{{ __('Total Amount') }}</label>
                                                         <input type="total_amount" class="form-control"
-                                                            name="total_amount" value="{{ $quotation->total }}" readonly>
+                                                            name="total_amount" value="{{ old('total_amount', $quotation->total) }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -203,6 +222,11 @@
             $('input[name="discount"], input[name="vat"]').on('input', function() {
                 calculateTotalAmount();
             })
+
+            // Recalculate on page load to ensure summary matches rows
+            if ($('#quotation_table tr').length > 0) {
+                calculateTotalAmount();
+            }
         })
 
 
@@ -211,41 +235,42 @@
 
             let totalAmount = 0;
             $('input[name="total[]"]').each(function() {
-                totalAmount += parseFloat($(this).val());
+                let val = parseFloat($(this).val());
+                totalAmount += isNaN(val) ? 0 : val;
             });
-            $('[name="subtotal"]').val(totalAmount);
+            $('[name="subtotal"]').val(totalAmount.toFixed(2));
 
             // discount
 
-            const discount = $('[name="discount"]').val();
+            const discount = $('[name="discount"]').val() || '';
             let discountAmount = 0;
 
             if (discount.includes('%')) {
-                const discountPercentage = parseFloat(discount.replace('%', '')); // Remove '%' and parse the number
-                discountAmount = totalAmount * (discountPercentage / 100);
+                const discountPercentage = parseFloat(discount.replace('%', ''));
+                discountAmount = isNaN(discountPercentage) ? 0 : totalAmount * (discountPercentage / 100);
             } else {
-                discountAmount = parseFloat(discount || 0);
+                discountAmount = parseFloat(discount) || 0;
             }
 
             // total after discount = total - discount
             const amountAfterDiscount = totalAmount - discountAmount;
-            $('[name="after_discount"]').val(amountAfterDiscount);
+            $('[name="after_discount"]').val(amountAfterDiscount.toFixed(2));
 
 
-            // vat
+            // vat (calculated on after-discount amount, not subtotal)
 
-            const vat = $('[name="vat"]').val();
+            const vat = $('[name="vat"]').val() || '';
             let vatAmount = 0;
             if (vat.includes('%')) {
-                const vatPercentage = parseFloat(vat.replace('%', '')); // Remove '%' and parse the number
-                vatAmount = totalAmount * (vatPercentage / 100);
+                const vatPercentage = parseFloat(vat.replace('%', ''));
+                vatAmount = isNaN(vatPercentage) ? 0 : amountAfterDiscount * (vatPercentage / 100);
             } else {
-                vatAmount = parseFloat(vat || 0);
+                vatAmount = parseFloat(vat) || 0;
             }
 
             // total amount
 
-            $('[name="total_amount"]').val(amountAfterDiscount + vatAmount);
+            $('[name="total_amount"]').val((amountAfterDiscount + vatAmount).toFixed(2));
 
         }
 

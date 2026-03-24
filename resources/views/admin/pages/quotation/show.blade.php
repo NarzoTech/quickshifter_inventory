@@ -191,8 +191,11 @@
                                             Discount:</td>
                                         <td class="text-right pr-2"
                                             style="border:none !important; border-bottom: 1px solid #fff !important;">
-                                            TK
-                                            {{ $quotation->discount }}
+                                            @if(str_contains((string) $quotation->discount, '%'))
+                                                {{ $quotation->discount }}
+                                            @else
+                                                TK {{ $quotation->discount }}
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>
@@ -202,8 +205,11 @@
                                             VAT:</td>
                                         <td class="text-right pr-2"
                                             style="border:none !important; border-bottom: 1px solid #fff !important;">
-                                            TK
-                                            {{ $quotation->vat }}
+                                            @if(str_contains((string) $quotation->vat, '%'))
+                                                {{ $quotation->vat }}
+                                            @else
+                                                TK {{ $quotation->vat }}
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>
