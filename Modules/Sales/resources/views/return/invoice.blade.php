@@ -169,8 +169,23 @@
 
 
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-6 d-flex" style="align-items: flex-end;">
                             <div class="invoice-watermark">
+                                @php
+                                    $returnPaid = $return->return_amount - $return->return_due;
+                                @endphp
+                                @if($returnPaid > 0)
+                                <div class="payment-details">
+                                    <span class="block bold" style="font-size: 12px; margin-bottom: 30px; display: block;">
+                                        <b>
+                                            <span style="font-weight: bold; letter-spacing: 0.1px; font-size: 13px;">
+                                                In Words:
+                                            </span>
+                                            {{ numberToWord($returnPaid) }} TK Only
+                                        </b>
+                                    </span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                         <div class="col-6">
@@ -214,22 +229,6 @@
                             </table>
                         </div>
                     </div>
-
-                    @php
-                        $returnPaid = $return->return_amount - $return->return_due;
-                    @endphp
-                    @if($returnPaid > 0)
-                    <div class="mt-3 payment-details">
-                        <span class="block bold" style="font-size: 12px">
-                            <b>
-                                <span style="font-weight: bold; letter-spacing: 0.1px; font-size: 13px;">
-                                    In Words:
-                                </span>
-                                {{ numberToWord($returnPaid) }} TK Only
-                            </b>
-                        </span>
-                    </div>
-                    @endif
 
                     @if($return->payments && $return->payments->count() > 0)
                     <div class="mt-3 payment-details">

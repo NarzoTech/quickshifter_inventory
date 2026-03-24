@@ -28,8 +28,8 @@ e .page * {
 }
 
 .invoice-watermark {
-    max-width: 80%;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
 }
 
 .invoice-watermark img {
@@ -44,6 +44,11 @@ e .page * {
 
     @page {
         size: A4;
+        margin: 0;
+    }
+
+    body {
+        margin: 10mm;
     }
 
     .container-fluid,

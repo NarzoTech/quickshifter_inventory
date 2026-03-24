@@ -221,8 +221,27 @@
 
 
         <div class="row">
-            <div class="col-6">
+            <div class="col-6 d-flex" style="align-items: flex-end;">
                 <div class="invoice-watermark">
+                    @if($sale->paid_amount > 0)
+                    <div class="payment-details">
+                        <span class="block bold" style="font-size: 12px; margin-bottom: 30px; display: block;">
+                            <b>
+                                <span style="font-weight: bold; letter-spacing: 0.1px; font-size: 13px;">
+                                    In Words:
+                                </span>
+                                {{ numberToWord($sale->paid_amount) }} TK
+                                Only
+                            </b>
+                        </span>
+                    </div>
+                    @endif
+
+                    @if($sale->sale_note)
+                    <div class="mt-2">
+                        <b>Note:</b> {{ $sale->sale_note }}
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="col-6">
@@ -348,27 +367,8 @@
                 </table>
             </div>
         </div>
-        @if($sale->paid_amount > 0)
-        <div class="mt-3 payment-details">
-            <span class="block bold" style="font-size: 12px">
-                <b>
-                    <span style="font-weight: bold; letter-spacing: 0.1px; font-size: 13px;">
-                        In Words:
-                    </span>
-                    {{ numberToWord($sale->paid_amount) }} TK
-                    Only
-                </b>
-            </span>
-        </div>
-        @endif
 
-        @if($sale->sale_note)
-        <div class="mt-2">
-            <b>Note:</b> {{ $sale->sale_note }}
-        </div>
-        @endif
-
-        <div class="d-flex justify-content-between" style="margin-top: 250px; clear: both;">
+        <div class="d-flex justify-content-between" style="margin-top: 80px; clear: both;">
             <div>
                 <p class="signature">
                     Received By

@@ -147,20 +147,25 @@
                 </table>
 
                 @if($expense->paid_amount > 0)
-                    <div class="mt-3 payment-details">
-                        <span style="font-weight: bold; font-size: 13px;">
-                            In Words: {{ numberToWord($expense->paid_amount) }} TK Only
+                    <div class="payment-details">
+                        <span class="block bold" style="font-size: 12px; margin-bottom: 30px; display: block;">
+                            <b>
+                                <span style="font-weight: bold; letter-spacing: 0.1px; font-size: 13px;">
+                                    In Words:
+                                </span>
+                                {{ numberToWord($expense->paid_amount) }} TK Only
+                            </b>
                         </span>
                     </div>
                 @endif
 
                 @if($expense->note)
-                    <div class="mt-3" style="clear: both;">
+                    <div class="mt-2">
                         <b>Note:</b> {{ $expense->note }}
                     </div>
                 @endif
 
-                <div class="d-flex justify-content-between" style="margin-top: 250px; clear: both;">
+                <div class="d-flex justify-content-between" style="margin-top: 80px; clear: both;">
                     <div>
                         <p class="signature">Prepared By</p>
                     </div>
