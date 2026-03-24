@@ -58,7 +58,14 @@
                                                     </thead>
                                                     <tbody id="purchase_table">
                                                         @foreach ($supplier->duePurchase as $purchase)
-                                                            <tr data-due="{{ $purchase->due_amount }}">
+                                                            @php
+                                                                // Return reduces due (goods returned = less owed)
+                                                                $returnAmount = $purchase->purchaseReturn->sum('return_amount');
+                                                                $returnReceived = $purchase->purchaseReturn->sum('received_amount');
+                                                                $effectiveDue = $purchase->due_amount - $returnAmount + $returnReceived;
+                                                                if ($effectiveDue <= 0) continue;
+                                                            @endphp
+                                                            <tr data-due="{{ $effectiveDue }}">
                                                                 <td>
                                                                     <div class="custom-checkbox custom-control">
                                                                         <input type="checkbox" data-checkboxes="checkgroup"
@@ -83,12 +90,12 @@
                                                                     {{ currency($purchase->total_amount) }}
                                                                 </td>
                                                                 <td>
-                                                                    {{ currency($purchase->due_amount) }}
+                                                                    {{ currency($effectiveDue) }}
                                                                 </td>
                                                                 <td>
                                                                     <input type="number" class="form-control"
                                                                         name="amount[]" value="0"
-                                                                        min="0" max="{{ $purchase->due_amount }}" step="0.01">
+                                                                        min="0" max="{{ $effectiveDue }}" step="0.01">
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -108,8 +115,17 @@
                                                             <div class="input-group-text">
                                                                 <i class="fas fa-money-check-alt"></i>
                                                             </div>
+                                                            @php
+                                                                $totalPayable = 0;
+                                                                foreach ($supplier->duePurchase as $p) {
+                                                                    $rAmt = $p->purchaseReturn->sum('return_amount');
+                                                                    $rRcv = $p->purchaseReturn->sum('received_amount');
+                                                                    $eDue = $p->due_amount - $rAmt + $rRcv;
+                                                                    if ($eDue > 0) $totalPayable += $eDue;
+                                                                }
+                                                            @endphp
                                                             <input type="number" class="form-control" name="total_payable"
-                                                                value="{{ $supplier->duePurchase->sum('due_amount') }}"
+                                                                value="{{ $totalPayable }}"
                                                                 readonly step="0.01">
                                                         </div>
                                                     </div>

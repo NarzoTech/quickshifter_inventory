@@ -9,8 +9,11 @@
             <div class="card">
                 <div class="card-body pb-0">
                     <form class="search_form " action="" method="GET">
+                        @if (request()->get('supplier'))
+                            <input type="hidden" name="supplier" value="{{ request()->get('supplier') }}">
+                        @endif
                         <div class="row">
-                            <div class="col-xxl-3 col-md-4">
+                            <div class="col-xxl-2 col-md-4">
                                 <div class="form-group search-wrapper">
                                     <input type="text" name="keyword" value="{{ request()->get('keyword') }}"
                                         class="form-control" placeholder="Search...">
@@ -20,6 +23,18 @@
                                 </div>
                             </div>
                             <div class="col-xxl-2 col-md-4">
+                                <div class="form-group">
+                                    <select name="supplier" class="form-control select2">
+                                        <option value="">{{ __('All Suppliers') }}</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}" {{ request('supplier') == $supplier->id ? 'selected' : '' }}>
+                                                {{ $supplier->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
                                     <select name="order_by" id="order_by" class="form-control">
                                         <option value="">{{ __('Order By') }}</option>
@@ -32,7 +47,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xxl-2 col-md-4">
+                            <div class="col-xxl-1 col-md-4">
                                 <div class="form-group">
                                     <select name="par-page" id="par-page" class="form-control">
                                         <option value="">{{ __('Per Page') }}</option>
@@ -88,13 +103,24 @@
             </div>
         </div>
         <div class="card-body">
+            <div class="alert alert-danger d-none justify-content-between delete-section danger-bg flex-wrap align-items-center mb-3">
+                <span>
+                    <span class="selected-count">0</span> {{ __('rows selected') }}
+                </span>
+                <button class="btn btn-danger bulk-delete-btn">{{ __('Delete Selected') }}</button>
+            </div>
             <div class="table-responsive">
                 <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
                             <th>
-                                {{ __('SL') }}
+                                <div class="custom-checkbox custom-control">
+                                    <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
+                                        class="custom-control-input" id="checkbox-all">
+                                    <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                </div>
                             </th>
+                            <th>{{ __('SL') }}</th>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Invoice No') }}</th>
                             <th>{{ __('Supplier') }}</th>
@@ -106,27 +132,40 @@
                     <tbody>
                         @foreach ($payments as $payment)
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ formatDate($payment->payment_date) }}
+                                <td>
+                                    <div class="custom-checkbox custom-control">
+                                        <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
+                                            id="checkbox-{{ $payment->id }}" name="select">
+                                        <label for="checkbox-{{ $payment->id }}" class="custom-control-label">&nbsp;</label>
+                                    </div>
                                 </td>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ formatDate($payment->payment_date) }}</td>
                                 <td>{{ $payment->purchase?->invoice_number }}</td>
                                 <td>{{ $payment->supplier->name }}</td>
                                 <td>{{ currency($payment->amount) }}</td>
                                 <td>{{ $payment->createdBy->name }}</td>
                                 <td>
-                                    @adminCan('supplier.due.pay.delete')
-                                        <div class="btn-group">
+                                    <div class="btn-group">
+                                        @adminCan('supplier.due.pay.list')
+                                            <a href="{{ route('admin.supplier.due-pay.edit', $payment->id) }}"
+                                                class="btn btn-info btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @endadminCan
+                                        @adminCan('supplier.due.pay.delete')
                                             <a href="javascript:;" class="btn btn-danger btn-sm"
                                                 onclick="deleteData({{ $payment->id }})">
                                                 <i class="fas fa-trash"></i>
                                             </a>
-                                        </div>
-                                    @endadminCan
+                                        @endadminCan
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
                         @if ($payments->count() > 0)
                             <tr>
+                                <td></td>
                                 <td colspan="4" class="text-center fw-bold">
                                     {{ __('Total') }}
                                 </td>
@@ -151,10 +190,85 @@
 @push('js')
     <script>
         function deleteData(id) {
-            let url = "{{ route('admin.supplier.due-receive.delete', ':id') }}"
+            let url = "{{ route('admin.supplier.due-pay.delete', ':id') }}"
             url = url.replace(':id', id);
             $("#deleteForm").attr("action", url);
             $('#deleteModal').modal('show');
         }
+
+        $(document).ready(function() {
+            // Select all checkbox
+            $('#checkbox-all').on('change', function() {
+                $('input[name="select"]').prop('checked', $(this).is(':checked'));
+                updateSelectedCount();
+            });
+
+            // Individual checkbox
+            $(document).on('change', 'input[name="select"]', function() {
+                var total = $('input[name="select"]').length;
+                var checked = $('input[name="select"]:checked').length;
+                $('#checkbox-all').prop('checked', total == checked);
+                updateSelectedCount();
+            });
+
+            function updateSelectedCount() {
+                var count = $('input[name="select"]:checked').length;
+                $('.selected-count').text(count);
+
+                if (count > 0) {
+                    $('.delete-section').removeClass('d-none').addClass('d-flex');
+                } else {
+                    $('.delete-section').addClass('d-none').removeClass('d-flex');
+                }
+            }
+
+            // Bulk delete
+            $('.bulk-delete-btn').on('click', function() {
+                var ids = [];
+                $('input[name="select"]:checked').each(function() {
+                    ids.push($(this).attr('id').split('-')[1]);
+                });
+
+                if (ids.length === 0) return;
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You are about to delete ' + ids.length + ' due payment record(s). This will restore due amounts.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete them!',
+                    cancelButtonText: 'No, keep them'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('admin.supplier.due-pay.bulk-delete') }}",
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                ids: ids
+                            },
+                            beforeSend: function() {
+                                $('.bulk-delete-btn').prop('disabled', true).text('Deleting...');
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    toastr.success(response.message);
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
+                                } else {
+                                    toastr.error(response.message);
+                                    $('.bulk-delete-btn').prop('disabled', false).text('Delete Selected');
+                                }
+                            },
+                            error: function() {
+                                toastr.error('Something went wrong');
+                                $('.bulk-delete-btn').prop('disabled', false).text('Delete Selected');
+                            }
+                        });
+                    }
+                });
+            });
+        });
     </script>
 @endpush

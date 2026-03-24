@@ -20,7 +20,11 @@ Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix()], function () 
     Route::get('suppliers/import', [SupplierController::class, 'bulkImport'])->name('suppliers.import');
     Route::post('suppliers/import', [SupplierController::class, 'bulkImportStore'])->name('suppliers.import.store');
 
-    Route::delete('supplier/due-receive/delete/{id}', [SupplierController::class, 'dueReceiveDelete'])->name('supplier.due-receive.delete');
+    Route::delete('supplier/due-receive/delete/{id}', [SupplierController::class, 'duePayDelete'])->name('supplier.due-receive.delete');
+    Route::delete('supplier/due-pay/delete/{id}', [SupplierController::class, 'duePayDelete'])->name('supplier.due-pay.delete');
+    Route::get('supplier/due-pay-edit/{id}', [SupplierController::class, 'duePayEdit'])->name('supplier.due-pay.edit');
+    Route::post('supplier/due-pay-update/{id}', [SupplierController::class, 'duePayUpdate'])->name('supplier.due-pay.update');
+    Route::post('supplier/due-pay-bulk-delete', [SupplierController::class, 'duePayBulkDelete'])->name('supplier.due-pay.bulk-delete');
     Route::resource('suppliers', SupplierController::class)->except(['show']);
 
     Route::post('suppliers/status/{id}', [SupplierController::class, 'changeStatus'])->name('suppliers.status');

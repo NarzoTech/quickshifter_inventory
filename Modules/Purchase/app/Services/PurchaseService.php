@@ -176,7 +176,8 @@ class PurchaseService
     private function validateReturnStock($request): void
     {
         foreach ($request->product_id as $index => $productId) {
-            $returnQty = (float) $request->return_quantity[$index];
+            $returnQty = (float) ($request->return_quantity[$index] ?? 0);
+            if ($returnQty <= 0) continue;
             $currentStock = (int) Product::where('id', $productId)->value('stock');
 
             if ($currentStock < $returnQty) {
@@ -686,6 +687,8 @@ class PurchaseService
         // store purchase return details with server-calculated subtotals
 
         foreach ($request->product_id as $index => $val) {
+            if (empty($request->return_quantity[$index]) || $request->return_quantity[$index] == 0) continue;
+
             $lineItem = $returnTotals['line_items'][$index];
 
             $purchase->purchaseDetails()->create([
@@ -716,6 +719,7 @@ class PurchaseService
         }
 
         // Always create ledger entry for purchase return
+        // Return reduces due by the full return amount (goods returned = less owed)
         $returnDue = $returnTotals['return_amount'] - $returnTotals['received_amount'];
         $ledger = $this->purchaseReturnLedger(
             $request,
@@ -833,6 +837,8 @@ class PurchaseService
 
         // create new purchase return details with server-calculated subtotals
         foreach ($request->product_id as $index => $val) {
+            if (empty($request->return_quantity[$index]) || $request->return_quantity[$index] == 0) continue;
+
             $lineItem = $returnTotals['line_items'][$index];
 
             $return->purchaseDetails()->create([
@@ -863,6 +869,7 @@ class PurchaseService
         }
 
         // Create ledger entry for purchase return with server-calculated amounts
+        // Return reduces due by the full return amount (goods returned = less owed)
         $returnDue = $returnTotals['return_amount'] - $returnTotals['received_amount'];
         $ledger = $this->purchaseReturnLedger(
             $request,

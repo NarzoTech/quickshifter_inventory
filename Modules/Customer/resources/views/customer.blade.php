@@ -151,7 +151,7 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->area->name }}</td>
-                                <td>{{ currency($user->sales->sum('grand_total')) }}</td>
+                                <td>{{ currency($user->sales->sum('grand_total') - $user->saleReturn->sum('return_amount')) }}</td>
                                 <td>{{ currency($user->total_paid + $offset) }}</td>
                                 <td>{{ currency($effectiveDue - $user->previous_due) }}</td>
                                 <td>{{ currency($user->previous_due) }}</td>

@@ -329,9 +329,9 @@ class SupplierService
         }
 
         if (request()->order_by) {
-            $list = $list->orderBy('payment_date', request()->order_by);
+            $list = $list->orderBy('payment_date', request()->order_by)->orderBy('id', request()->order_by);
         } else {
-            $list = $list->orderBy('payment_date', 'desc');
+            $list = $list->orderBy('payment_date', 'desc')->orderBy('id', 'desc');
         }
 
         return $list;
@@ -358,22 +358,26 @@ class SupplierService
             $list = $list->where(function ($q) use ($keyword) {
                 $q->where('note', 'like', $keyword)
                     ->orWhere('amount', 'like', $keyword)
-
+                    ->orWhere('invoice', 'like', $keyword)
+                    ->orWhere('account_type', 'like', $keyword)
                     ->orWhereHas('supplier', function ($query) use ($keyword) {
                         $query->where('name', 'like', $keyword)
                             ->orWhere('phone', 'like', $keyword)
                             ->orWhere('address', 'like', $keyword)
                             ->orWhere('email', 'like', $keyword);
                     });
-            })
-                ->orWhere('invoice', 'like', $keyword)
-                ->orWhere('account_type', 'like', $keyword);
+            });
+        }
+
+        // Supplier filter
+        if (request()->filled('supplier')) {
+            $list = $list->where('supplier_id', request()->supplier);
         }
 
         if (request()->order_by) {
-            $list = $list->orderBy('payment_date', request()->order_by);
+            $list = $list->orderBy('payment_date', request()->order_by)->orderBy('id', request()->order_by);
         } else {
-            $list = $list->orderBy('payment_date', 'desc');
+            $list = $list->orderBy('payment_date', 'desc')->orderBy('id', 'desc');
         }
 
         return $list;

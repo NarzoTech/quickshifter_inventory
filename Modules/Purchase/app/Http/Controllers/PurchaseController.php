@@ -52,7 +52,8 @@ class PurchaseController extends Controller
             $returnDue = $purchase->purchaseReturn->sum(function ($r) {
                 return $r->return_amount - $r->received_amount;
             });
-            $data['total_amount'] += $purchase->total_amount;
+            $returnAmount = $purchase->purchaseReturn->sum('return_amount');
+            $data['total_amount'] += $purchase->total_amount - $returnAmount;
             $data['paid_amount'] += $purchase->paid_amount + $offset;
             $data['due_amount'] += $purchase->due_amount - $offset - $returnDue;
         }

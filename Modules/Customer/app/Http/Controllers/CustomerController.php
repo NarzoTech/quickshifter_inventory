@@ -130,9 +130,8 @@ class CustomerController extends Controller
 
         $customerData = request()->order_type ? $customers : $query->get();
         foreach ($customerData as $index => $customer) {
-            $data['totalSale'] += $customer->sales->sum('grand_total');
-
             $totalReturn           = $customer->saleReturn->sum('return_amount');
+            $data['totalSale'] += $customer->sales->sum('grand_total') - $totalReturn;
             $data['total_return'] += $totalReturn;
 
             $data['total_return_pay'] += $totalReturn - $customer->saleReturn->sum('return_due');
@@ -574,9 +573,9 @@ class CustomerController extends Controller
         }
 
         if (request()->order_by) {
-            $payments = $payments->orderBy('payment_date', request()->order_by);
+            $payments = $payments->orderBy('payment_date', request()->order_by)->orderBy('id', request()->order_by);
         } else {
-            $payments = $payments->orderBy('payment_date', 'desc');
+            $payments = $payments->orderBy('payment_date', 'desc')->orderBy('id', 'desc');
         }
 
         if (request('customer')) {

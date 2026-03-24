@@ -111,6 +111,14 @@
                                         </thead>
                                         <tbody id="purchase_table">
                                             @foreach ($customer->due as $due)
+                                                @php
+                                                    // Return reduces due (goods returned = less owed by customer)
+                                                    $returnAmount = $due->sale ? $due->sale->saleReturns->sum('return_amount') : 0;
+                                                    $returnPaidBack = $due->sale ? $due->sale->saleReturns->sum(function($r) { return $r->return_amount - $r->return_due; }) : 0;
+                                                    $remainingDue = $due->due_amount - $returnAmount + $returnPaidBack;
+                                                    if ($remainingDue <= 0) continue;
+                                                    $totalDue += $remainingDue;
+                                                @endphp
                                                 <tr>
                                                     <td>
                                                         <div class="custom-checkbox custom-control">
@@ -133,10 +141,6 @@
                                                     <td>
                                                         {{ currency($due->sale->grand_total ?? 0) }}
                                                     </td>
-                                                    @php
-                                                        $remainingDue = $due->due_amount;
-                                                        $totalDue += $remainingDue;
-                                                    @endphp
                                                     <td>
                                                         {{ currency($remainingDue) }}
                                                     </td>

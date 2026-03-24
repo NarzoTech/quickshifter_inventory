@@ -57,7 +57,7 @@ class SupplierController extends Controller
         $supplierData = request()->order_type ? $suppliers : $suppliers->get();
 
         foreach ($supplierData as $supplier) {
-            $data['totalPurchase'] += $supplier->purchases->sum('total_amount');
+            $data['totalPurchase'] += $supplier->purchases->sum('total_amount') - $supplier->purchaseReturn->sum('return_amount');
             $data['total_return'] += $supplier->purchaseReturn->sum('return_amount');
             $data['total_return_pay'] += $supplier->purchaseReturn->sum('received_amount');
 
@@ -293,16 +293,43 @@ class SupplierController extends Controller
             $payments->appends(request()->query());
         }
 
-
-
         if (request('export_pdf')) {
             return view('supplier::pdf.due-pay-list', ['payments' => $payments,  'data' => $data]);
         }
 
-        return view('supplier::due-pay-history', compact('payments', 'data'));
+        $suppliers = Supplier::where('status', 1)->orderBy('name')->get(['id', 'name']);
+
+        return view('supplier::due-pay-history', compact('payments', 'data', 'suppliers'));
     }
 
-    public function dueReceiveDelete($id)
+    public function duePayEdit($id)
+    {
+        checkAdminHasPermissionAndThrowException('supplier.due.pay.list');
+        $payment = SupplierPayment::findOrFail($id);
+        $accounts = $this->accountsService->all()->with('bank')->get();
+        return view('supplier::due-pay-edit', compact('payment', 'accounts'));
+    }
+
+    public function duePayUpdate(Request $request, $id)
+    {
+        checkAdminHasPermissionAndThrowException('supplier.due.pay.list');
+
+        $request->validate([
+            'amount'       => 'required|numeric|min:0.01',
+            'payment_date' => 'required|date',
+            'note'         => 'nullable|string',
+        ]);
+
+        $payment = SupplierPayment::findOrFail($id);
+        $payment->update($request->only(['amount', 'payment_date', 'note', 'account_id']));
+
+        return to_route('admin.suppliers.due-pay-history')->with([
+            'messege'    => 'Supplier due payment updated successfully.',
+            'alert-type' => 'success',
+        ]);
+    }
+
+    public function duePayDelete($id)
     {
         checkAdminHasPermissionAndThrowException('supplier.due.pay.delete');
 
@@ -316,6 +343,32 @@ class SupplierController extends Controller
             DB::rollBack();
             Log::error($e->getMessage());
             return back()->with(['messege' => 'Payment deletion failed', 'alert-type' => 'error']);
+        }
+    }
+
+    public function duePayBulkDelete(Request $request)
+    {
+        checkAdminHasPermissionAndThrowException('supplier.due.pay.delete');
+        $ids = $request->ids;
+
+        if (empty($ids)) {
+            return response()->json(['success' => false, 'message' => 'No items selected']);
+        }
+
+        DB::beginTransaction();
+        try {
+            foreach ($ids as $id) {
+                $payment = SupplierPayment::find($id);
+                if (!$payment) continue;
+                $this->supplierService->dueReceiveDelete($id);
+            }
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => count($ids) . ' payment(s) deleted successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Deletion failed: ' . $e->getMessage()]);
         }
     }
 

@@ -86,11 +86,17 @@ class PurchaseReturnController extends Controller
             'product_id'        => 'required|array|min:1',
             'product_id.*'      => 'required|exists:products,id',
             'return_quantity'    => 'required|array|min:1',
-            'return_quantity.*'  => 'required|numeric|min:0.01',
+            'return_quantity.*'  => 'nullable|numeric|min:0',
             'return_subtotal'   => 'required|array',
-            'return_subtotal.*' => 'required|numeric|min:0',
+            'return_subtotal.*' => 'nullable|numeric|min:0',
             'received_amount'   => 'nullable|numeric|min:0',
         ]);
+
+        // Ensure at least one product has a return quantity > 0
+        $hasReturnQty = collect($request->return_quantity)->filter(fn($qty) => $qty > 0)->isNotEmpty();
+        if (!$hasReturnQty) {
+            return back()->withInput()->withErrors(['return_quantity' => 'At least one product must have a return quantity.']);
+        }
 
         DB::beginTransaction();
         try {
@@ -134,18 +140,24 @@ class PurchaseReturnController extends Controller
             'product_id'        => 'required|array|min:1',
             'product_id.*'      => 'required|exists:products,id',
             'return_quantity'    => 'required|array|min:1',
-            'return_quantity.*'  => 'required|numeric|min:0.01',
+            'return_quantity.*'  => 'nullable|numeric|min:0',
             'return_subtotal'   => 'required|array',
-            'return_subtotal.*' => 'required|numeric|min:0',
+            'return_subtotal.*' => 'nullable|numeric|min:0',
             'received_amount'   => 'nullable|numeric|min:0',
         ]);
+
+        // Ensure at least one product has a return quantity > 0
+        $hasReturnQty = collect($request->return_quantity)->filter(fn($qty) => $qty > 0)->isNotEmpty();
+        if (!$hasReturnQty) {
+            return back()->withInput()->withErrors(['return_quantity' => 'At least one product must have a return quantity.']);
+        }
 
         DB::beginTransaction();
         try {
             $this->purchaseService->updateReturn($request, $id);
 
             DB::commit();
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Created Successfully', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.return.index', [], ['messege' => 'Purchase Return Updated Successfully', 'alert-type' => 'success']);
         } catch (Exception $ex) {
 
             DB::rollBack();
