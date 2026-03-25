@@ -211,19 +211,7 @@ class SaleService
      */
     private function validateSaleStock(array $cart): void
     {
-        foreach ($cart as $item) {
-            if ($item['type'] === 'product' && ($item['source'] ?? 0) == 1) {
-                $currentStock = (int) Product::where('id', $item['id'])->value('stock');
-                $qty = (int) $item['qty'];
-                if ($currentStock < $qty) {
-                    $product = Product::find($item['id']);
-                    throw new \Exception(
-                        "Insufficient stock for '" . ($product->name ?? $item['id'])
-                        . "'. Available: {$currentStock}, Requested: {$qty}"
-                    );
-                }
-            }
-        }
+        // Allow selling from negative stock — no stock validation
     }
 
     public function createSale(Request $request, $user, $cart): Sale
