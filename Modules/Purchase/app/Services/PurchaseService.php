@@ -271,7 +271,7 @@ class PurchaseService
         $cashPaid = min($cashPaid, $totals['total_amount']);
         $cashDue = $totals['total_amount'] - $cashPaid;
 
-        $this->purchaseLedger($request, $purchase->id, $cashPaid, $totals['total_amount'], 'purchase', 1, $cashDue);
+        $purchaseLedger = $this->purchaseLedger($request, $purchase->id, $cashPaid, $totals['total_amount'], 'purchase', 1, $cashDue);
 
         foreach ($request->product_id as $index => $id) {
             $lineItem = $totals['line_items'][$index];
@@ -333,6 +333,23 @@ class PurchaseService
                 throw new \Exception("Payment account not found for payment type: {$item}. Please check account settings.");
             }
 
+            // Create advance deduct ledger entry first so we can link it
+            $paymentLedgerId = $purchaseLedger->id;
+            if ($item == 'advance') {
+                $advanceLedger = new Ledger();
+                $advanceLedger->supplier_id = $request->supplier_id;
+                $advanceLedger->amount = $payAmount;
+                $advanceLedger->total_amount = 0;
+                $advanceLedger->due_amount = -$payAmount;
+                $advanceLedger->invoice_type = 'Advance Deduct';
+                $advanceLedger->is_paid = 1;
+                $advanceLedger->invoice_no = $request->invoice_number;
+                $advanceLedger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+                $advanceLedger->created_by = auth('admin')->user()->id;
+                $advanceLedger->save();
+                $paymentLedgerId = $advanceLedger->id;
+            }
+
             SupplierPayment::create([
                 'payment_type' => $item == 'advance' ? 'advance_deduct' : 'purchase',
                 'purchase_id'  => $purchase->id,
@@ -345,22 +362,8 @@ class PurchaseService
                 'created_by'   => auth('admin')->user()->id,
                 'account_type' => accountList()[$item] ?? $item,
                 'invoice'      => $request->invoice_number,
+                'ledger_id'    => $paymentLedgerId,
             ]);
-
-            // Create advance deduct ledger entry
-            if ($item == 'advance') {
-                $advanceLedger = new Ledger();
-                $advanceLedger->supplier_id = $request->supplier_id;
-                $advanceLedger->amount = $payAmount;
-                $advanceLedger->total_amount = 0;
-                $advanceLedger->due_amount = -$payAmount; // Reduces supplier due in ledger running balance
-                $advanceLedger->invoice_type = 'Advance Deduct';
-                $advanceLedger->is_paid = 1;
-                $advanceLedger->invoice_no = $request->invoice_number;
-                $advanceLedger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
-                $advanceLedger->created_by = auth('admin')->user()->id;
-                $advanceLedger->save();
-            }
         }
 
         // Log purchase transaction
@@ -406,6 +409,7 @@ class PurchaseService
         }
 
         $oldInvoiceNumber = $purchase->invoice_number;
+        $oldSupplierId = $purchase->supplier_id;
         $purchaseDate = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
 
         // Regenerate invoice number if purchase date changed
@@ -441,11 +445,22 @@ class PurchaseService
         // Merge the new invoice number into request for downstream methods
         $request->merge(['invoice_number' => $newInvoiceNumber]);
 
-        $ledger = Ledger::where('supplier_id', $request->supplier_id)
+        // Find existing ledger using the OLD supplier_id (before potential supplier change)
+        // This prevents orphan ledgers when a purchase's supplier is changed
+        $ledger = Ledger::where('supplier_id', $oldSupplierId)
             ->where('invoice_type', 'purchase')
             ->where('invoice_no', $oldInvoiceNumber)
             ->where('is_paid', 1)
             ->first();
+
+        // If not found with old supplier_id, try the new one (in case they match or ledger was already updated)
+        if (!$ledger) {
+            $ledger = Ledger::where('supplier_id', $request->supplier_id)
+                ->where('invoice_type', 'purchase')
+                ->where('invoice_no', $oldInvoiceNumber)
+                ->where('is_paid', 1)
+                ->first();
+        }
 
         // Calculate cash-only paid (exclude advance) for ledger display
         $cashPaid = 0;
@@ -457,12 +472,12 @@ class PurchaseService
         $cashPaid = min($cashPaid, $totals['total_amount']);
         $cashDue = $totals['total_amount'] - $cashPaid;
 
-        $this->purchaseLedger($request, $purchase->id, $cashPaid, $totals['total_amount'], 'purchase', 1, $cashDue, $ledger);
+        $purchaseLedger = $this->purchaseLedger($request, $purchase->id, $cashPaid, $totals['total_amount'], 'purchase', 1, $cashDue, $ledger);
 
-        // Delete old advance deduct ledger entries using the OLD invoice number
+        // Delete old advance deduct ledger entries using the OLD invoice number and OLD supplier_id
         Ledger::where('invoice_type', 'Advance Deduct')
             ->where('invoice_no', $oldInvoiceNumber)
-            ->where('supplier_id', $request->supplier_id)
+            ->where('supplier_id', $oldSupplierId)
             ->delete();
 
         // Restore product stock using DB-level decrement (bypasses number_format accessor)
@@ -537,6 +552,23 @@ class PurchaseService
                 throw new \Exception("Payment account not found for payment type: {$item}. Please check account settings.");
             }
 
+            // Create advance deduct ledger entry first so we can link it
+            $paymentLedgerId = $purchaseLedger->id;
+            if ($item == 'advance') {
+                $advanceLedger = new Ledger();
+                $advanceLedger->supplier_id = $request->supplier_id;
+                $advanceLedger->amount = $payAmount;
+                $advanceLedger->total_amount = 0;
+                $advanceLedger->due_amount = -$payAmount;
+                $advanceLedger->invoice_type = 'Advance Deduct';
+                $advanceLedger->is_paid = 1;
+                $advanceLedger->invoice_no = $newInvoiceNumber;
+                $advanceLedger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
+                $advanceLedger->created_by = auth('admin')->user()->id;
+                $advanceLedger->save();
+                $paymentLedgerId = $advanceLedger->id;
+            }
+
             SupplierPayment::create([
                 'payment_type' => $item == 'advance' ? 'advance_deduct' : 'purchase',
                 'purchase_id'  => $purchase->id,
@@ -549,22 +581,8 @@ class PurchaseService
                 'created_by'   => auth('admin')->user()->id,
                 'invoice'      => $newInvoiceNumber,
                 'account_type' => accountList()[$item] ?? $item,
+                'ledger_id'    => $paymentLedgerId,
             ]);
-
-            // Create advance deduct ledger entry
-            if ($item == 'advance') {
-                $advanceLedger = new Ledger();
-                $advanceLedger->supplier_id = $request->supplier_id;
-                $advanceLedger->amount = $payAmount;
-                $advanceLedger->total_amount = 0;
-                $advanceLedger->due_amount = -$payAmount; // Reduces supplier due in ledger running balance
-                $advanceLedger->invoice_type = 'Advance Deduct';
-                $advanceLedger->is_paid = 1;
-                $advanceLedger->invoice_no = $newInvoiceNumber;
-                $advanceLedger->date = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
-                $advanceLedger->created_by = auth('admin')->user()->id;
-                $advanceLedger->save();
-            }
         }
 
         // Log purchase transaction update
@@ -580,19 +598,90 @@ class PurchaseService
         // Log purchase deletion before deleting
         $this->transactionLogger->logPurchase('delete', [], $purchase);
 
-        // Restore product stock using DB-level decrement
-        foreach ($this->purchase->find($id)->purchaseDetails as $purchaseDetail) {
+        // Restore product stock from purchase
+        foreach ($purchase->purchaseDetails as $purchaseDetail) {
             $qty = (int) $purchaseDetail->quantity;
             Product::where('id', $purchaseDetail->product_id)->update([
                 'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
             ]);
         }
 
+        // ─── Clean up purchase returns first ───
+        $purchaseReturns = PurchaseReturn::where('purchase_id', $id)->get();
+        foreach ($purchaseReturns as $return) {
+            // Restore return stock (items that were returned should go back to "returned" state)
+            foreach ($return->purchaseDetails as $returnDetail) {
+                $qty = (int) $returnDetail->quantity;
+                Product::where('id', $returnDetail->product_id)->update([
+                    'stock' => DB::raw("stock + {$qty}"),
+                ]);
+            }
+
+            // Delete return payment and its ledger
+            $returnPayment = SupplierPayment::where('purchase_return_id', $return->id)->first();
+            if ($returnPayment) {
+                if ($returnPayment->ledger_id) {
+                    $returnLedger = Ledger::find($returnPayment->ledger_id);
+                    if ($returnLedger) {
+                        $returnLedger->details()->delete();
+                        $returnLedger->delete();
+                    }
+                }
+                $returnPayment->delete();
+            }
+
+            // Delete return ledger entries (in case not linked via payment)
+            $returnLedgers = Ledger::where('invoice_no', $return->invoice)
+                ->where('invoice_type', 'purchase return')
+                ->get();
+            foreach ($returnLedgers as $rl) {
+                $rl->details()->delete();
+                $rl->delete();
+            }
+
+            // Delete return details and stock records
+            $return->purchaseDetails()->delete();
+            $return->stock()->delete();
+            $return->delete();
+        }
+
+        // ─── Clean up purchase details and stock ───
         PurchaseDetails::where('purchase_id', $id)?->delete();
         Stock::where('purchase_id', $id)?->delete();
+
+        // ─── Clean up due_pay payment ledger entries ───
+        $duePayPayments = SupplierPayment::where('purchase_id', $id)
+            ->where('payment_type', 'due_pay')
+            ->get();
+
+        foreach ($duePayPayments as $payment) {
+            if ($payment->ledger_id) {
+                $paymentLedger = Ledger::find($payment->ledger_id);
+                if ($paymentLedger) {
+                    $otherCount = SupplierPayment::where('ledger_id', $paymentLedger->id)
+                        ->where('id', '!=', $payment->id)
+                        ->count();
+
+                    if ($otherCount == 0) {
+                        $paymentLedger->details()->delete();
+                        $paymentLedger->delete();
+                    } else {
+                        $paymentLedger->details()->where('invoice', $purchase->invoice_number)->delete();
+                        $rawAmount = (float) DB::table('ledgers')->where('id', $paymentLedger->id)->value('amount');
+                        $rawDue = (float) DB::table('ledgers')->where('id', $paymentLedger->id)->value('due_amount');
+                        DB::table('ledgers')->where('id', $paymentLedger->id)->update([
+                            'amount'     => round($rawAmount - $payment->amount, 2),
+                            'due_amount' => round($rawDue + $payment->amount, 2),
+                        ]);
+                    }
+                }
+            }
+        }
+
+        // ─── Delete all payments for this purchase ───
         SupplierPayment::where('purchase_id', $id)?->delete();
 
-        // delete ledger and ledger details (scoped to supplier to prevent cross-supplier deletion)
+        // ─── Delete purchase ledger and advance deduct ledger entries ───
         $ledgers = Ledger::where('supplier_id', $purchase->supplier_id)
             ->where(function ($query) {
                 $query->where('invoice_type', 'purchase')
@@ -601,11 +690,14 @@ class PurchaseService
             })->where('invoice_no', $purchase->invoice_number)->get();
 
         foreach ($ledgers as $ledger) {
-            // Delete ledger details first
             $ledger->details()->delete();
-            // Then delete the ledger
             $ledger->delete();
         }
+
+        // ─── Also clean up any orphaned ledger details referencing this invoice ───
+        \App\Models\LedgerDetails::where('invoice', $purchase->invoice_number)
+            ->whereDoesntHave('ledger')
+            ->delete();
 
         return $purchase->delete();
     }
@@ -932,6 +1024,8 @@ class PurchaseService
         $ledger->date         = Carbon::createFromFormat('d-m-Y', $request->purchase_date);
         $ledger->created_by   = auth('admin')->user()->id;
         $ledger->save();
+
+        return $ledger;
     }
 
     public function purchaseReturnLedger($request, $id, $paid, $type = 'purchase_return', $isPaid = 0, $dueAmount = 0, $ledger = null, $totalAmount = 0, $invoiceNo = null)

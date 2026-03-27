@@ -116,13 +116,12 @@
                                                                 <i class="fas fa-money-check-alt"></i>
                                                             </div>
                                                             @php
-                                                                $totalPayable = 0;
-                                                                foreach ($supplier->duePurchase as $p) {
-                                                                    $rAmt = $p->purchaseReturn->sum('return_amount');
-                                                                    $rRcv = $p->purchaseReturn->sum('received_amount');
-                                                                    $eDue = $p->due_amount - $rAmt + $rRcv;
-                                                                    if ($eDue > 0) $totalPayable += $eDue;
-                                                                }
+                                                                // Use supplier-level total_due (same as supplier list)
+                                                                // This accounts for all payments including advance_deduct
+                                                                $rawDue = $supplier->total_due;
+                                                                $rawAdvance = $supplier->advance;
+                                                                $advOffset = min(max(0, $rawDue), max(0, $rawAdvance));
+                                                                $totalPayable = max(0, $rawDue - $advOffset);
                                                             @endphp
                                                             <input type="number" class="form-control" name="total_payable"
                                                                 value="{{ $totalPayable }}"

@@ -323,7 +323,10 @@ class ExpenseSupplierService
                 $ledger->details()->delete();
                 $ledger->delete();
             } else {
-                $ledger->details()->where('invoice', $payment->expense ? $payment->expense->invoice : null)->delete();
+                $invoiceNo = $payment->expense ? $payment->expense->invoice : null;
+                if ($invoiceNo) {
+                    $ledger->details()->where('invoice', $invoiceNo)->delete();
+                }
 
                 $rawLedgerAmount = (float) \Illuminate\Support\Facades\DB::table('ledgers')->where('id', $ledger->id)->value('amount');
                 $rawLedgerDue = (float) \Illuminate\Support\Facades\DB::table('ledgers')->where('id', $ledger->id)->value('due_amount');

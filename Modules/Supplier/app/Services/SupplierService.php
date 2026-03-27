@@ -436,7 +436,10 @@ class SupplierService
                 $ledger->delete();
             } else {
                 // Other payments exist, only delete the specific ledger detail for this payment
-                $ledger->details()->where('invoice', $payment->purchase?->invoice_number)->delete();
+                $invoiceNo = $payment->purchase?->invoice_number;
+                if ($invoiceNo) {
+                    $ledger->details()->where('invoice', $invoiceNo)->delete();
+                }
 
                 // Update ledger amount using raw DB values
                 $rawLedgerAmount = (float) \DB::table('ledgers')->where('id', $ledger->id)->value('amount');
