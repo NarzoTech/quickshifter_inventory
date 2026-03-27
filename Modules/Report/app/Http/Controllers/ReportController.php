@@ -1457,9 +1457,24 @@ class ReportController extends Controller
                 $fromDate->addMonth();
             }
         } else {
-            for ($month = 1; $month <= 12; $month++) {
-                $months[] = Carbon::createFromDate(null, $month)->format('F');
-                $years[] = now()->year;
+            // Default: show all payments from earliest to latest salary record
+            $earliest = \Modules\Employee\app\Models\EmployeeSalary::orderBy('year')->orderBy('date')->first();
+            $latest = \Modules\Employee\app\Models\EmployeeSalary::orderByDesc('year')->orderByDesc('date')->first();
+
+            if ($earliest && $latest) {
+                $fromDate = Carbon::createFromDate($earliest->year, Carbon::parse($earliest->month)->month, 1);
+                $toDate = Carbon::createFromDate($latest->year, Carbon::parse($latest->month)->month, 1);
+                while ($fromDate <= $toDate) {
+                    $months[] = $fromDate->format('F');
+                    $years[] = $fromDate->year;
+                    $fromDate->addMonth();
+                }
+            } else {
+                // Fallback: current year if no salary records exist
+                for ($month = 1; $month <= 12; $month++) {
+                    $months[] = Carbon::createFromDate(null, $month)->format('F');
+                    $years[] = now()->year;
+                }
             }
         }
 

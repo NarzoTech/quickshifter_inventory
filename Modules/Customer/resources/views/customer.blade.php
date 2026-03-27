@@ -141,7 +141,8 @@
                         @foreach ($users as $index => $user)
                             @php
                                 $rawDue = $user->total_due;
-                                $rawAdvance = $user->advances();
+                                $hasDateFilter = request()->from_date || request()->to_date;
+                                $rawAdvance = $hasDateFilter ? $user->trueAdvances() : $user->advances();
                                 $offset = min(max(0, $rawDue), max(0, $rawAdvance));
                                 $effectiveDue = $rawDue - $offset;
                                 $effectiveAdvance = $rawAdvance - $offset;

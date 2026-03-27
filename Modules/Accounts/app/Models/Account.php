@@ -70,7 +70,7 @@ class Account extends Model
         $deposit = $this->deposits()->sum('amount');
         $withdraw = $this->withdraws()->sum('amount');
         $asset = $this->assets()->sum('amount');
-        $expenses = $this->expenses->sum('amount');
+        $expenses = $this->expenses->sum('paid_amount');
         $salary = $this->salary()->sum('amount');
 
         // Balance Transfers
@@ -86,6 +86,7 @@ class Account extends Model
     {
         // Expenses are now tracked via ExpenseSupplierPayment for proper multi-account support
         // Only return expenses that have NO payment records (legacy data only)
+        // Use paid_amount so due amounts don't affect cashflow
         return $this->hasMany(Expense::class, 'account_id')
             ->whereNull('expense_supplier_id')
             ->whereDoesntHave('payments');
@@ -202,7 +203,7 @@ class Account extends Model
 
         $expenses = $this->expenses()
             ->where('date', '<', $startDate)
-            ->sum('amount');
+            ->sum('paid_amount');
 
         $salary = $this->salary()
             ->where('date', '<', $startDate)
@@ -299,7 +300,7 @@ class Account extends Model
         $deposit = $depositQuery->sum('amount');
         $withdraw = $withdrawQuery->sum('amount');
         $asset = $assetQuery->sum('amount');
-        $expenses = $expensesQuery->sum('amount');
+        $expenses = $expensesQuery->sum('paid_amount');
         $salary = $salaryQuery->sum('amount');
 
         // Balance Transfers

@@ -151,7 +151,7 @@
                                 <td>{{ $sale?->customer?->name ?? 'Guest' }}</td>
                                 <td>{{ $sale->sale_note }}</td>
                                 <td>{{ $sale->total_price }}</td>
-                                <td>{{ $sale->discount_amount }}</td>
+                                <td>{{ $sale->order_discount }}</td>
                                 <td>{{ $sale->grand_total }}</td>
                                 @php
                                     $offset = $advanceOffsets[$sale->id] ?? 0;

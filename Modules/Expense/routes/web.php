@@ -18,6 +18,7 @@ use Modules\Expense\app\Http\Controllers\ExpenseSupplierController;
 
 Route::group(['as' => 'admin.', 'prefix' => getAdminRoutePrefix(), 'middleware' => ['auth:admin', 'translation']], function () {
     Route::get('expense/{id}/invoice', [ExpenseController::class, 'invoice'])->name('expense.invoice');
+    Route::post('expense/{id}/due-pay', [ExpenseController::class, 'duePayStore'])->name('expense.due-pay-store');
     Route::resource('expense', ExpenseController::class)->names('expense');
     Route::resource('expenseType', ExpenseTypeController::class)->names('expense.type');
     Route::get('expense-types/{id}/children', [ExpenseTypeController::class, 'getChildren'])

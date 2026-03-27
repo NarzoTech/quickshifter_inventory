@@ -73,6 +73,30 @@ class Supplier extends Model
         return $totals['total_advance'] - $totals['total_refund'] - $totals['total_used'];
     }
 
+    /**
+     * Get the true advance balance from ALL payments (ignores eager-load filters).
+     * Use this when you need the actual current advance balance regardless of date filters.
+     */
+    public function getTrueAdvanceAttribute()
+    {
+        $payments = SupplierPayment::where('supplier_id', $this->id)
+            ->whereIn('payment_type', ['advance_pay', 'advance_refund', 'advance_deduct'])
+            ->get();
+
+        $totals = $payments->reduce(function ($carry, $payment) {
+            if ($payment->payment_type === 'advance_pay') {
+                $carry['total_advance'] += $payment->amount;
+            } elseif ($payment->payment_type === 'advance_refund') {
+                $carry['total_refund'] += $payment->amount;
+            } elseif ($payment->payment_type === 'advance_deduct') {
+                $carry['total_used'] += $payment->amount;
+            }
+            return $carry;
+        }, ['total_advance' => 0, 'total_refund' => 0, 'total_used' => 0]);
+
+        return $totals['total_advance'] - $totals['total_refund'] - $totals['total_used'];
+    }
+
 
     public function getTotalPurchaseAttribute()
     {

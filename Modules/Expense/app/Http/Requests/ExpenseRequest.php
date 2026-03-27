@@ -13,9 +13,9 @@ class ExpenseRequest extends FormRequest
         return [
             'date'                => 'required|date',
             'amount'              => 'required|numeric|min:0.01',
-            'payment_type'        => 'required|array|min:1',
+            'payment_type'        => 'nullable|array',
             'payment_type.*'      => 'required|string',
-            'account_id'          => 'required|array|min:1',
+            'account_id'          => 'nullable|array',
             'paying_amount'       => 'nullable|array',
             'paying_amount.*'     => 'nullable|numeric|min:0',
             'expense_type_id'     => 'required|exists:expense_types,id',

@@ -56,13 +56,15 @@ class SupplierController extends Controller
 
         $supplierData = request()->order_type ? $suppliers : $suppliers->get();
 
+        $hasDateFilter = request()->from_date || request()->to_date;
         foreach ($supplierData as $supplier) {
             $data['totalPurchase'] += $supplier->purchases->sum('total_amount') - $supplier->purchaseReturn->sum('return_amount');
             $data['total_return'] += $supplier->purchaseReturn->sum('return_amount');
             $data['total_return_pay'] += $supplier->purchaseReturn->sum('received_amount');
 
             $rawDue = $supplier->total_due;
-            $rawAdvance = $supplier->advance;
+            // Use true (unfiltered) advance when date filters are active
+            $rawAdvance = $hasDateFilter ? $supplier->true_advance : $supplier->advance;
             $offset = min(max(0, $rawDue), max(0, $rawAdvance));
             $data['pay'] += $supplier->payments->whereIn('payment_type', ['purchase', 'due_pay', 'advance_deduct'])->sum('amount') + $offset;
             $data['total_due'] += $rawDue - $offset;
@@ -321,12 +323,76 @@ class SupplierController extends Controller
         ]);
 
         $payment = SupplierPayment::findOrFail($id);
-        $payment->update($request->only(['amount', 'payment_date', 'note', 'account_id']));
+        $oldAmount = round((float) $payment->amount, 2);
+        $newAmount = round((float) $request->amount, 2);
+        $diff = round($newAmount - $oldAmount, 2);
 
-        return to_route('admin.suppliers.due-pay-history')->with([
-            'messege'    => 'Supplier due payment updated successfully.',
-            'alert-type' => 'success',
-        ]);
+        DB::beginTransaction();
+        try {
+            // Update the purchase paid_amount/due_amount if linked to a purchase
+            if ($payment->purchase_id && $diff != 0) {
+                $rawPaid = (float) \DB::table('purchases')->where('id', $payment->purchase_id)->value('paid_amount');
+                $rawDue = (float) \DB::table('purchases')->where('id', $payment->purchase_id)->value('due_amount');
+
+                // Validate new amount doesn't exceed original due
+                if ($diff > 0 && $diff > $rawDue + 0.01) {
+                    throw new \Exception(
+                        "New amount exceeds remaining due (" . number_format($rawDue, 2) . ") for this purchase."
+                    );
+                }
+
+                $newPaid = round(max(0, $rawPaid + $diff), 2);
+                $newDue = round(max(0, $rawDue - $diff), 2);
+
+                \DB::table('purchases')->where('id', $payment->purchase_id)->update([
+                    'paid_amount'    => $newPaid,
+                    'due_amount'     => $newDue,
+                    'payment_status' => $newDue == 0 ? 'paid' : 'due',
+                ]);
+            }
+
+            // Update the ledger entry if linked
+            if ($payment->ledger_id && $diff != 0) {
+                $rawLedgerAmount = (float) \DB::table('ledgers')->where('id', $payment->ledger_id)->value('amount');
+                $rawLedgerDue = (float) \DB::table('ledgers')->where('id', $payment->ledger_id)->value('due_amount');
+
+                \DB::table('ledgers')->where('id', $payment->ledger_id)->update([
+                    'amount'     => round($rawLedgerAmount + $diff, 2),
+                    'due_amount' => round($rawLedgerDue - $diff, 2),
+                    'note'       => $request->note,
+                    'date'       => now()->parse($request->payment_date),
+                ]);
+
+                // Update the ledger detail for this purchase's invoice
+                if ($payment->purchase) {
+                    \DB::table('ledger_details')
+                        ->where('ledger_id', $payment->ledger_id)
+                        ->where('invoice', $payment->purchase->invoice_number)
+                        ->update(['amount' => $newAmount]);
+                }
+            }
+
+            // Update the payment record itself
+            $payment->update([
+                'amount'       => $newAmount,
+                'payment_date' => now()->parse($request->payment_date),
+                'note'         => $request->note,
+                'account_id'   => $request->account_id,
+            ]);
+
+            DB::commit();
+            return to_route('admin.suppliers.due-pay-history')->with([
+                'messege'    => 'Supplier due payment updated successfully.',
+                'alert-type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return to_route('admin.suppliers.due-pay-history')->with([
+                'messege'    => 'Due payment update failed: ' . $e->getMessage(),
+                'alert-type' => 'error',
+            ]);
+        }
     }
 
     public function duePayDelete($id)

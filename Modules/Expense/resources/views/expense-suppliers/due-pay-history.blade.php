@@ -83,12 +83,12 @@
                         <tr>
                             <th>{{ __('SN') }}</th>
                             <th>{{ __('Invoice') }}</th>
-                            <th>{{ __('Supplier Name') }}</th>
-                            <th>{{ __('Expense ID') }}</th>
+                            <th>{{ __('Supplier') }}</th>
+                            <th>{{ __('Expense Invoice') }}</th>
                             <th>{{ __('Payment Date') }}</th>
                             <th>{{ __('Amount') }}</th>
+                            <th>{{ __('Account') }}</th>
                             <th>{{ __('Note') }}</th>
-                            <th>{{ __('Memo') }}</th>
                             <th>{{ __('Created By') }}</th>
                             <th>{{ __('Action') }}</th>
                         </tr>
@@ -98,12 +98,12 @@
                             <tr>
                                 <td>{{ method_exists($payments, 'firstItem') ? $payments->firstItem() + $index : $index + 1 }}</td>
                                 <td>{{ $payment->invoice }}</td>
-                                <td>{{ $payment->expenseSupplier->name }}</td>
-                                <td>EXP-{{ $payment->expense_id }}</td>
+                                <td>{{ $payment->expenseSupplier->name ?? __('Direct Expense') }}</td>
+                                <td>{{ $payment->expense->invoice ?? '-' }}</td>
                                 <td>{{ formatDate($payment->payment_date) }}</td>
                                 <td>{{ currency($payment->amount) }}</td>
+                                <td>{{ $payment->account ? ucfirst($payment->account->account_type) : '-' }}</td>
                                 <td>{{ $payment->note }}</td>
-                                <td>{{ $payment->memo }}</td>
                                 <td>{{ $payment->createdBy->name }}</td>
                                 <td>
                                     @adminCan('expense_supplier.due_pay')

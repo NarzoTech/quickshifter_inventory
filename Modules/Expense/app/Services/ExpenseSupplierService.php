@@ -257,7 +257,7 @@ class ExpenseSupplierService
     {
         $list = ExpenseSupplierPayment::query();
 
-        $list = $list->with('expense', 'expenseSupplier', 'createdBy')
+        $list = $list->with('expense', 'expenseSupplier', 'account', 'createdBy')
             ->whereNotNull('expense_id')
             ->where('payment_type', 'due_pay');
 

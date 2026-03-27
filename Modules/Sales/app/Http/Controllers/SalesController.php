@@ -81,11 +81,14 @@ class SalesController extends Controller
 
         $customerAdvMap = [];
         $advanceOffsets = [];
+        $hasDateFilter = request('from_date') || request('to_date');
 
         foreach ($sales->get() as $sale) {
             $cid = $sale->customer_id;
             if ($cid && !isset($customerAdvMap[$cid])) {
-                $customerAdvMap[$cid] = $sale->customer ? $sale->customer->advances() : 0;
+                $customerAdvMap[$cid] = $sale->customer
+                    ? ($hasDateFilter ? $sale->customer->trueAdvances() : $sale->customer->advances())
+                    : 0;
             }
             $offset = 0;
             if ($cid && isset($customerAdvMap[$cid])) {
@@ -97,7 +100,7 @@ class SalesController extends Controller
             $returnAmount = $sale->saleReturns->sum('return_amount');
             $returnDue = $sale->saleReturns->sum('return_due');
             $data['sale_amount'] += $sale->total_price;
-            $data['discount_amount'] += $sale->discount_amount;
+            $data['discount_amount'] += $sale->order_discount;
             $data['total_amount'] += $sale->grand_total - $returnAmount;
             $data['paid_amount'] += $sale->paid_amount + $offset;
             $data['due_amount'] += $sale->due_amount - $offset - $returnDue;

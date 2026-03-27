@@ -45,11 +45,6 @@ class ExpenseService
             $paidAmount += floatval($amt);
         }
 
-        // If no supplier, paid amount = full amount (immediate payment)
-        if (!$request->expense_supplier_id) {
-            $paidAmount = $amount;
-        }
-
         $dueAmount = $amount - $paidAmount;
 
         // Get the first payment account for the expense record
@@ -178,7 +173,7 @@ class ExpenseService
                 ->get();
 
             foreach ($oldPayments as $payment) {
-                if ($payment->ledger) {
+                if ($payment->ledger_id && $payment->ledger->exists) {
                     $payment->ledger->details()->delete();
                     $payment->ledger->delete();
                 }
@@ -306,7 +301,7 @@ class ExpenseService
             // Delete associated payments and ledger entries
             $payments = ExpenseSupplierPayment::where('expense_id', $id)->get();
             foreach ($payments as $payment) {
-                if ($payment->ledger) {
+                if ($payment->ledger_id && $payment->ledger->exists) {
                     $payment->ledger->details()->delete();
                     $payment->ledger->delete();
                 }
@@ -325,6 +320,93 @@ class ExpenseService
             $result = $expense->delete();
             DB::commit();
             return $result;
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
+    }
+
+    public function duePaySingle(Request $request, $id)
+    {
+        $expense = $this->expense->findOrFail($id);
+
+        $payAmount = round((float) $request->paying_amount, 2);
+        if ($payAmount <= 0) {
+            throw new \Exception('Payment amount must be greater than zero.');
+        }
+
+        $rawDue = (float) DB::table('expenses')->where('id', $id)->value('due_amount');
+        if ($payAmount > $rawDue + 0.01) {
+            throw new \Exception(
+                "Payment amount (" . number_format($payAmount, 2) . ") exceeds due amount ("
+                . number_format($rawDue, 2) . ") for expense: {$expense->invoice}"
+            );
+        }
+        $payAmount = min($payAmount, $rawDue);
+
+        DB::beginTransaction();
+        try {
+            // Resolve account
+            $accountInput = $request->account_id;
+            if ($accountInput == 'cash' || $accountInput == 'advance') {
+                $account = $this->account->where('account_type', $accountInput)->first();
+            } else {
+                $account = $this->account->find($accountInput);
+            }
+
+            if (!$account) {
+                throw new \Exception('Invalid account selected.');
+            }
+
+            // Create Ledger entry for supplier expenses
+            $ledgerId = null;
+            if ($expense->expense_supplier_id) {
+                $ledger = new \App\Models\Ledger();
+                $ledger->expense_supplier_id = $expense->expense_supplier_id;
+                $ledger->amount = $payAmount;
+                $ledger->invoice_type = 'Expense Due Payment';
+                $ledger->is_paid = 1;
+                $ledger->invoice_no = generateInvoiceNumber(\App\Models\Ledger::class, 'invoice_no', 'ESPL', ['invoice_type' => 'Expense Due Payment'], $request->payment_date);
+                $ledger->note = $request->note;
+                $ledger->due_amount = -$payAmount;
+                $ledger->total_amount = 0;
+                $ledger->date = now()->parse($request->payment_date);
+                $ledger->created_by = auth('admin')->user()->id;
+                $ledger->save();
+
+                $ledger->invoice_url = route('admin.expense-suppliers.ledger-details', $ledger->id);
+                $ledger->save();
+                $ledgerId = $ledger->id;
+
+                $ledger->details()->create([
+                    'invoice' => $expense->invoice,
+                    'amount' => $payAmount,
+                ]);
+            }
+
+            // Update expense paid/due amounts
+            $rawPaid = (float) DB::table('expenses')->where('id', $id)->value('paid_amount');
+            DB::table('expenses')->where('id', $id)->update([
+                'paid_amount' => round($rawPaid + $payAmount, 2),
+                'due_amount'  => round(max(0, $rawDue - $payAmount), 2),
+            ]);
+
+            // Create payment record (goes to cashflow as 'due_pay')
+            ExpenseSupplierPayment::create([
+                'expense_id' => $expense->id,
+                'expense_supplier_id' => $expense->expense_supplier_id,
+                'account_id' => $account->id,
+                'payment_type' => 'due_pay',
+                'is_paid' => 1,
+                'amount' => $payAmount,
+                'payment_date' => now()->parse($request->payment_date),
+                'note' => $request->note,
+                'invoice' => generateInvoiceNumber(ExpenseSupplierPayment::class, 'invoice', 'ESP', [], $request->payment_date),
+                'ledger_id' => $ledgerId,
+                'created_by' => auth('admin')->user()->id,
+            ]);
+
+            DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
             throw $ex;

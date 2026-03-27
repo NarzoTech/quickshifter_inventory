@@ -636,77 +636,30 @@ class SaleService
             }
         }
 
-        // Handle due receive payments made against this sale
-        // These represent money the customer already paid — convert to advance
-        $dueReceivePayments = CustomerPayment::where('sale_id', $sale->id)
-            ->where('payment_type', 'due_receive')
-            ->where('amount', '>', 0)
-            ->get();
+        // Clean up due receive payments and their ledger entries for this sale
+        $dueReceiveLedgerDetails = \App\Models\LedgerDetails::where('invoice', $sale->invoice)->get();
+        foreach ($dueReceiveLedgerDetails as $detail) {
+            $parentLedger = Ledger::find($detail->ledger_id);
+            if ($parentLedger && $parentLedger->invoice_type == 'Due Receive') {
+                // Reduce the parent ledger amount by this detail's amount
+                $parentLedger->amount -= $detail->amount;
+                $parentLedger->due_amount += $detail->amount;
+                $parentLedger->save();
 
-        $totalDueReceived = $dueReceivePayments->sum('amount');
-
-        if ($totalDueReceived > 0 && $sale->customer_id && $sale->customer_id != 'walk-in-customer') {
-            // Remove this sale's portion from due receive ledger entries
-            $ledgerDetails = \App\Models\LedgerDetails::where('invoice', $sale->invoice)->get();
-            foreach ($ledgerDetails as $detail) {
-                $parentLedger = Ledger::find($detail->ledger_id);
-                if ($parentLedger && $parentLedger->invoice_type == 'Due Receive') {
-                    // Reduce the parent ledger amount by this detail's amount
-                    $parentLedger->amount -= $detail->amount;
-                    $parentLedger->due_amount += $detail->amount;
-                    $parentLedger->save();
-
-                    // If parent ledger has no remaining amount, delete it
-                    if ($parentLedger->amount <= 0) {
-                        $parentLedger->details()->delete();
-                        $parentLedger->delete();
-                    } else {
-                        $detail->delete();
-                    }
+                // If parent ledger has no remaining amount, delete it
+                if ($parentLedger->amount <= 0) {
+                    $parentLedger->details()->delete();
+                    $parentLedger->delete();
+                } else {
+                    $detail->delete();
                 }
             }
-
-            // Delete the due receive payment records for this sale
-            CustomerPayment::where('sale_id', $sale->id)
-                ->where('payment_type', 'due_receive')
-                ->delete();
-
-            // Convert the received amount to advance for the customer
-            $cashAccount = Account::where('account_type', 'cash')->first();
-            if (!$cashAccount) {
-                $cashAccount = Account::create(['account_type' => 'cash']);
-            }
-
-            // Create advance ledger
-            $advLedger = new Ledger();
-            $advLedger->customer_id = $sale->customer_id;
-            $advLedger->amount = $totalDueReceived;
-            $advLedger->total_amount = 0;
-            $advLedger->due_amount = -$totalDueReceived;
-            $advLedger->invoice_type = 'Advance Received';
-            $advLedger->is_received = 1;
-            $advLedger->invoice_no = generateInvoiceNumber(Ledger::class, 'invoice_no', 'CAL', ['invoice_type' => 'Advance Received']);
-            $advLedger->note = 'Auto advance from deleted sale ' . $sale->invoice;
-            $advLedger->date = now();
-            $advLedger->created_by = auth('admin')->user()->id;
-            $advLedger->save();
-            $advLedger->invoice_url = route('admin.customers.ledger-details', $advLedger->id);
-            $advLedger->save();
-
-            // Create advance payment record
-            CustomerPayment::create([
-                'customer_id'  => $sale->customer_id,
-                'account_id'   => $cashAccount->id,
-                'payment_type' => 'advance_receive',
-                'is_received'  => 1,
-                'amount'       => $totalDueReceived,
-                'account_type' => accountList()[$cashAccount->account_type] ?? '',
-                'note'         => 'Auto advance from deleted sale ' . $sale->invoice,
-                'created_by'   => auth('admin')->user()->id,
-                'payment_date' => now(),
-                'invoice'      => generateInvoiceNumber(CustomerPayment::class, 'invoice', 'CP'),
-            ]);
         }
+
+        // Delete due receive payment records for this sale
+        CustomerPayment::where('sale_id', $sale->id)
+            ->where('payment_type', 'due_receive')
+            ->delete();
 
         // delete sale ledger and advance deduct ledger entries
         $ledgers = Ledger::where(function ($query) {

@@ -26,32 +26,50 @@ class SupplierService
     public function allSupplier()
     {
         $suppliers = $this->supplier->query();
-        $suppliers = $suppliers->with(['purchaseReturn', 'purchases' => function ($query) {
-            if (request()->from_date || request()->to_date) {
-                [$from_date, $to_date] = $this->getDateRangeFromRequest();
-                if ($from_date) {
-                    $query->where('purchase_date', '>=', $from_date);
+        $hasDateFilter = request()->from_date || request()->to_date;
+
+        $suppliers = $suppliers->with([
+            'purchaseReturn' => function ($query) use ($hasDateFilter) {
+                if ($hasDateFilter) {
+                    [$from_date, $to_date] = $this->getDateRangeFromRequest();
+                    if ($from_date) {
+                        $query->where('return_date', '>=', $from_date);
+                    }
+                    if ($to_date) {
+                        $query->where('return_date', '<=', $to_date);
+                    }
                 }
-                if ($to_date) {
-                    $query->where('purchase_date', '<=', $to_date);
+            },
+            'purchases' => function ($query) use ($hasDateFilter) {
+                if ($hasDateFilter) {
+                    [$from_date, $to_date] = $this->getDateRangeFromRequest();
+                    if ($from_date) {
+                        $query->where('purchase_date', '>=', $from_date);
+                    }
+                    if ($to_date) {
+                        $query->where('purchase_date', '<=', $to_date);
+                    }
                 }
-            }
-        }, 'payments' => function ($query) {
-            $query->where(function ($q) {
-                $q->where('is_paid', 1)
-                    ->orWhereIn('payment_type', ['advance_refund']);
-            });
+            },
+            'payments' => function ($query) use ($hasDateFilter) {
+                $query->where(function ($q) {
+                    $q->where('is_paid', 1)
+                        ->orWhereIn('payment_type', ['advance_refund']);
+                });
 
-            [$from_date, $to_date] = $this->getDateRangeFromRequest();
+                if ($hasDateFilter) {
+                    [$from_date, $to_date] = $this->getDateRangeFromRequest();
 
-            if ($from_date) {
-                $query->where('payment_date', '>=', $from_date);
-            }
+                    if ($from_date) {
+                        $query->where('payment_date', '>=', $from_date);
+                    }
 
-            if ($to_date) {
-                $query->where('payment_date', '<=', $to_date);
-            }
-        }]);
+                    if ($to_date) {
+                        $query->where('payment_date', '<=', $to_date);
+                    }
+                }
+            },
+        ]);
 
 
         if (request()->keyword) {
@@ -98,15 +116,15 @@ class SupplierService
                     break;
 
                 case 'paid':
-                    $suppliers = $suppliers->with(['payments', 'purchases'])
+                    $suppliers = $suppliers->with(['payments', 'purchases', 'purchaseReturn'])
                         ->whereHas('purchases')
                         ->get();
                     $suppliers = $suppliers->filter(function ($supplier) {
-                        return $supplier->purchases->sum('total_amount') == $supplier->payments->sum('amount');
+                        return $supplier->total_due <= 0;
                     });
 
                     $suppliers = $suppliers->$orderBy(function ($supplier) {
-                        return $supplier->payments->sum('amount');
+                        return $supplier->total_paid;
                     });
                     break;
 
@@ -215,9 +233,6 @@ class SupplierService
 
         // Use server-calculated total — never trust client's paying_amount
         $request->merge(['paying_amount' => round($totalPayingAmount, 2)]);
-
-        $supplier->balance = $supplier->balance - $totalPayingAmount;
-        $supplier->save();
 
         // account information
 
@@ -582,6 +597,7 @@ class SupplierService
                 'payment_date' => now(),
                 'note' => 'Auto offset with advance',
                 'created_by' => auth('admin')->user()->id,
+                'ledger_id' => $ledger->id,
             ]);
 
             $ledger->details()->create([
@@ -594,19 +610,7 @@ class SupplierService
 
         $actualOffset = $offsetAmount - $remaining;
 
-        // Create Advance Deduct payment
-        SupplierPayment::create([
-            'supplier_id' => $supplierId,
-            'account_id' => $account->id,
-            'payment_type' => 'advance_deduct',
-            'is_paid' => 1,
-            'amount' => $actualOffset,
-            'payment_date' => now(),
-            'note' => 'Auto offset due with advance',
-            'created_by' => auth('admin')->user()->id,
-        ]);
-
-        // Create Advance Deduct ledger (records advance consumption, no due impact — due already reduced by Due Payment entry)
+        // Create Advance Deduct ledger FIRST (records advance consumption, no due impact — due already reduced by Due Payment entry)
         $advLedger = new Ledger();
         $advLedger->supplier_id = $supplierId;
         $advLedger->amount = $actualOffset;
@@ -618,6 +622,20 @@ class SupplierService
         $advLedger->date = now();
         $advLedger->created_by = auth('admin')->user()->id;
         $advLedger->save();
+
+        // Create Advance Deduct payment (linked to ledger)
+        SupplierPayment::create([
+            'supplier_id' => $supplierId,
+            'account_id' => $account->id,
+            'payment_type' => 'advance_deduct',
+            'is_paid' => 1,
+            'amount' => $actualOffset,
+            'payment_date' => now(),
+            'note' => 'Auto offset due with advance',
+            'created_by' => auth('admin')->user()->id,
+            'invoice' => $ledger->invoice_no,
+            'ledger_id' => $advLedger->id,
+        ]);
 
         return $actualOffset;
     }

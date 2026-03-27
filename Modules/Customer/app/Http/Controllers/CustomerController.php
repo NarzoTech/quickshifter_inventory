@@ -44,7 +44,16 @@ class CustomerController extends Controller
 
         $query = User::query();
 
-        $query->with('sales', 'payment', 'saleReturn');
+        $query->with(['sales', 'payment', 'saleReturn' => function ($q) use ($request) {
+            if ($request->filled('from_date') || $request->filled('to_date')) {
+                if ($request->filled('from_date')) {
+                    $q->where('return_date', '>=', Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay());
+                }
+                if ($request->filled('to_date')) {
+                    $q->where('return_date', '<=', Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay());
+                }
+            }
+        }]);
 
         $query->when($request->filled('keyword'), function ($q) use ($request) {
             $q->where('name', 'like', '%' . $request->keyword . '%')
@@ -80,26 +89,22 @@ class CustomerController extends Controller
                     $customers = $query->with(['sales', 'payment', 'saleReturn'])
                         ->get();
                     $customers = $customers->filter(function ($customer) {
-                        return $customer->getTotalDueAttribute() > 0;
+                        return $customer->total_due > 0;
                     });
                     $customers = $customers->$orderBy(function ($customer) {
-                        $totalPurchase = $customer->sales->sum('grand_total');
-                        $totalPaid     = $customer->payment->sum('amount');
-                        $totalReturnDue = $customer->saleReturn->sum('return_due');
-                        $totalDue      = $totalPurchase - $totalPaid - $totalReturnDue;
-                        return $totalDue;
+                        return $customer->total_due;
                     });
                     break;
 
                 case 'paid':
-                    $customers = $query->with(['payment', 'sales'])
+                    $customers = $query->with(['payment', 'sales', 'saleReturn'])
                         ->whereHas('sales')
                         ->get();
                     $customers = $customers->filter(function ($customer) {
-                        return $customer->sales->sum('grand_total') == $customer->getTotalPaidAttribute();
+                        return $customer->total_due <= 0;
                     });
                     $customers = $customers->$orderBy(function ($customer) {
-                        return $customer->payment->sum('amount');
+                        return $customer->total_paid;
                     });
                     break;
 
@@ -128,6 +133,7 @@ class CustomerController extends Controller
         $data['total_advance']     = 0;
         $data['total_due_dismiss'] = 0;
 
+        $hasDateFilter = $request->filled('from_date') || $request->filled('to_date');
         $customerData = request()->order_type ? $customers : $query->get();
         foreach ($customerData as $index => $customer) {
             $totalReturn           = $customer->saleReturn->sum('return_amount');
@@ -138,7 +144,8 @@ class CustomerController extends Controller
             $data['total_return_due'] += $customer->saleReturn->sum('return_due');
 
             $rawDue = $customer->total_due;
-            $rawAdvance = $customer->advances();
+            // Use true (unfiltered) advance when date filters are active
+            $rawAdvance = $hasDateFilter ? $customer->trueAdvances() : $customer->advances();
             $offset = min(max(0, $rawDue), max(0, $rawAdvance));
             $data['pay']           += $customer->total_paid + $offset;
             $data['total_due']     += $rawDue - $offset;
@@ -470,6 +477,7 @@ class CustomerController extends Controller
                         'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
                         'note'         => $request->note,
                         'created_by'   => auth('admin')->user()->id,
+                        'ledger_id'    => $ledger->id,
                     ]);
 
                     // Update customer due record
@@ -518,6 +526,7 @@ class CustomerController extends Controller
                         'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
                         'note'         => $request->note ?? 'Direct balance due receive',
                         'created_by'   => auth('admin')->user()->id,
+                        'ledger_id'    => $ledger->id,
                     ]);
 
                     // Create ledger details for direct balance
@@ -673,14 +682,108 @@ class CustomerController extends Controller
         ]);
 
         $payment = CustomerPayment::findOrFail($id);
+        $oldAmount = round((float) $payment->amount, 2);
+        $newAmount = round((float) $request->amount, 2);
+        $diff = round($newAmount - $oldAmount, 2);
 
-        // Only allow safe fields to be updated — prevent mass assignment of customer_id, payment_type, sale_id etc.
-        $payment->update($request->only(['amount', 'payment_date', 'note', 'account_id']));
+        DB::beginTransaction();
+        try {
+            // Handle direct balance payments differently
+            if ($payment->payment_type === 'direct_due_receive') {
+                if ($diff != 0 && $payment->customer_id) {
+                    $rawBalance = (float) DB::table('users')->where('id', $payment->customer_id)->value('wallet_balance');
+                    // Increasing payment = decrease wallet more; decreasing = restore wallet
+                    if ($diff > 0 && $diff > $rawBalance + 0.01) {
+                        throw new \Exception(
+                            "New amount exceeds remaining wallet balance (" . number_format($rawBalance, 2) . ")."
+                        );
+                    }
+                    DB::table('users')->where('id', $payment->customer_id)->update([
+                        'wallet_balance' => round($rawBalance - $diff, 2),
+                    ]);
+                }
+            } else {
+                // Invoice-based payment: update the sale paid_amount/due_amount
+                if ($payment->sale_id && $diff != 0) {
+                    $rawPaid = (float) DB::table('sales')->where('id', $payment->sale_id)->value('paid_amount');
+                    $rawDue = (float) DB::table('sales')->where('id', $payment->sale_id)->value('due_amount');
 
-        return to_route('admin.customer.due-receive.list')->with([
-            'messege'    => 'Customer due receive updated successfully.',
-            'alert-type' => 'success',
-        ]);
+                    // Validate new amount doesn't exceed remaining due
+                    if ($diff > 0 && $diff > $rawDue + 0.01) {
+                        throw new \Exception(
+                            "New amount exceeds remaining due (" . number_format($rawDue, 2) . ") for this sale."
+                        );
+                    }
+
+                    $newPaid = round(max(0, $rawPaid + $diff), 2);
+                    $newDue = round(max(0, $rawDue - $diff), 2);
+
+                    DB::table('sales')->where('id', $payment->sale_id)->update([
+                        'paid_amount'    => $newPaid,
+                        'due_amount'     => $newDue,
+                        'payment_status' => $newDue == 0 ? 'paid' : 'due',
+                    ]);
+
+                    // Update customer_dues record
+                    $sale = Sale::find($payment->sale_id);
+                    if ($sale) {
+                        $due = CustomerDue::where('invoice', $sale->invoice)->first();
+                        if ($due) {
+                            DB::table('customer_dues')->where('id', $due->id)->update([
+                                'due_amount'  => round(max(0, $due->due_amount - $diff), 2),
+                                'paid_amount' => round(max(0, $due->paid_amount + $diff), 2),
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            // Update the ledger entry if linked
+            if ($payment->ledger_id && $diff != 0) {
+                $rawLedgerAmount = (float) DB::table('ledgers')->where('id', $payment->ledger_id)->value('amount');
+                $rawLedgerDue = (float) DB::table('ledgers')->where('id', $payment->ledger_id)->value('due_amount');
+
+                DB::table('ledgers')->where('id', $payment->ledger_id)->update([
+                    'amount'     => round($rawLedgerAmount + $diff, 2),
+                    'due_amount' => round($rawLedgerDue - $diff, 2),
+                    'note'       => $request->note,
+                    'date'       => now()->parse($request->payment_date),
+                ]);
+
+                // Update the ledger detail
+                $invoiceKey = $payment->payment_type === 'direct_due_receive'
+                    ? 'DIRECT-BALANCE'
+                    : ($payment->sale ? $payment->sale->invoice : null);
+
+                if ($invoiceKey) {
+                    DB::table('ledger_details')
+                        ->where('ledger_id', $payment->ledger_id)
+                        ->where('invoice', $invoiceKey)
+                        ->update(['amount' => $newAmount]);
+                }
+            }
+
+            // Update the payment record itself
+            $payment->update([
+                'amount'       => $newAmount,
+                'payment_date' => now()->parse($request->payment_date),
+                'note'         => $request->note,
+                'account_id'   => $request->account_id,
+            ]);
+
+            DB::commit();
+            return to_route('admin.customer.due-receive.list')->with([
+                'messege'    => 'Customer due receive updated successfully.',
+                'alert-type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return to_route('admin.customer.due-receive.list')->with([
+                'messege'    => 'Due receive update failed: ' . $e->getMessage(),
+                'alert-type' => 'error',
+            ]);
+        }
     }
 
     public function dueReceiveDelete($id)

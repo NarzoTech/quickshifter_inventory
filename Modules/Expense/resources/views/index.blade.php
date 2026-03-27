@@ -199,6 +199,16 @@
                                                             <a class="dropdown-item" href="javascript:;"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#editExpense{{ $expense->id }}">{{ __('Edit') }}</a>
+                                                            @if($expense->due_amount > 0)
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#duePayExpense{{ $expense->id }}">{{ __('Pay Due') }}</a>
+                                                            @endif
+                                                            @if($expense->payments()->where('payment_type', 'due_pay')->exists())
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#duePayListExpense{{ $expense->id }}">{{ __('Due Pay List') }}</a>
+                                                            @endif
                                                         @endadminCan
                                                         @adminCan('expense.delete')
                                                             <a href="javascript:;" class="dropdown-item"
@@ -329,8 +339,8 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label>{{ __('Payment Details') }}<span class="text-danger">*</span></label>
-                                    <div class="table-responsive">
+                                    <label>{{ __('Payment Details') }} <small class="text-muted">({{ __('Leave empty for fully due') }})</small></label>
+                                    <div class="table-responsive" style="overflow: visible;">
                                         <table class="table table-bordered expense-payment-table">
                                             <thead>
                                                 <tr>
@@ -344,6 +354,9 @@
                                                 @include('expense::partials.payment-row', ['counter' => 1])
                                             </tbody>
                                         </table>
+                                        <a href="javascript:;" class="btn btn-sm btn-outline-primary add-expense-payment mt-1">
+                                            <i class="fa fa-plus"></i> {{ __('Add Payment') }}
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -486,7 +499,7 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label>{{ __('Payment Details') }}</label>
-                                        <div class="table-responsive">
+                                        <div class="table-responsive" style="overflow: visible;">
                                             <table class="table table-bordered expense-payment-table">
                                                 <thead>
                                                     <tr>
@@ -504,7 +517,7 @@
                                                         @foreach($existingPayments as $pIndex => $payment)
                                                             <tr class="payment-row-edit" data-counter="{{ $pIndex + 1 }}" data-expense-id="{{ $expense->id }}">
                                                                 <td>
-                                                                    <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="{{ $expense->id }}" required>
+                                                                    <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="{{ $expense->id }}">
                                                                         <option value="">{{ __('Select') }}</option>
                                                                         @foreach (accountList() as $key => $list)
                                                                             @php
@@ -540,7 +553,7 @@
                                                                     @endif
                                                                 </td>
                                                                 <td>
-                                                                    <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="{{ $expense->id }}" placeholder="{{ __('Amount') }}" value="{{ $payment->amount }}" required>
+                                                                    <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="{{ $expense->id }}" placeholder="{{ __('Amount') }}" value="{{ $payment->amount }}">
                                                                 </td>
                                                                 <td>
                                                                     <div class="btn-group btn-group-sm">
@@ -548,11 +561,10 @@
                                                                             <a href="javascript:;" class="btn btn-sm btn-primary add-expense-payment-edit" data-expense-id="{{ $expense->id }}">
                                                                                 <i class="fa fa-plus"></i>
                                                                             </a>
-                                                                        @else
-                                                                            <a href="javascript:;" class="btn btn-sm btn-danger remove-expense-payment-edit" data-expense-id="{{ $expense->id }}">
-                                                                                <i class="fa fa-trash"></i>
-                                                                            </a>
                                                                         @endif
+                                                                        <a href="javascript:;" class="btn btn-sm btn-danger remove-expense-payment-edit" data-expense-id="{{ $expense->id }}">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </a>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -560,7 +572,7 @@
                                                     @else
                                                         <tr class="payment-row-edit" data-counter="1" data-expense-id="{{ $expense->id }}">
                                                             <td>
-                                                                <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="{{ $expense->id }}" required>
+                                                                <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="{{ $expense->id }}">
                                                                     <option value="">{{ __('Select') }}</option>
                                                                     @foreach (accountList() as $key => $list)
                                                                         <option value="{{ $key }}" @if ($key == $expense->payment_type) selected @endif>{{ $list }}</option>
@@ -593,12 +605,15 @@
                                                                 @endif
                                                             </td>
                                                             <td>
-                                                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="{{ $expense->id }}" placeholder="{{ __('Amount') }}" value="{{ $expense->paid_amount }}" required>
+                                                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="{{ $expense->id }}" placeholder="{{ __('Amount') }}" value="{{ $expense->paid_amount }}">
                                                             </td>
                                                             <td>
                                                                 <div class="btn-group btn-group-sm">
                                                                     <a href="javascript:;" class="btn btn-sm btn-primary add-expense-payment-edit" data-expense-id="{{ $expense->id }}">
                                                                         <i class="fa fa-plus"></i>
+                                                                    </a>
+                                                                    <a href="javascript:;" class="btn btn-sm btn-danger remove-expense-payment-edit" data-expense-id="{{ $expense->id }}">
+                                                                        <i class="fa fa-trash"></i>
                                                                     </a>
                                                                 </div>
                                                             </td>
@@ -651,6 +666,158 @@
             </div>
         </div>
     @endforeach
+    {{-- Due Pay Modals --}}
+    @foreach ($expenses as $expense)
+        @if($expense->due_amount > 0)
+            <div class="modal fade" id="duePayExpense{{ $expense->id }}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{ __('Pay Due') }} - {{ $expense->invoice }}</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body py-0">
+                            <form action="{{ route('admin.expense.due-pay-store', $expense->id) }}" method="POST"
+                                id="due-pay-form{{ $expense->id }}">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ __('Total Amount') }}</label>
+                                            <input type="text" class="form-control" value="{{ currency($expense->amount) }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>{{ __('Due Amount') }}</label>
+                                            <input type="text" class="form-control text-danger fw-bold" value="{{ currency($expense->due_amount) }}" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="due_pay_date_{{ $expense->id }}">{{ __('Payment Date') }}<span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control datepicker" id="due_pay_date_{{ $expense->id }}"
+                                                name="payment_date" value="{{ formatDate(now()) }}" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="due_pay_amount_{{ $expense->id }}">{{ __('Paying Amount') }}<span class="text-danger">*</span></label>
+                                            <input type="number" step="0.01" min="0.01" max="{{ $expense->due_amount }}"
+                                                class="form-control" id="due_pay_amount_{{ $expense->id }}"
+                                                name="paying_amount" value="{{ $expense->due_amount }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="due_pay_type_{{ $expense->id }}">{{ __('Payment Type') }}<span class="text-danger">*</span></label>
+                                            <select name="payment_type" id="due_pay_type_{{ $expense->id }}"
+                                                class="form-control due-pay-type" data-expense-id="{{ $expense->id }}" required>
+                                                <option value="">{{ __('Select') }}</option>
+                                                @foreach (accountList() as $key => $list)
+                                                    <option value="{{ $key }}">{{ $list }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group due-pay-account-wrapper-{{ $expense->id }}">
+                                            <label>{{ __('Account') }}</label>
+                                            <input type="hidden" name="account_id" value="cash">
+                                            <input type="text" class="form-control" value="Cash" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="due_pay_note_{{ $expense->id }}">{{ __('Note') }}</label>
+                                            <textarea name="note" id="due_pay_note_{{ $expense->id }}" cols="30" rows="2"
+                                                class="form-control" placeholder="{{ __('Enter note (optional)') }}"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                            <button type="submit" class="btn btn-primary" form="due-pay-form{{ $expense->id }}">{{ __('Pay') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Due Pay List Modal --}}
+        @if($expense->payments()->where('payment_type', 'due_pay')->exists())
+            <div class="modal fade" id="duePayListExpense{{ $expense->id }}">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{ __('Due Pay List') }} - {{ $expense->invoice }}</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <strong>{{ __('Total Amount') }}:</strong> {{ currency($expense->amount) }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>{{ __('Paid Amount') }}:</strong> <span class="text-success">{{ currency($expense->paid_amount) }}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>{{ __('Due Amount') }}:</strong> <span class="text-danger">{{ currency($expense->due_amount) }}</span>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('SN') }}</th>
+                                            <th>{{ __('Invoice') }}</th>
+                                            <th>{{ __('Payment Date') }}</th>
+                                            <th>{{ __('Amount') }}</th>
+                                            <th>{{ __('Account') }}</th>
+                                            <th>{{ __('Note') }}</th>
+                                            <th>{{ __('Action') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($expense->payments()->where('payment_type', 'due_pay')->orderBy('payment_date', 'desc')->get() as $dpIndex => $duePay)
+                                            <tr>
+                                                <td>{{ $dpIndex + 1 }}</td>
+                                                <td>{{ $duePay->invoice }}</td>
+                                                <td>{{ formatDate($duePay->payment_date) }}</td>
+                                                <td>{{ currency($duePay->amount) }}</td>
+                                                <td>{{ $duePay->account ? ucfirst($duePay->account->account_type) : '-' }}</td>
+                                                <td>{{ $duePay->note ?? '-' }}</td>
+                                                <td>
+                                                    @adminCan('expense.edit')
+                                                        <button type="button" class="btn btn-sm btn-danger"
+                                                            onclick="deleteDuePayment({{ $duePay->id }})">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    @endadminCan
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-end"><strong>{{ __('Total') }}</strong></td>
+                                            <td colspan="4"><strong>{{ currency($expense->payments()->where('payment_type', 'due_pay')->sum('amount')) }}</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{ __('Close') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endforeach
+
     @push('js')
         <script>
             $(document).ready(function() {
@@ -667,6 +834,41 @@
                         });
                     });
                 @endforeach
+                // Due Pay modal - handle payment type change
+                $(document).on('change', '.due-pay-type', function() {
+                    const paymentType = $(this).val();
+                    const expenseId = $(this).data('expense-id');
+                    const wrapper = $(`.due-pay-account-wrapper-${expenseId}`);
+
+                    if (paymentType == '' || paymentType == 'cash' || paymentType == 'advance') {
+                        const displayText = paymentType == 'cash' ? 'Cash' : (paymentType == 'advance' ? 'Advance' : '-');
+                        wrapper.html(`
+                            <label>{{ __('Account') }}</label>
+                            <input type="hidden" name="account_id" value="${paymentType}">
+                            <input type="text" class="form-control" value="${displayText}" readonly>
+                        `);
+                    } else {
+                        const filterAccount = accounts.filter(account => account.account_type === paymentType);
+                        let selectHtml = `<label>{{ __('Account') }}<span class="text-danger">*</span></label>
+                            <select name="account_id" class="form-control" required><option value="">{{ __('Select') }}</option>`;
+
+                        filterAccount.forEach(account => {
+                            let optionText = '';
+                            if (paymentType == 'bank') {
+                                optionText = `${account.bank_account_number} (${account.bank?.name || 'N/A'})`;
+                            } else if (paymentType == 'mobile_banking') {
+                                optionText = `${account.mobile_number} (${account.mobile_bank_name})`;
+                            } else if (paymentType == 'card') {
+                                optionText = `${account.card_number} (${account.bank?.name || 'N/A'})`;
+                            }
+                            selectHtml += `<option value="${account.id}">${optionText}</option>`;
+                        });
+
+                        selectHtml += `</select>`;
+                        wrapper.html(selectHtml);
+                    }
+                });
+
                 const reqType = '{{ request()->type }}';
                 if (reqType) {
                     $('#addExpense').modal('show');
@@ -737,7 +939,7 @@
                     const newRow = `
                         <tr class="payment-row" data-counter="${paymentCounter}">
                             <td>
-                                <select name="payment_type[]" class="form-control expense-pay-type" required>
+                                <select name="payment_type[]" class="form-control expense-pay-type">
                                     <option value="">{{ __('Select') }}</option>
                                     @foreach (accountList() as $key => $list)
                                         <option value="{{ $key }}">{{ $list }}</option>
@@ -749,7 +951,7 @@
                                 <span class="text-muted">-</span>
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount" placeholder="{{ __('Amount') }}" required>
+                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount" placeholder="{{ __('Amount') }}">
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
@@ -766,7 +968,7 @@
                 // Remove payment row
                 $(document).on('click', '.remove-expense-payment', function() {
                     $(this).closest('tr').remove();
-                    calculateTotalPaid();
+                    calculatePaidAndDue();
                 });
 
                 // Handle payment type change for expense payments
@@ -833,7 +1035,7 @@
                     const newRow = `
                         <tr class="payment-row-edit" data-counter="${counter}" data-expense-id="${expenseId}">
                             <td>
-                                <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="${expenseId}" required>
+                                <select name="payment_type[]" class="form-control expense-pay-type-edit" data-expense-id="${expenseId}">
                                     <option value="">{{ __('Select') }}</option>
                                     @foreach (accountList() as $key => $list)
                                         <option value="{{ $key }}">{{ $list }}</option>
@@ -845,7 +1047,7 @@
                                 <span class="text-muted">-</span>
                             </td>
                             <td>
-                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="${expenseId}" placeholder="{{ __('Amount') }}" required>
+                                <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount-edit" data-expense-id="${expenseId}" placeholder="{{ __('Amount') }}">
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
@@ -929,6 +1131,23 @@
                 url = url.replace(':id', id);
                 $("#deleteForm").attr("action", url);
                 $('#deleteModal').modal('show');
+            }
+
+            function deleteDuePayment(id) {
+                if (confirm('{{ __("Are you sure you want to delete this due payment?") }}')) {
+                    let url = "{{ route('admin.expense-suppliers.due-pay-delete', ':id') }}";
+                    url = url.replace(':id', id);
+
+                    fetch(url, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        }
+                    }).then(response => {
+                        window.location.reload();
+                    });
+                }
             }
         </script>
     @endpush

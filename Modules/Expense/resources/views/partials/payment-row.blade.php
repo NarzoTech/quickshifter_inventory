@@ -1,6 +1,6 @@
 <tr class="payment-row" data-counter="{{ $counter ?? 1 }}">
     <td>
-        <select name="payment_type[]" class="form-control expense-pay-type" required>
+        <select name="payment_type[]" class="form-control expense-pay-type">
             <option value="">{{ __('Select') }}</option>
             @foreach (accountList() as $key => $list)
                 <option value="{{ $key }}" @if ($key == 'cash') selected @endif>{{ $list }}</option>
@@ -12,7 +12,7 @@
         <span class="text-muted">Cash</span>
     </td>
     <td>
-        <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount" placeholder="{{ __('Amount') }}" required>
+        <input type="number" step="0.01" name="paying_amount[]" class="form-control expense-paying-amount" placeholder="{{ __('Amount') }}">
     </td>
     <td>
         <div class="btn-group btn-group-sm">
@@ -23,6 +23,9 @@
             @else
                 <a href="javascript:;" class="btn btn-sm btn-primary add-expense-payment">
                     <i class="fa fa-plus"></i>
+                </a>
+                <a href="javascript:;" class="btn btn-sm btn-danger remove-expense-payment">
+                    <i class="fa fa-trash"></i>
                 </a>
             @endif
         </div>

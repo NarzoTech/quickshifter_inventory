@@ -8,10 +8,10 @@
             <tr style="background-color: #003366; color: white;">
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('SN') }}</th>
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Payment Date') }}</th>
-                <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Expense ID') }}</th>
+                <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Expense Invoice') }}</th>
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Supplier') }}</th>
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Amount') }}</th>
-                <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Note') }}</th>
+                <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Account') }}</th>
                 <th style="border: 1px solid #003366; padding: 8px; text-align: left;">{{ __('Created By') }}</th>
             </tr>
         </thead>
@@ -20,10 +20,10 @@
                 <tr>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $loop->iteration }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ formatDate($payment->payment_date) }}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">EXP-{{ $payment->expense_id }}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">{{ $payment->expenseSupplier->name }}</td>
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ $payment->expense->invoice ?? '-' }}</td>
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ $payment->expenseSupplier->name ?? __('Direct Expense') }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ currency($payment->amount) }}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">{{ $payment->note ?? '-' }}</td>
+                    <td style="border: 1px solid #ccc; padding: 8px;">{{ $payment->account ? ucfirst($payment->account->account_type) : '-' }}</td>
                     <td style="border: 1px solid #ccc; padding: 8px;">{{ $payment->createdBy->name }}</td>
                 </tr>
             @endforeach

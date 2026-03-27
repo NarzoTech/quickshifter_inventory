@@ -134,7 +134,8 @@
                         @foreach ($suppliers as $index => $supplier)
                             @php
                                 $rawDue = $supplier->total_due;
-                                $rawAdvance = $supplier->advance;
+                                $hasDateFilter = request()->from_date || request()->to_date;
+                                $rawAdvance = $hasDateFilter ? $supplier->true_advance : $supplier->advance;
                                 $offset = min(max(0, $rawDue), max(0, $rawAdvance));
                                 $effectiveDue = $rawDue - $offset;
                                 $effectiveAdvance = $rawAdvance - $offset;

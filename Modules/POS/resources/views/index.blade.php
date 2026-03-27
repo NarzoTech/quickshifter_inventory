@@ -1522,9 +1522,9 @@
 
 
 
-            // Only set full amount on first open (single row with no value)
+            // When there's only one payment row, always sync it with the current total
             let paymentRows = $('[name="paying_amount[]"]');
-            if (paymentRows.length === 1 && !parseFloat(paymentRows.first().val())) {
+            if (paymentRows.length === 1) {
                 paymentRows.first().val(grandTotal);
             }
             updatePaymentTotals();

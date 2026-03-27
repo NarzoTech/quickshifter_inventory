@@ -150,20 +150,33 @@ class AccountsController extends Controller
             return $query;
         };
 
-        // Service Sale
-        $serviceSaleQuery = ProductSale::whereNotNull('service_id');
+        // Service Sale - only count the paid proportion of service amounts
+        // This prevents double-counting: unpaid service dues should not appear here,
+        // they will appear under customer_due when actually paid
+        $serviceSaleSubquery = \Illuminate\Support\Facades\DB::table('product_sales')
+            ->selectRaw('sale_id, SUM(sub_total) as service_total')
+            ->whereNotNull('service_id')
+            ->groupBy('sale_id');
+
+        $serviceSaleQuery = \Illuminate\Support\Facades\DB::table('customer_payments as cp')
+            ->joinSub($serviceSaleSubquery, 'ps', 'cp.sale_id', '=', 'ps.sale_id')
+            ->join('sales as s', 'cp.sale_id', '=', 's.id')
+            ->whereIn('cp.payment_type', ['sale', 'advance_deduct'])
+            ->where('s.grand_total', '>', 0);
+
         if ($hasDateFilter) {
-            $serviceSaleQuery->whereHas('sale', function ($q) use ($fromDate, $toDate) {
-                if ($fromDate && $toDate) {
-                    $q->whereBetween('order_date', [$fromDate, $toDate]);
-                } elseif ($fromDate) {
-                    $q->where('order_date', '>=', $fromDate);
-                } elseif ($toDate) {
-                    $q->where('order_date', '<=', $toDate);
-                }
-            });
+            if ($fromDate && $toDate) {
+                $serviceSaleQuery->whereBetween('s.order_date', [$fromDate, $toDate]);
+            } elseif ($fromDate) {
+                $serviceSaleQuery->where('s.order_date', '>=', $fromDate);
+            } elseif ($toDate) {
+                $serviceSaleQuery->where('s.order_date', '<=', $toDate);
+            }
         }
-        $data['serviceSale'] = $serviceSaleQuery->sum('sub_total');
+
+        $data['serviceSale'] = (float) ($serviceSaleQuery
+            ->selectRaw('SUM(cp.amount * ps.service_total / s.grand_total) as total')
+            ->value('total') ?? 0);
 
         // Product Sale
         $productSaleQuery = CustomerPayment::where('payment_type', 'sale');
@@ -206,17 +219,24 @@ class AccountsController extends Controller
         $data['salary'] = $salaryQuery->sum('amount');
 
         // Expenses (legacy expenses WITHOUT supplier AND without payment records)
+        // Use paid_amount so due amounts don't affect cashflow
         $legacyExpensesQuery = Expense::whereNull('expense_supplier_id')
             ->whereDoesntHave('payments');
         $applyDateFilter($legacyExpensesQuery, 'date');
-        $legacyExpenses = $legacyExpensesQuery->sum('amount');
+        $legacyExpenses = $legacyExpensesQuery->sum('paid_amount');
 
-        // Direct expenses (non-supplier expenses with payment records)
+        // Direct expenses (non-supplier expenses with payment records - initial payment)
         $directExpenseQuery = ExpenseSupplierPayment::where('payment_type', 'direct_expense');
         $applyDateFilter($directExpenseQuery, 'payment_date');
         $directExpenses = $directExpenseQuery->sum('amount');
 
-        $data['expenses'] = $legacyExpenses + $directExpenses;
+        // Non-supplier due payments (due payments for non-supplier expenses)
+        $directDuePayQuery = ExpenseSupplierPayment::where('payment_type', 'due_pay')
+            ->whereNull('expense_supplier_id');
+        $applyDateFilter($directDuePayQuery, 'payment_date');
+        $directDuePay = $directDuePayQuery->sum('amount');
+
+        $data['expenses'] = $legacyExpenses + $directExpenses + $directDuePay;
 
         // Supplier Due Pay
         $supplierDuePayQuery = SupplierPayment::where('payment_type', 'due_pay');
@@ -243,8 +263,9 @@ class AccountsController extends Controller
         $applyDateFilter($purchaseReturnQuery, 'payment_date');
         $data['purchaseReturn'] = $purchaseReturnQuery->sum('amount');
 
-        // Expense Supplier Due Pay
-        $expenseSupplierDuePayQuery = ExpenseSupplierPayment::where('payment_type', 'due_pay');
+        // Expense Supplier Due Pay (only supplier-linked due payments)
+        $expenseSupplierDuePayQuery = ExpenseSupplierPayment::where('payment_type', 'due_pay')
+            ->whereNotNull('expense_supplier_id');
         $applyDateFilter($expenseSupplierDuePayQuery, 'payment_date');
         $data['expenseSupplierDuePay'] = $expenseSupplierDuePayQuery->sum('amount');
 
@@ -457,7 +478,7 @@ class AccountsController extends Controller
         // Legacy Expenses (without supplier)
         $expensesQuery = $account->expenses();
         $applyDateFilter($expensesQuery, 'date');
-        $expenses = $expensesQuery->get()->map(function ($expense) {
+        $expenses = $expensesQuery->where('paid_amount', '>', 0)->get()->map(function ($expense) {
             $url = null;
             if ($expense->id) {
                 $url = route('admin.expense.invoice', $expense->id);
@@ -468,7 +489,7 @@ class AccountsController extends Controller
                 'reference' => $expense->invoice ?? '-',
                 'url' => $url,
                 'debit' => 0,
-                'credit' => $expense->amount,
+                'credit' => $expense->paid_amount,
             ];
         });
         $transactions = $transactions->merge($expenses);

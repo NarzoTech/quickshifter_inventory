@@ -187,6 +187,22 @@ class User extends Model
         return $advance - $advanceRefund - $advanceUsed;
     }
 
+    /**
+     * Get the true advance balance from ALL payments (ignores eager-load date filters).
+     * Use this when date filters are active but you need the actual current advance balance.
+     */
+    public function trueAdvances()
+    {
+        $payments = CustomerPayment::where('customer_id', $this->id)
+            ->whereIn('payment_type', ['advance_receive', 'advance_refund', 'advance_deduct'])
+            ->get();
+
+        $advance = $payments->where('payment_type', 'advance_receive')->sum('amount');
+        $advanceRefund = $payments->where('payment_type', 'advance_refund')->sum('amount');
+        $advanceUsed = $payments->where('payment_type', 'advance_deduct')->sum('amount');
+        return $advance - $advanceRefund - $advanceUsed;
+    }
+
     public function orderReviews()
     {
         return $this->hasMany(OrderReview::class, 'user_id');

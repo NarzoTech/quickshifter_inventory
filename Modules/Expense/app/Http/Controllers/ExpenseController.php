@@ -55,22 +55,15 @@ class ExpenseController extends Controller
             });
         }
 
-        // Filter by payment status
+        // Filter by payment status (aligned with Expense::getPaymentStatusLabelAttribute)
         if (request('payment_status')) {
             $status = request('payment_status');
             if ($status == 'paid') {
-                $expenses = $expenses->where(function ($q) {
-                    $q->where('due_amount', 0)
-                        ->orWhereNull('expense_supplier_id');
-                });
+                $expenses = $expenses->where('due_amount', '<=', 0)->where('amount', '>', 0);
             } elseif ($status == 'partial') {
-                $expenses = $expenses->whereNotNull('expense_supplier_id')
-                    ->where('due_amount', '>', 0)
-                    ->where('paid_amount', '>', 0);
+                $expenses = $expenses->where('due_amount', '>', 0)->where('paid_amount', '>', 0);
             } elseif ($status == 'due') {
-                $expenses = $expenses->whereNotNull('expense_supplier_id')
-                    ->where('due_amount', '>', 0)
-                    ->where('paid_amount', 0);
+                $expenses = $expenses->where('due_amount', '>', 0)->where('paid_amount', '<=', 0);
             }
         }
 
@@ -160,6 +153,18 @@ class ExpenseController extends Controller
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return $this->redirectWithMessage(RedirectType::UPDATE->value, null, [], ['messege' => $exception->getMessage(), 'alert-type' => 'danger']);
+        }
+    }
+
+    public function duePayStore(Request $request, $id): RedirectResponse
+    {
+        checkAdminHasPermissionAndThrowException('expense.edit');
+        try {
+            $this->expense->duePaySingle($request, $id);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.index', [], ['messege' => 'Due payment successful', 'alert-type' => 'success']);
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.index', [], ['messege' => $exception->getMessage(), 'alert-type' => 'danger']);
         }
     }
 
