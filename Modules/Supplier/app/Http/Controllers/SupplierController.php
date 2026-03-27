@@ -502,7 +502,7 @@ class SupplierController extends Controller
     public function ledger($id)
     {
         checkAdminHasPermissionAndThrowException('supplier.ledger');
-        $supplier = $this->supplierService->find($id);
+        $supplier = Supplier::withTrashed()->findOrFail($id);
 
         // Calculate opening balance from entries before from_date
         $balanceBeforeFromDate = 0;
