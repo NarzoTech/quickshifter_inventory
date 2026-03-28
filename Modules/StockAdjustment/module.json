@@ -1,0 +1,11 @@
+{
+    "name": "StockAdjustment",
+    "alias": "stockadjustment",
+    "description": "Stock adjustment module for inventory losses",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\StockAdjustment\\app\\Providers\\StockAdjustmentServiceProvider"
+    ],
+    "files": []
+}

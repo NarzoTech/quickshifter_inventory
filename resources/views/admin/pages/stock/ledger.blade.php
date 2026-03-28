@@ -141,6 +141,10 @@
                                         <a href="{{ $stock->invoice }}">
                                             {{ $stock->sale->invoice ?? '' }}
                                         </a>
+                                    @elseif($stock->stock_adjustment_id)
+                                        <a href="{{ route('admin.stock-adjustment.show', $stock->stock_adjustment_id) }}">
+                                            {{ $stock->stockAdjustment->invoice ?? '' }}
+                                        </a>
                                     @endif
                                 </td>
                                 <td>{{ ucwords($stock->type) }}</td>

@@ -214,6 +214,14 @@ trait PermissionsTrait
 
         ],
     ];
+    public static array $stockAdjustmentPermissions = [
+        'group_name' => 'stock adjustment',
+        'permissions' => [
+            'stock.adjustment.view',
+            'stock.adjustment.create',
+            'stock.adjustment.delete',
+        ],
+    ];
     public static array $servicePermissions = [
         'group_name' => 'service',
         'permissions' => [

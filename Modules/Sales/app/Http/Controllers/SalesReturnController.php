@@ -99,9 +99,17 @@ class SalesReturnController extends Controller
     public function create($id)
     {
         checkAdminHasPermissionAndThrowException('sales.return');
-        $sale = Sale::find($id);
+        $sale = Sale::with('products.product')->findOrFail($id);
         $accounts = $this->service->all()->get();
-        return view('sales::return.create', compact('sale', 'accounts'));
+
+        // Calculate already returned quantities per product for this sale
+        $alreadyReturned = SalesReturnDetails::whereHas('saleReturn', function ($q) use ($id) {
+            $q->where('sale_id', $id);
+        })->get()->groupBy('product_id')->map(function ($details) {
+            return (int) $details->sum('quantity');
+        });
+
+        return view('sales::return.create', compact('sale', 'accounts', 'alreadyReturned'));
     }
 
     /**
@@ -112,26 +120,67 @@ class SalesReturnController extends Controller
         checkAdminHasPermissionAndThrowException('sales.return');
 
         $request->validate([
-            'sale_id' => 'required',
+            'sale_id' => 'required|exists:sales,id',
+            'customer_id' => 'nullable|exists:users,id',
             'order_date' => 'required',
             'return_date' => 'required',
-            'return_amount' => 'required',
-            'paying_amount' => 'nullable',
+            'return_amount' => 'required|numeric|min:0.01',
+            'paying_amount' => 'nullable|numeric|min:0',
             'payment_type' => 'required',
             'return_subtotal' => 'required|array',
+            'return_subtotal.*' => 'required|numeric|min:0',
             'return_quantity' => 'required|array',
+            'return_quantity.*' => 'required|numeric|min:0|integer',
             'price' => 'required|array',
-            'price.*' => 'required',
+            'price.*' => 'required|numeric|min:0',
         ]);
 
         DB::beginTransaction();
         // create a new sale return
         try {
-            $payingAmount = $request->paying_amount ?? 0;
-            $due = $request->return_amount - $payingAmount;
+            $payingAmount = (float) ($request->paying_amount ?? 0);
+            $returnAmount = (float) $request->return_amount;
+
+            // Validate paying amount does not exceed return amount
+            if ($payingAmount > $returnAmount) {
+                throw new Exception('Paying amount cannot exceed return amount.');
+            }
+
+            // Validate return quantities against sold quantities
+            $sale = Sale::with('products.product')->findOrFail($request->sale_id);
+            $existingReturns = SalesReturnDetails::whereHas('saleReturn', function ($q) use ($request) {
+                $q->where('sale_id', $request->sale_id);
+            })->get()->groupBy('product_id');
+
+            // Sum return quantities per product from form (handles duplicate product rows)
+            $formReturnQtyByProduct = [];
+            foreach ($request->product_id as $key => $prod_id) {
+                $formReturnQtyByProduct[$prod_id] = ($formReturnQtyByProduct[$prod_id] ?? 0) + (int) $request->return_quantity[$key];
+            }
+
+            // Validate each product's total return qty
+            foreach ($formReturnQtyByProduct as $prod_id => $totalReturnQty) {
+                if ($totalReturnQty <= 0) continue;
+
+                $soldQty = (int) $sale->products->where('product_id', $prod_id)->sum('quantity');
+                $alreadyReturned = isset($existingReturns[$prod_id]) ? (int) $existingReturns[$prod_id]->sum('quantity') : 0;
+                $maxReturnable = $soldQty - $alreadyReturned;
+
+                if ($totalReturnQty > $maxReturnable) {
+                    $productName = $sale->products->where('product_id', $prod_id)->first()?->product?->name ?? "Product #{$prod_id}";
+                    throw new Exception("Cannot return {$totalReturnQty} units of {$productName}. Max returnable: {$maxReturnable} (Sold: {$soldQty}, Already returned: {$alreadyReturned}).");
+                }
+            }
+
+            // Validate at least one product has return quantity > 0
+            if (array_sum($formReturnQtyByProduct) <= 0) {
+                throw new Exception('At least one product must have a return quantity greater than 0.');
+            }
+
+            $due = $returnAmount - $payingAmount;
             $return = SalesReturn::create([
                 'sale_id' => $request->sale_id,
-                'customer_id' => $request->customer_id,
+                'customer_id' => $request->customer_id ?: null,
                 'order_date' => Carbon::createFromFormat('d-m-Y', $request->order_date),
                 'return_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                 'return_amount' => $request->return_amount,
@@ -169,10 +218,8 @@ class SalesReturnController extends Controller
                 Stock::create([
                     'sale_return_id' => $return->id,
                     'product_id' => $prod_id,
-                    'date' => Carbon::createFromFormat('d-m-Y', $request->order_date),
+                    'date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                     'type' => 'Sale Return',
-                    // 'invoice' => route('admin.sales.invoice', $sale->id),
-                    // 'invoice_number' => $sale->invoice,
                     'in_quantity' => $request->return_quantity[$key],
                     'rate' => $request->price[$key],
                     'created_by' => auth('admin')->user()->id,
@@ -180,7 +227,7 @@ class SalesReturnController extends Controller
             }
 
 
-            if ($payingAmount) {
+            if ($payingAmount > 0) {
                 // create a payment
                 $account = Account::where('account_type', $request->payment_type);
                 if ($request->payment_type == 'cash') {
@@ -188,8 +235,13 @@ class SalesReturnController extends Controller
                 } else {
                     $account = $account->where('id', $request->account_id)->first();
                 }
-                $data = [
-                    'customer_id' => $request->customer_id,
+
+                if (!$account) {
+                    throw new Exception('Invalid payment account. Please select a valid account.');
+                }
+
+                CustomerPayment::create([
+                    'customer_id' => $request->customer_id ?: null,
                     'payment_type' => 'sale return',
                     'sale_return_id' => $return->id,
                     'is_paid' => 1,
@@ -198,8 +250,7 @@ class SalesReturnController extends Controller
                     'amount' => $payingAmount,
                     'payment_date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                     'created_by' => auth('admin')->user()->id,
-                ];
-                CustomerPayment::create($data);
+                ]);
             }
 
 
@@ -208,7 +259,7 @@ class SalesReturnController extends Controller
             // total_amount = returned goods value (negative = reduces sales)
             // due_amount = net balance impact (total_amount - amount = -return_due)
             $ledger = new Ledger();
-            $ledger->customer_id = $request->customer_id;
+            $ledger->customer_id = $request->customer_id ?: null;
             $ledger->sale_return_id = $return->id;
             $ledger->amount = -$payingAmount;
             $ledger->total_amount = -$request->return_amount;
@@ -237,11 +288,19 @@ class SalesReturnController extends Controller
     public function edit($id)
     {
         checkAdminHasPermissionAndThrowException('sales.return');
-        $return = SalesReturn::with(['details.product', 'sale.products.product', 'customer', 'payments.account'])->find($id);
+        $return = SalesReturn::with(['details.product', 'sale.products.product', 'customer', 'payments.account'])->findOrFail($id);
         $sale = $return->sale;
         $accounts = $this->service->all()->get();
         $payment = $return->payments->first();
-        return view('sales::return.edit', compact('return', 'sale', 'accounts', 'payment'));
+
+        // Calculate already returned quantities per product (excluding current return)
+        $alreadyReturned = SalesReturnDetails::whereHas('saleReturn', function ($q) use ($return) {
+            $q->where('sale_id', $return->sale_id)->where('id', '!=', $return->id);
+        })->get()->groupBy('product_id')->map(function ($details) {
+            return (int) $details->sum('quantity');
+        });
+
+        return view('sales::return.edit', compact('return', 'sale', 'accounts', 'payment', 'alreadyReturned'));
     }
 
     /**
@@ -252,22 +311,63 @@ class SalesReturnController extends Controller
         checkAdminHasPermissionAndThrowException('sales.return');
 
         $request->validate([
-            'sale_id' => 'required',
+            'sale_id' => 'required|exists:sales,id',
+            'customer_id' => 'nullable|exists:users,id',
             'order_date' => 'required',
             'return_date' => 'required',
-            'return_amount' => 'required',
-            'paying_amount' => 'nullable',
+            'return_amount' => 'required|numeric|min:0.01',
+            'paying_amount' => 'nullable|numeric|min:0',
             'payment_type' => 'required',
             'return_subtotal' => 'required|array',
+            'return_subtotal.*' => 'required|numeric|min:0',
             'return_quantity' => 'required|array',
+            'return_quantity.*' => 'required|numeric|min:0|integer',
             'price' => 'required|array',
-            'price.*' => 'required',
+            'price.*' => 'required|numeric|min:0',
         ]);
 
         DB::beginTransaction();
         try {
-            $payingAmount = $request->paying_amount ?? 0;
-            $return = SalesReturn::find($id);
+            $payingAmount = (float) ($request->paying_amount ?? 0);
+            $returnAmount = (float) $request->return_amount;
+
+            // Validate paying amount does not exceed return amount
+            if ($payingAmount > $returnAmount) {
+                throw new Exception('Paying amount cannot exceed return amount.');
+            }
+
+            $return = SalesReturn::findOrFail($id);
+
+            // Validate return quantities against sold quantities (excluding current return's old quantities)
+            $sale = Sale::with('products.product')->findOrFail($request->sale_id);
+            $existingReturns = SalesReturnDetails::whereHas('saleReturn', function ($q) use ($request, $id) {
+                $q->where('sale_id', $request->sale_id)->where('id', '!=', $id);
+            })->get()->groupBy('product_id');
+
+            // Sum return quantities per product from form (handles duplicate product rows)
+            $formReturnQtyByProduct = [];
+            foreach ($request->product_id as $key => $prod_id) {
+                $formReturnQtyByProduct[$prod_id] = ($formReturnQtyByProduct[$prod_id] ?? 0) + (int) $request->return_quantity[$key];
+            }
+
+            // Validate each product's total return qty
+            foreach ($formReturnQtyByProduct as $prod_id => $totalReturnQty) {
+                if ($totalReturnQty <= 0) continue;
+
+                $soldQty = (int) $sale->products->where('product_id', $prod_id)->sum('quantity');
+                $alreadyReturned = isset($existingReturns[$prod_id]) ? (int) $existingReturns[$prod_id]->sum('quantity') : 0;
+                $maxReturnable = $soldQty - $alreadyReturned;
+
+                if ($totalReturnQty > $maxReturnable) {
+                    $productName = $sale->products->where('product_id', $prod_id)->first()?->product?->name ?? "Product #{$prod_id}";
+                    throw new Exception("Cannot return {$totalReturnQty} units of {$productName}. Max returnable: {$maxReturnable} (Sold: {$soldQty}, Already returned: {$alreadyReturned}).");
+                }
+            }
+
+            // Validate at least one product has return quantity > 0
+            if (array_sum($formReturnQtyByProduct) <= 0) {
+                throw new Exception('At least one product must have a return quantity greater than 0.');
+            }
 
             // Regenerate invoice if return date changed
             $oldInvoice = $return->invoice;
@@ -343,7 +443,7 @@ class SalesReturnController extends Controller
                 Stock::create([
                     'sale_return_id' => $return->id,
                     'product_id' => $prod_id,
-                    'date' => Carbon::createFromFormat('d-m-Y', $request->order_date),
+                    'date' => Carbon::createFromFormat('d-m-Y', $request->return_date),
                     'type' => 'Sale Return',
                     'in_quantity' => $request->return_quantity[$key],
                     'rate' => $request->price[$key],
@@ -352,15 +452,20 @@ class SalesReturnController extends Controller
             }
 
             // 5. Create new payment if paying amount > 0
-            if ($payingAmount) {
+            if ($payingAmount > 0) {
                 $account = Account::where('account_type', $request->payment_type);
                 if ($request->payment_type == 'cash') {
                     $account = $account->first();
                 } else {
                     $account = $account->where('id', $request->account_id)->first();
                 }
+
+                if (!$account) {
+                    throw new Exception('Invalid payment account. Please select a valid account.');
+                }
+
                 CustomerPayment::create([
-                    'customer_id' => $request->customer_id,
+                    'customer_id' => $request->customer_id ?: null,
                     'payment_type' => 'sale return',
                     'sale_return_id' => $return->id,
                     'is_paid' => 1,
@@ -377,7 +482,7 @@ class SalesReturnController extends Controller
             // total_amount = returned goods value (negative = reduces sales)
             // due_amount = net balance impact (total_amount - amount = -return_due)
             $ledger = new Ledger();
-            $ledger->customer_id = $request->customer_id;
+            $ledger->customer_id = $request->customer_id ?: null;
             $ledger->sale_return_id = $return->id;
             $ledger->amount = -$payingAmount;
             $ledger->total_amount = -$request->return_amount;
@@ -408,7 +513,7 @@ class SalesReturnController extends Controller
 
         DB::beginTransaction();
         try {
-            $return = SalesReturn::find($id);
+            $return = SalesReturn::findOrFail($id);
 
             // Reverse stock using DB-level decrement (sales return added stock, so removing it subtracts)
             foreach ($return->details as $detail) {

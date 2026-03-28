@@ -40,23 +40,29 @@
             @include('purchase::sidebar')
         @endif
 
-        @adminCan('stock.view')
-            <li class="menu-item {{ Route::is('admin.stock.index') ? 'active open' : '' }}">
+        @if(checkAdminHasPermission('stock.view') || checkAdminHasPermission('stock.adjustment.view') || checkAdminHasPermission('stock.adjustment.create'))
+            <li class="menu-item {{ Route::is('admin.stock.index') || Route::is('admin.stock-adjustment.*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class='menu-icon tf-icons bx bx-detail'></i>
                     <div class="text-truncate" data-i18n="{{ __('Inventory') }}">{{ __('Inventory') }}</div>
                 </a>
                 <ul class="menu-sub">
 
-                    <li class="menu-item {{ Route::is('admin.stock.index') ? 'active' : '' }}">
-                        <a href="{{ route('admin.stock.index') }}" class="menu-link">
-                            <div class="text-truncate" data-i18n="{{ __('Stock') }}">{{ __('Stock') }}</div>
-                        </a>
-                    </li>
+                    @adminCan('stock.view')
+                        <li class="menu-item {{ Route::is('admin.stock.index') ? 'active' : '' }}">
+                            <a href="{{ route('admin.stock.index') }}" class="menu-link">
+                                <div class="text-truncate" data-i18n="{{ __('Stock') }}">{{ __('Stock') }}</div>
+                            </a>
+                        </li>
+                    @endadminCan
+
+                    @if (Module::isEnabled('StockAdjustment'))
+                        @include('stockadjustment::sidebar')
+                    @endif
 
                 </ul>
             </li>
-        @endadminCan
+        @endif
         @if (Module::isEnabled('Service'))
             @include('service::sidebar')
         @endif

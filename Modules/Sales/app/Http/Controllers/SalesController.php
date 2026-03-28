@@ -98,12 +98,12 @@ class SalesController extends Controller
             $advanceOffsets[$sale->id] = $offset;
 
             $returnAmount = $sale->saleReturns->sum('return_amount');
-            $returnDue = $sale->saleReturns->sum('return_due');
+            $returnDue = max(0, $sale->saleReturns->sum('return_due'));
             $data['sale_amount'] += $sale->total_price;
             $data['discount_amount'] += $sale->order_discount;
             $data['total_amount'] += $sale->grand_total - $returnAmount;
             $data['paid_amount'] += $sale->paid_amount + $offset;
-            $data['due_amount'] += $sale->due_amount - $offset - $returnDue;
+            $data['due_amount'] += max(0, $sale->due_amount - $offset - $returnDue);
         }
 
         if (request('par-page')) {

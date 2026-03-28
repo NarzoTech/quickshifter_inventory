@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Product\app\Models\Product;
 use Modules\Purchase\app\Models\Purchase;
 use Modules\Sales\app\Models\Sale;
+use Modules\StockAdjustment\app\Models\StockAdjustment;
 
 class Stock extends Model
 {
@@ -35,6 +36,7 @@ class Stock extends Model
         'purchase_return_id',
         'sale_id',
         'sale_return_id',
+        'stock_adjustment_id',
     ];
 
     public function product()
@@ -65,5 +67,10 @@ class Stock extends Model
     public function updatedBy()
     {
         return $this->belongsTo(Admin::class, 'updated_by')->withDefault();
+    }
+
+    public function stockAdjustment()
+    {
+        return $this->belongsTo(StockAdjustment::class, 'stock_adjustment_id')->withDefault();
     }
 }

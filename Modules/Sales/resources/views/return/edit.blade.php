@@ -91,6 +91,10 @@
                                                     $existingDetail = $return->details->where('product_id', $product->product_id)->first();
                                                     $returnQty = $existingDetail ? $existingDetail->quantity : 0;
                                                     $returnSubtotal = $existingDetail ? $existingDetail->sub_total : 0;
+                                                    $returned = $alreadyReturned[$product->product_id] ?? 0;
+                                                    $totalSold = (int) $sale->products->where('product_id', $product->product_id)->sum('quantity');
+                                                    $totalReturnable = max(0, $totalSold - $returned);
+                                                    $maxReturnable = min($product->quantity, $totalReturnable);
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $product->product->name }}
@@ -101,14 +105,18 @@
                                                         <input type="hidden" class="form-control" name="price[]"
                                                             value="{{ $product->price }}">
                                                     </td>
-                                                    <td>{{ $product->quantity }}</td>
+                                                    <td>{{ $product->quantity }}
+                                                        @if($returned > 0)
+                                                            <small class="text-muted">({{ __('Returned') }}: {{ $returned }})</small>
+                                                        @endif
+                                                    </td>
                                                     <td>
                                                         <input type="number" class="form-control" name="return_quantity[]"
-                                                            value="{{ $returnQty }}">
+                                                            value="{{ $returnQty }}" min="0" max="{{ $maxReturnable }}">
                                                     </td>
                                                     <td>
                                                         <input type="number" class="form-control" name="return_subtotal[]"
-                                                            value="{{ $returnSubtotal }}" step="0.01">
+                                                            value="{{ $returnSubtotal }}" step="0.01" min="0" readonly>
                                                     </td>
 
                                                 </tr>
@@ -123,13 +131,6 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label>{{ __('Paid Amount') }}</label>
-                                            <input type="number" class="form-control" name="paid_amount"
-                                                value="{{ $sale->payment->sum('amount') }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-group">
                                             <label>{{ __('Return Amount') }}</label>
                                             <input type="number" class="form-control" name="return_amount"
                                                 value="{{ $return->return_amount }}" readonly>
@@ -138,15 +139,16 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>{{ __('Paying Amount') }}</label>
-                                            <input type="paying_amount" class="form-control" name="paying_amount"
-                                                value="{{ $return->return_amount - $return->return_due }}">
+                                            <input type="number" class="form-control" name="paying_amount"
+                                                value="{{ $return->return_amount - $return->return_due }}"
+                                                min="0" step="0.01" max="{{ $return->return_amount }}">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label>{{ __('Pay By') }}</label>
                                             <div class="pyment-method">
-                                                <select name="payment_type" id="" class="form-control">
+                                                <select name="payment_type" id="" class="form-control" required>
                                                     <option value="">{{ __('Select Payment Type') }}
                                                     </option>
                                                     @foreach (accountList() as $key => $list)
@@ -217,14 +219,17 @@
             // calculate summery
             function calculateSummery() {
                 let total_return_subtotal = 0;
-                let total_return_quantity = 0;
                 $('input[name="return_subtotal[]"]').each(function() {
                     total_return_subtotal += parseFloat($(this).val() ? $(this).val() : 0);
                 });
-                $('input[name="return_quantity[]"]').each(function() {
-                    total_return_quantity += parseFloat($(this).val());
-                });
                 $('input[name="return_amount"]').val(total_return_subtotal);
+
+                // Cap paying amount to return amount
+                let payingAmount = parseFloat($('input[name="paying_amount"]').val()) || 0;
+                if (payingAmount > total_return_subtotal) {
+                    $('input[name="paying_amount"]').val(total_return_subtotal);
+                }
+                $('input[name="paying_amount"]').attr('max', total_return_subtotal);
             }
 
             // payment type

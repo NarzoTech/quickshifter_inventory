@@ -155,11 +155,11 @@
                                 <td>{{ $sale->grand_total }}</td>
                                 @php
                                     $offset = $advanceOffsets[$sale->id] ?? 0;
-                                    $returnDue = $sale->saleReturns->sum('return_due');
-                                    $effectiveDue = $sale->due_amount - $offset - $returnDue;
+                                    $returnDue = max(0, $sale->saleReturns->sum('return_due'));
+                                    $effectiveDue = max(0, $sale->due_amount - $offset - $returnDue);
                                 @endphp
-                                <td>{{ $sale->paid_amount + $offset }}</td>
-                                <td>{{ $effectiveDue }}</td>
+                                <td>{{ currency($sale->paid_amount + $offset) }}</td>
+                                <td>{{ currency($effectiveDue) }}</td>
                                 <td>
                                     @if ($effectiveDue <= 0)
                                         <span class="badge bg-success">{{ __('Paid') }}</span>
