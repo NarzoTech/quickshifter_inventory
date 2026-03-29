@@ -882,6 +882,11 @@ if (! function_exists('generateInvoiceNumber')) {
         $query = $modelClass::whereNotNull($invoiceColumn)
             ->where($invoiceColumn, 'like', $dailyPrefix . '%');
 
+        // Include soft-deleted records to avoid duplicate invoice numbers
+        if (in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses_recursive($modelClass))) {
+            $query->withTrashed();
+        }
+
         // Apply additional where conditions if provided
         foreach ($whereConditions as $column => $value) {
             $query->where($column, $value);
