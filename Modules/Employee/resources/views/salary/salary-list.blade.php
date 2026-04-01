@@ -142,6 +142,15 @@
                                         colspan="8"></x-empty-table>
                                 @endforelse
                             </tbody>
+                            @if ($payments->count() > 0)
+                                <tfoot>
+                                    <tr style="font-weight: bold;">
+                                        <td colspan="4" class="text-end"><b>{{ __('Total') }}</b></td>
+                                        <td><b>{{ currency($totalPaid) }}</b></td>
+                                        <td colspan="3"></td>
+                                    </tr>
+                                </tfoot>
+                            @endif
                         </table>
                     </div>
                     @if (request()->get('par-page') !== 'all')

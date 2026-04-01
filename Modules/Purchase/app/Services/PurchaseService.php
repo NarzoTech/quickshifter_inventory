@@ -107,6 +107,61 @@ class PurchaseService
     }
 
     /**
+     * Check for a completely identical existing purchase to prevent duplicates.
+     * Matches: date, supplier, memo_no, and all product line items (product, qty, price).
+     */
+    private function checkDuplicatePurchase($request): void
+    {
+        $purchaseDate = Carbon::createFromFormat('d-m-Y', $request->purchase_date)->toDateString();
+
+        // Find purchases with the same date, supplier, and memo_no
+        $candidates = Purchase::where('supplier_id', $request->supplier_id)
+            ->where('purchase_date', $purchaseDate)
+            ->where('memo_no', $request->memo_no)
+            ->with('purchaseDetails')
+            ->get();
+
+        if ($candidates->isEmpty()) {
+            return;
+        }
+
+        // Build a normalized fingerprint of the incoming line items
+        $incomingItems = [];
+        foreach ($request->product_id as $index => $productId) {
+            $incomingItems[] = [
+                'product_id'     => (int) $productId,
+                'quantity'       => (int) $request->quantity[$index],
+                'purchase_price' => (float) $request->unit_price[$index],
+                'sale_price'     => (float) $request->selling_price[$index],
+            ];
+        }
+
+        // Sort by product_id then purchase_price for consistent comparison
+        usort($incomingItems, fn($a, $b) => $a['product_id'] <=> $b['product_id'] ?: $a['purchase_price'] <=> $b['purchase_price']);
+
+        foreach ($candidates as $existing) {
+            if ($existing->purchaseDetails->count() !== count($incomingItems)) {
+                continue;
+            }
+
+            $existingItems = $existing->purchaseDetails->map(fn($d) => [
+                'product_id'     => (int) $d->product_id,
+                'quantity'       => (int) $d->quantity,
+                'purchase_price' => (float) $d->purchase_price,
+                'sale_price'     => (float) $d->sale_price,
+            ])->toArray();
+
+            usort($existingItems, fn($a, $b) => $a['product_id'] <=> $b['product_id'] ?: $a['purchase_price'] <=> $b['purchase_price']);
+
+            if ($incomingItems === $existingItems) {
+                throw new \Exception(
+                    "Duplicate purchase detected. An identical purchase already exists (Invoice: {$existing->invoice_number}) with the same date, supplier, memo, and products."
+                );
+            }
+        }
+    }
+
+    /**
      * Recalculate purchase return totals and validate against original purchase.
      */
     private function recalculateReturnTotals($request, $purchaseId, $excludeReturnId = null): array
@@ -227,6 +282,9 @@ class PurchaseService
     }
     public function store($request)
     {
+        // Duplicate prevention — check for an identical existing purchase
+        $this->checkDuplicatePurchase($request);
+
         // Server-side recalculation — never trust client-calculated totals
         $totals = $this->recalculatePurchaseTotals($request);
 
@@ -484,7 +542,7 @@ class PurchaseService
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
             $qty = (int) $purchaseDetail->quantity;
             Product::where('id', $purchaseDetail->product_id)->update([
-                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                'stock' => DB::raw("stock - {$qty}"),
             ]);
         }
 
@@ -602,7 +660,7 @@ class PurchaseService
         foreach ($purchase->purchaseDetails as $purchaseDetail) {
             $qty = (int) $purchaseDetail->quantity;
             Product::where('id', $purchaseDetail->product_id)->update([
-                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                'stock' => DB::raw("stock - {$qty}"),
             ]);
         }
 
@@ -793,7 +851,7 @@ class PurchaseService
             // Update product stock using DB-level decrement
             $qty = (int) $request->return_quantity[$index];
             Product::where('id', $val)->update([
-                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                'stock' => DB::raw("stock - {$qty}"),
             ]);
             $prod = Product::find($val);
 
@@ -943,7 +1001,7 @@ class PurchaseService
             // Update product stock using DB-level decrement
             $qty = (int) $request->return_quantity[$index];
             Product::where('id', $val)->update([
-                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                'stock' => DB::raw("stock - {$qty}"),
             ]);
             $prod = Product::find($val);
 

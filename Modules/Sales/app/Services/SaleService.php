@@ -18,6 +18,7 @@ use Modules\Product\app\Models\Product;
 use Modules\Product\app\Models\Variant;
 use Modules\Sales\app\Models\ProductSale;
 use Modules\Sales\app\Models\Sale;
+use Modules\Sales\app\Models\SalesReturn;
 use Modules\Service\app\Models\Service;
 
 class SaleService
@@ -274,7 +275,7 @@ class SaleService
             if ($product != null && $item['type'] == 'product' && $item['source'] == 1) {
                 $saleQty = (int) $item['qty'];
                 Product::where('id', $item['id'])->update([
-                    'stock' => DB::raw("CASE WHEN stock >= {$saleQty} THEN stock - {$saleQty} ELSE 0 END"),
+                    'stock' => DB::raw("stock - {$saleQty}"),
                     'stock_status' => DB::raw("CASE WHEN stock - {$saleQty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
                 ]);
 
@@ -436,6 +437,34 @@ class SaleService
             $sale->return_amount = $request->return_amount;
             $sale->updated_by = auth('admin')->user()->id;
 
+            // Clean up linked sales returns before updating the sale
+            foreach ($sale->saleReturns as $return) {
+                foreach ($return->details as $detail) {
+                    if ($detail->product_id) {
+                        $qty = (int) $detail->quantity;
+                        Product::where('id', $detail->product_id)->update([
+                            'stock' => DB::raw("stock - {$qty}"),
+                            'stock_status' => DB::raw("CASE WHEN stock - {$qty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
+                        ]);
+                    }
+                }
+                $return->stock()->delete();
+                $return->details()->delete();
+                if ($return->ledger) {
+                    $return->ledger->details()->delete();
+                    $return->ledger->delete();
+                }
+                Ledger::where('sale_return_id', $return->id)->each(function ($ledger) {
+                    $ledger->details()->delete();
+                    $ledger->delete();
+                });
+                $return->payments()->delete();
+                CustomerPayment::where('sale_return_id', $return->id)
+                    ->where('payment_type', 'sale return')
+                    ->delete();
+                $return->delete();
+            }
+
             // Restore product stock using DB-level increment
             foreach ($sale->products as $item) {
                 if ($item->product_id && $item->source == 1) {
@@ -481,7 +510,7 @@ class SaleService
                 if ($product != null && $item['type'] == 'product' && $item['source'] == 1) {
                     $saleQty = (int) $item['qty'];
                     Product::where('id', $item['id'])->update([
-                        'stock' => DB::raw("CASE WHEN stock >= {$saleQty} THEN stock - {$saleQty} ELSE 0 END"),
+                        'stock' => DB::raw("stock - {$saleQty}"),
                         'stock_status' => DB::raw("CASE WHEN stock - {$saleQty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
                     ]);
 
@@ -634,6 +663,45 @@ class SaleService
                     'stock_status' => DB::raw("CASE WHEN stock + {$qty} > 0 THEN 'in_stock' ELSE 'out_of_stock' END"),
                 ]);
             }
+        }
+
+        // Clean up linked sales returns before deleting the sale
+        foreach ($sale->saleReturns as $return) {
+            // Reverse stock added by the return
+            foreach ($return->details as $detail) {
+                if ($detail->product_id) {
+                    $qty = (int) $detail->quantity;
+                    Product::where('id', $detail->product_id)->update([
+                        'stock' => DB::raw("stock - {$qty}"),
+                        'stock_status' => DB::raw("CASE WHEN stock - {$qty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
+                    ]);
+                }
+            }
+
+            // Delete return stock records
+            $return->stock()->delete();
+
+            // Delete return details
+            $return->details()->delete();
+
+            // Delete return ledger and its details
+            if ($return->ledger) {
+                $return->ledger->details()->delete();
+                $return->ledger->delete();
+            }
+            Ledger::where('sale_return_id', $return->id)->each(function ($ledger) {
+                $ledger->details()->delete();
+                $ledger->delete();
+            });
+
+            // Delete return payments
+            $return->payments()->delete();
+            CustomerPayment::where('sale_return_id', $return->id)
+                ->where('payment_type', 'sale return')
+                ->delete();
+
+            // Delete the return itself
+            $return->delete();
         }
 
         // Clean up due receive payments and their ledger entries for this sale

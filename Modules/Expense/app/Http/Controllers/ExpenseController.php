@@ -35,7 +35,8 @@ class ExpenseController extends Controller
         if (request('keyword')) {
             $keyword  = request('keyword');
             $expenses = $expenses->where(function ($query) use ($keyword) {
-                $query->where('amount', 'like', "%{$keyword}%")
+                $query->where('invoice', 'like', "%{$keyword}%")
+                    ->orWhere('amount', 'like', "%{$keyword}%")
                     ->orWhere('note', 'like', "%{$keyword}%")
                     ->orWhereHas('expenseType', function ($q) use ($keyword) {
                         $q->where('name', 'like', "%{$keyword}%");

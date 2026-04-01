@@ -382,7 +382,7 @@ class SalesReturnController extends Controller
                 if ($detail->product_id) {
                     $qty = (int) $detail->quantity;
                     Product::where('id', $detail->product_id)->update([
-                        'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                        'stock' => DB::raw("stock - {$qty}"),
                         'stock_status' => DB::raw("CASE WHEN stock - {$qty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
                     ]);
                 }
@@ -520,7 +520,7 @@ class SalesReturnController extends Controller
                 if ($detail->product_id) {
                     $qty = (int) $detail->quantity;
                     Product::where('id', $detail->product_id)->update([
-                        'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                        'stock' => DB::raw("stock - {$qty}"),
                         'stock_status' => DB::raw("CASE WHEN stock - {$qty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
                     ]);
                 }

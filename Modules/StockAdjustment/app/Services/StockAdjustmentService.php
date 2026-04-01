@@ -72,7 +72,7 @@ class StockAdjustmentService
 
             // Reduce product stock
             Product::where('id', $product->id)->update([
-                'stock' => DB::raw("CASE WHEN stock >= {$qty} THEN stock - {$qty} ELSE 0 END"),
+                'stock' => DB::raw("stock - {$qty}"),
                 'stock_status' => DB::raw("CASE WHEN stock - {$qty} <= 0 THEN 'out_of_stock' ELSE 'in_stock' END"),
             ]);
 

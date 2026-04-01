@@ -127,7 +127,7 @@ class PurchaseController extends Controller
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
-            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => 'Something went wrong', 'alert-type' => 'error']);
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], ['messege' => $ex->getMessage(), 'alert-type' => 'error']);
         }
     }
 

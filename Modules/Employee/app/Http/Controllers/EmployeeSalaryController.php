@@ -190,6 +190,24 @@ class EmployeeSalaryController extends Controller
             $payments = $payments->orderBy('id', $sort);
         }
 
+        // Calculate lifetime total (all records, ignoring pagination/filters)
+        $totalPaid = EmployeeSalary::sum('amount');
+
+        // Export all filtered data (before pagination)
+        if (request('export')) {
+            $allPayments = (clone $payments)->get();
+            $fileName = 'employee-salary-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
+            return Excel::download(new EmployeeSalaryExport($allPayments, $totalPaid), $fileName);
+        }
+
+        if (request('export_pdf')) {
+            $allPayments = (clone $payments)->get();
+            return view('employee::pdf.salary', [
+                'payments' => $allPayments,
+                'totalPaid' => $totalPaid,
+            ]);
+        }
+
         if (request('par-page')) {
             $parpage = request('par-page') == 'all' ? null : request('par-page');
         } else {
@@ -202,21 +220,6 @@ class EmployeeSalaryController extends Controller
             $payments->appends(request()->query());
         }
 
-
-        if (request('export')) {
-            $fileName = 'employee-salary-' . date('Y-m-d') . '_' . date('h-i-s') . '.xlsx';
-            return Excel::download(new EmployeeSalaryExport($payments), $fileName);
-        }
-
-
-        if (request('export_pdf')) {
-
-            return view('employee::pdf.salary', [
-                'payments' => $payments,
-            ]);
-        }
-
-
-        return view('employee::salary.salary-list', compact('payments'));
+        return view('employee::salary.salary-list', compact('payments', 'totalPaid'));
     }
 }

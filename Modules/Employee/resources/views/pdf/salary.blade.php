@@ -39,7 +39,7 @@
                         <b>{{ __('Total') }}</b>
                     </td>
                     <td>
-                        <b>{{ $totalAmount }}</b>
+                        <b>{{ $totalPaid ?? $totalAmount }}</b>
                     </td>
                 </tr>
             @endif

@@ -14,7 +14,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle, WithEvents
 {
     private $index;
-    public function __construct(private $payments) {}
+    private $totalPaid;
+    public function __construct(private $payments, $totalPaid = null)
+    {
+        $this->totalPaid = $totalPaid;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
@@ -95,9 +99,9 @@ class EmployeeSalaryExport implements FromCollection, WithHeadings, WithMapping,
                 // 4 header rows + number of payment rows + 1
                 $lastRow = 4 + $this->payments->count() + 1;
                 
-                // Calculate total
-                $total = $this->payments->sum('amount');
-                
+                // Use lifetime total
+                $total = $this->totalPaid ?? $this->payments->sum('amount');
+
                 // Add total row
                 $event->sheet->getDelegate()->setCellValue('D' . $lastRow, 'Total');
                 $event->sheet->getDelegate()->setCellValue('E' . $lastRow, $total);

@@ -81,7 +81,7 @@ class OrderService
             if ($product != null) {
                 $orderQty = (int) $item['qty'];
                 Product::where('id', $item['id'])->update([
-                    'stock' => DB::raw("CASE WHEN stock >= {$orderQty} THEN stock - {$orderQty} ELSE 0 END"),
+                    'stock' => DB::raw("stock - {$orderQty}"),
                 ]);
             }
         }
