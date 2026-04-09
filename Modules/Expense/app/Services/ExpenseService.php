@@ -57,6 +57,11 @@ class ExpenseService
             $account = $this->account->find($firstAccountId);
         }
 
+        // Fallback to cash account if no account resolved
+        if (!$account) {
+            $account = $this->account->where('account_type', 'cash')->first();
+        }
+
         // Handle document upload
         $documentPath = null;
         if ($request->hasFile('document')) {
@@ -202,6 +207,11 @@ class ExpenseService
                 $account = $this->account->where('account_type', 'cash')->first();
             } else {
                 $account = $this->account->find($firstAccountId);
+            }
+
+            // Fallback to cash account if no account resolved
+            if (!$account) {
+                $account = $this->account->where('account_type', 'cash')->first();
             }
 
             // Handle document upload

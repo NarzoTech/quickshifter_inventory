@@ -4,6 +4,7 @@ namespace Modules\Accounts\app\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Modules\Accounts\app\Models\Account;
+use Modules\Expense\app\Models\Expense;
 
 class AccountsService
 {
@@ -61,6 +62,16 @@ class AccountsService
         $totalAccounts->map(function ($account) use (&$accountBalance, $fromDate, $toDate) {
             $accountBalance += $account->getBalanceBetween($fromDate, $toDate);
         });
+
+        $unassignedQuery = Expense::whereNull('expense_supplier_id')
+            ->whereDoesntHave('payments')
+            ->whereNull('account_id');
+
+        if ($fromDate && $toDate) {
+            $unassignedQuery->whereBetween('date', [$fromDate, $toDate]);
+        }
+
+        $accountBalance -= $unassignedQuery->sum('paid_amount');
 
         return $accountBalance;
     }

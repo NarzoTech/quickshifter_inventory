@@ -205,7 +205,7 @@
                             </div>
                             <div>
                                 <p class="label mb-0 text-white-50">{{ __('Cash in Hand') }}</p>
-                                <h3 class="amount mb-0 text-white">{{ currency($cashAccount?->getBalanceBetween()) }}</h3>
+                                <h3 class="amount mb-0 text-white">{{ currency(($cashAccount?->getBalanceBetween() ?? 0) - $unassignedExpenses) }}</h3>
                             </div>
                         </div>
                     </div>

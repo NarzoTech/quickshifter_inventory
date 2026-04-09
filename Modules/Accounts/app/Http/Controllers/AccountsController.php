@@ -50,8 +50,14 @@ class AccountsController extends Controller
             $accountBalance += $account->getBalanceBetween();
         });
 
+        // Legacy expenses with no account_id — deduct from cash (default payment method)
+        $unassignedExpenses = Expense::whereNull('expense_supplier_id')
+            ->whereDoesntHave('payments')
+            ->whereNull('account_id')
+            ->sum('paid_amount');
+        $accountBalance -= $unassignedExpenses;
 
-        return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccount', 'mobileAccounts', 'cardAccounts', 'advanceAccounts', 'accountBalance'));
+        return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccount', 'mobileAccounts', 'cardAccounts', 'advanceAccounts', 'accountBalance', 'unassignedExpenses'));
     }
 
     /**
@@ -563,11 +569,44 @@ class AccountsController extends Controller
         });
         $transactions = $transactions->merge($expenses);
 
+        // Unassigned legacy expenses (no account_id) — show in cash account ledger
+        if ($account->account_type === 'cash') {
+            $unassignedExpensesQuery = Expense::whereNull('expense_supplier_id')
+                ->whereDoesntHave('payments')
+                ->whereNull('account_id')
+                ->where('paid_amount', '>', 0);
+            $applyDateFilter($unassignedExpensesQuery, 'date');
+            $unassignedExpenses = $unassignedExpensesQuery->get()->map(function ($expense) {
+                $url = null;
+                if ($expense->id) {
+                    $url = route('admin.expense.invoice', $expense->id);
+                }
+                return [
+                    'date' => $expense->date,
+                    'description' => __('Expense') . ' - ' . ($expense->expenseType?->name ?? ''),
+                    'reference' => $expense->invoice ?? '-',
+                    'url' => $url,
+                    'debit' => 0,
+                    'credit' => $expense->paid_amount,
+                ];
+            });
+            $transactions = $transactions->merge($unassignedExpenses);
+        }
+
         // Sort by date
         $transactions = $transactions->sortBy('date')->values();
 
         // Calculate opening balance if date filter applied
         $openingBalance = $hasDateFilter && $fromDate ? $account->getOpeningBalance($fromDate) : 0;
+
+        // Include unassigned expenses in cash account opening balance
+        if ($account->account_type === 'cash' && $hasDateFilter && $fromDate) {
+            $openingBalance -= Expense::whereNull('expense_supplier_id')
+                ->whereDoesntHave('payments')
+                ->whereNull('account_id')
+                ->where('date', '<', $fromDate)
+                ->sum('paid_amount');
+        }
 
         // Apply keyword filter
         if (request('keyword')) {

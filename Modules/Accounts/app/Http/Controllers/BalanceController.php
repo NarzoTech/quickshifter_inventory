@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\Accounts\app\Models\Account;
 use Modules\Accounts\app\Models\BalanceTransfer;
 use Modules\Accounts\app\Services\AccountsService;
+use Modules\Expense\app\Models\Expense;
 
 class BalanceController extends Controller
 {
@@ -42,6 +43,11 @@ class BalanceController extends Controller
         $accounts->map(function ($account) use (&$accountBalance) {
             $accountBalance += $account->balance();
         });
+
+        $accountBalance -= Expense::whereNull('expense_supplier_id')
+            ->whereDoesntHave('payments')
+            ->whereNull('account_id')
+            ->sum('paid_amount');
 
         return view('accounts::balance', compact('accounts', 'deposits', 'withdraws', 'totalDeposits', 'totalWithdraws', 'accountBalance'));
     }
@@ -117,9 +123,14 @@ class BalanceController extends Controller
 
         $accountBalance = 0;
         $accounts->map(function ($account) use (&$accountBalance) {
-
             $accountBalance += $account->balance();
         });
+
+        $accountBalance -= Expense::whereNull('expense_supplier_id')
+            ->whereDoesntHave('payments')
+            ->whereNull('account_id')
+            ->sum('paid_amount');
+
         return view('accounts::balance-edit', compact('accounts', 'deposits', 'withdraws', 'balance', 'totalDeposits', 'totalWithdraws', 'accountBalance'));
     }
 
