@@ -19,7 +19,7 @@ class ThrottleWriteRequests
 
         $routeKey = $request->method() . '|' . $request->path();
         $sessionKey = 'throttle_write_' . md5($routeKey);
-        $cooldown = 30;
+        $cooldown = 15;
 
         $lastRequestAt = session($sessionKey);
 
