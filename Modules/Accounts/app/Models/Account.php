@@ -63,6 +63,24 @@ class Account extends Model
         $customerPaymentsReceived = $this->customerPayments()->where('is_received', 1)->sum('amount');
         $customerPaymentsPaid = $this->customerPayments()->where('is_paid', 1)->sum('amount');
 
+        // Deduct proportional outside purchase cost (source=2) from customer payments received
+        $outsideCostDeduction = (float) (\Illuminate\Support\Facades\DB::table('customer_payments as cp')
+            ->join('sales as s', 'cp.sale_id', '=', 's.id')
+            ->joinSub(
+                \Illuminate\Support\Facades\DB::table('product_sales')
+                    ->selectRaw('sale_id, SUM(purchase_price * quantity) as outside_cost')
+                    ->where('source', 2)
+                    ->groupBy('sale_id'),
+                'oc', 'cp.sale_id', '=', 'oc.sale_id'
+            )
+            ->where('cp.account_id', $this->id)
+            ->where('cp.is_received', 1)
+            ->where('s.grand_total', '>', 0)
+            ->whereNull('s.deleted_at')
+            ->selectRaw('SUM(cp.amount * oc.outside_cost / s.grand_total) as total')
+            ->value('total') ?? 0);
+        $customerPaymentsReceived -= $outsideCostDeduction;
+
         // Expense Supplier Payments
         $expenseSupplierPaymentsReceived = $this->expenseSupplierPayments()->where('is_received', 1)->sum('amount');
         $expenseSupplierPaymentsPaid = $this->expenseSupplierPayments()->where('is_paid', 1)->sum('amount');
@@ -177,6 +195,25 @@ class Account extends Model
             ->where('payment_date', '<', $startDate)
             ->sum('amount');
 
+        // Deduct proportional outside purchase cost (source=2) from opening customer payments
+        $outsideCostDeduction = (float) (\Illuminate\Support\Facades\DB::table('customer_payments as cp')
+            ->join('sales as s', 'cp.sale_id', '=', 's.id')
+            ->joinSub(
+                \Illuminate\Support\Facades\DB::table('product_sales')
+                    ->selectRaw('sale_id, SUM(purchase_price * quantity) as outside_cost')
+                    ->where('source', 2)
+                    ->groupBy('sale_id'),
+                'oc', 'cp.sale_id', '=', 'oc.sale_id'
+            )
+            ->where('cp.account_id', $this->id)
+            ->where('cp.is_received', 1)
+            ->where('s.grand_total', '>', 0)
+            ->whereNull('s.deleted_at')
+            ->where('cp.payment_date', '<', $startDate)
+            ->selectRaw('SUM(cp.amount * oc.outside_cost / s.grand_total) as total')
+            ->value('total') ?? 0);
+        $customerPaymentsReceived -= $outsideCostDeduction;
+
         // Expense Supplier Payments Received and Paid before the start date
         $expenseSupplierPaymentsReceived = $this->expenseSupplierPayments()
             ->where('is_received', 1)
@@ -269,6 +306,31 @@ class Account extends Model
 
         $customerPaymentsReceived = $customerPaymentsReceivedQuery->sum('amount');
         $customerPaymentsPaid = $customerPaymentsPaidQuery->sum('amount');
+
+        // Deduct proportional outside purchase cost (source=2) from customer payments received
+        $outsideCostQuery = \Illuminate\Support\Facades\DB::table('customer_payments as cp')
+            ->join('sales as s', 'cp.sale_id', '=', 's.id')
+            ->joinSub(
+                \Illuminate\Support\Facades\DB::table('product_sales')
+                    ->selectRaw('sale_id, SUM(purchase_price * quantity) as outside_cost')
+                    ->where('source', 2)
+                    ->groupBy('sale_id'),
+                'oc', 'cp.sale_id', '=', 'oc.sale_id'
+            )
+            ->where('cp.account_id', $this->id)
+            ->where('cp.is_received', 1)
+            ->where('s.grand_total', '>', 0)
+            ->whereNull('s.deleted_at');
+
+        if ($hasDateFilter && $startDate && $endDate) {
+            $outsideCostQuery->whereBetween('cp.payment_date', [$startDate, $endDate]);
+        }
+
+        $outsideCostDeduction = (float) ($outsideCostQuery
+            ->selectRaw('SUM(cp.amount * oc.outside_cost / s.grand_total) as total')
+            ->value('total') ?? 0);
+
+        $customerPaymentsReceived -= $outsideCostDeduction;
 
         // Expense Supplier Payments Received and Paid
         $expenseSupplierPaymentsReceivedQuery = $this->expenseSupplierPayments()->where('is_received', 1);

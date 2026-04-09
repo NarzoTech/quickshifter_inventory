@@ -387,20 +387,42 @@ class AccountsController extends Controller
         };
 
         // Customer Payments (Sales, Due Receive, Advance, etc.)
+        // Pre-calculate outside cost ratio per sale for source=2 items
+        $outsideCostRatios = \Illuminate\Support\Facades\DB::table('product_sales')
+            ->join('sales', 'product_sales.sale_id', '=', 'sales.id')
+            ->where('product_sales.source', 2)
+            ->where('sales.grand_total', '>', 0)
+            ->whereNull('sales.deleted_at')
+            ->selectRaw('product_sales.sale_id, SUM(product_sales.purchase_price * product_sales.quantity) / sales.grand_total as cost_ratio')
+            ->groupBy('product_sales.sale_id', 'sales.grand_total')
+            ->pluck('cost_ratio', 'sale_id');
+
         $customerPaymentsQuery = $account->customerPayments();
         $applyDateFilter($customerPaymentsQuery, 'payment_date');
-        $customerPayments = $customerPaymentsQuery->get()->map(function ($payment) {
+        $customerPayments = $customerPaymentsQuery->get()->map(function ($payment) use ($outsideCostRatios) {
             $url = null;
             if ($payment->sale_id) {
                 $url = route('admin.sales.invoice', $payment->sale_id);
             }
+
+            $debit = $payment->is_received ? $payment->amount : 0;
+            $note = '';
+
+            // Deduct proportional outside purchase cost
+            if ($debit > 0 && $payment->sale_id && isset($outsideCostRatios[$payment->sale_id])) {
+                $outsideCost = round($payment->amount * $outsideCostRatios[$payment->sale_id], 2);
+                $debit = round($debit - $outsideCost, 2);
+                $note = 'Received: ' . number_format($payment->amount, 2) . ' - Outside cost: ' . number_format($outsideCost, 2);
+            }
+
             return [
                 'date' => $payment->payment_date,
                 'description' => ucfirst(str_replace('_', ' ', $payment->payment_type)),
                 'reference' => $payment->sale?->invoice ?? $payment->customer?->name ?? '-',
                 'url' => $url,
-                'debit' => $payment->is_received ? $payment->amount : 0,
+                'debit' => $debit,
                 'credit' => $payment->is_paid ? $payment->amount : 0,
+                'note' => $note,
             ];
         });
         $transactions = $transactions->merge($customerPayments);

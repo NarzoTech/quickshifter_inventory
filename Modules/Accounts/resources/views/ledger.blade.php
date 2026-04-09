@@ -129,6 +129,9 @@
                                 <td class="text-end">
                                     @if($transaction['debit'] > 0)
                                         <span class="text-success">{{ currency($transaction['debit']) }}</span>
+                                        @if(!empty($transaction['note']))
+                                            <br><small class="text-muted">{{ $transaction['note'] }}</small>
+                                        @endif
                                     @else
                                         -
                                     @endif
