@@ -52,6 +52,7 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('media.create');
         $request->validate([
             'images' => 'required|array',
             'images.*' => 'image|mimes:jpeg,png,svg|max:2048', // Adjust the validation rules as needed
@@ -102,6 +103,7 @@ class MediaController extends Controller
      */
     public function edit($id)
     {
+        checkAdminHasPermissionAndThrowException('media.view');
         $media = Media::find($id);
 
         return view('media::edit', compact('media'));
@@ -112,6 +114,7 @@ class MediaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('media.create');
         $media = Media::findOrFail($id);
 
         if ($media && $request->hasFile('image')) {
@@ -148,6 +151,7 @@ class MediaController extends Controller
      */
     public function destroy($id)
     {
+        checkAdminHasPermissionAndThrowException('media.delete');
         $media = Media::findOrFail($id);
         if (File::exists(public_path($media->path))) {
             unlink(public_path($media->path));
@@ -177,6 +181,7 @@ class MediaController extends Controller
 
     public function media_multi_delete(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('media.delete');
         $media_list = Media::whereIn('id', $request->id_list)->get();
         foreach ($media_list as $media) {
             if (File::exists(public_path($media->path))) {

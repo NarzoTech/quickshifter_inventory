@@ -1,3 +1,4 @@
+@if(checkAdminHasPermission('order.view'))
 <li
     class="nav-item dropdown {{ Route::is('admin.orders') || Route::is('admin.order') || Route::is('admin.pending-payment') || Route::is('admin.rejected-payment') || Route::is('admin.pending-orders') ? 'active' : '' }}">
     <a href="#" class="nav-link has-dropdown" data-bs-toggle="dropdown"><i class="fas fa-shopping-bag"></i>
@@ -47,3 +48,4 @@
 
     </ul>
 </li>
+@endif

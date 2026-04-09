@@ -47,16 +47,19 @@ class SettingController extends Controller
 
     public function printSetting()
     {
+        checkAdminHasPermissionAndThrowException('setting.view');
         return view('globalsetting::settings.print-settings');
     }
 
     public function courierSetting()
     {
+        checkAdminHasPermissionAndThrowException('setting.view');
         return view('globalsetting::settings.courier-settings');
     }
 
     public function resetDatabase()
     {
+        checkAdminHasPermissionAndThrowException('database.reset');
         return view('admin.pages.database_clear');
     }
 

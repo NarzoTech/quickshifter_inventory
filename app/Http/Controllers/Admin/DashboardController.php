@@ -27,6 +27,7 @@ class DashboardController extends Controller
     }
     public function dashboard()
     {
+        checkAdminHasPermissionAndThrowException('dashboard.view');
         $data['customerDues'] = CustomerDue::where('status', 1)->sum('due_amount');
         $data['todaySales'] = Sale::whereDate('order_date', date('Y-m-d'))->sum('grand_total');
         $data['totalProducts'] = Product::count();
@@ -311,6 +312,7 @@ class DashboardController extends Controller
 
     public function monthlyStatFilter()
     {
+        checkAdminHasPermissionAndThrowException('dashboard.view');
         $type = request('type');
         $from = Carbon::parse(request('from'));
         $to = Carbon::parse(request('to'));

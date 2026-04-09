@@ -24,6 +24,7 @@ class ProductAttributeController extends Controller
      */
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('product.attribute.view');
         $attributes = $this->attributeService->getAllAttributes();
         return view('product::products.attributes.index', compact('attributes'));
     }
@@ -33,6 +34,7 @@ class ProductAttributeController extends Controller
      */
     public function create()
     {
+        checkAdminHasPermissionAndThrowException('product.attribute.create');
         return view('product::products.attributes.create');
     }
 
@@ -41,6 +43,7 @@ class ProductAttributeController extends Controller
      */
     public function store(AttributeRequest $request)
     {
+        checkAdminHasPermissionAndThrowException('product.attribute.create');
         DB::beginTransaction();
         try {
             $this->attributeService->storeAttribute($request);
@@ -66,6 +69,7 @@ class ProductAttributeController extends Controller
      */
     public function edit(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.attribute.edit');
         $attribute = $this->attributeService->getById($id);
         return view('product::products.attributes.edit', compact('attribute'));
     }
@@ -75,6 +79,7 @@ class ProductAttributeController extends Controller
      */
     public function update(AttributeRequest $request, string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.attribute.edit');
         DB::beginTransaction();
         try {
             $attribute = $this->attributeService->getById($id);
@@ -93,6 +98,7 @@ class ProductAttributeController extends Controller
      */
     public function destroy(string $id)
     {
+        checkAdminHasPermissionAndThrowException('product.attribute.delete');
         DB::beginTransaction();
         try {
             $attribute = $this->attributeService->deleteAttribute($id);
@@ -120,6 +126,7 @@ class ProductAttributeController extends Controller
 
     public function deleteValue(Request $request)
     {
+        checkAdminHasPermissionAndThrowException('product.attribute.delete');
         DB::beginTransaction();
         try {
             $this->attributeService->deleteValue($request->all());

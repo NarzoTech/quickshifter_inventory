@@ -429,6 +429,80 @@ trait PermissionsTrait
         ],
     ];
 
+    public static array $warehousePermissions = [
+        'group_name' => 'warehouse',
+        'permissions' => [
+            'warehouse.view',
+            'warehouse.create',
+            'warehouse.edit',
+            'warehouse.delete',
+        ],
+    ];
+
+    public static array $mediaPermissions = [
+        'group_name' => 'media',
+        'permissions' => [
+            'media.view',
+            'media.create',
+            'media.delete',
+        ],
+    ];
+
+    public static array $taxPermissions = [
+        'group_name' => 'tax',
+        'permissions' => [
+            'tax.view',
+            'tax.create',
+            'tax.store',
+            'tax.edit',
+            'tax.update',
+            'tax.delete',
+        ],
+    ];
+
+    public static array $currencyPermissions = [
+        'group_name' => 'currency',
+        'permissions' => [
+            'currency.view',
+            'currency.create',
+            'currency.store',
+            'currency.edit',
+            'currency.update',
+            'currency.delete',
+        ],
+    ];
+
+    public static array $languagePermissions = [
+        'group_name' => 'language',
+        'permissions' => [
+            'language.view',
+            'language.create',
+            'language.store',
+            'language.edit',
+            'language.update',
+            'language.delete',
+        ],
+    ];
+
+    public static array $orderPermissions = [
+        'group_name' => 'order',
+        'permissions' => [
+            'order.view',
+            'order.update',
+            'order.delete',
+        ],
+    ];
+
+    public static array $productAttributePermissions = [
+        'group_name' => 'product attribute',
+        'permissions' => [
+            'product.attribute.view',
+            'product.attribute.create',
+            'product.attribute.edit',
+            'product.attribute.delete',
+        ],
+    ];
+
 
     // return super admin permission aka 'all permissions'
     private static function getSuperAdminPermissions(): array
