@@ -373,7 +373,12 @@ class CustomerController extends Controller
             'customer_id'            => 'required|exists:users,id',
             'receiving_amount'       => 'required|numeric|min:0.01',
             'payment_date'           => 'required|date',
-            'account_id'             => 'required',
+            'payment_type'           => 'required|array|min:1',
+            'payment_type.*'         => 'required|string',
+            'account_id'             => 'required|array|min:1',
+            'account_id.*'           => 'required',
+            'paid_amount'            => 'required|array|min:1',
+            'paid_amount.*'          => 'required|numeric|min:0.01',
             'sale_id'                => 'nullable|array',
             'sale_id.*'              => 'nullable|integer|exists:sales,id',
             'amount'                 => 'nullable|array',
@@ -399,14 +404,33 @@ class CustomerController extends Controller
             ]);
         }
 
+        // Validate total paid amounts match receiving amount
+        $totalPaid = array_sum($request->paid_amount ?? []);
+        if (round($totalPaid, 2) != round((float) $request->receiving_amount, 2)) {
+            return $this->redirectWithMessage(RedirectType::ERROR->value, null, [], [
+                'messege' => 'Total payment amounts (' . number_format($totalPaid, 2) . ') must equal receiving amount (' . number_format($request->receiving_amount, 2) . ').',
+                'alert-type' => 'error'
+            ]);
+        }
+
         DB::beginTransaction();
         try {
-            // Get account
-            $account = $request->account_id;
-            if ($account == 'cash' || $account == 'advance') {
-                $account = $this->account->all()->where('account_type', $account)->first();
-            } else {
-                $account = $this->account->all()->find($account);
+            // Resolve all payment accounts and build payment pool
+            $paymentPool = [];
+            foreach ($request->account_id as $key => $accountId) {
+                $paidAmount = (float) ($request->paid_amount[$key] ?? 0);
+                if ($paidAmount <= 0) continue;
+
+                if ($accountId == 'cash' || $accountId == 'advance') {
+                    $account = $this->account->all()->where('account_type', $accountId)->first();
+                } else {
+                    $account = $this->account->all()->find($accountId);
+                }
+
+                $paymentPool[] = [
+                    'account'   => $account,
+                    'remaining' => $paidAmount,
+                ];
             }
 
             // Create main ledger entry
@@ -437,7 +461,7 @@ class CustomerController extends Controller
 
                     $sale = Sale::findOrFail($saleId);
 
-                    // Verify sale belongs to this customer — prevent cross-customer payment
+                    // Verify sale belongs to this customer
                     $saleCustomerId = $sale->user_id ?? $sale->customer_id;
                     if ($saleCustomerId && (int) $saleCustomerId !== (int) $request->customer_id) {
                         throw new \Exception(
@@ -445,16 +469,16 @@ class CustomerController extends Controller
                         );
                     }
 
-                    // Cap payment at remaining due — prevent overpayment
+                    // Cap payment at remaining due
                     $rawDue = (float) DB::table('sales')->where('id', $saleId)->value('due_amount');
                     $maxPayable = max(0, $rawDue);
                     $paymentAmount = min($paymentAmount, $maxPayable);
 
                     if ($paymentAmount <= 0) {
-                        continue; // already fully paid
+                        continue;
                     }
 
-                    // Use DB-level arithmetic for safe updates
+                    // Update sale totals
                     $rawPaid = (float) DB::table('sales')->where('id', $saleId)->value('paid_amount');
                     $rawGrand = (float) DB::table('sales')->where('id', $saleId)->value('grand_total');
                     $newPaid = round($rawPaid + $paymentAmount, 2);
@@ -466,19 +490,29 @@ class CustomerController extends Controller
                         'payment_status' => $newDue == 0 ? 'paid' : 'due',
                     ]);
 
-                    // Create payment data
-                    CustomerPayment::create([
-                        'sale_id'      => $sale->id,
-                        'customer_id'  => $request->customer_id,
-                        'account_id'   => $account->id,
-                        'payment_type' => 'due_receive',
-                        'is_received'  => 1,
-                        'amount'       => $paymentAmount,
-                        'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
-                        'note'         => $request->note,
-                        'created_by'   => auth('admin')->user()->id,
-                        'ledger_id'    => $ledger->id,
-                    ]);
+                    // Distribute invoice amount across payment methods
+                    $invoiceRemaining = $paymentAmount;
+                    foreach ($paymentPool as &$pool) {
+                        if ($invoiceRemaining <= 0 || $pool['remaining'] <= 0) continue;
+
+                        $allocate = min($invoiceRemaining, $pool['remaining']);
+                        $pool['remaining'] -= $allocate;
+                        $invoiceRemaining -= $allocate;
+
+                        CustomerPayment::create([
+                            'sale_id'      => $sale->id,
+                            'customer_id'  => $request->customer_id,
+                            'account_id'   => $pool['account']->id,
+                            'payment_type' => 'due_receive',
+                            'is_received'  => 1,
+                            'amount'       => $allocate,
+                            'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
+                            'note'         => $request->note,
+                            'created_by'   => auth('admin')->user()->id,
+                            'ledger_id'    => $ledger->id,
+                        ]);
+                    }
+                    unset($pool);
 
                     // Update customer due record
                     $due = CustomerDue::where('invoice', $sale->invoice)->first();
@@ -501,7 +535,6 @@ class CustomerController extends Controller
                 $customer = User::find($request->customer_id);
 
                 if ($customer) {
-                    // Validate direct balance doesn't exceed wallet balance
                     $actualWalletBalance = (float) ($customer->wallet_balance ?? 0);
                     if ($directBalanceAmount > $actualWalletBalance + 0.01) {
                         throw new \Exception(
@@ -511,23 +544,32 @@ class CustomerController extends Controller
                     }
                     $directBalanceAmount = min($directBalanceAmount, $actualWalletBalance);
 
-                    // Update customer wallet balance
                     $customer->wallet_balance = round($actualWalletBalance - $directBalanceAmount, 2);
                     $customer->save();
 
-                    // Create payment record for direct balance (no sale_id)
-                    CustomerPayment::create([
-                        'sale_id'      => null,
-                        'customer_id'  => $request->customer_id,
-                        'account_id'   => $account->id,
-                        'payment_type' => 'direct_due_receive',
-                        'is_received'  => 1,
-                        'amount'       => $directBalanceAmount,
-                        'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
-                        'note'         => $request->note ?? 'Direct balance due receive',
-                        'created_by'   => auth('admin')->user()->id,
-                        'ledger_id'    => $ledger->id,
-                    ]);
+                    // Distribute direct balance across payment methods
+                    $directRemaining = $directBalanceAmount;
+                    foreach ($paymentPool as &$pool) {
+                        if ($directRemaining <= 0 || $pool['remaining'] <= 0) continue;
+
+                        $allocate = min($directRemaining, $pool['remaining']);
+                        $pool['remaining'] -= $allocate;
+                        $directRemaining -= $allocate;
+
+                        CustomerPayment::create([
+                            'sale_id'      => null,
+                            'customer_id'  => $request->customer_id,
+                            'account_id'   => $pool['account']->id,
+                            'payment_type' => 'direct_due_receive',
+                            'is_received'  => 1,
+                            'amount'       => $allocate,
+                            'payment_date' => Carbon::createFromFormat('d-m-Y', $request->payment_date),
+                            'note'         => $request->note ?? 'Direct balance due receive',
+                            'created_by'   => auth('admin')->user()->id,
+                            'ledger_id'    => $ledger->id,
+                        ]);
+                    }
+                    unset($pool);
 
                     // Create ledger details for direct balance
                     $ledger->details()->create([
@@ -539,7 +581,7 @@ class CustomerController extends Controller
 
             DB::commit();
             return to_route('admin.customers.index')->with([
-                'messege'    => 'Customer due receive successfully.',
+                'messege'    => 'Customer due receive successfully. Please wait 30 seconds before submitting another request.',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $exception) {

@@ -198,7 +198,10 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        @include('components.account-type', ['text' => 'Receive'])
+                                        <label class="mb-2"><b>{{ __('Payment Methods') }}</b></label>
+                                        <div id="payment-rows-container">
+                                            @include('customer::due-receive-payment-row')
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -219,6 +222,8 @@
 
 @push('js')
     <script>
+        const accountsList = @json($accounts);
+
         $(document).ready(function() {
             'use strict';
 
@@ -321,43 +326,59 @@
 
             $('input[name="receiving_amount"]').on('input', function() {
                 let value = parseFloat($(this).val()) || 0;
+                distributeToInvoices(value);
 
-                // Reset all amounts
-                $('input[name="amount[]"]').val('');
-                $('#direct_balance_amount').val('');
-                $('#checkbox-all').prop('checked', false);
-                $('input[name="select"]').prop('checked', false);
-                $('#checkbox-direct-balance').prop('checked', false);
+                // Auto-fill first payment row when only one row
+                if ($('.payment-row').length === 1) {
+                    $('.paid-amount-input').first().val(value.toFixed(2));
+                }
+            });
 
-                // First, allocate to direct balance if exists
-                if (directBalanceMax > 0 && value > 0) {
-                    const directAmount = Math.min(value, directBalanceMax);
-                    $('#direct_balance_amount').val(directAmount);
-                    $('#checkbox-direct-balance').prop('checked', true);
-                    value -= directAmount;
+            // Add payment row
+            $(document).on('click', '.add-payment-row', function() {
+                const newRow = `@include('customer::due-receive-payment-row', ['add' => true])`;
+                $('#payment-rows-container').append(newRow);
+            });
+
+            // Remove payment row
+            $(document).on('click', '.remove-payment-row', function() {
+                $(this).closest('.payment-row').remove();
+                updateReceivingFromPayments();
+            });
+
+            // Update receiving amount when payment amounts change
+            $(document).on('input', '.paid-amount-input', function() {
+                updateReceivingFromPayments();
+            });
+
+            // Payment type change — update account dropdown
+            $(document).on('change', '.payment-type-select', function() {
+                const selectedType = $(this).val();
+                const accountCol = $(this).closest('.payment-row').find('.account-col');
+
+                if (selectedType === 'cash' || selectedType === 'advance') {
+                    const displayName = selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
+                    accountCol.html(`<input type="hidden" name="account_id[]" value="${selectedType}"><input type="text" class="form-control account-display" value="${displayName}" readonly>`);
+                    return;
                 }
 
-                // Then allocate to invoices
-                $('input[name="amount[]"]').each(function() {
-                    if (value <= 0) return;
-
-                    let due = $(this).closest('tr').find('td:eq(4)').text();
-                    due = parseFloat(due.replace(/[^0-9.]/g, '')) || 0;
-
-                    if (due > 0) {
-                        const allocate = Math.min(value, due);
-                        $(this).val(allocate);
-                        $(this).closest('tr').find('input[name="select"]').prop('checked', true);
-                        value -= allocate;
+                const filtered = accountsList.filter(a => a.account_type === selectedType);
+                let html = '<select name="account_id[]" class="form-control">';
+                filtered.forEach(function(account) {
+                    switch (selectedType) {
+                        case 'bank':
+                            html += `<option value="${account.id}">${account.bank_account_number} (${account.bank?.name || ''})</option>`;
+                            break;
+                        case 'mobile_banking':
+                            html += `<option value="${account.id}">${account.mobile_number} (${account.mobile_bank_name})</option>`;
+                            break;
+                        case 'card':
+                            html += `<option value="${account.id}">${account.card_number} (${account.bank?.name || ''})</option>`;
+                            break;
                     }
                 });
-
-                // Update checkbox-all state
-                var total = $('input[name="select"]').length;
-                var number = $('input[name="select"]:checked').length;
-                if (total == number && total > 0) {
-                    $('#checkbox-all').prop('checked', true);
-                }
+                html += '</select>';
+                accountCol.html(html);
             });
         });
 
@@ -376,6 +397,62 @@
             total += directVal;
 
             $('input[name="receiving_amount"]').val(total.toFixed(2));
+
+            // Auto-fill first payment row amount with total
+            const firstPaidInput = $('.paid-amount-input').first();
+            if ($('.payment-row').length === 1) {
+                firstPaidInput.val(total.toFixed(2));
+            }
+        }
+
+        function updateReceivingFromPayments() {
+            let total = 0;
+            $('.paid-amount-input').each(function() {
+                total += parseFloat($(this).val()) || 0;
+            });
+            $('input[name="receiving_amount"]').val(total.toFixed(2));
+            distributeToInvoices(total);
+        }
+
+        function distributeToInvoices(value) {
+            // Reset all invoice amounts and checkboxes
+            $('input[name="amount[]"]').val('');
+            $('#direct_balance_amount').val('');
+            $('#checkbox-all').prop('checked', false);
+            $('input[name="select"]').prop('checked', false);
+            $('#checkbox-direct-balance').prop('checked', false);
+
+            const directBalanceMax = {{ $directBalance ?? 0 }};
+
+            // First, allocate to direct balance if exists
+            if (directBalanceMax > 0 && value > 0) {
+                const directAmount = Math.min(value, directBalanceMax);
+                $('#direct_balance_amount').val(directAmount);
+                $('#checkbox-direct-balance').prop('checked', true);
+                value -= directAmount;
+            }
+
+            // Then allocate to invoices
+            $('input[name="amount[]"]').each(function() {
+                if (value <= 0) return;
+
+                let due = $(this).closest('tr').find('td:eq(4)').text();
+                due = parseFloat(due.replace(/[^0-9.]/g, '')) || 0;
+
+                if (due > 0) {
+                    const allocate = Math.min(value, due);
+                    $(this).val(allocate);
+                    $(this).closest('tr').find('input[name="select"]').prop('checked', true);
+                    value -= allocate;
+                }
+            });
+
+            // Update checkbox-all state
+            var total = $('input[name="select"]').length;
+            var number = $('input[name="select"]:checked').length;
+            if (total == number && total > 0) {
+                $('#checkbox-all').prop('checked', true);
+            }
         }
     </script>
 @endpush
