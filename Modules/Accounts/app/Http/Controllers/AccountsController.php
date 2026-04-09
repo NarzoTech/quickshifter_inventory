@@ -178,15 +178,47 @@ class AccountsController extends Controller
             ->selectRaw('SUM(cp.amount * ps.service_total / s.grand_total) as total')
             ->value('total') ?? 0);
 
-        // Product Sale
+        // Outside purchase cost subquery: total purchase cost per sale for source=2 (outside) items
+        $outsideCostSubquery = function () {
+            return \Illuminate\Support\Facades\DB::table('product_sales')
+                ->selectRaw('sale_id, SUM(purchase_price * quantity) as outside_cost')
+                ->where('source', 2)
+                ->groupBy('sale_id');
+        };
+
+        // Outside cost deduction for product sales (proportional to payment / grand_total)
+        $outsideCostSalesQuery = \Illuminate\Support\Facades\DB::table('customer_payments as cp')
+            ->joinSub($outsideCostSubquery(), 'oc', 'cp.sale_id', '=', 'oc.sale_id')
+            ->join('sales as s', 'cp.sale_id', '=', 's.id')
+            ->where('cp.payment_type', 'sale')
+            ->where('s.grand_total', '>', 0)
+            ->whereNull('s.deleted_at');
+        $applyDateFilter($outsideCostSalesQuery, 'cp.payment_date');
+        $outsideCostSales = (float) ($outsideCostSalesQuery
+            ->selectRaw('SUM(cp.amount * oc.outside_cost / s.grand_total) as total')
+            ->value('total') ?? 0);
+
+        // Product Sale (adjusted: deduct outside purchase cost to show only benefit)
         $productSaleQuery = CustomerPayment::where('payment_type', 'sale');
         $applyDateFilter($productSaleQuery, 'payment_date');
-        $data['productSale'] = $productSaleQuery->sum('amount') - $data['serviceSale'];
+        $data['productSale'] = $productSaleQuery->sum('amount') - $data['serviceSale'] - $outsideCostSales;
 
-        // Customer Due
+        // Outside cost deduction for customer due receives (proportional to payment / grand_total)
+        $outsideCostDueQuery = \Illuminate\Support\Facades\DB::table('customer_payments as cp')
+            ->joinSub($outsideCostSubquery(), 'oc', 'cp.sale_id', '=', 'oc.sale_id')
+            ->join('sales as s', 'cp.sale_id', '=', 's.id')
+            ->where('cp.payment_type', 'due_receive')
+            ->where('s.grand_total', '>', 0)
+            ->whereNull('s.deleted_at');
+        $applyDateFilter($outsideCostDueQuery, 'cp.payment_date');
+        $outsideCostDue = (float) ($outsideCostDueQuery
+            ->selectRaw('SUM(cp.amount * oc.outside_cost / s.grand_total) as total')
+            ->value('total') ?? 0);
+
+        // Customer Due (adjusted: deduct outside purchase cost to show only benefit)
         $customerDueQuery = CustomerPayment::whereIn('payment_type', ['due_receive', 'direct_due_receive']);
         $applyDateFilter($customerDueQuery, 'payment_date');
-        $data['customer_due'] = $customerDueQuery->sum('amount');
+        $data['customer_due'] = $customerDueQuery->sum('amount') - $outsideCostDue;
 
         // Sale Return (actual cash refunded to customer)
         $saleReturnQuery = CustomerPayment::where('payment_type', 'sale return');
@@ -295,6 +327,21 @@ class AccountsController extends Controller
 
         // Opening balance is 0 for all-time view, or calculated from the start date when filtered
         $openingBalance = $hasDateFilter && $fromDate ? $this->accountsService->getOpeningBalance($fromDate) : 0;
+
+        // Adjust opening balance: deduct outside purchase costs from pre-period sales & due receives
+        if ($hasDateFilter && $fromDate) {
+            $preOutsideCost = (float) (\Illuminate\Support\Facades\DB::table('customer_payments as cp')
+                ->joinSub($outsideCostSubquery(), 'oc', 'cp.sale_id', '=', 'oc.sale_id')
+                ->join('sales as s', 'cp.sale_id', '=', 's.id')
+                ->whereIn('cp.payment_type', ['sale', 'due_receive'])
+                ->where('s.grand_total', '>', 0)
+                ->whereNull('s.deleted_at')
+                ->where('cp.payment_date', '<', $fromDate)
+                ->selectRaw('SUM(cp.amount * oc.outside_cost / s.grand_total) as total')
+                ->value('total') ?? 0);
+
+            $openingBalance -= $preOutsideCost;
+        }
 
         $currentBalance = $openingBalance + $data['totalReceive'] - $data['totalPay'];
         return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance', 'hasDateFilter'));

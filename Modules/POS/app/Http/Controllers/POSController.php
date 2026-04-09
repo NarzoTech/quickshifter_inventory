@@ -498,7 +498,7 @@ class POSController extends Controller
                 'order' => $order_result,
                 'invoice' => $invoiceBlade,
                 'invoiceRoute' => $invoiceRoute,
-                'message' => 'Sale created successfully',
+                'message' => 'Sale created successfully. Please wait 30 seconds before submitting another request.',
                 'alert-type' => 'success',
             ], 200);
         } catch (Exception $ex) {

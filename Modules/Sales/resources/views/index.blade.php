@@ -136,6 +136,7 @@
                             <th>{{ __('Sale Amount') }}</th>
                             <th>{{ __('Discount') }}</th>
                             <th>{{ __('Total Amount') }}</th>
+                            <th>{{ __('Other Income') }}</th>
                             <th>{{ __('Paid Amount') }}</th>
                             <th>{{ __('Due') }}</th>
                             <th>{{ __('Payment Status') }}</th>
@@ -153,6 +154,12 @@
                                 <td>{{ $sale->total_price }}</td>
                                 <td>{{ $sale->order_discount }}</td>
                                 <td>{{ $sale->grand_total }}</td>
+                                @php
+                                    $outsideIncome = $sale->details->where('source', 2)->sum(function ($d) {
+                                        return ($d->price - $d->purchase_price) * $d->quantity;
+                                    });
+                                @endphp
+                                <td>{{ currency($outsideIncome) }}</td>
                                 @php
                                     $offset = $advanceOffsets[$sale->id] ?? 0;
                                     $returnDue = max(0, $sale->saleReturns->sum('return_due'));
@@ -222,6 +229,9 @@
                             </td>
                             <td colspan="1">
                                 <b>{{ currency($data['total_amount']) }}</b>
+                            </td>
+                            <td colspan="1">
+                                <b>{{ currency($data['income_amount']) }}</b>
                             </td>
                             <td colspan="1">
                                 <b>{{ currency($data['paid_amount']) }}</b>

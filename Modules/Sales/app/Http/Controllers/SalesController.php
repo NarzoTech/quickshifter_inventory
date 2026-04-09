@@ -76,6 +76,7 @@ class SalesController extends Controller
         $data['sale_amount'] = 0;
         $data['discount_amount'] = 0;
         $data['total_amount'] = 0;
+        $data['income_amount'] = 0;
         $data['paid_amount'] = 0;
         $data['due_amount'] = 0;
 
@@ -99,9 +100,13 @@ class SalesController extends Controller
 
             $returnAmount = $sale->saleReturns->sum('return_amount');
             $returnDue = max(0, $sale->saleReturns->sum('return_due'));
+            $outsideIncome = $sale->details->where('source', 2)->sum(function ($d) {
+                return ($d->price - $d->purchase_price) * $d->quantity;
+            });
             $data['sale_amount'] += $sale->total_price;
             $data['discount_amount'] += $sale->order_discount;
             $data['total_amount'] += $sale->grand_total - $returnAmount;
+            $data['income_amount'] += $outsideIncome;
             $data['paid_amount'] += $sale->paid_amount + $offset;
             $data['due_amount'] += max(0, $sale->due_amount - $offset - $returnDue);
         }
@@ -323,7 +328,7 @@ class SalesController extends Controller
             session()->put('UPDATE_CART', []);
             return response()->json([
                 'order' => $order,
-                'message' => 'Order Updated successfully',
+                'message' => 'Order Updated successfully. Please wait 30 seconds before submitting another request.',
                 'alert-type' => 'success',
             ], 200);
         } catch (Exception $ex) {
