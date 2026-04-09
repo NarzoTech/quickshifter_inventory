@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ThrottleWriteRequests
 {
     /**
-     * Block all non-GET requests for 30 seconds after the last write request.
+     * Block duplicate non-GET requests to the same route within 30 seconds.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -17,15 +17,18 @@ class ThrottleWriteRequests
             return $next($request);
         }
 
-        $lastWriteAt = session('last_write_request_at');
+        $routeKey = $request->method() . '|' . $request->path();
+        $sessionKey = 'throttle_write_' . md5($routeKey);
         $cooldown = 30;
 
-        if ($lastWriteAt) {
-            $elapsed = now()->diffInSeconds($lastWriteAt);
+        $lastRequestAt = session($sessionKey);
+
+        if ($lastRequestAt) {
+            $elapsed = now()->diffInSeconds($lastRequestAt);
             $remaining = $cooldown - $elapsed;
 
             if ($remaining > 0) {
-                $message = "Please wait {$remaining} seconds before submitting another request.";
+                $message = "Please wait {$remaining} seconds before submitting this request again.";
 
                 if ($request->expectsJson() || $request->ajax()) {
                     return response()->json([
@@ -45,7 +48,7 @@ class ThrottleWriteRequests
 
         $response = $next($request);
 
-        session(['last_write_request_at' => now()]);
+        session([$sessionKey => now()]);
 
         return $response;
     }

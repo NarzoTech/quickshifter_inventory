@@ -1110,7 +1110,7 @@
 
 
                 // add payment row
-                $('.add-payment').on('click', function() {
+                $(document).on('click', '.add-payment', function() {
                     // Calculate remaining BEFORE adding row
                     let totalAmount = parseFloat($('#total_amountModal').text()) || 0;
                     let totalPaid = 0;
