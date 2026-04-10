@@ -123,7 +123,7 @@ class PurchaseController extends Controller
 
             DB::commit();
 
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.index', [], ['messege' => 'Product Purchase successfully. Please wait 30 seconds before submitting another request.', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.purchase.index', [], ['messege' => 'Product Purchase successfully.', 'alert-type' => 'success']);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();
@@ -164,7 +164,7 @@ class PurchaseController extends Controller
             $this->purchaseService->update($request, $id);
 
             DB::commit();
-            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.purchase.index', [], ['messege' => 'Product Purchase updated successfully. Please wait 30 seconds before submitting another request.', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.purchase.index', [], ['messege' => 'Product Purchase updated successfully.', 'alert-type' => 'success']);
         } catch (\Exception $ex) {
             Log::error($ex->getMessage());
             DB::rollBack();

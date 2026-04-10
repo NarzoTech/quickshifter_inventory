@@ -581,7 +581,7 @@ class CustomerController extends Controller
 
             DB::commit();
             return to_route('admin.customers.index')->with([
-                'messege'    => 'Customer due receive successfully. Please wait 30 seconds before submitting another request.',
+                'messege'    => 'Customer due receive successfully.',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $exception) {

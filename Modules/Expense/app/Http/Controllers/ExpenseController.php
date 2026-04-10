@@ -135,7 +135,7 @@ class ExpenseController extends Controller
         checkAdminHasPermissionAndThrowException('expense.create');
         try {
             $this->expense->store($request);
-            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.expense.index', [], ['messege' => 'Expense created successfully. Please wait 30 seconds before submitting another request.', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::CREATE->value, 'admin.expense.index', [], ['messege' => 'Expense created successfully.', 'alert-type' => 'success']);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return $this->redirectWithMessage(RedirectType::CREATE->value, null, [], ['messege' => $exception->getMessage(), 'alert-type' => 'danger']);
@@ -150,7 +150,7 @@ class ExpenseController extends Controller
         checkAdminHasPermissionAndThrowException('expense.edit');
         try {
             $this->expense->update($request, $id);
-            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.index', [], ['messege' => 'Expense updated successfully. Please wait 30 seconds before submitting another request.', 'alert-type' => 'success']);
+            return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.expense.index', [], ['messege' => 'Expense updated successfully.', 'alert-type' => 'success']);
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
             return $this->redirectWithMessage(RedirectType::UPDATE->value, null, [], ['messege' => $exception->getMessage(), 'alert-type' => 'danger']);

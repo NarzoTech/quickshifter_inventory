@@ -28,43 +28,50 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('backend/js/jquery.uploadPreview.min.js') }}"></script>
 <script src="{{ asset('backend/flatpickr.js') }}"></script>
-<script src="{{ asset('backend/js/custom.js') }}"></script>
+<script src="{{ asset('backend/js/custom.js') }}?v={{ filemtime(public_path('backend/js/custom.js')) }}"></script>
 
 <script>
-    @session('message')
-    var type = "{{ Session::get('alert-type', 'info') }}"
-    switch (type) {
-        case 'info':
-            toastr.info("{{ $value }}", '', options);
-            break;
-        case 'success':
-            toastr.success("{{ $value }}", '', options);
-            break;
-        case 'warning':
-            toastr.warning("{{ $value }}", '', options);
-            break;
-        case 'error':
-            toastr.error("{{ $value }}", '', options);
-            break;
-    }
-    @endsession
-    @session('messege')
-    var type = "{{ Session::get('alert-type', 'info') }}"
-    switch (type) {
-        case 'info':
-            toastr.info("{{ $value }}", '', options);
-            break;
-        case 'success':
-            toastr.success("{{ $value }}", '', options);
-            break;
-        case 'warning':
-            toastr.warning("{{ $value }}", '', options);
-            break;
-        case 'error':
-            toastr.error("{{ $value }}", '', options);
-            break;
-    }
-    @endsession
+    @if(Session::has('throttle_remaining'))
+        showThrottleCountdown({{ Session::get('throttle_remaining') }});
+    @else
+        @session('message')
+        var type = "{{ Session::get('alert-type', 'info') }}"
+        switch (type) {
+            case 'info':
+                toastr.info("{{ $value }}", '', options);
+                break;
+            case 'success':
+                toastr.success("{{ $value }}", '', options);
+                break;
+            case 'warning':
+                toastr.warning("{{ $value }}", '', options);
+                break;
+            case 'error':
+                toastr.error("{{ $value }}", '', options);
+                break;
+        }
+        @endsession
+        @session('messege')
+        var type = "{{ Session::get('alert-type', 'info') }}"
+        switch (type) {
+            case 'info':
+                toastr.info("{{ $value }}", '', options);
+                break;
+            case 'success':
+                toastr.success("{{ $value }}", '', options);
+                break;
+            case 'warning':
+                toastr.warning("{{ $value }}", '', options);
+                break;
+            case 'error':
+                toastr.error("{{ $value }}", '', options);
+                break;
+        }
+        @endsession
+        @if(Session::has('throttle_cooldown'))
+            showThrottleCountdown({{ Session::get('throttle_cooldown') }});
+        @endif
+    @endif
 </script>
 
 
@@ -85,8 +92,10 @@
     }
 
     function handleError(error) {
-        console.log(error);
         if (error.responseJSON) {
+            if (error.responseJSON.throttled) {
+                return; // handled by global ajaxError handler
+            }
             if (error.responseJSON.message) {
                 toastr.error(error.responseJSON.message, '', options);
             }

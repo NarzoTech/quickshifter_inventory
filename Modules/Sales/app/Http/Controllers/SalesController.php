@@ -328,7 +328,7 @@ class SalesController extends Controller
             session()->put('UPDATE_CART', []);
             return response()->json([
                 'order' => $order,
-                'message' => 'Order Updated successfully. Please wait 30 seconds before submitting another request.',
+                'message' => 'Order Updated successfully.',
                 'alert-type' => 'success',
             ], 200);
         } catch (Exception $ex) {

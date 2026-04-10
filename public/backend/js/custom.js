@@ -71,3 +71,46 @@ const options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 }
+
+// Throttle countdown toastr
+function showThrottleCountdown(seconds) {
+    var remaining = Math.ceil(seconds);
+    var $toast = toastr.error(
+        "Please wait " + remaining + " seconds before submitting again.",
+        '',
+        $.extend({}, options, {
+            timeOut: remaining * 1000,
+            extendedTimeOut: 0,
+            progressBar: true,
+            preventDuplicates: true,
+            onCloseClick: function () { clearInterval(interval); }
+        })
+    );
+
+    var interval = setInterval(function () {
+        remaining--;
+        if (remaining <= 0) {
+            clearInterval(interval);
+            toastr.clear($toast);
+        } else {
+            $toast.find('.toast-message').text(
+                "Please wait " + remaining + " seconds before submitting again."
+            );
+        }
+    }, 1000);
+}
+
+// Global AJAX handler for 429 throttle responses
+$(document).ajaxError(function (event, jqXHR) {
+    if (jqXHR.status === 429 && jqXHR.responseJSON && jqXHR.responseJSON.throttled) {
+        showThrottleCountdown(jqXHR.responseJSON.remaining_seconds);
+    }
+});
+
+// Global AJAX handler for successful write responses — show countdown
+$(document).ajaxSuccess(function (event, jqXHR) {
+    var data = jqXHR.responseJSON;
+    if (data && data.throttle_cooldown) {
+        showThrottleCountdown(data.throttle_cooldown);
+    }
+});

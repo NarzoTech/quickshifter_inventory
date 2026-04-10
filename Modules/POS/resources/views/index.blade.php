@@ -1810,6 +1810,7 @@
                     }
                 },
                 error: function(response) {
+                    if (response.responseJSON && response.responseJSON.throttled) return;
                     if (response.responseJSON && response.responseJSON.message) {
                         toastr.error(response.responseJSON.message);
                     } else {
@@ -2016,6 +2017,7 @@
                     }
                 },
                 error: function(response) {
+                    if (response.responseJSON && response.responseJSON.throttled) return;
                     toastr.error(response.responseJSON?.message || "{{ __('Server error occurred') }}");
                 }
             });

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ThrottleWriteRequests
 {
     /**
-     * Block duplicate non-GET requests to the same route within 30 seconds.
+     * Block duplicate non-GET requests to the same route within 15 seconds.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -42,6 +42,7 @@ class ThrottleWriteRequests
                 return redirect()->back()->with([
                     'messege' => $message,
                     'alert-type' => 'error',
+                    'throttle_remaining' => $remaining,
                 ]);
             }
         }
@@ -49,6 +50,15 @@ class ThrottleWriteRequests
         $response = $next($request);
 
         session([$sessionKey => now()]);
+
+        // Attach cooldown info so the frontend can show a countdown
+        if ($response instanceof \Illuminate\Http\JsonResponse) {
+            $data = $response->getData(true);
+            $data['throttle_cooldown'] = $cooldown;
+            $response->setData($data);
+        } elseif ($response instanceof \Illuminate\Http\RedirectResponse) {
+            $response->with('throttle_cooldown', $cooldown);
+        }
 
         return $response;
     }

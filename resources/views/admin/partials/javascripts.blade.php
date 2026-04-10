@@ -15,28 +15,35 @@
 <script src="{{ asset('backend/js/iziToast.min.js') }}"></script>
 <script src="{{ asset('backend/js/modules-toastr.js') }}"></script>
 <script src="{{ asset('backend/tinymce/js/tinymce/tinymce.min.js') }}"></script>
-<script src="{{ asset('backend/js/custom.js') }}"></script>
+<script src="{{ asset('backend/js/custom.js') }}?v={{ filemtime(public_path('backend/js/custom.js')) }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <script>
-    @session('messege')
-    var type = "{{ Session::get('alert-type', 'info') }}"
-    switch (type) {
-        case 'info':
-            toastr.info("{{ $value }}");
-            break;
-        case 'success':
-            toastr.success("{{ $value }}");
-            break;
-        case 'warning':
-            toastr.warning("{{ $value }}");
-            break;
-        case 'error':
-            toastr.error("{{ $value }}");
-            break;
-    }
-    @endsession
+    @if(Session::has('throttle_remaining'))
+        showThrottleCountdown({{ Session::get('throttle_remaining') }});
+    @else
+        @session('messege')
+        var type = "{{ Session::get('alert-type', 'info') }}"
+        switch (type) {
+            case 'info':
+                toastr.info("{{ $value }}");
+                break;
+            case 'success':
+                toastr.success("{{ $value }}");
+                break;
+            case 'warning':
+                toastr.warning("{{ $value }}");
+                break;
+            case 'error':
+                toastr.error("{{ $value }}");
+                break;
+        }
+        @endsession
+        @if(Session::has('throttle_cooldown'))
+            showThrottleCountdown({{ Session::get('throttle_cooldown') }});
+        @endif
+    @endif
 </script>
 
 <script>
@@ -54,8 +61,10 @@
     }
 
     function handleError(error) {
-        console.log(error);
         if (error.responseJSON) {
+            if (error.responseJSON.throttled) {
+                return; // handled by global ajaxError handler
+            }
             $.each(error.responseJSON.errors, function(index, data) {
                 toastr.error(data);
             })
