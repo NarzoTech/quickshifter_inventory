@@ -46,6 +46,15 @@ class AccountsService
             $accountBalance += $account->getOpeningBalance($fromDate);
         });
 
+        // Include unassigned expenses (null account_id) that are not captured by any account
+        $unassignedExpenses = Expense::whereNull('expense_supplier_id')
+            ->whereDoesntHave('payments')
+            ->whereNull('account_id')
+            ->where('date', '<', $fromDate)
+            ->sum('paid_amount');
+
+        $accountBalance -= $unassignedExpenses;
+
         return $accountBalance;
     }
 

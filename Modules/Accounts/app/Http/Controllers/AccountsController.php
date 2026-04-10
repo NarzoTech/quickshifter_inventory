@@ -172,11 +172,11 @@ class AccountsController extends Controller
 
         if ($hasDateFilter) {
             if ($fromDate && $toDate) {
-                $serviceSaleQuery->whereBetween('s.order_date', [$fromDate, $toDate]);
+                $serviceSaleQuery->whereBetween('cp.payment_date', [$fromDate, $toDate]);
             } elseif ($fromDate) {
-                $serviceSaleQuery->where('s.order_date', '>=', $fromDate);
+                $serviceSaleQuery->where('cp.payment_date', '>=', $fromDate);
             } elseif ($toDate) {
-                $serviceSaleQuery->where('s.order_date', '<=', $toDate);
+                $serviceSaleQuery->where('cp.payment_date', '<=', $toDate);
             }
         }
 
@@ -333,21 +333,6 @@ class AccountsController extends Controller
 
         // Opening balance is 0 for all-time view, or calculated from the start date when filtered
         $openingBalance = $hasDateFilter && $fromDate ? $this->accountsService->getOpeningBalance($fromDate) : 0;
-
-        // Adjust opening balance: deduct outside purchase costs from pre-period sales & due receives
-        if ($hasDateFilter && $fromDate) {
-            $preOutsideCost = (float) (\Illuminate\Support\Facades\DB::table('customer_payments as cp')
-                ->joinSub($outsideCostSubquery(), 'oc', 'cp.sale_id', '=', 'oc.sale_id')
-                ->join('sales as s', 'cp.sale_id', '=', 's.id')
-                ->whereIn('cp.payment_type', ['sale', 'due_receive'])
-                ->where('s.grand_total', '>', 0)
-                ->whereNull('s.deleted_at')
-                ->where('cp.payment_date', '<', $fromDate)
-                ->selectRaw('SUM(cp.amount * oc.outside_cost / s.grand_total) as total')
-                ->value('total') ?? 0);
-
-            $openingBalance -= $preOutsideCost;
-        }
 
         $currentBalance = $openingBalance + $data['totalReceive'] - $data['totalPay'];
         return view('accounts::cash-flow', compact('data', 'openingBalance', 'currentBalance', 'hasDateFilter'));
