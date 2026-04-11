@@ -269,6 +269,23 @@
                 </div>
             </div>
         </div>
+
+        {{-- Daily Cash Card --}}
+        <div class="col-12 col-md-6 col-xl-3 mb-4">
+            <div class="card account-summary-card bg-gradient-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-wrapper bg-white bg-opacity-25 me-3">
+                            <i class="fas fa-cash-register text-black"></i>
+                        </div>
+                        <div>
+                            <p class="label mb-0 text-white-50">{{ __('Daily Cash') }}</p>
+                            <h3 class="amount mb-0 text-white">{{ currency($dailyCash) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- Bank Accounts Section --}}

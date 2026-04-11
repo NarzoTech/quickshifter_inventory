@@ -57,7 +57,51 @@ class AccountsController extends Controller
             ->sum('paid_amount');
         $accountBalance -= $unassignedExpenses;
 
-        return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccount', 'mobileAccounts', 'cardAccounts', 'advanceAccounts', 'accountBalance', 'unassignedExpenses'));
+        // Daily Cash — physical cash drawer movement (cash account only)
+        // Uses filtered date range if provided, otherwise defaults to today
+        $dailyCash = 0;
+        if ($cashAccount) {
+            $dailyCashFromDate = request('from_date') ? now()->parse(request('from_date'))->toDateString() : now()->toDateString();
+            $dailyCashToDate = request('to_date') ? now()->parse(request('to_date'))->toDateString() : $dailyCashFromDate;
+
+            $applyDailyCashDate = function ($query, $dateColumn) use ($dailyCashFromDate, $dailyCashToDate) {
+                return $query->whereBetween($dateColumn, [$dailyCashFromDate, $dailyCashToDate]);
+            };
+
+            // Customer payments (sales, due receive, advance receive — cash in / returns, refunds — cash out)
+            $dailyCash += $applyDailyCashDate($cashAccount->customerPayments()->where('is_received', 1), 'payment_date')->sum('amount');
+            $dailyCash -= $applyDailyCashDate($cashAccount->customerPayments()->where('is_paid', 1), 'payment_date')->sum('amount');
+
+            // Supplier payments (purchase return, advance refund — cash in / purchase, due pay, advance pay — cash out)
+            $dailyCash += $applyDailyCashDate($cashAccount->supplierPayments()->where('is_received', 1), 'payment_date')->sum('amount');
+            $dailyCash -= $applyDailyCashDate($cashAccount->supplierPayments()->where('is_paid', 1), 'payment_date')->sum('amount');
+
+            // Expense supplier payments
+            $dailyCash += $applyDailyCashDate($cashAccount->expenseSupplierPayments()->where('is_received', 1), 'payment_date')->sum('amount');
+            $dailyCash -= $applyDailyCashDate($cashAccount->expenseSupplierPayments()->where('is_paid', 1), 'payment_date')->sum('amount');
+
+            // Deposits & withdrawals
+            $dailyCash += $applyDailyCashDate($cashAccount->deposits(), 'date')->sum('amount');
+            $dailyCash -= $applyDailyCashDate($cashAccount->withdraws(), 'date')->sum('amount');
+
+            // Salary
+            $dailyCash -= $applyDailyCashDate($cashAccount->salary(), 'date')->sum('amount');
+
+            // Legacy expenses (assigned to cash account)
+            $dailyCash -= $applyDailyCashDate($cashAccount->expenses(), 'date')->sum('paid_amount');
+
+            // Unassigned expenses (null account_id — treated as cash)
+            $dailyCash -= $applyDailyCashDate(
+                Expense::whereNull('expense_supplier_id')->whereDoesntHave('payments')->whereNull('account_id'),
+                'date'
+            )->sum('paid_amount');
+
+            // Balance transfers
+            $dailyCash += $applyDailyCashDate($cashAccount->transfersIn(), 'date')->sum('amount');
+            $dailyCash -= $applyDailyCashDate($cashAccount->transfersOut(), 'date')->sum('amount');
+        }
+
+        return view('accounts::index', compact('accounts', 'bankAccounts', 'cashAccount', 'mobileAccounts', 'cardAccounts', 'advanceAccounts', 'accountBalance', 'unassignedExpenses', 'dailyCash'));
     }
 
     /**
@@ -326,6 +370,9 @@ class AccountsController extends Controller
         $balanceTransferQuery = BalanceTransfer::query();
         $applyDateFilter($balanceTransferQuery, 'date');
         $data['balance_transfer'] = $balanceTransferQuery->sum('amount');
+
+        // Outside purchase cost recovery (informational: portion of received payments that covers outside purchase cost)
+        $data['outsidePurchaseCostRecovery'] = $outsideCostSales + $outsideCostDue;
 
         $data['totalPay'] = $data['sale_return'] + $data['balance_withdraw'] + $data['customer_advance_refund'] + $data['supplierDuePay'] + $data['supplierAdvancePay'] + $data['purchase'] + $data['expenses'] + $data['salary'] + $data['expenseSupplierDuePay'] + $data['expenseSupplierAdvancePay'] + $data['expenseSupplierPayment'];
 
