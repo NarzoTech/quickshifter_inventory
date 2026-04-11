@@ -402,6 +402,7 @@ trait PermissionsTrait
             'employee.pay.advance',
             'employee.edit.salary',
             'employee.delete.salary',
+            'employee.salary.increment',
         ],
     ];
     public static array $attendancePermissions = [

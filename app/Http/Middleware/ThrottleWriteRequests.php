@@ -17,6 +17,11 @@ class ThrottleWriteRequests
             return $next($request);
         }
 
+        // Exclude login/logout from throttling
+        if ($request->routeIs('admin.login', 'admin.store-login', 'admin.logout')) {
+            return $next($request);
+        }
+
         $routeKey = $request->method() . '|' . $request->path();
         $sessionKey = 'throttle_write_' . md5($routeKey);
         $cooldown = 15;

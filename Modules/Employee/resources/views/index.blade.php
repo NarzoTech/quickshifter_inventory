@@ -90,10 +90,28 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    @adminCan('employee.salary.increment')
+                    <div class="alert alert-info d-none justify-content-between increment-section flex-wrap align-items-center mb-3">
+                        <span><span class="increment-count">0</span> {{ __('employee(s) selected') }}</span>
+                        <button class="btn btn-success increment-selected-btn" data-bs-toggle="modal"
+                            data-bs-target="#salaryIncrementModal">
+                            <i class="fa fa-arrow-up"></i> {{ __('Increment Salary') }}
+                        </button>
+                    </div>
+                    @endadminCan
                     <div class="table-responsive list_table">
                         <table style="width: 100%;" class="table mb-3">
                             <thead>
                                 <tr>
+                                    @if(checkAdminHasPermission('employee.salary.increment'))
+                                    <th>
+                                        <div class="custom-checkbox custom-control">
+                                            <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
+                                                class="custom-control-input" id="checkbox-all">
+                                            <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                                        </div>
+                                    </th>
+                                    @endif
                                     <th>{{ __('Sl') }}</th>
                                     <th>{{ __('Employee Name') }}</th>
                                     <th>{{ __('Employee Picture') }}</th>
@@ -109,6 +127,15 @@
                             <tbody>
                                 @forelse ($employees as $index => $employee)
                                     <tr>
+                                        @if(checkAdminHasPermission('employee.salary.increment'))
+                                        <td>
+                                            <div class="custom-checkbox custom-control">
+                                                <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
+                                                    id="checkbox-{{ $employee->id }}" name="select">
+                                                <label for="checkbox-{{ $employee->id }}" class="custom-control-label">&nbsp;</label>
+                                            </div>
+                                        </td>
+                                        @endif
                                         <td>{{ ++$index }}</td>
                                         <td>{{ $employee->name }}</td>
                                         <td>
@@ -132,9 +159,11 @@
                                         </td>
                                         <td>{{ formatDate($employee->join_date) }}</td>
                                         <td>
-                                            @if (checkAdminHasPermission('employee.view.payment') ||
+                                            @if (checkAdminHasPermission('employee.edit') ||
+                                                    checkAdminHasPermission('employee.view.payment') ||
                                                     checkAdminHasPermission('employee.pay.salary') ||
                                                     checkAdminHasPermission('employee.pay.advance') ||
+                                                    checkAdminHasPermission('employee.salary.increment') ||
                                                     checkAdminHasPermission('employee.status') ||
                                                     checkAdminHasPermission('employee.delete'))
                                                 <div class="btn-group" role="group">
@@ -147,6 +176,10 @@
                                                         @adminCan('employee.edit')
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.employee.edit', $employee->id) }}">{{ __('Edit') }}</a>
+                                                        @endadminCan
+                                                        @adminCan('employee.salary.increment')
+                                                            <a class="dropdown-item increment-single" href="javascript:;"
+                                                                data-id="{{ $employee->id }}">{{ __('Increment Salary') }}</a>
                                                         @endadminCan
                                                         @adminCan('employee.view.payment')
                                                             <a class="dropdown-item view-payment" href="javascript:;"
@@ -175,7 +208,7 @@
                                     </tr>
                                 @empty
                                     <x-empty-table :name="__('Employee List')" route="" create="no" :message="__('No data found!')"
-                                        colspan="10"></x-empty-table>
+                                        colspan="{{ checkAdminHasPermission('employee.salary.increment') ? 11 : 10 }}"></x-empty-table>
                                 @endforelse
                             </tbody>
                         </table>
@@ -257,6 +290,80 @@
     </div>
 
 
+    {{-- Salary Increment Modal --}}
+    @adminCan('employee.salary.increment')
+    <div tabindex="-1" role="dialog" id="salaryIncrementModal" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ __('Salary Increment') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{-- Step 1: Input --}}
+                    <div id="increment-step-1">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ __('Increment Type') }} <span class="text-danger">*</span></label>
+                                    <select id="increment_type" class="form-control">
+                                        <option value="amount">{{ __('Fixed Amount') }}</option>
+                                        <option value="percentage">{{ __('Percentage (%)') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ __('Value') }} <span class="text-danger">*</span></label>
+                                    <input type="number" id="increment_value" class="form-control"
+                                        min="0.01" step="any" placeholder="{{ __('Enter amount or percentage') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>{{ __('Note (Optional)') }}</label>
+                                    <input type="text" id="increment_note" class="form-control"
+                                        placeholder="{{ __('e.g. Annual review 2026') }}" maxlength="255">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary" id="preview-increment-btn">
+                                {{ __('Preview Changes') }}
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Step 2: Preview --}}
+                    <div id="increment-step-2" class="d-none">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>{{ __('Employee') }}</th>
+                                        <th>{{ __('Current Salary') }}</th>
+                                        <th>{{ __('New Salary') }}</th>
+                                        <th>{{ __('Change') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="preview-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="button" class="btn btn-secondary" id="back-to-step1-btn">
+                                {{ __('Back') }}
+                            </button>
+                            <button type="button" class="btn btn-success" id="apply-increment-btn">
+                                {{ __('Apply Increment') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endadminCan
+
     @push('js')
         <script>
             function deleteData(id) {
@@ -266,14 +373,175 @@
                 $('#deleteModal').modal('show');
             }
 
-
             $('.view-payment').on('click', function() {
                 var id = $(this).data('id');
                 $('#viewDate').modal('show');
                 let url = "{{ route('admin.employee.salary.view', ':id') }}";
                 url = url.replace(':id', id);
                 $('#viewDateForm').attr('action', url);
-            })
+            });
+
+            // Salary Increment — checkbox & bulk logic
+            @if(checkAdminHasPermission('employee.salary.increment'))
+            $('#checkbox-all').on('change', function() {
+                $('input[name="select"]').prop('checked', $(this).is(':checked'));
+                updateIncrementBar();
+            });
+
+            $(document).on('change', 'input[name="select"]', function() {
+                var total = $('input[name="select"]').length;
+                var checked = $('input[name="select"]:checked').length;
+                $('#checkbox-all').prop('checked', total === checked);
+                updateIncrementBar();
+            });
+
+            function updateIncrementBar() {
+                var count = $('input[name="select"]:checked').length;
+                $('.increment-count').text(count);
+                if (count > 0) {
+                    $('.increment-section').removeClass('d-none').addClass('d-flex');
+                } else {
+                    $('.increment-section').addClass('d-none').removeClass('d-flex');
+                }
+            }
+
+            function getSelectedIds() {
+                var ids = [];
+                $('input[name="select"]:checked').each(function() {
+                    ids.push($(this).attr('id').split('-')[1]);
+                });
+                return ids;
+            }
+
+            // Single employee increment from Action dropdown
+            $(document).on('click', '.increment-single', function() {
+                $('input[name="select"]').prop('checked', false);
+                var id = $(this).data('id');
+                $('#checkbox-' + id).prop('checked', true);
+                updateIncrementBar();
+                $('#salaryIncrementModal').modal('show');
+            });
+
+            // Preview
+            $('#preview-increment-btn').on('click', function() {
+                var ids = getSelectedIds();
+                var type = $('#increment_type').val();
+                var value = $('#increment_value').val();
+
+                if (!value || parseFloat(value) <= 0) {
+                    toastr.error('{{ __("Please enter a valid increment value.") }}');
+                    return;
+                }
+                if (ids.length === 0) {
+                    toastr.error('{{ __("No employees selected.") }}');
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('admin.employee.salary.increment.preview') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        employee_ids: ids,
+                        increment_type: type,
+                        increment_value: value,
+                    },
+                    success: function(response) {
+                        var html = '';
+                        response.preview.forEach(function(item) {
+                            var change = item.new_salary - item.previous_salary;
+                            html += '<tr>' +
+                                '<td>' + item.name + '</td>' +
+                                '<td>' + item.previous_salary.toLocaleString() + '</td>' +
+                                '<td>' + item.new_salary.toLocaleString() + '</td>' +
+                                '<td class="text-success fw-bold">+' + change.toLocaleString() + '</td>' +
+                                '</tr>';
+                        });
+                        $('#preview-table-body').html(html);
+                        $('#increment-step-1').addClass('d-none');
+                        $('#increment-step-2').removeClass('d-none');
+                    },
+                    error: function(xhr) {
+                        var message = xhr.responseJSON?.message || '{{ __("Failed to generate preview.") }}';
+                        toastr.error(message);
+                    }
+                });
+            });
+
+            // Back
+            $('#back-to-step1-btn').on('click', function() {
+                $('#increment-step-2').addClass('d-none');
+                $('#increment-step-1').removeClass('d-none');
+            });
+
+            // Apply — close modal first so SweetAlert isn't behind it
+            $('#apply-increment-btn').on('click', function() {
+                var ids = getSelectedIds();
+                var type = $('#increment_type').val();
+                var value = $('#increment_value').val();
+                var note = $('#increment_note').val();
+
+                $('#salaryIncrementModal').modal('hide');
+                $('#salaryIncrementModal').one('hidden.bs.modal', function() {
+                    Swal.fire({
+                        title: '{{ __("Confirm Salary Increment") }}',
+                        text: '{{ __("Are you sure you want to apply this salary increment to") }} ' + ids.length + ' {{ __("employee(s)?") }}',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: '{{ __("Yes, apply it!") }}',
+                        cancelButtonText: '{{ __("Cancel") }}'
+                    }).then((result) => {
+                        if (!result.isConfirmed) {
+                            // Re-open modal if cancelled
+                            $('#salaryIncrementModal').modal('show');
+                            return;
+                        }
+                        $.ajax({
+                            url: "{{ route('admin.employee.salary.increment') }}",
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                employee_ids: ids,
+                                increment_type: type,
+                                increment_value: value,
+                                note: note,
+                            },
+                            beforeSend: function() {
+                                $('#apply-increment-btn').prop('disabled', true).text('{{ __("Processing...") }}');
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    toastr.success(response.message);
+                                    setTimeout(function() { location.reload(); }, 1000);
+                                } else {
+                                    toastr.error(response.message);
+                                    $('#apply-increment-btn').prop('disabled', false).text('{{ __("Apply Increment") }}');
+                                }
+                            },
+                            error: function(xhr) {
+                                var message = xhr.responseJSON?.message || '{{ __("Failed to apply increment.") }}';
+                                toastr.error(message);
+                                $('#apply-increment-btn').prop('disabled', false).text('{{ __("Apply Increment") }}');
+                            }
+                        });
+                    });
+                });
+            });
+
+            // Reset modal state when closed via X button (not during confirm flow)
+            var isConfirmFlow = false;
+            $('#apply-increment-btn').on('mousedown', function() { isConfirmFlow = true; });
+            $('#salaryIncrementModal').on('hidden.bs.modal', function() {
+                if (!isConfirmFlow) {
+                    $('#increment-step-2').addClass('d-none');
+                    $('#increment-step-1').removeClass('d-none');
+                    $('#increment_value').val('');
+                    $('#increment_note').val('');
+                    $('#preview-table-body').html('');
+                }
+                isConfirmFlow = false;
+            });
+            @endif
         </script>
     @endpush
 @endsection

@@ -12,6 +12,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\Employee\app\Http\Requests\EmployeeRequest;
+use Modules\Employee\app\Http\Requests\SalaryIncrementRequest;
+use Modules\Employee\app\Models\Employee;
 use Modules\Employee\app\Services\EmployeeService;
 
 class EmployeeController extends Controller
@@ -170,5 +172,58 @@ class EmployeeController extends Controller
         checkAdminHasPermissionAndThrowException('employee.status');
         $this->employee->changeStatus($id);
         return $this->redirectWithMessage(RedirectType::UPDATE->value, 'admin.employee.index', [], ['message' => 'Employee status updated successfully', 'alert-type' => 'success']);
+    }
+
+    public function salaryIncrementPreview(Request $request)
+    {
+        checkAdminHasPermissionAndThrowException('employee.salary.increment');
+
+        $employees = Employee::whereIn('id', $request->employee_ids)->get();
+        $type = $request->increment_type;
+        $value = (float) $request->increment_value;
+
+        $preview = $employees->map(function ($emp) use ($type, $value) {
+            $previous = (int) ($emp->salary ?? 0);
+            $newSalary = $type === 'percentage'
+                ? $previous + (int) round($previous * ($value / 100))
+                : $previous + (int) $value;
+
+            return [
+                'id'              => $emp->id,
+                'name'            => $emp->name,
+                'previous_salary' => $previous,
+                'new_salary'      => $newSalary,
+            ];
+        });
+
+        return response()->json(['preview' => $preview]);
+    }
+
+    public function salaryIncrement(SalaryIncrementRequest $request)
+    {
+        checkAdminHasPermissionAndThrowException('employee.salary.increment');
+
+        try {
+            $results = $this->employee->incrementSalary(
+                $request->employee_ids,
+                $request->increment_type,
+                (float) $request->increment_value,
+                $request->note
+            );
+
+            $count = count($results);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('Salary incremented successfully for') . " {$count} " . __('employee(s)'),
+                'results' => $results,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Salary increment error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

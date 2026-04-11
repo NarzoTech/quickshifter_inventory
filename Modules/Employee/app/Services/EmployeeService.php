@@ -11,6 +11,7 @@ use Modules\Attendance\app\Models\WeekendSetup;
 use Modules\Attendance\app\Models\Attendance;
 use Modules\Employee\app\Models\Employee;
 use Modules\Employee\app\Models\EmployeeSalary;
+use Modules\Employee\app\Models\SalaryIncrement;
 
 class EmployeeService
 {
@@ -59,6 +60,53 @@ class EmployeeService
             throw new \Exception('Employee not found');
         }
         $employee->update(['status' => $employee->status == 1 ? 0 : 1]);
+    }
+
+    public function incrementSalary(array $employeeIds, string $type, float $value, ?string $note = null): array
+    {
+        $results = [];
+
+        DB::beginTransaction();
+        try {
+            $employees = $this->employee->whereIn('id', $employeeIds)->lockForUpdate()->get();
+
+            foreach ($employees as $employee) {
+                $previousSalary = (int) ($employee->salary ?? 0);
+
+                if ($type === 'percentage') {
+                    $incrementAmount = (int) round($previousSalary * ($value / 100));
+                } else {
+                    $incrementAmount = (int) $value;
+                }
+
+                $newSalary = $previousSalary + $incrementAmount;
+
+                $employee->update(['salary' => $newSalary]);
+
+                SalaryIncrement::create([
+                    'employee_id'     => $employee->id,
+                    'previous_salary' => $previousSalary,
+                    'new_salary'      => $newSalary,
+                    'increment_type'  => $type,
+                    'increment_value' => $value,
+                    'note'            => $note,
+                    'incremented_by'  => auth()->guard('admin')->id(),
+                ]);
+
+                $results[] = [
+                    'id'              => $employee->id,
+                    'name'            => $employee->name,
+                    'previous_salary' => $previousSalary,
+                    'new_salary'      => $newSalary,
+                ];
+            }
+
+            DB::commit();
+            return $results;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function addSalary($request, $employee)

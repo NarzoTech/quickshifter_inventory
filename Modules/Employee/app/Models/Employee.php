@@ -124,6 +124,11 @@ class Employee extends Model
         return $this->currentSalary->where('month', $month)->where('year', $year)->sum('amount');
     }
 
+    public function salaryIncrements()
+    {
+        return $this->hasMany(SalaryIncrement::class, 'employee_id', 'id');
+    }
+
     public function attendance()
     {
         $month_year = request()->month_year ?? now()->format('m/Y');
