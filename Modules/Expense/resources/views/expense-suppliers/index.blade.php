@@ -133,8 +133,10 @@
                                                 {{ __('Action') }}
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $supplier->id }}">
+                                                @adminCan('expense_supplier.view')
                                                 <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
                                                     data-bs-target="#showSupplier{{ $supplier->id }}">{{ __('Show') }}</a>
+                                                @endadminCan
                                                 @adminCan('expense_supplier.edit')
                                                     <a class="dropdown-item" href="javascript:;" data-bs-toggle="modal"
                                                         data-bs-target="#editSupplier{{ $supplier->id }}">{{ __('Edit') }}</a>

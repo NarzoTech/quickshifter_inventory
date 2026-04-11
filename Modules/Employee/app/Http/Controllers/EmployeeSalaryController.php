@@ -47,7 +47,7 @@ class EmployeeSalaryController extends Controller
     public function create($id)
     {
         if (!checkAdminHasPermission('employee.pay.salary') && !checkAdminHasPermission('employee.pay.advance')) {
-            abort(403);
+            throw new \App\Exceptions\AccessPermissionDeniedException();
         }
 
         $employee = $this->employee->find($id);
@@ -68,7 +68,7 @@ class EmployeeSalaryController extends Controller
     public function store(EmployeeSalaryRequest $request, $id): RedirectResponse
     {
         if (!checkAdminHasPermission('employee.pay.salary') && !checkAdminHasPermission('employee.pay.advance')) {
-            abort(403);
+            throw new \App\Exceptions\AccessPermissionDeniedException();
         }
         try {
             $employee = $this->employee->find($id);

@@ -18,11 +18,12 @@ class OrderController extends Controller
     protected $orderService;
     public function __construct(OrderService $orderService)
     {
-        $this->middleware(['auth', 'verified']);
+        $this->middleware('auth:admin');
         $this->orderService = $orderService;
     }
     public function index()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->latest()->paginate(20);
 
         $orders->appends(request()->query());
@@ -34,6 +35,7 @@ class OrderController extends Controller
 
     public function pending_order()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('delivery_status', 1)->latest()->paginate(20);
 
         $orders->appends(request()->query());
@@ -45,6 +47,7 @@ class OrderController extends Controller
 
     public function progressOrder()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('delivery_status', 3)->latest()->paginate(20);
         $orders->appends(request()->query());
 
@@ -53,6 +56,7 @@ class OrderController extends Controller
     }
     public function onTheWay()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('delivery_status', 4)->latest()->paginate(20);
         $orders->appends(request()->query());
 
@@ -61,6 +65,7 @@ class OrderController extends Controller
     }
     public function deliveredOrder()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('delivery_status', 5)->latest()->paginate(20);
         $orders->appends(request()->query());
 
@@ -70,6 +75,7 @@ class OrderController extends Controller
 
     public function declinedOrder()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('delivery_status', 6)->latest()->paginate(20);
         $orders->appends(request()->query());
 
@@ -79,6 +85,7 @@ class OrderController extends Controller
 
     public function cashOnDelivery()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('payment_method', 'cod')->latest()->paginate(20);
         $orders->appends(request()->query());
 
@@ -88,12 +95,14 @@ class OrderController extends Controller
 
     public function show($id)
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $order = Order::with('orderDetails', 'user')->find($id);
         return view('order::show-order', compact('order'));
     }
 
     public function updateOrderStatus(Request $request, $id)
     {
+        checkAdminHasPermissionAndThrowException('order.update');
         $rules = [
             'order_status' => 'required',
             'payment_status' => 'required',
@@ -138,8 +147,7 @@ class OrderController extends Controller
 
     public function orderStatus(Request $request)
     {
-        // abort_unless(checkAdminHasPermission('order.status'), 403);
-
+        checkAdminHasPermissionAndThrowException('order.update');
 
         $request->validate([
             'status' => 'required',
@@ -159,7 +167,7 @@ class OrderController extends Controller
 
     public function destroy($id)
     {
-
+        checkAdminHasPermissionAndThrowException('order.delete');
         DB::beginTransaction();
         try {
             $order = $this->orderService->getOrder($id);
@@ -176,6 +184,7 @@ class OrderController extends Controller
     }
     public function pending_payment()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('payment_status', 'pending')->latest()->paginate(20);
         $orders->appends(request()->query());
 
@@ -185,6 +194,7 @@ class OrderController extends Controller
 
     public function rejected_payment()
     {
+        checkAdminHasPermissionAndThrowException('order.view');
         $orders = $this->orderService->getOrders()->where('payment_status', 'rejected')->latest()->paginate(20);
         $orders->appends(request()->query());
 
@@ -193,7 +203,7 @@ class OrderController extends Controller
     }
     public function order_payment_reject(Request $request, $id)
     {
-
+        checkAdminHasPermissionAndThrowException('order.update');
         $request->validate([
             'subject' => 'required',
             'description' => 'required',
@@ -218,7 +228,7 @@ class OrderController extends Controller
 
     public function order_payment_approved(Request $request, $id)
     {
-
+        checkAdminHasPermissionAndThrowException('order.update');
         $request->validate([
             'subject' => 'required',
             'description' => 'required',

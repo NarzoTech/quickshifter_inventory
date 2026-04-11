@@ -107,7 +107,9 @@
                             <th>{{ __('Paying Amount') }}</th>
                             <th>{{ __('Payment Status') }}</th>
                             <th>{{ __('Due') }}</th>
+                            @if(checkAdminHasPermission('sales.return') || checkAdminHasPermission('sales.return.delete'))
                             <th>{{ __('Action') }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -131,6 +133,7 @@
                                     @endif
                                 </td>
                                 <td>{{ $sale->return_due }}</td>
+                                @if(checkAdminHasPermission('sales.return') || checkAdminHasPermission('sales.return.delete'))
                                 <td>
                                     <div class="btn-group mb-2">
                                         @adminCan('sales.return')
@@ -146,6 +149,7 @@
                                         @endadminCan
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                         <tr>

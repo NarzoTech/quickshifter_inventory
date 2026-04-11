@@ -85,16 +85,19 @@
             </div>
         </div>
         <div class="card-body">
+            @adminCan('customer.due.receive.delete')
             <div class="alert alert-danger d-none justify-content-between delete-section danger-bg flex-wrap align-items-center mb-3">
                 <span>
                     <span class="selected-count">0</span> {{ __('rows selected') }}
                 </span>
                 <button class="btn btn-danger bulk-delete-btn">{{ __('Delete Selected') }}</button>
             </div>
+            @endadminCan
             <div class="table-responsive list_table">
                 <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
+                            @if(checkAdminHasPermission('customer.due.receive.delete'))
                             <th>
                                 <div class="custom-checkbox custom-control">
                                     <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
@@ -102,19 +105,23 @@
                                     <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
                                 </div>
                             </th>
+                            @endif
                             <th>{{ __('SL') }}</th>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Invoice No') }}</th>
                             <th>{{ __('Customer') }}</th>
                             <th>{{ __('Amount') }}</th>
                             <th>{{ __('Receive By') }}</th>
+                            @if(checkAdminHasPermission('customer.due.receive.edit') || checkAdminHasPermission('customer.due.receive.delete'))
                             <th>{{ __('Action') }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
 
                         @foreach ($payments as $payment)
                             <tr>
+                                @if(checkAdminHasPermission('customer.due.receive.delete'))
                                 <td>
                                     <div class="custom-checkbox custom-control">
                                         <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
@@ -122,6 +129,7 @@
                                         <label for="checkbox-{{ $payment->id }}" class="custom-control-label">&nbsp;</label>
                                     </div>
                                 </td>
+                                @endif
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ formatDate($payment->payment_date) }}
                                 </td>
@@ -129,23 +137,35 @@
                                 <td>{{ $payment->customer->name }}</td>
                                 <td>{{ $payment->amount }}</td>
                                 <td>{{ $payment->createdBy->name }}</td>
+                                @if(checkAdminHasPermission('customer.due.receive.edit') || checkAdminHasPermission('customer.due.receive.delete'))
                                 <td>
                                     <div class="btn-group">
-                                        <a href="javascript:;" class="btn btn-danger btn-sm"
-                                            onclick="deleteData({{ $payment->id }})">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        @adminCan('customer.due.receive.edit')
+                                            <a href="{{ route('admin.customer.due-receive.edit', $payment->id) }}"
+                                                class="btn btn-info btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @endadminCan
+                                        @adminCan('customer.due.receive.delete')
+                                            <a href="javascript:;" class="btn btn-danger btn-sm"
+                                                onclick="deleteData({{ $payment->id }})">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        @endadminCan
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                         @if ($payments->count() > 0)
                             <tr>
+                                @if(checkAdminHasPermission('customer.due.receive.delete'))
                                 <td></td>
+                                @endif
                                 <td colspan="4" class="text-center fw-bold">
                                     {{ __('Total') }}
                                 </td>
-                                <td colspan="3" class="fw-bold">
+                                <td colspan="{{ (checkAdminHasPermission('customer.due.receive.edit') || checkAdminHasPermission('customer.due.receive.delete')) ? 3 : 2 }}" class="fw-bold">
                                     {{ currency($data['total']) }}
                                 </td>
                             </tr>
@@ -235,8 +255,9 @@
                                     $('.bulk-delete-btn').prop('disabled', false).text('Delete Selected');
                                 }
                             },
-                            error: function() {
-                                toastr.error('Something went wrong');
+                            error: function(xhr) {
+                                var message = xhr.responseJSON?.message || '{{ __("Permission Denied, You can not perform this action!") }}';
+                                toastr.error(message);
                                 $('.bulk-delete-btn').prop('disabled', false).text('Delete Selected');
                             }
                         });

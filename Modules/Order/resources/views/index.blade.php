@@ -24,7 +24,9 @@
                                             <th width="10%">{{ __('Order Status') }}</th>
                                             <th width="10%">{{ __('Payment') }}</th>
                                             <th width="10%">{{ __('Created By') }}</th>
+                                            @if(checkAdminHasPermission('order.update') || checkAdminHasPermission('order.delete'))
                                             <th width="15%">{{ __('Action') }}</th>
+                                            @endif
                                         </tr>
                                         @forelse ($orders as $index => $order)
                                             <tr>
@@ -61,16 +63,22 @@
                                                         {{ __('Customer') }}
                                                     @endif
                                                 </td>
+                                                @if(checkAdminHasPermission('order.update') || checkAdminHasPermission('order.delete'))
                                                 <td>
+                                                    @adminCan('order.view')
                                                     <a href="{{ route('admin.order.show', $order->id) }}"
                                                         class="btn btn-primary btn-sm"><i class="fa fa-eye"
                                                             aria-hidden="true"></i></a>
+                                                    @endadminCan
 
-                                                    <a href="javascript:;" data-bs-toggle="modal" {{-- data-bs-target="#deleteModal" --}}
+                                                    @adminCan('order.delete')
+                                                    <a href="javascript:;" data-bs-toggle="modal"
                                                         class="btn btn-danger btn-sm"
                                                         onclick="deleteData({{ $order->order_id }})"><i class="fa fa-trash"
                                                             aria-hidden="true"></i></a>
+                                                    @endadminCan
 
+                                                    @adminCan('order.update')
                                                     <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#status"
                                                         class="btn btn-warning btn-sm status-btn"
                                                         data-id="{{ $order->order_id }}"
@@ -78,7 +86,9 @@
                                                         data-method="{{ $order->delivery_method }}"
                                                         data-payment="{{ $order->payment_status }}"><i class="fas fa-truck"
                                                             aria-hidden="true"></i></a>
+                                                    @endadminCan
                                                 </td>
+                                                @endif
                                             </tr>
                                         @empty
                                             <x-empty-table :name="__('Customer')" route="" create="no" :message="__('No data found!')"

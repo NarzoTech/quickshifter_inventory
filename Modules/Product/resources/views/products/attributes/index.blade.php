@@ -86,7 +86,9 @@
                             <th>{{ __('SL.') }}</th>
                             <th>{{ __('Name') }}</th>
                             <th>{{ __('Values') }}</th>
+                            @if(checkAdminHasPermission('product.attribute.edit') || checkAdminHasPermission('product.attribute.delete'))
                             <th>{{ __('Action') }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -101,6 +103,7 @@
                                         @endif
                                     @endforeach
                                 </td>
+                                @if(checkAdminHasPermission('product.attribute.edit') || checkAdminHasPermission('product.attribute.delete'))
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop{{ $attribute->id }}" type="button"
@@ -109,18 +112,23 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop{{ $attribute->id }}">
+                                            @adminCan('product.attribute.edit')
                                             <a href="{{ route('admin.attribute.edit', $attribute->id) }}"
                                                 class="dropdown-item" data-bs-toggle="tooltip"
                                                 title="{{ __('Edit') }}">{{ __('Edit') }}</a>
+                                            @endadminCan
+                                            @adminCan('product.attribute.delete')
                                             <a href="javascript:void(0)"
                                                 class="dropdown-item trigger--fire-modal-1 deleteForm"
                                                 data-bs-toggle="modal" title="{{ __('Delete') }}"
                                                 data-url="{{ route('admin.attribute.destroy', $attribute->id) }}"
                                                 data-form="deleteForm"
                                                 data-id="{{ $attribute->id }}">{{ __('Delete') }}</a>
+                                            @endadminCan
                                         </div>
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                             @empty
                                 <x-empty-table :name="__('Attribute')" route="admin.attribute.create" create="no" :message="__('No data found!')"

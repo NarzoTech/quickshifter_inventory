@@ -103,16 +103,19 @@
             </div>
         </div>
         <div class="card-body">
+            @adminCan('supplier.due.pay.delete')
             <div class="alert alert-danger d-none justify-content-between delete-section danger-bg flex-wrap align-items-center mb-3">
                 <span>
                     <span class="selected-count">0</span> {{ __('rows selected') }}
                 </span>
                 <button class="btn btn-danger bulk-delete-btn">{{ __('Delete Selected') }}</button>
             </div>
+            @endadminCan
             <div class="table-responsive">
                 <table style="width: 100%;" class="table common_table">
                     <thead>
                         <tr>
+                            @if(checkAdminHasPermission('supplier.due.pay.delete'))
                             <th>
                                 <div class="custom-checkbox custom-control">
                                     <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
@@ -120,18 +123,22 @@
                                     <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
                                 </div>
                             </th>
+                            @endif
                             <th>{{ __('SL') }}</th>
                             <th>{{ __('Date') }}</th>
                             <th>{{ __('Invoice No') }}</th>
                             <th>{{ __('Supplier') }}</th>
                             <th>{{ __('Amount') }}</th>
                             <th>{{ __('Paid By') }}</th>
+                            @if(checkAdminHasPermission('supplier.due.pay.list') || checkAdminHasPermission('supplier.due.pay.delete'))
                             <th>{{ __('Action') }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($payments as $payment)
                             <tr>
+                                @if(checkAdminHasPermission('supplier.due.pay.delete'))
                                 <td>
                                     <div class="custom-checkbox custom-control">
                                         <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
@@ -139,12 +146,14 @@
                                         <label for="checkbox-{{ $payment->id }}" class="custom-control-label">&nbsp;</label>
                                     </div>
                                 </td>
+                                @endif
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ formatDate($payment->payment_date) }}</td>
                                 <td>{{ $payment->purchase?->invoice_number }}</td>
                                 <td>{{ $payment->supplier->name }}</td>
                                 <td>{{ currency($payment->amount) }}</td>
                                 <td>{{ $payment->createdBy->name }}</td>
+                                @if(checkAdminHasPermission('supplier.due.pay.list') || checkAdminHasPermission('supplier.due.pay.delete'))
                                 <td>
                                     <div class="btn-group">
                                         @adminCan('supplier.due.pay.list')
@@ -161,15 +170,18 @@
                                         @endadminCan
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                         @if ($payments->count() > 0)
                             <tr>
+                                @if(checkAdminHasPermission('supplier.due.pay.delete'))
                                 <td></td>
+                                @endif
                                 <td colspan="4" class="text-center fw-bold">
                                     {{ __('Total') }}
                                 </td>
-                                <td colspan="3" class="fw-bold">
+                                <td colspan="{{ (checkAdminHasPermission('supplier.due.pay.list') || checkAdminHasPermission('supplier.due.pay.delete')) ? 3 : 2 }}" class="fw-bold">
                                     {{ currency($data['total']) }}
                                 </td>
                             </tr>
@@ -261,8 +273,9 @@
                                     $('.bulk-delete-btn').prop('disabled', false).text('Delete Selected');
                                 }
                             },
-                            error: function() {
-                                toastr.error('Something went wrong');
+                            error: function(xhr) {
+                                var message = xhr.responseJSON?.message || '{{ __("Permission Denied, You can not perform this action!") }}';
+                                toastr.error(message);
                                 $('.bulk-delete-btn').prop('disabled', false).text('Delete Selected');
                             }
                         });

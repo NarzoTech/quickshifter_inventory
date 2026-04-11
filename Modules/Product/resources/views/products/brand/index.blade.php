@@ -76,16 +76,17 @@
             @endadminCan
         </div>
         <div class="card-body">
+            @adminCan('product.brand.delete')
             <div class="alert alert-danger d-none justify-content-between delete-section danger-bg">
                 <span><span class="number">0 </span> rows selected</span>
-                @adminCan('product.brand.delete')
-                    <button class="btn btn-danger delete-button">Delete</button>
-                @endadminCan
+                <button class="btn btn-danger delete-button">Delete</button>
             </div>
+            @endadminCan
             <div class="table-responsive list_table">
                 <table style="width: 100%;" class="table mb-5">
                     <thead>
                         <tr>
+                            @if(checkAdminHasPermission('product.brand.delete'))
                             <th>
                                 <div class="custom-checkbox custom-control">
                                     <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
@@ -93,15 +94,19 @@
                                     <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
                                 </div>
                             </th>
+                            @endif
                             <th>{{ __('SL.') }}</th>
                             <th>{{ __('Image') }}</th>
                             <th class="text-left">{{ __('Name') }}</th>
+                            @if(checkAdminHasPermission('product.brand.edit') || checkAdminHasPermission('product.brand.delete'))
                             <th>{{ __('Action') }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($brands as $index => $brand)
                             <tr>
+                                @if(checkAdminHasPermission('product.brand.delete'))
                                 <td>
                                     <div class="custom-checkbox custom-control">
                                         <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
@@ -110,10 +115,12 @@
                                             class="custom-control-label">&nbsp;</label>
                                     </div>
                                 </td>
+                                @endif
                                 <td>{{ method_exists($brands, 'firstItem') ? $index + $brands->firstItem() : $index + 1 }}</td>
                                 <td><img src="{{ $brand->image_url }}" alt="" class="img-fluid"
                                         style="width: 80px"></td>
                                 <td class="text-left">{{ $brand->name }}</td>
+                                @if(checkAdminHasPermission('product.brand.edit') || checkAdminHasPermission('product.brand.delete'))
                                 <td>
                                     @if (checkAdminHasPermission('product.brand.edit') || checkAdminHasPermission('product.brand.delete'))
                                         <div class="btn-group" role="group">
@@ -137,6 +144,7 @@
                                         </div>
                                     @endif
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

@@ -113,18 +113,19 @@
             </div>
         </div>
         <div class="card-body">
+            @adminCan('product.delete')
             <div
                 class="alert alert-danger d-none justify-content-between delete-section danger-bg flex-wrap align-items-center">
                 <span>
                     <span class="number">0 </span> rows selected</span>
-                @adminCan('product.delete')
-                    <button class="btn btn-danger delete-button">Delete</button>
-                @endadminCan
+                <button class="btn btn-danger delete-button">Delete</button>
             </div>
+            @endadminCan
             <div class="table-responsive list_table">
                 <table style="width: 100%;" class="table product_list_table">
                     <thead>
                         <tr>
+                            @if(checkAdminHasPermission('product.delete'))
                             <th>
                                 <div class="custom-checkbox custom-control">
                                     <input type="checkbox" data-checkboxes="checkgroup" data-checkbox-role="dad"
@@ -132,6 +133,7 @@
                                     <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
                                 </div>
                             </th>
+                            @endif
                             <th>{{ __('SN') }}</th>
                             <th>{{ __('Photo') }}</th>
                             <th>{{ __('Name') }}</th>
@@ -144,7 +146,9 @@
                             @adminCan('product.status')
                                 <th>{{ __('Status') }}</th>
                             @endadminCan
+                            @if(checkAdminHasPermission('product.edit') || checkAdminHasPermission('product.delete'))
                             <th>{{ __('Action') }}</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -153,12 +157,14 @@
                         @endphp
                         @foreach ($products as $index => $product)
                             <tr>
+                                @if(checkAdminHasPermission('product.delete'))
                                 <td>
                                     <div class="custom-checkbox custom-control">
                                         <input type="checkbox" data-checkboxes="checkgroup" class="custom-control-input"
                                             id="checkbox-{{ $product->id }}" name="select">
                                     </div>
                                 </td>
+                                @endif
                                 <td>{{ $start + $index }}</td>
                                 <td> <img class="rounded-circle" src="{{ $product->singleImage }}"></td>
                                 <td>{{ $product->name }} </td>
@@ -185,6 +191,7 @@
                                         @endif
                                     </td>
                                 @endadminCan
+                                @if(checkAdminHasPermission('product.edit') || checkAdminHasPermission('product.delete'))
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button class="btn btn-primary btn-sm dropdown-toggle" type="button"
@@ -224,6 +231,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

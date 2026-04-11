@@ -51,10 +51,25 @@ class AccountsController extends Controller
         });
 
         // Legacy expenses with no account_id — deduct from cash (default payment method)
-        $unassignedExpenses = Expense::whereNull('expense_supplier_id')
+        $unassignedExpensesQuery = Expense::whereNull('expense_supplier_id')
             ->whereDoesntHave('payments')
-            ->whereNull('account_id')
-            ->sum('paid_amount');
+            ->whereNull('account_id');
+
+        // Apply date filter if provided (getBalanceBetween already respects request dates)
+        $hasDateFilter = request('from_date') || request('to_date');
+        if ($hasDateFilter) {
+            $fromDate = request('from_date') ? now()->parse(request('from_date'))->startOfDay() : null;
+            $toDate = request('to_date') ? now()->parse(request('to_date'))->endOfDay() : null;
+            if ($fromDate && $toDate) {
+                $unassignedExpensesQuery->whereBetween('date', [$fromDate, $toDate]);
+            } elseif ($fromDate) {
+                $unassignedExpensesQuery->where('date', '>=', $fromDate);
+            } elseif ($toDate) {
+                $unassignedExpensesQuery->where('date', '<=', $toDate);
+            }
+        }
+
+        $unassignedExpenses = $unassignedExpensesQuery->sum('paid_amount');
         $accountBalance -= $unassignedExpenses;
 
         // Daily Cash — physical cash drawer movement (cash account only)
